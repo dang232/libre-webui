@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -126,10 +126,10 @@ export const resolvePlatformRuntimeConfig = (
 ): PlatformRuntimeConfig => {
   const blockers: string[] = [];
   const mode = enumValue(
-    env.LIBRE_PLATFORM_MODE,
+    env.ALCORE_PLATFORM_MODE,
     'solo',
     ['solo', 'team'] as const,
-    'LIBRE_PLATFORM_MODE',
+    'ALCORE_PLATFORM_MODE',
     blockers
   );
   const databaseBackend = enumValue(

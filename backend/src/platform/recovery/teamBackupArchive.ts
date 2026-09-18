@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -55,7 +55,7 @@ import {
   type BackupVerification,
 } from './backupArchive.js';
 
-const TEAM_INVENTORY_FORMAT = 'libre-webui-team-backup-inventory';
+const TEAM_INVENTORY_FORMAT = 'alcore-team-backup-inventory';
 const TEAM_INVENTORY_VERSION = 2;
 const COPY_BUFFER_BYTES = 1024 * 1024;
 const DEFAULT_MAX_BLOB_OBJECTS = 250_000;
@@ -515,7 +515,7 @@ const validateToolTimeout = (value: number | undefined): number => {
 
 const validateTeamSelection = (env: NodeJS.ProcessEnv): void => {
   if (
-    env.LIBRE_PLATFORM_MODE?.trim().toLowerCase() !== 'team' ||
+    env.ALCORE_PLATFORM_MODE?.trim().toLowerCase() !== 'team' ||
     env.DATABASE_BACKEND?.trim().toLowerCase() !== 'postgres' ||
     env.BLOB_STORE_BACKEND?.trim().toLowerCase() !== 's3' ||
     env.VECTOR_STORE_BACKEND?.trim().toLowerCase() !== 'pgvector'
@@ -1232,7 +1232,7 @@ export const createTeamBackupArchive = async (
   const dumpPath = path.join(payload, 'team', 'postgres.dump');
   // A pg_dump wrapper may execute in a rootful container with this scratch
   // directory bind-mounted from the host. Create the output inode as the
-  // Libre process first so pg_dump only truncates it and cannot leave behind
+  // Alcore process first so pg_dump only truncates it and cannot leave behind
   // a root-owned file that the host process is unable to secure or remove.
   fs.writeFileSync(dumpPath, '', { flag: 'wx', mode: 0o600 });
   const database = createPostgresDatabase(postgresConfig);
@@ -1327,12 +1327,12 @@ export const createTeamBackupArchive = async (
     stageProtectedRuntimeConfiguration(payload, env);
     const pkg = loadAppPackage(import.meta.url);
     const manifest: BackupArchiveManifestInput = {
-      format: 'libre-webui-integrated-backup',
+      format: 'alcore-integrated-backup',
       version: 1,
       backupId: crypto.randomUUID(),
       createdAt: (options.now ?? new Date()).toISOString(),
       application: {
-        name: 'libre-webui',
+        name: 'alcore',
         version: pkg.version || 'unknown',
         nodeVersion: process.version,
       },
@@ -1345,7 +1345,7 @@ export const createTeamBackupArchive = async (
         jobWorkerMode: env.JOB_WORKER_MODE || 'external',
       },
       inventory: {
-        format: 'libre-webui-recovery-inventory',
+        format: 'alcore-recovery-inventory',
         version: 1,
         schemaFingerprint: inventory.schemaFingerprint,
         encryptionKeyFingerprint: inventory.storageKeyFingerprint,
@@ -1581,7 +1581,7 @@ const restoredEnvironment = (
     ...runtime,
     ...secrets,
     ...target,
-    LIBRE_PLATFORM_MODE: 'team',
+    ALCORE_PLATFORM_MODE: 'team',
     DATABASE_BACKEND: 'postgres',
     BLOB_STORE_BACKEND: 's3',
     VECTOR_STORE_BACKEND: 'pgvector',

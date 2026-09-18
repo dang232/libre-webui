@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -171,7 +171,7 @@ export async function secureToolRequest(
       signal: controller.signal,
       dispatcher,
       headers: {
-        'User-Agent': 'Libre-WebUI/1.0 (+tool gateway)',
+        'User-Agent': 'Alcore/1.0 (+tool gateway)',
         ...request.headers,
       },
       ...(request.body !== undefined ? { body: request.body } : {}),

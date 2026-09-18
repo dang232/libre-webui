@@ -1,11 +1,11 @@
 ---
 sidebar_position: 1
 title: 'Desktop App'
-description: 'Install the Libre WebUI desktop application for macOS, Windows, and Linux, and connect it to a local or remote server.'
+description: 'Install the Alcore desktop application for macOS, Windows, and Linux, and connect it to a local or remote server.'
 slug: /ELECTRON_DESKTOP_APP
 keywords:
   [
-    libre webui desktop,
+    Alcore desktop,
     desktop app,
     macos app,
     windows app,
@@ -18,8 +18,8 @@ keywords:
 
 # 🖥️ Desktop App
 
-The Libre WebUI desktop app wraps the web interface in a native window for
-macOS, Windows, and Linux. It connects to a Libre WebUI server: one running on
+The Alcore desktop app wraps the web interface in a native window for
+macOS, Windows, and Linux. It connects to a Alcore server: one running on
 the same machine, or any server you point it at.
 
 The app is developed in
@@ -41,22 +41,22 @@ Grab the package for your platform from the
 
 Releases before the rename shipped these assets under the
 `Libre-WebUI-Frontend` prefix with an app bundle named
-`Libre WebUI Frontend.app`.
+`Alcore Frontend.app`.
 
 ### macOS blocks the app as damaged
 
-Libre WebUI temporarily uses an ad-hoc signature for macOS builds. This keeps
+Alcore temporarily uses an ad-hoc signature for macOS builds. This keeps
 the application bundle structurally valid, but it does not identify the
 publisher to Apple and cannot be notarized. After copying the application to
 Applications, approve it in **System Settings → Privacy & Security → Open
 Anyway**.
 
 If macOS does not offer that option, remove the quarantine attribute only after
-verifying that the application came from the official Libre WebUI release:
+verifying that the application came from the official Alcore release:
 
 ```bash
-xattr -dr com.apple.quarantine "/Applications/Libre WebUI Desktop.app"
-open "/Applications/Libre WebUI Desktop.app"
+xattr -dr com.apple.quarantine "/Applications/Alcore Desktop.app"
+open "/Applications/Alcore Desktop.app"
 ```
 
 Do not disable Gatekeeper globally. Seamless distribution still requires a
@@ -64,17 +64,17 @@ Developer ID Application certificate and Apple notarization.
 
 ## 🔌 Connecting to a Server
 
-The app is a client; it needs a Libre WebUI server. On first launch a landing
+The app is a client; it needs a Alcore server. On first launch a landing
 screen offers two paths:
 
 - **Local**: the app probes for a server on your machine (port 3001, the
   default for the Docker image and `npx libre-webui`) and connects when its
   health check answers.
-- **Remote**: enter the URL of any reachable Libre WebUI server, such as a
+- **Remote**: enter the URL of any reachable Alcore server, such as a
   homelab or team deployment. The app verifies it before connecting.
 
 Your choice is remembered. To change servers later, use
-**Libre WebUI → Switch Server…** in the menu bar. If a remembered server stops
+**Alcore → Switch Server…** in the menu bar. If a remembered server stops
 answering, the app returns to the landing screen instead of a blank window.
 
 To run a local server, see [Quick Start](./QUICK_START): Docker Compose,
@@ -95,7 +95,7 @@ runtime. Work availability is determined by the server it connects to:
 - the app continues to support Chat when Work is unavailable.
 
 Work files live on the server's Docker host or Kubernetes storage, not inside
-the desktop app. Previews travel through Libre WebUI's signed same-origin
+the desktop app. Previews travel through Alcore's signed same-origin
 proxy, so local and remote desktop clients can use them when the server's
 reverse proxy preserves HTTP and WebSocket traffic.
 

@@ -48,7 +48,7 @@ class ReleaseManager {
   }
 
   async createRelease(releaseType = null) {
-    console.log('🚀 Starting Libre WebUI release process...\n');
+    console.log('🚀 Starting Alcore release process...\n');
     this.ensureCleanWorkingTree();
 
     const currentVersion = this.getCurrentVersion();

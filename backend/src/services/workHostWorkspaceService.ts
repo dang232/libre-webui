@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,7 +40,7 @@ const DENIED_SEGMENTS = new Set([
   '.config',
   '.kube',
   '.docker',
-  '.libre-webui',
+  '.alcore',
   '.claude',
   'node_modules',
 ]);

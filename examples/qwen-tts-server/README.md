@@ -1,4 +1,4 @@
-# Qwen3-TTS Integration for Libre WebUI
+# Qwen3-TTS Integration for Alcore
 
 OpenAI-compatible API server for Qwen3-TTS.
 

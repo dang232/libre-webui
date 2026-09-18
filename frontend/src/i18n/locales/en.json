@@ -41,8 +41,8 @@
     "more": "More"
   },
   "brand": {
-    "name": "Libre WebUI",
-    "shortName": "Libre"
+    "name": "Alcore",
+    "shortName": "Alcore"
   },
   "appInitialization": {
     "ollamaUnavailable": "Ollama service is not available. Plugin models may still be used.",
@@ -191,9 +191,9 @@
   },
   "setup": {
     "welcome": {
-      "title": "Welcome to Libre WebUI",
+      "title": "Welcome to Alcore",
       "subtitle": "Let's Get Started",
-      "description": "Set up your Libre WebUI instance in just a few steps",
+      "description": "Set up your Alcore instance in just a few steps",
       "createAdmin": "Create Admin Account",
       "features": {
         "secure": {
@@ -213,7 +213,7 @@
     "admin": {
       "title": "Create Admin Account",
       "subtitle": "Administrator Setup",
-      "description": "Create the first admin account for your Libre WebUI instance",
+      "description": "Create the first admin account for your Alcore instance",
       "usernamePlaceholder": "Enter admin username",
       "passwordPlaceholder": "Enter password (at least 12 characters)",
       "confirmPlaceholder": "Confirm your password",
@@ -223,7 +223,7 @@
       "failed": "Failed to create admin account",
       "approvalUnexpected": "The initial administrator could not be activated. Please try again.",
       "fillAllFields": "Please fill in all fields",
-      "note": "This will be the primary administrator account for your Libre WebUI instance"
+      "note": "This will be the primary administrator account for your Alcore instance"
     },
     "encryptionKey": {
       "title": "Save Your Encryption Key",
@@ -239,7 +239,7 @@
       "envNote": "This key is also saved in your backend/.env file as ENCRYPTION_KEY",
       "acknowledgment": "I have saved my encryption key in a secure location and understand that losing it may result in data loss.",
       "confirmRequired": "Please confirm that you have saved the encryption key",
-      "continue": "Continue to Libre WebUI"
+      "continue": "Continue to Alcore"
     },
     "connectModels": {
       "title": "Connect your models",
@@ -1015,7 +1015,7 @@
       "archiveScopeV3": "Includes preferences, chats, folders, Notes, knowledge collections, and extracted document text. Excludes accounts and secrets, biometric cloned voices, generated media, personas and memory, and Work data or volumes.",
       "exportAll": "Export Portable Archive",
       "import": "Import Data",
-      "importDescription": "Validate and import a Libre WebUI portable archive. Existing records not present in the archive are never deleted.",
+      "importDescription": "Validate and import an Alcore portable archive. Existing records not present in the archive are never deleted.",
       "importData": "Import Data",
       "importing": "Importing...",
       "clearSessions": "Clear Sessions",
@@ -1047,7 +1047,7 @@
       "toSkip": "to skip",
       "documents": "Documents",
       "warnings": "Warnings",
-      "refreshAfterImportFailed": "Data was imported, but some views could not be refreshed. Reload Libre WebUI to see every change.",
+      "refreshAfterImportFailed": "Data was imported, but some views could not be refreshed. Reload Alcore to see every change.",
       "exportSuccess": "Portable data archive exported",
       "exportFailed": "Export failed",
       "importSuccess": "Portable data archive imported",
@@ -1056,7 +1056,7 @@
         "invalidJson": "Portable archive is not valid JSON.",
         "objectRequired": "Portable archive must contain a JSON object.",
         "unsupportedVersion": "Unsupported portable archive version {{version}}.",
-        "unrecognized": "This file is not a Libre WebUI portable archive."
+        "unrecognized": "This file is not an Alcore portable archive."
       },
       "errors": "Errors",
       "archivedChats": {
@@ -1322,7 +1322,7 @@
       "saveFile": "Save file",
       "formatCode": "Format code"
     },
-    "description": "Every keyboard shortcut available in Libre WebUI.",
+    "description": "Every keyboard shortcut available in Alcore.",
     "newChat": "New chat",
     "newWork": "New Work session",
     "openPalette": "Open command palette"
@@ -1701,7 +1701,7 @@
   "userManager": {
     "title": "User Management",
     "subtitle": "Manage user accounts and permissions",
-    "pageDescription": "Manage user accounts, permissions, and access controls for your Libre WebUI instance.",
+    "pageDescription": "Manage user accounts, permissions, and access controls for your Alcore instance.",
     "sections": {
       "users": "Users",
       "access": "Access & policies",
@@ -1829,7 +1829,7 @@
     },
     "agentAccess": {
       "title": "Agents",
-      "description": "Offer the Agents section (Libre Claw) to administrators. Agent CLIs run on the host as the server user, outside the Work sandbox.",
+      "description": "Offer the Agents section (Alcore Claw) to administrators. Agent CLIs run on the host as the server user, outside the Work sandbox.",
       "saved": "Agent access updated",
       "saveFailed": "Could not update agent access",
       "lockedByEnv": "Pinned by the AGENT_CLI_MODELS_ENABLED environment variable."
@@ -2041,7 +2041,7 @@
       "title": "No provider calls yet",
       "description": "Calls will appear here after an enabled plugin handles chat, Work, embedding, image, speech, sound, or video requests."
     },
-    "privacyNote": "Usage is metered on the server at the outbound plugin boundary. Libre WebUI stores provider, model, timing, status, and reported counters—never prompts, responses, endpoints, credentials, or provider error bodies. Token totals include only calls where the provider returned usage metadata.",
+    "privacyNote": "Usage is metered on the server at the outbound plugin boundary. Alcore stores provider, model, timing, status, and reported counters—never prompts, responses, endpoints, credentials, or provider error bodies. Token totals include only calls where the provider returned usage metadata.",
     "heatmap": {
       "title": "A year of activity",
       "description": "Daily provider calls over the past year, colored by each day's most-used model.",
@@ -2056,7 +2056,7 @@
   "systemPage": {
     "eyebrow": "Administration",
     "title": "System",
-    "description": "Monitor the machine and runtime hosting this Libre WebUI instance.",
+    "description": "Monitor the machine and runtime hosting this Alcore instance.",
     "updated": "Updated {{date}}",
     "refresh": "Refresh system information",
     "loadFailed": "System information could not be loaded.",
@@ -2074,7 +2074,7 @@
     },
     "host": {
       "title": "Host & runtime",
-      "description": "Operating system, processor, and Libre WebUI process details.",
+      "description": "Operating system, processor, and Alcore process details.",
       "container": "Container runtime",
       "native": "Native runtime",
       "hostname": "Hostname",
@@ -2082,7 +2082,7 @@
       "processor": "Processor",
       "logicalCpus": "logical CPUs",
       "loadAverage": "Load average · 1 / 5 / 15 min",
-      "libreVersion": "Libre WebUI",
+      "libreVersion": "Alcore",
       "nodeVersion": "Node.js",
       "process": "Process",
       "workingDirectory": "Working directory"
@@ -2134,7 +2134,7 @@
       "internal": "internal",
       "empty": "No network interfaces are visible to the application runtime."
     },
-    "securityNote": "This page is restricted to administrators. The server returns operational summaries only: it does not expose environment variables, credentials, Docker labels, mounts, container commands, or inspect payloads. When Libre WebUI runs in a container, host-level CPU and memory details come from Docker Engine when its local socket is available; other values describe the application runtime.",
+    "securityNote": "This page is restricted to administrators. The server returns operational summaries only: it does not expose environment variables, credentials, Docker labels, mounts, container commands, or inspect payloads. When Alcore runs in a container, host-level CPU and memory details come from Docker Engine when its local socket is available; other values describe the application runtime.",
     "work": {
       "title": "Work",
       "description": "Sandboxes across every user",
@@ -2314,9 +2314,9 @@
     "referenceTranscript": "Exact reference transcript",
     "referenceTranscriptPlaceholder": "Enter exactly what is spoken in the reference recording…",
     "referenceAudioTooLarge": "Reference audio must be {{max}} or smaller.",
-    "cloneConsent": "Only clone a voice when you have the speaker’s permission. The recording is sent to the selected provider for this generation and is not saved by Libre WebUI.",
+    "cloneConsent": "Only clone a voice when you have the speaker’s permission. The recording is sent to the selected provider for this generation and is not saved by Alcore.",
     "saveVoiceProfile": "Save as a reusable voice",
-    "saveVoiceProfileDescription": "Store this reference recording and transcript securely. Libre WebUI sends them to the selected provider for every Speech batch that uses this voice.",
+    "saveVoiceProfileDescription": "Store this reference recording and transcript securely. Alcore sends them to the selected provider for every Speech batch that uses this voice.",
     "voiceProfileName": "Saved voice name",
     "voiceProfileNamePlaceholder": "For example, My voice",
     "voiceStorageConsent": "I confirm that I have the speaker’s permission to clone and store this voice. The reference stays saved until I delete it.",
@@ -2554,7 +2554,7 @@
     "subtitle": "Local agent runs, approvals, schedules, memory, tools, and usage.",
     "dashboard": "Dashboard",
     "connection": {
-      "disconnectedTitle": "Libre Claw daemon is not connected",
+      "disconnectedTitle": "Alcore Claw daemon is not connected",
       "disconnectedDescription": "Start it locally with <command>libre-claw start</command> or set <env>LIBRE_CLAW_BASE_URL</env> in the backend environment."
     },
     "status": {
@@ -2573,7 +2573,7 @@
     },
     "startRun": {
       "title": "Start Agent Run",
-      "placeholder": "Ask Libre Claw to inspect a repo, fix a bug, run a review, schedule a report...",
+      "placeholder": "Ask Alcore Claw to inspect a repo, fix a bug, run a review, schedule a report...",
       "chatRun": "Chat run",
       "goalMode": "Goal mode",
       "providerOverride": "Provider override",
@@ -2584,14 +2584,14 @@
       "title": "Model Route",
       "providerPlaceholder": "provider",
       "modelPlaceholder": "model",
-      "persistGlobal": "Persist to Libre Claw global config",
+      "persistGlobal": "Persist to Alcore Claw global config",
       "saveModel": "Save model",
-      "theme": "Libre Claw theme",
+      "theme": "Alcore Claw theme",
       "saveTheme": "Save theme"
     },
     "runs": {
       "title": "Runs",
-      "empty": "No Libre Claw runs yet."
+      "empty": "No Alcore Claw runs yet."
     },
     "timeline": {
       "title": "Run Timeline",
@@ -2625,7 +2625,7 @@
       "schedulePlaceholder": "daily 09:00",
       "promptPlaceholder": "Automation prompt",
       "create": "Create",
-      "empty": "No scheduled Libre Claw automations.",
+      "empty": "No scheduled Alcore Claw automations.",
       "runNow": "Run now",
       "pause": "Pause",
       "resume": "Resume",
@@ -2666,19 +2666,19 @@
       "unknownError": "Unknown error"
     },
     "toasts": {
-      "loadStatusFailed": "Could not load Libre Claw status",
-      "enterTask": "Enter a task for Libre Claw",
-      "runStarted": "Libre Claw run started",
-      "startRunFailed": "Could not start Libre Claw run",
+      "loadStatusFailed": "Could not load Alcore Claw status",
+      "enterTask": "Enter a task for Alcore Claw",
+      "runStarted": "Alcore Claw run started",
+      "startRunFailed": "Could not start Alcore Claw run",
       "runCancelled": "Run cancelled",
       "cancelRunFailed": "Could not cancel run",
       "approved": "Approved",
       "denied": "Denied",
       "resolvePermissionFailed": "Could not resolve permission",
       "providerModelRequired": "Provider and model are required",
-      "modelUpdated": "Libre Claw model updated",
+      "modelUpdated": "Alcore Claw model updated",
       "updateModelFailed": "Could not update model",
-      "themeUpdated": "Libre Claw theme updated",
+      "themeUpdated": "Alcore Claw theme updated",
       "updateThemeFailed": "Could not update theme",
       "automationRequired": "Automation name, schedule, and prompt are required",
       "automationCreated": "Automation created",
@@ -3049,7 +3049,7 @@
     "title": "What's new",
     "releaseNotes": "Release notes",
     "cta": "Okay, let's go",
-    "starAsk": "Enjoying Libre WebUI? Leave a star on GitHub"
+    "starAsk": "Enjoying Alcore? Leave a star on GitHub"
   },
   "notes": {
     "title": "Notes",
@@ -3502,7 +3502,7 @@
     "description": "Tool servers the model can call, and the approvals you have granted them.",
     "approvalNotice": "Tools that change data outside the chat always ask for approval, unless you granted that tool an always or per-chat approval.",
     "registerServer": "Register server",
-    "registerHint": "Libre WebUI reads the server once and pins the tools it exposes. Refresh the server later to pick up changes.",
+    "registerHint": "Alcore reads the server once and pins the tools it exposes. Refresh the server later to pick up changes.",
     "editServer": "Edit server",
     "empty": "No tool servers",
     "emptyHintAdmin": "Register an OpenAPI or MCP server to give the model something to call.",

@@ -8,7 +8,7 @@ keywords: [sharing, grants, permissions, collaboration, access control]
 
 # Sharing
 
-Every shareable resource in Libre WebUI moves through one grant model:
+Every shareable resource in Alcore moves through one grant model:
 owner → user or group principals → `read`, `write`, or `admin`
 permission. There is no per-feature permission system to learn twice, and
 the global administrator role deliberately confers **no** access to

@@ -1,16 +1,16 @@
 ---
 sidebar_position: 4
 title: 'Database Encryption'
-description: 'Application-level AES-256-GCM encryption and key handling in Libre WebUI.'
+description: 'Application-level AES-256-GCM encryption and key handling in Alcore.'
 slug: /DATABASE_ENCRYPTION
 keywords:
-  [database encryption, aes-256-gcm, libre webui security, encrypted storage]
+  [database encryption, aes-256-gcm, Alcore security, encrypted storage]
 image: /img/social/19.png
 ---
 
 # Database Encryption
 
-Libre WebUI includes an application-level encryption service for sensitive values before they are written to storage.
+Alcore includes an application-level encryption service for sensitive values before they are written to storage.
 
 ## Encryption Method
 
@@ -28,7 +28,7 @@ openssl rand -hex 32
 
 ## Key Storage
 
-Libre WebUI loads the key in this order:
+Alcore loads the key in this order:
 
 1. `ENCRYPTION_KEY` from the environment.
 2. A persisted `.encryption_key` file under the selected `DATA_DIR`.

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -876,7 +876,7 @@ export class S3EncryptedBlobStore implements BlobStore {
 
   /**
    * Only keys emitted by objectKey() belong to this lifecycle. Unknown keys
-   * beneath a shared operator prefix are never treated as Libre garbage.
+   * beneath a shared operator prefix are never treated as Alcore garbage.
    */
   private managedObjectId(objectKey: string): string | undefined {
     const prefix = `${this.keyPrefix}/v1/`;

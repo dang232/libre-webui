@@ -8,7 +8,7 @@ keywords: [channels, team chat, threads, reactions, mentions, direct messages]
 
 # Channels
 
-Channels bring team conversations into Libre WebUI: public and private
+Channels bring team conversations into Alcore: public and private
 rooms plus direct messages, with threads, reactions, pins, unread
 tracking, file attachments, and `@model` replies — all on the same
 durable, encrypted foundations as chat.

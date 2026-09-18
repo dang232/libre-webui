@@ -1,16 +1,16 @@
 ---
 sidebar_position: 1
 title: 'Authentication & Security'
-description: 'Authentication, first-user setup, OAuth, roles, Turnstile, and session security in Libre WebUI.'
+description: 'Authentication, first-user setup, OAuth, roles, Turnstile, and session security in Alcore.'
 slug: /AUTHENTICATION
 keywords:
-  [libre webui authentication, user management, jwt security, oauth, turnstile]
+  [Alcore authentication, user management, jwt security, oauth, turnstile]
 image: /img/social/12.png
 ---
 
 # Authentication & Security
 
-Libre WebUI uses local user accounts with JWT sessions. A fresh installation
+Alcore uses local user accounts with JWT sessions. A fresh installation
 always permits one local administrator bootstrap. Public registration for every
 later local or OAuth account is closed by default.
 
@@ -22,7 +22,7 @@ in the current browser and applies to sign-up as well.
 
 When the database has no users:
 
-1. Libre WebUI shows the first-time setup flow.
+1. Alcore shows the first-time setup flow.
 2. The user creates the first local account.
 3. The account is assigned the `admin` role.
 4. Every later public registration stays closed unless explicitly enabled.
@@ -159,7 +159,7 @@ and named volumes. If Docker cleanup fails, access remains revoked, the role
 change reports the cleanup failure, and the operator must restore Docker access
 and retry cleanup.
 
-Deleting a user is destructive for that user's Work data. Libre WebUI first
+Deleting a user is destructive for that user's Work data. Alcore first
 stops their managed containers and removes their Work volumes, then deletes the
 account and database records. If Docker cannot prove that cleanup succeeded,
 the account deletion fails so an administrator can correct the runtime problem

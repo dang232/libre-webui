@@ -9,7 +9,7 @@ keywords:
 
 # Plugins
 
-Libre WebUI uses plugins to connect external AI providers and model capabilities alongside local Ollama.
+Alcore uses plugins to connect external AI providers and model capabilities alongside local Ollama.
 
 ## Plugin Types
 
@@ -27,7 +27,7 @@ Plugins can expose static model maps and, where supported, refresh available mod
 
 ## Built-In Provider Families
 
-Libre WebUI includes provider definitions for common services:
+Alcore includes provider definitions for common services:
 
 - OpenAI and OpenAI-compatible APIs
 - Anthropic
@@ -56,7 +56,7 @@ another user's active providers.
 
 During upgrade, the legacy global `.status.json` activation list is copied once
 to the accounts that already exist, but only for definitions that exactly match
-Libre WebUI's compiled trust anchors. Legacy custom or shadow definitions stay
+Alcore's compiled trust anchors. Legacy custom or shadow definitions stay
 quarantined and inactive. Accounts created after that migration start with no
 plugins activated.
 
@@ -114,7 +114,7 @@ An environment key is a fallback only while the request uses the routing and
 authentication projection from an unshadowed bundled plugin definition. An
 imported definition, a writable definition that shadows a bundled ID, or an
 administrator's stored connection-routing override requires a credential saved
-by the same account. Libre WebUI compares the root endpoint, authentication
+by the same account. Alcore compares the root endpoint, authentication
 fields, capability endpoints and endpoint-variable selectors, and recognized
 routing-variable definitions and defaults before allowing environment fallback.
 The compiled manifest hash remains authoritative even when the legacy and
@@ -144,7 +144,7 @@ Many providers expose an OpenAI-compatible API. A plugin can define:
 - Model discovery behavior
 - Optional model map fallback
 
-If a provider does not support live model discovery, Libre WebUI uses the configured model map.
+If a provider does not support live model discovery, Alcore uses the configured model map.
 Imported plugin JSON configures providers that already speak one of Libre
 WebUI's supported wire formats: OpenAI Chat Completions, OpenAI Responses,
 Anthropic Messages, or Gemini. JSON alone does not translate an arbitrary
@@ -166,8 +166,8 @@ cannot accidentally receive image requests. Leave `image_endpoint` blank to
 inherit the bundled Image API endpoint.
 
 Image selections are provider-qualified. When two image plugins expose the same
-model ID, Libre WebUI sends the request only to the provider selected in the
-image panel. GPT Image responses use base64 image data; Libre WebUI converts
+model ID, Alcore sends the request only to the provider selected in the
+image panel. GPT Image responses use base64 image data; Alcore converts
 that data to an in-app image and saves it to the current user's gallery.
 Image API routes require authentication, and direct generation requests must
 include both `pluginId` and `model`. They may set `n` to a JSON integer from 1
@@ -213,7 +213,7 @@ Imported plugin JSON can provide the same defaults:
 Responses requests use `input`, `max_output_tokens`, flattened function tools,
 `store: false`, and request encrypted reasoning content for stateless
 continuation. Completed and streamed Responses output is normalized back to
-Libre WebUI's chat and Work event formats. Replay state is retained only when
+Alcore's chat and Work event formats. Replay state is retained only when
 the complete ordered output Item array is at most 64 Items and 90 KB; Items are
 kept exact and are never field-truncated. Replayable Items require unique,
 non-empty IDs and types, and message, reasoning, and function-call structures
@@ -228,7 +228,7 @@ Work stores tool-only state in hidden context rows that are not returned by
 message APIs. A hashed scope binds replay to the same provider, model, Responses
 mode, final configured endpoint, and an opaque one-way fingerprint of the
 selected credential. When that scope changes, including after API-key rotation,
-Libre WebUI falls back to normalized message history rather than sending
+Alcore falls back to normalized message history rather than sending
 provider-specific Items across an authentication boundary. An active Work run
 also fingerprints its routing and credential and revalidates them immediately
 before every provider round; changing the mode, endpoint, or API key stops the
@@ -270,9 +270,9 @@ results, and generated content without transport encryption, so use it only for
 a self-hosted gateway on a network you trust; prefer HTTPS whenever the gateway
 supports TLS. Requests originate from the backend. In container deployments,
 that means a service URL such as `http://ai-gateway:8080/v1`, while `localhost`
-identifies the Libre WebUI container itself. Plugin capability routes, including
+identifies the Alcore container itself. Plugin capability routes, including
 image generation, resolve endpoint variables and credentials for the requesting
-authenticated account. Libre WebUI does not have an unauthenticated
+authenticated account. Alcore does not have an unauthenticated
 single-user mode.
 
 ### Capability-specific endpoints
@@ -297,7 +297,7 @@ The `endpoint` variable is the complete request URL, including the operation
 path. For example, an OpenAI-compatible chat plugin normally uses a URL such as
 `https://provider.example/v1/chat/completions`, not only
 `https://provider.example`. Imported legacy plugin configurations may call this
-variable `api_url`; Libre WebUI accepts that alias, but a non-empty `endpoint`
+variable `api_url`; Alcore accepts that alias, but a non-empty `endpoint`
 always takes precedence when both are present.
 
 Absolute HTTP and HTTPS endpoint URLs are accepted; other protocols are
@@ -311,7 +311,7 @@ Provider requests do not follow redirects. Configure the final validated
 operation URL directly; a redirect response is reported as a provider error
 instead of forwarding credentials or request content to another hop.
 
-Remember that requests originate from the Libre WebUI backend. In a container,
+Remember that requests originate from the Alcore backend. In a container,
 `localhost` identifies the container itself, not automatically the container
 host or another service. Use the gateway's container service name, or a
 host-reachable name such as `host.docker.internal` where the container runtime
@@ -333,10 +333,10 @@ labels describe which plugin route lists a model; they are not health checks.
 Add fallback or manually maintained model IDs through the plugin JSON
 `model_map`, not by editing a discovered row.
 
-When a plugin is activated, Libre WebUI attempts model discovery with that
+When a plugin is activated, Alcore attempts model discovery with that
 account's effective endpoint and credential. An administrator's custom route
 requires a credential stored by the same account; an environment fallback is
-used only with the trusted manifest route. For compatible APIs, Libre WebUI
+used only with the trusted manifest route. For compatible APIs, Alcore
 derives a model-list URL from the full endpoint:
 
 - a URL ending in `/models` is used as-is;
@@ -360,7 +360,7 @@ definition.
 Discovery expects an OpenAI-compatible response containing model IDs in a
 `data` array. Activation waits for that attempt before returning, so the first
 plugin-list refresh can include the discovered catalog. Successful results are
-stored per user and overlaid on that user's plugin view; Libre WebUI does not
+stored per user and overlaid on that user's plugin view; Alcore does not
 rewrite the shared plugin JSON or expose one user's discovered model IDs to
 another account. If the provider has no compatible model-list endpoint, cannot
 be reached, or returns another response shape, an ordinary activation keeps
@@ -392,7 +392,7 @@ Duplicate Ollama/plugin and plugin/plugin model names remain separate choices,
 and reopening a chat restores the exact choice that was saved.
 
 Explicit provider identity fails closed. If a selected plugin is deactivated,
-removed, or no longer advertises that model, Libre WebUI keeps the saved
+removed, or no longer advertises that model, Alcore keeps the saved
 selection visible as unavailable and does not silently switch to another
 provider with the same model name. Reactivate the provider or explicitly choose
 another model before generating again.
@@ -418,7 +418,7 @@ them.
 For administrators, connection overrides appear first. Sampling and other
 specialist controls remain under **Advanced parameters**, which is also closed
 by default. Inherited connection and generation values render as blank inputs
-with a provider-default hint. Libre WebUI does not copy manifest defaults into
+with a provider-default hint. Alcore does not copy manifest defaults into
 an account's saved settings merely because the panel was opened.
 
 Saving sends only fields changed in the current editor session. Clearing a
@@ -456,13 +456,13 @@ provider.
 A remote Work run can make several provider requests. The provider receives the
 Work system prompt, conversation context, tool definitions, and requested tool
 results. Tool results can contain source files, directory listings, or command
-output. Libre WebUI shows a per-user, dismissible remote-provider disclosure in
+output. Alcore shows a per-user, dismissible remote-provider disclosure in
 Work; operators should still review provider pricing, retention, and training
 policies before enabling a service for sensitive projects.
 
 ## Embeddings
 
-Embedding-capable plugins can appear in the document embedding settings. Libre WebUI also detects likely Ollama embedding models such as `nomic-embed-text`, `bge`, `e5`, `gte`, and similar model names.
+Embedding-capable plugins can appear in the document embedding settings. Alcore also detects likely Ollama embedding models such as `nomic-embed-text`, `bge`, `e5`, `gte`, and similar model names.
 
 When no embedding model is discovered, the UI falls back to `nomic-embed-text` as the local default candidate.
 

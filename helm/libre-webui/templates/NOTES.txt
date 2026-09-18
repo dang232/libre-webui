@@ -2,7 +2,7 @@ Thank you for installing {{ .Chart.Name }}!
 
 Your release is named: {{ .Release.Name }}
 
-To access Libre WebUI:
+To access Alcore:
 
 {{- if .Values.ingress.enabled }}
 1. Access via Ingress:

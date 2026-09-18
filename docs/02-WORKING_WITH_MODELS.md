@@ -1,11 +1,11 @@
 ---
 sidebar_position: 3
 title: 'Working with AI Models'
-description: 'Model selection, Ollama management, cloud provider plugins, and performance guidance for Libre WebUI.'
+description: 'Model selection, Ollama management, cloud provider plugins, and performance guidance for Alcore.'
 slug: /WORKING_WITH_MODELS
 keywords:
   [
-    libre webui ai models,
+    Alcore ai models,
     ollama models,
     ai model management,
     gemma,
@@ -19,7 +19,7 @@ image: /img/social/02.png
 
 # Working with AI Models
 
-Libre WebUI can use local Ollama models and plugin-backed cloud models in the same workspace. The Model Manager shows installed Ollama models, running models, live Ollama Library results, Hugging Face GGUF entries, and Ollama Cloud entries where available.
+Alcore can use local Ollama models and plugin-backed cloud models in the same workspace. The Model Manager shows installed Ollama models, running models, live Ollama Library results, Hugging Face GGUF entries, and Ollama Cloud entries where available.
 
 ## Choosing a First Model
 
@@ -48,7 +48,7 @@ Open **Settings → Models** to:
 - Pull Hugging Face GGUF models through Ollama when compatible.
 - Pull Ollama Cloud models from the cloud filter.
 
-For Ollama Cloud results, the UI normalizes cloud model names before pulling. If a cloud model requires the `:cloud` or `-cloud` suffix, Libre WebUI applies that for you from the cloud model flow.
+For Ollama Cloud results, the UI normalizes cloud model names before pulling. If a cloud model requires the `:cloud` or `-cloud` suffix, Alcore applies that for you from the cloud model flow.
 
 ## Model Catalog and Visibility
 
@@ -92,7 +92,7 @@ together with the model name, so a provider cannot capture an identically named
 model. If the saved selection loses that identity — for example the model or
 provider is no longer available — an image-bearing turn fails. Re-select the
 model under **Settings → Defaults → Specialized Models → Vision Model** to
-repair it. Failing loudly is deliberate; Libre WebUI does not silently
+repair it. Failing loudly is deliberate; Alcore does not silently
 substitute another provider.
 
 ## Models for Work
@@ -105,7 +105,7 @@ Work needs a chat model that can call tools. It can use:
   configured for the current administrator.
 
 Plugin-backed Work runs use the provider adapter appropriate to the configured
-plugin: OpenAI-compatible, Anthropic, or Gemini. Libre WebUI persists the exact
+plugin: OpenAI-compatible, Anthropic, or Gemini. Alcore persists the exact
 provider type and plugin identifier with the task and each run, so a plugin
 cannot capture an identically named Ollama model. If the selected model or
 provider rejects tool calling, the run fails instead of silently switching to
@@ -120,7 +120,7 @@ file's contents can leave that host when they are included in a tool result.
 
 One autonomous Work run can make multiple model calls. Check the remote
 provider's pricing, retention, and training policies before using sensitive
-projects. Libre WebUI shows a remote-provider notice in Work with a per-user
+projects. Alcore shows a remote-provider notice in Work with a per-user
 dismiss control.
 
 ## Hardware Guide
@@ -146,7 +146,7 @@ Quantized models use less memory. Q4 quantizations are usually the practical def
 | Document search | `nomic-embed-text` or another embedding model                       |
 | Text-to-speech  | TTS plugins such as Qwen3-TTS or Kyutai TTS                         |
 
-Provider model names change frequently. In Libre WebUI, use the provider’s model discovery where available, or paste the exact model ID from the provider dashboard.
+Provider model names change frequently. In Alcore, use the provider’s model discovery where available, or paste the exact model ID from the provider dashboard.
 
 ## Prompting and Settings
 
@@ -166,7 +166,7 @@ Provider model names change frequently. In Libre WebUI, use the provider’s mod
 - Confirm Ollama is running: `ollama list`.
 - Try the same pull in a terminal to see Ollama’s raw error.
 - Check disk space before pulling large models.
-- If you are using the Model Manager cloud filter, let Libre WebUI handle cloud suffixes.
+- If you are using the Model Manager cloud filter, let Alcore handle cloud suffixes.
 
 **Responses are slow**
 

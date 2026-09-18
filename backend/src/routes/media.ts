@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -960,7 +960,7 @@ async function resumeVideoJob(
       return;
     }
 
-    if (process.env.LIBRE_PLATFORM_MODE === 'team') {
+    if (process.env.ALCORE_PLATFORM_MODE === 'team') {
       // Team media work belongs exclusively to the external durable worker.
       // A polling app replica must never become an unleased provider worker.
       res.status(202).json({
@@ -1077,7 +1077,7 @@ router.delete(
         });
         return;
       }
-      if (job.providerJobId === 'libre:prepared') {
+      if (job.providerJobId === 'alcore:prepared') {
         res.status(409).json({
           success: false,
           message: 'The provider submission is still being reconciled',
@@ -1355,7 +1355,7 @@ async function publicJob(
     prompt: job.prompt,
     cancellable:
       (job.status === 'pending' || job.status === 'in_progress') &&
-      job.providerJobId !== 'libre:prepared' &&
+      job.providerJobId !== 'alcore:prepared' &&
       (await pluginService.canCancelVideoGenRequest(
         job.model,
         job.pluginId,

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +43,7 @@ const logger = createLogger('services:work-runtime');
 // limits, timeouts, DNS) comes from the shared Work runtime config so one
 // deployment story covers both backends.
 export const WORK_KUBERNETES_DEFAULTS = {
-  namespace: 'libre-webui-work',
+  namespace: 'alcore-work',
   workspaceSize: '5Gi',
   podReadyTimeoutMs: 900_000,
   podGoneTimeoutMs: 60_000,
@@ -68,10 +68,10 @@ const k8sConfig = {
 
 const POD_POLL_INTERVAL_MS = 500;
 const WORK_CONTAINER_NAME = 'work';
-const MANAGED_LABEL = 'ai.libre-webui.managed';
-const TASK_LABEL = 'ai.libre-webui.task';
-const NETWORK_LABEL = 'ai.libre-webui.network';
-const POLICY_ANNOTATION = 'ai.libre-webui.policy';
+const MANAGED_LABEL = 'ai.alcore.managed';
+const TASK_LABEL = 'ai.alcore.task';
+const NETWORK_LABEL = 'ai.alcore.network';
+const POLICY_ANNOTATION = 'ai.alcore.policy';
 
 // Container states that mean the sandbox will never come up without operator
 // action; waiting for the ready timeout would hide the actual problem.
@@ -820,10 +820,10 @@ export function describeKubernetesUnavailable(
     return `The Kubernetes credentials cannot manage Pods in namespace "${namespace}". Grant the backend ServiceAccount pods, pods/exec, and persistentvolumeclaims rights there.`;
   }
   if (/ENOTFOUND|ECONNREFUSED|ETIMEDOUT|EHOSTUNREACH/.test(message)) {
-    return `No Kubernetes API server is reachable: ${message}. Check KUBECONFIG or run Libre WebUI inside the cluster.`;
+    return `No Kubernetes API server is reachable: ${message}. Check KUBECONFIG or run Alcore inside the cluster.`;
   }
   if (/no active cluster|cannot load|ENOENT/i.test(message)) {
-    return `No Kubernetes configuration was found: ${message}. Provide a kubeconfig or run Libre WebUI inside the cluster.`;
+    return `No Kubernetes configuration was found: ${message}. Provide a kubeconfig or run Alcore inside the cluster.`;
   }
   return message;
 }

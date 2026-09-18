@@ -53,23 +53,23 @@ test('Homebrew templates match current release packaging', () => {
 
   assert.match(cask, /Libre-WebUI-Desktop-#\{version\}-mac-arm64\.dmg/);
   assert.match(cask, /^cask "libre-webui-desktop" do/m);
-  assert.match(cask, /name "Libre WebUI Desktop"/);
+  assert.match(cask, /name "Alcore Desktop"/);
   assert.doesNotMatch(cask, /^cask "libre-webui" do/m);
   assert.doesNotMatch(cask, /^cask "libre-webui-frontend" do/m);
   assert.match(cask, /verified: "github\.com\/libre-webui\/libre-webui\/"/);
   assert.match(cask, /depends_on arch: :arm64/);
   assert.match(cask, /depends_on macos: :monterey/);
-  assert.match(cask, /app "Libre WebUI Desktop\.app"/);
+  assert.match(cask, /app "Alcore Desktop\.app"/);
   // The pre-rename userData directory must stay in zap so upgrades from the
-  // "Libre WebUI Frontend" era still clean up fully.
+  // "Alcore Frontend" era still clean up fully.
   assert.match(
     cask,
-    /~\/Library\/Application Support\/Libre WebUI Frontend/
+    /~\/Library\/Application Support\/Alcore Frontend/
   );
   assert.match(cask, /brew install --formula libre-webui/);
   assert.doesNotMatch(
     cask,
-    /Libre\.WebUI-|app "Libre WebUI\.app"|auto_updates/
+    /Libre\.WebUI-|app "Alcore\.app"|auto_updates/
   );
 });
 

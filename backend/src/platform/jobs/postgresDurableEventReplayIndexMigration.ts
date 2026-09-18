@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -24,6 +24,6 @@ export const POSTGRES_DURABLE_EVENT_REPLAY_INDEX_MIGRATION: PostgresMigration =
       .digest('hex'),
     sql: POSTGRES_DURABLE_EVENT_REPLAY_INDEX_SQL,
     rollbackPlan:
-      'Stop every Libre replica and worker, restore the verified pre-upgrade backup, then deploy the matching older release. Dropping idx_platform_events_stream_subject_cursor in place is safe only after proving no replay workload depends on it.',
+      'Stop every Alcore replica and worker, restore the verified pre-upgrade backup, then deploy the matching older release. Dropping idx_platform_events_stream_subject_cursor in place is safe only after proving no replay workload depends on it.',
     minimumCompatibleVersion: 12,
   });

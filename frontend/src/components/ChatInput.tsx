@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -517,7 +517,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       );
       if (response.success) {
         toast.success(t('chat.input.menu.documentAttached'));
-        window.dispatchEvent(new Event('libre:documents-updated'));
+        window.dispatchEvent(new Event('alcore:documents-updated'));
       } else {
         toast.error(response.error || t('chat.input.menu.attachFailed'));
       }
@@ -537,7 +537,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       const response = await documentsApi.fetchWebpage(url, currentSession?.id);
       if (response.success) {
         toast.success(t('chat.input.menu.webpageAttached'));
-        window.dispatchEvent(new Event('libre:documents-updated'));
+        window.dispatchEvent(new Event('alcore:documents-updated'));
         closeAttachMenu();
       } else {
         toast.error(response.error || t('chat.input.menu.attachFailed'));

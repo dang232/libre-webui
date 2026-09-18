@@ -41,8 +41,8 @@
     "more": "Çok"
   },
   "brand": {
-    "name": "Libre WebUI",
-    "shortName": "Libre"
+    "name": "Alcore",
+    "shortName": "Alcore"
   },
   "appInitialization": {
     "ollamaUnavailable": "Ollama hizmeti kullanılamıyor. Eklenti modelleri kullanılmaya devam edilebilir.",
@@ -191,9 +191,9 @@
   },
   "setup": {
     "welcome": {
-      "title": "Libre WebUI'ye Hoş Geldiniz",
+      "title": "Alcore'ye Hoş Geldiniz",
       "subtitle": "Başlayalım",
-      "description": "Libre WebUI kurulumunuzu birkaç adımda tamamlayın",
+      "description": "Alcore kurulumunuzu birkaç adımda tamamlayın",
       "createAdmin": "Yönetici Hesabı Oluştur",
       "features": {
         "secure": {
@@ -213,7 +213,7 @@
     "admin": {
       "title": "Yönetici Hesabı Oluştur",
       "subtitle": "Yönetici Kurulumu",
-      "description": "Libre WebUI kurulumunuz için ilk yönetici hesabını oluşturun",
+      "description": "Alcore kurulumunuz için ilk yönetici hesabını oluşturun",
       "usernamePlaceholder": "Yönetici kullanıcı adını girin",
       "passwordPlaceholder": "Parola gir (en az 12 karakter)",
       "confirmPlaceholder": "Şifrenizi onaylayın",
@@ -223,7 +223,7 @@
       "failed": "Yönetici hesabı oluşturulamadı",
       "approvalUnexpected": "İlk yönetici etkinleştirilemedi. Lütfen tekrar deneyin.",
       "fillAllFields": "Lütfen tüm alanları doldurun",
-      "note": "Bu, Libre WebUI kurulumunuz için ana yönetici hesabı olacaktır"
+      "note": "Bu, Alcore kurulumunuz için ana yönetici hesabı olacaktır"
     },
     "encryptionKey": {
       "title": "Şifreleme Anahtarınızı Kaydedin",
@@ -239,7 +239,7 @@
       "envNote": "Bu anahtar ayrıca backend/.env dosyanızda ENCRYPTION_KEY olarak kaydedilmiştir",
       "acknowledgment": "Şifreleme anahtarımı güvenli bir yerde sakladım ve kaybetmenin veri kaybına yol açabileceğini anlıyorum.",
       "confirmRequired": "Lütfen şifreleme anahtarını kaydettiğinizi onaylayın",
-      "continue": "Libre WebUI'ye Devam Et"
+      "continue": "Alcore'ye Devam Et"
     },
     "connectModels": {
       "title": "Modellerinizi bağlayın",
@@ -1047,7 +1047,7 @@
       "toSkip": "atlanacak",
       "documents": "Belgeler",
       "warnings": "Uyarılar",
-      "refreshAfterImportFailed": "Veriler içe aktarıldı, ancak bazı görünümler yenilenemedi. Tüm değişiklikleri görmek için Libre WebUI’yi yeniden yükleyin.",
+      "refreshAfterImportFailed": "Veriler içe aktarıldı, ancak bazı görünümler yenilenemedi. Tüm değişiklikleri görmek için Alcore’yi yeniden yükleyin.",
       "exportSuccess": "Taşınabilir veri arşivi dışa aktarıldı",
       "exportFailed": "Dışa aktarma başarısız oldu",
       "importSuccess": "Taşınabilir veri arşivi içe aktarıldı",
@@ -1056,7 +1056,7 @@
         "invalidJson": "Taşınabilir arşiv geçerli bir JSON değil.",
         "objectRequired": "Taşınabilir arşiv bir JSON nesnesi içermelidir.",
         "unsupportedVersion": "Taşınabilir arşiv sürümü {{version}} desteklenmiyor.",
-        "unrecognized": "Bu dosya bir Libre WebUI taşınabilir arşivi değil."
+        "unrecognized": "Bu dosya bir Alcore taşınabilir arşivi değil."
       },
       "errors": "Hatalar",
       "archivedChats": {
@@ -1322,7 +1322,7 @@
       "saveFile": "Dosyayı kaydet",
       "formatCode": "Kodu biçimlendir"
     },
-    "description": "Libre WebUI'de kullanılabilen tüm klavye kısayolları.",
+    "description": "Alcore'de kullanılabilen tüm klavye kısayolları.",
     "newChat": "Yeni sohbet",
     "newWork": "Yeni Work oturumu",
     "openPalette": "Komut paletini aç"
@@ -1701,7 +1701,7 @@
   "userManager": {
     "title": "Kullanıcı Yönetimi",
     "subtitle": "Kullanıcı hesaplarını ve izinlerini yönetin",
-    "pageDescription": "Libre WebUI örneğiniz için kullanıcı hesaplarını, izinleri ve erişim kontrollerini yönetin.",
+    "pageDescription": "Alcore örneğiniz için kullanıcı hesaplarını, izinleri ve erişim kontrollerini yönetin.",
     "sections": {
       "users": "Kullanıcılar",
       "access": "Erişim ve ilkeler",
@@ -1829,7 +1829,7 @@
     },
     "agentAccess": {
       "title": "Ajanlar",
-      "description": "Ajanlar bölümünü (Libre Claw) yöneticilere sunun. Ajan CLI'ları ana makinede sunucu kullanıcısı olarak, Work korumalı alanının dışında çalışır.",
+      "description": "Ajanlar bölümünü (Alcore Claw) yöneticilere sunun. Ajan CLI'ları ana makinede sunucu kullanıcısı olarak, Work korumalı alanının dışında çalışır.",
       "saved": "Ajan erişimi güncellendi",
       "saveFailed": "Ajan erişimi güncellenemedi",
       "lockedByEnv": "AGENT_CLI_MODELS_ENABLED ortam değişkeniyle sabitlendi."
@@ -2041,7 +2041,7 @@
       "title": "Henüz sağlayıcı çağrısı yok",
       "description": "Etkin bir eklenti sohbet, Work, gömme, görüntü, konuşma, ses veya video isteklerini işledikten sonra çağrılar burada görünecektir."
     },
-    "privacyNote": "Kullanım, sunucuda giden eklenti sınırında ölçülür. Libre WebUI; sağlayıcı, model, zamanlama, durum ve bildirilen sayaçları saklar—asla istemleri, yanıtları, uç noktaları, kimlik bilgilerini veya sağlayıcı hata gövdelerini saklamaz. Token toplamları yalnızca sağlayıcının kullanım meta verilerini döndürdüğü çağrıları içerir.",
+    "privacyNote": "Kullanım, sunucuda giden eklenti sınırında ölçülür. Alcore; sağlayıcı, model, zamanlama, durum ve bildirilen sayaçları saklar—asla istemleri, yanıtları, uç noktaları, kimlik bilgilerini veya sağlayıcı hata gövdelerini saklamaz. Token toplamları yalnızca sağlayıcının kullanım meta verilerini döndürdüğü çağrıları içerir.",
     "heatmap": {
       "title": "Bir yıllık etkinlik",
       "description": "Son bir yıldaki günlük sağlayıcı çağrıları, her günün en çok kullanılan modeline göre renklendirilmiştir.",
@@ -2056,7 +2056,7 @@
   "systemPage": {
     "eyebrow": "Yönetim",
     "title": "Sistem",
-    "description": "Bu Libre WebUI örneğini barındıran makineyi ve çalışma zamanını izleyin.",
+    "description": "Bu Alcore örneğini barındıran makineyi ve çalışma zamanını izleyin.",
     "updated": "Güncellendi {{date}}",
     "refresh": "Sistem bilgilerini yenile",
     "loadFailed": "Sistem bilgileri yüklenemedi.",
@@ -2074,7 +2074,7 @@
     },
     "host": {
       "title": "Ana makine ve çalışma zamanı",
-      "description": "İşletim sistemi, işlemci ve Libre WebUI işlem ayrıntıları.",
+      "description": "İşletim sistemi, işlemci ve Alcore işlem ayrıntıları.",
       "container": "Kapsayıcı çalışma zamanı",
       "native": "Yerel çalışma zamanı",
       "hostname": "Sunucu adı",
@@ -2082,7 +2082,7 @@
       "processor": "İşlemci",
       "logicalCpus": "mantıksal CPU",
       "loadAverage": "Yük ortalaması · 1 / 5 / 15 dk",
-      "libreVersion": "Libre WebUI",
+      "libreVersion": "Alcore",
       "nodeVersion": "Node.js",
       "process": "Süreç",
       "workingDirectory": "Çalışma dizini"
@@ -2134,7 +2134,7 @@
       "internal": "dahili",
       "empty": "Uygulama çalışma zamanına görünür ağ arayüzü yok."
     },
-    "securityNote": "Bu sayfa yöneticilerle sınırlıdır. Sunucu yalnızca operasyonel özetler döndürür: ortam değişkenlerini, kimlik bilgilerini, Docker etiketlerini, bağlamaları, konteyner komutlarını veya inceleme yüklerini açıklamaz. Libre WebUI bir konteynerde çalıştığında, ana makine düzeyindeki CPU ve bellek ayrıntıları yerel soketi kullanılabilir olduğunda Docker Engine'den gelir; diğer değerler uygulama çalışma zamanını tanımlar.",
+    "securityNote": "Bu sayfa yöneticilerle sınırlıdır. Sunucu yalnızca operasyonel özetler döndürür: ortam değişkenlerini, kimlik bilgilerini, Docker etiketlerini, bağlamaları, konteyner komutlarını veya inceleme yüklerini açıklamaz. Alcore bir konteynerde çalıştığında, ana makine düzeyindeki CPU ve bellek ayrıntıları yerel soketi kullanılabilir olduğunda Docker Engine'den gelir; diğer değerler uygulama çalışma zamanını tanımlar.",
     "work": {
       "title": "Work",
       "description": "Tüm kullanıcıların korumalı alanları",
@@ -2314,9 +2314,9 @@
     "referenceTranscript": "Referans kaydının eksiksiz dökümü",
     "referenceTranscriptPlaceholder": "Referans kaydında söylenenleri olduğu gibi girin…",
     "referenceAudioTooLarge": "Referans sesin boyutu en fazla {{max}} olabilir.",
-    "cloneConsent": "Bir sesi yalnızca konuşmacının izni olduğunda klonlayın. Kayıt, bu oluşturma işlemi için seçilen sağlayıcıya gönderilir ve Libre WebUI tarafından kaydedilmez.",
+    "cloneConsent": "Bir sesi yalnızca konuşmacının izni olduğunda klonlayın. Kayıt, bu oluşturma işlemi için seçilen sağlayıcıya gönderilir ve Alcore tarafından kaydedilmez.",
     "saveVoiceProfile": "Yeniden kullanılabilir ses olarak kaydet",
-    "saveVoiceProfileDescription": "Bu referans kaydını ve dökümünü güvenli şekilde saklayın. Libre WebUI, bu sesi kullanan her Konuşma grubu için bunları seçilen sağlayıcıya gönderir.",
+    "saveVoiceProfileDescription": "Bu referans kaydını ve dökümünü güvenli şekilde saklayın. Alcore, bu sesi kullanan her Konuşma grubu için bunları seçilen sağlayıcıya gönderir.",
     "voiceProfileName": "Kaydedilmiş ses adı",
     "voiceProfileNamePlaceholder": "Örneğin, Sesim",
     "voiceStorageConsent": "Bu sesi klonlamak ve saklamak için konuşmacının iznini aldığımı onaylıyorum. Referans, ben silene kadar kayıtlı kalacak.",
@@ -2554,7 +2554,7 @@
     "subtitle": "Yerel aracı çalıştırmaları, onaylar, programlar, bellek, araçlar ve kullanım.",
     "dashboard": "Kontrol paneli",
     "connection": {
-      "disconnectedTitle": "Libre Claw arka plan servisi bağlı değil",
+      "disconnectedTitle": "Alcore Claw arka plan servisi bağlı değil",
       "disconnectedDescription": "Yerel olarak <command>libre-claw start</command> ile başlatın veya arka uç ortamında <env>LIBRE_CLAW_BASE_URL</env>'ı ayarlayın."
     },
     "status": {
@@ -2573,7 +2573,7 @@
     },
     "startRun": {
       "title": "Aracı çalıştırmayı başlat",
-      "placeholder": "Libre Claw'tan bir depoyu incelemesini, bir hatayı düzeltmesini, bir inceleme çalıştırmasını, bir rapor planlamasını isteyin...",
+      "placeholder": "Alcore Claw'tan bir depoyu incelemesini, bir hatayı düzeltmesini, bir inceleme çalıştırmasını, bir rapor planlamasını isteyin...",
       "chatRun": "Sohbet çalıştırması",
       "goalMode": "Hedef modu",
       "providerOverride": "Sağlayıcıyı geçersiz kılma",
@@ -2584,14 +2584,14 @@
       "title": "Model Rota",
       "providerPlaceholder": "sağlayıcı",
       "modelPlaceholder": "modeli",
-      "persistGlobal": "Libre Claw genel yapılandırmaya devam et",
+      "persistGlobal": "Alcore Claw genel yapılandırmaya devam et",
       "saveModel": "Modeli kaydet",
-      "theme": "Libre Claw teması",
+      "theme": "Alcore Claw teması",
       "saveTheme": "Temayı kaydet"
     },
     "runs": {
       "title": "Çalıştırmalar",
-      "empty": "Henüz Libre Claw çalıştırması yok."
+      "empty": "Henüz Alcore Claw çalıştırması yok."
     },
     "timeline": {
       "title": "Çalıştırma zaman çizelgesi",
@@ -2625,7 +2625,7 @@
       "schedulePlaceholder": "daily 09:00",
       "promptPlaceholder": "Otomasyon istemi",
       "create": "Oluştur",
-      "empty": "Planlanmış Libre Claw otomasyonu yok.",
+      "empty": "Planlanmış Alcore Claw otomasyonu yok.",
       "runNow": "Şimdi çalıştır",
       "pause": "Duraklat",
       "resume": "Sürdür",
@@ -2666,19 +2666,19 @@
       "unknownError": "Bilinmeyen hata"
     },
     "toasts": {
-      "loadStatusFailed": "Libre Claw durumu yüklenemedi",
-      "enterTask": "Libre Claw için bir görev girin",
-      "runStarted": "Libre Claw çalıştırması başladı",
-      "startRunFailed": "Libre Claw çalıştırması başlatılamadı",
+      "loadStatusFailed": "Alcore Claw durumu yüklenemedi",
+      "enterTask": "Alcore Claw için bir görev girin",
+      "runStarted": "Alcore Claw çalıştırması başladı",
+      "startRunFailed": "Alcore Claw çalıştırması başlatılamadı",
       "runCancelled": "Çalıştırma iptal edildi",
       "cancelRunFailed": "Çalıştırma iptal edilemedi",
       "approved": "Onaylandı",
       "denied": "Reddedildi",
       "resolvePermissionFailed": "İzin çözülemedi",
       "providerModelRequired": "Sağlayıcı ve model gerekli",
-      "modelUpdated": "Libre Claw modeli güncellendi",
+      "modelUpdated": "Alcore Claw modeli güncellendi",
       "updateModelFailed": "Model güncellenemedi",
-      "themeUpdated": "Libre Claw teması güncellendi",
+      "themeUpdated": "Alcore Claw teması güncellendi",
       "updateThemeFailed": "Tema güncellenemedi",
       "automationRequired": "Otomasyon adı, program ve istem gerekli",
       "automationCreated": "Otomasyon oluşturuldu",
@@ -3049,7 +3049,7 @@
     "title": "Yenilikler",
     "releaseNotes": "Sürüm notları",
     "cta": "Tamam, başlayalım",
-    "starAsk": "Libre WebUI'yi beğendiniz mi? GitHub'da yıldız bırakın"
+    "starAsk": "Alcore'yi beğendiniz mi? GitHub'da yıldız bırakın"
   },
   "notes": {
     "title": "Notlar",
@@ -3502,7 +3502,7 @@
     "description": "Modelin çağırabileceği araç sunucuları ve onlara verdiğiniz onaylar.",
     "approvalNotice": "Sohbetin dışındaki verileri değiştiren araçlar, o araca kalıcı ya da sohbete özel bir onay vermediyseniz her seferinde onay ister.",
     "registerServer": "Sunucu kaydet",
-    "registerHint": "Libre WebUI sunucuyu bir kez okur ve sunduğu araçları sabitler. Değişiklikleri almak için sunucuyu daha sonra yenileyin.",
+    "registerHint": "Alcore sunucuyu bir kez okur ve sunduğu araçları sabitler. Değişiklikleri almak için sunucuyu daha sonra yenileyin.",
     "editServer": "Sunucuyu düzenle",
     "empty": "Araç sunucusu yok",
     "emptyHintAdmin": "Modelin çağırabileceği bir şey olması için bir OpenAPI veya MCP sunucusu kaydedin.",

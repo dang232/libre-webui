@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,11 +69,11 @@ export const DocumentIndicator: React.FC<DocumentIndicatorProps> = ({
     // commit instead of cascading a second synchronous render.
     const timer = setTimeout(() => void loadDocuments(), 0);
     const handleDocumentsUpdated = () => void loadDocuments();
-    window.addEventListener('libre:documents-updated', handleDocumentsUpdated);
+    window.addEventListener('alcore:documents-updated', handleDocumentsUpdated);
     return () => {
       clearTimeout(timer);
       window.removeEventListener(
-        'libre:documents-updated',
+        'alcore:documents-updated',
         handleDocumentsUpdated
       );
     };
@@ -100,7 +100,7 @@ export const DocumentIndicator: React.FC<DocumentIndicatorProps> = ({
     try {
       const response = await documentsApi.deleteDocument(documentId);
       if (!response.success) throw new Error(response.error);
-      window.dispatchEvent(new Event('libre:documents-updated'));
+      window.dispatchEvent(new Event('alcore:documents-updated'));
     } catch (error) {
       logger.error('Failed to delete document:', error);
       toast.error(t('settings.documents.library.deleteFailed'));

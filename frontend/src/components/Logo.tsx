@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,14 +21,13 @@ import { cn } from '@/utils';
 interface LogoProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg';
-  /** Render the "WebUI" suffix after "Libre". Defaults to true. */
+  /** @deprecated Suffix removed; Alcore renders as a single word. Kept for API compatibility. */
   wordmark?: boolean;
 }
 
-// Single source of truth for the "Libre WebUI" wordmark so it reads identically
-// everywhere it appears. "WebUI" keeps the same type size as "Libre"; the
-// lighter weight is the only distinction.
-const LIBRE_SIZE: Record<NonNullable<LogoProps['size']>, string> = {
+// Single source of truth for the "Alcore" wordmark so it reads identically
+// everywhere it appears.
+const ALCORE_SIZE: Record<NonNullable<LogoProps['size']>, string> = {
   sm: 'text-[1.0625rem] leading-none',
   md: 'text-[1.625rem] leading-none',
   lg: 'text-[2.5rem] leading-none',
@@ -37,21 +36,19 @@ const LIBRE_SIZE: Record<NonNullable<LogoProps['size']>, string> = {
 export const Logo: React.FC<LogoProps> = ({
   className,
   size = 'md',
-  wordmark = true,
+  wordmark: _wordmark = false,
 }) => {
+  void _wordmark;
   return (
     <span
       dir='ltr'
       className={cn(
-        'libre-brand inline-flex items-baseline whitespace-nowrap',
-        LIBRE_SIZE[size],
+        'alcore-brand inline-flex items-baseline whitespace-nowrap',
+        ALCORE_SIZE[size],
         className
       )}
     >
-      Libre
-      {wordmark && (
-        <span className='ms-1 font-normal tracking-[-0.035em]'>WebUI</span>
-      )}
+      Alcore
     </span>
   );
 };

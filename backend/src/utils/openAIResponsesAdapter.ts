@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -579,7 +579,7 @@ function normalizeResponsesUsage(
 }
 
 /**
- * Converts a completed Responses API object into Libre WebUI's existing
+ * Converts a completed Responses API object into Alcore's existing
  * Chat Completions-shaped normalized response.
  */
 export function normalizeOpenAIResponsesResponse(
@@ -747,7 +747,7 @@ export function createPluginCredentialFingerprint(
   apiKey: string | null
 ): string {
   return createHash('sha256')
-    .update('libre-webui:plugin-credential:v1\0')
+    .update('alcore:plugin-credential:v1\0')
     .update(apiKey || '')
     .digest('hex');
 }

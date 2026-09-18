@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -59,7 +59,7 @@ export interface ArchivedDocument {
 }
 
 export interface UserDataArchive {
-  format: 'libre-webui-user-data';
+  format: 'alcore-user-data';
   version: 3;
   exportedAt: string;
   preferences: Partial<UserPreferences>;
@@ -71,7 +71,7 @@ export interface UserDataArchive {
   exclusions: DataArchiveExclusion[];
   integrity: {
     algorithm: 'sha256';
-    canonicalization: 'libre-json-sort-v1';
+    canonicalization: 'alcore-json-sort-v1';
     digest: string;
   };
 }
@@ -83,7 +83,7 @@ export interface ArchiveSectionResult {
 }
 
 export interface DataArchiveImportResult {
-  format: 'libre-webui-user-data';
+  format: 'alcore-user-data';
   version: 3;
   migratedFromVersion?: string;
   strategy: DataArchiveMergeStrategy;
@@ -100,7 +100,7 @@ export interface DataArchiveImportResult {
 
 export interface DataArchivePreflight {
   valid: true;
-  format: 'libre-webui-user-data';
+  format: 'alcore-user-data';
   version: 3;
   migratedFromVersion?: string;
   strategy: DataArchiveMergeStrategy;
@@ -318,7 +318,7 @@ export const preferencesApi = {
   exportData: async (): Promise<ApiResponse<UserDataArchive>> => {
     if (isDemoMode()) {
       const payload: Omit<UserDataArchive, 'integrity'> = {
-        format: 'libre-webui-user-data',
+        format: 'alcore-user-data',
         version: 3,
         exportedAt: new Date().toISOString(),
         preferences: getDemoPreferences(),
@@ -333,7 +333,7 @@ export const preferencesApi = {
         ...payload,
         integrity: {
           algorithm: 'sha256',
-          canonicalization: 'libre-json-sort-v1',
+          canonicalization: 'alcore-json-sort-v1',
           digest: await computePortableArchiveDigest(
             payload as unknown as Record<string, unknown>
           ),
@@ -350,7 +350,7 @@ export const preferencesApi = {
     if (isDemoMode()) {
       return createDemoResponse<DataArchivePreflight>({
         valid: true,
-        format: 'libre-webui-user-data',
+        format: 'alcore-user-data',
         version: 3,
         strategy,
         incoming: {
@@ -363,7 +363,7 @@ export const preferencesApi = {
           documentChunks: 0,
         },
         result: {
-          format: 'libre-webui-user-data',
+          format: 'alcore-user-data',
           version: 3,
           strategy,
           sessionFolders: { imported: 0, overwritten: 0, skipped: 0 },
@@ -393,7 +393,7 @@ export const preferencesApi = {
   ): Promise<ApiResponse<DataArchiveImportResult>> => {
     if (isDemoMode()) {
       return createDemoResponse<DataArchiveImportResult>({
-        format: 'libre-webui-user-data',
+        format: 'alcore-user-data',
         version: 3,
         strategy,
         preferences: {

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,12 +46,12 @@ import { encryptionService } from './encryptionService.js';
 
 const logger = createLogger('services:data-archive');
 
-export const DATA_ARCHIVE_FORMAT = 'libre-webui-user-data';
+export const DATA_ARCHIVE_FORMAT = 'alcore-user-data';
 export const DATA_ARCHIVE_VERSION = 3;
 export const DATA_ARCHIVE_MAX_BYTES = 50 * 1024 * 1024;
 export const DATA_ARCHIVE_CANONICALIZATION = 'libre-json-sort-v1';
 
-const LEGACY_ARCHIVE_FORMAT = 'libre-webui-export';
+const LEGACY_ARCHIVE_FORMAT = 'alcore-export';
 const MAX_ARCHIVE_SESSIONS = 5_000;
 const MAX_ARCHIVE_MESSAGES = 100_000;
 const MAX_ARCHIVE_DOCUMENTS = 5_000;
@@ -894,7 +894,7 @@ function normalizeArchive(value: unknown): NormalizedArchive {
 
   if (source.format !== DATA_ARCHIVE_FORMAT) {
     throw new DataArchiveValidationError(
-      'Unrecognized Libre WebUI archive format'
+      'Unrecognized Alcore archive format'
     );
   }
   if (source.version !== DATA_ARCHIVE_VERSION) {
@@ -1520,7 +1520,7 @@ async function applyPlan(
 
 function assertExportIsRestorable(archive: UserDataArchive): void {
   // Run the exact importer schema and resource checks before returning a file.
-  // This prevents Libre from offering an export that its own preflight rejects.
+  // This prevents Alcore from offering an export that its own preflight rejects.
   normalizeArchive(archive);
   const serializedBytes = Buffer.byteLength(
     JSON.stringify(archive, null, 2),

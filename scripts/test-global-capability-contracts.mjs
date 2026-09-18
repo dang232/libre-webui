@@ -515,7 +515,7 @@ async function renderInventory() {
     '---',
     'sidebar_position: 46',
     "title: 'Global Capability Contracts'",
-    "description: 'Generated inventory of global product capabilities and application routes in Libre WebUI.'",
+    "description: 'Generated inventory of global product capabilities and application routes in Alcore.'",
     'slug: /GLOBAL_CAPABILITY_CONTRACTS',
     '---',
     '',

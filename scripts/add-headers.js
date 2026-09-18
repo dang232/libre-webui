@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const COPYRIGHT_HEADER = `/*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,7 +55,7 @@ function shouldIgnoreFile(filePath) {
 }
 
 function hasHeader(content) {
-  return content.startsWith('/*') && content.includes('Libre WebUI') && content.includes('Copyright (C) 2025 Kroonen AI, Inc.');
+  return content.startsWith('/*') && content.includes('Alcore') && content.includes('Copyright (C) 2025 Kroonen AI, Inc.');
 }
 
 function addHeaderToFile(filePath) {

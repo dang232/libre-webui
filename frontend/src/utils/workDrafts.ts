@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-const WORK_DRAFT_PREFIX = 'libre-webui:work-draft:';
+const WORK_DRAFT_PREFIX = 'alcore:work-draft:';
 
 export interface WorkDraft {
   content: string;

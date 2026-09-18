@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Launch mlx_lm.server with Libre WebUI-friendly local defaults.
+Launch mlx_lm.server with Alcore-friendly local defaults.
 
 The HTTP implementation comes from mlx-lm itself. This wrapper keeps the
-server bound to localhost, avoids Libre WebUI's port 8080, and provides a
+server bound to localhost, avoids Alcore's port 8080, and provides a
 repeatable command for development.
 """
 
@@ -62,7 +62,7 @@ def json_object(value: str) -> str:
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Start an OpenAI-compatible MLX LM server for Libre WebUI."
+        description="Start an OpenAI-compatible MLX LM server for Alcore."
     )
     parser.add_argument(
         "--model",
@@ -160,7 +160,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     print(f"Health: http://{args.host}:{args.port}/health")
     print(f"Models: http://{args.host}:{args.port}/v1/models")
     print(
-        "Libre WebUI endpoint: "
+        "Alcore endpoint: "
         f"http://{args.host}:{args.port}/v1/chat/completions"
     )
     os.execv(sys.executable, command)

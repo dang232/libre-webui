@@ -1,5 +1,5 @@
 /*
- * Libre WebUI service worker: offline shell + Web Push display.
+ * Alcore service worker: offline shell + Web Push display.
  *
  * Caching policy, deliberately conservative:
  * - Navigations are network-first with the cached app shell as the offline
@@ -16,7 +16,7 @@
 // lazy chunks no longer existed on the server — the page died mid-render.
 const CACHE_VERSION =
   new URLSearchParams(self.location.search).get('v') || 'v1';
-const CACHE_NAME = `libre-webui-shell-${CACHE_VERSION}`;
+const CACHE_NAME = `alcore-shell-${CACHE_VERSION}`;
 const SHELL_URLS = ['/', '/manifest.webmanifest', '/icon-192.png'];
 
 self.addEventListener('install', event => {
@@ -35,7 +35,7 @@ self.addEventListener('activate', event => {
       .then(keys =>
         Promise.all(
           keys
-            .filter(key => key.startsWith('libre-webui-') && key !== CACHE_NAME)
+            .filter(key => key.startsWith('alcore-') && key !== CACHE_NAME)
             .map(key => caches.delete(key))
         )
       )
@@ -97,13 +97,13 @@ self.addEventListener('push', event => {
   } catch {
     payload = { title: event.data ? event.data.text() : '' };
   }
-  const title = payload.title || 'Libre WebUI';
+  const title = payload.title || 'Alcore';
   event.waitUntil(
     self.registration.showNotification(title, {
       body: payload.body || '',
       icon: '/icon-192.png',
       badge: '/icon-192.png',
-      tag: payload.type || 'libre-webui',
+      tag: payload.type || 'alcore',
       data: { href: payload.href || '/' },
     })
   );

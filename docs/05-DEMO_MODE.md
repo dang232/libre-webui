@@ -1,14 +1,14 @@
 ---
 sidebar_position: 6
 title: 'Demo Mode'
-description: 'How Libre WebUI demo mode works for preview deployments.'
+description: 'How Alcore demo mode works for preview deployments.'
 slug: /DEMO_MODE
-keywords: [libre webui demo mode, preview deployment, mock data]
+keywords: [Alcore demo mode, preview deployment, mock data]
 ---
 
 # Demo Mode
 
-Demo mode lets public preview deployments show Libre WebUI without requiring a real backend account or provider credentials.
+Demo mode lets public preview deployments show Alcore without requiring a real backend account or provider credentials.
 
 ## When Demo Mode Turns On
 

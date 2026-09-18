@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,7 @@ import { useAuthStore } from '@/store/authStore';
 import { libreClawApi } from '@/utils/api/libreClawApi';
 
 /**
- * Administrator opt-in for the Agents section (Libre Claw and agent CLI
+ * Administrator opt-in for the Agents section (Alcore Claw and agent CLI
  * models). Disabled by default: agent CLIs run on the host as the server
  * user, outside the Work sandbox. The backend enforces the setting on
  * every request; this card only reads and writes it.

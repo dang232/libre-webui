@@ -1,9 +1,9 @@
 {
-  "name": "libre-webui-backend",
+  "name": "alcore-backend",
   "version": "0.36.0",
   "license": "Apache-2.0",
   "type": "module",
-  "description": "Backend API for Libre WebUI",
+  "description": "Backend API for Alcore",
   "main": "dist/main.js",
   "scripts": {
     "dev": "node --watch --import tsx src/main.ts",

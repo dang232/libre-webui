@@ -1,7 +1,7 @@
 ---
 sidebar_position: 14
 title: 'Use an Installed Coding Agent as a Chat Model'
-description: 'Expose the Claude Code, Codex, OpenCode, or Pi CLI already installed on your server as a selectable Libre WebUI chat model, without adding an API key.'
+description: 'Expose the Claude Code, Codex, OpenCode, or Pi CLI already installed on your server as a selectable Alcore chat model, without adding an API key.'
 slug: /AGENT_CLI_MODELS
 keywords:
   [
@@ -20,13 +20,13 @@ keywords:
 # Use an Installed Coding Agent as a Chat Model
 
 If you already pay for a coding agent and it is signed in on the machine running
-Libre WebUI, you can talk to it from a normal chat instead of adding a separate
-API key. Libre WebUI detects the agent's command-line interface and offers it in
+Alcore, you can talk to it from a normal chat instead of adding a separate
+API key. Alcore detects the agent's command-line interface and offers it in
 the model selector like any other model.
 
 ## What gets detected
 
-On each request for the model list, Libre WebUI looks on the server's `PATH` for
+On each request for the model list, Alcore looks on the server's `PATH` for
 these commands:
 
 | Model           | Command    | Provided by   |
@@ -52,7 +52,7 @@ Each CLI can expose several entries in the Agents group:
 - **OpenCode** lists the models of every provider it is authenticated with
   (from `opencode models`), and always requires an explicit choice — its
   CLI-level default can point at a local server that is not reachable from the
-  Libre WebUI host.
+  Alcore host.
 
 Pi runs each turn stateless (`--no-session`), with local tools disabled and a
 neutral system prompt, so replies are not colored by — and chats never touch —
@@ -72,7 +72,7 @@ transcript of the recent conversation to the agent and streams its answer back.
 ## Who can use it, and what it can reach
 
 This feature is **administrator-only**, and the reason matters. The agent runs
-as the same operating-system user as the Libre WebUI backend, on the host — not
+as the same operating-system user as the Alcore backend, on the host — not
 inside a Work container. It therefore inherits that user's agent credentials and
 whatever access those agents normally have, including the ability to read files
 and run commands on the server if it decides to.

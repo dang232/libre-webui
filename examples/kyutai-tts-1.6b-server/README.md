@@ -1,4 +1,4 @@
-# Kyutai TTS 1.6B Integration for Libre WebUI
+# Kyutai TTS 1.6B Integration for Alcore
 
 OpenAI-compatible API server for Kyutai TTS 1.6B with GPU acceleration.
 

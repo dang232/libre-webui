@@ -45,7 +45,7 @@ Persona data is scoped per user.
 
 ## Parameter Limits
 
-Libre WebUI validates persona settings before saving:
+Alcore validates persona settings before saving:
 
 | Parameter      | Range         |
 | -------------- | ------------- |
@@ -71,13 +71,13 @@ Semantic memory search uses the configured embedding model. `nomic-embed-text` i
 
 ## Mutation State
 
-When mutation settings are enabled, Libre WebUI stores a runtime state for the persona. The mutation engine can track mood, learned preferences, interaction patterns, and a mutation log based on conversation signals.
+When mutation settings are enabled, Alcore stores a runtime state for the persona. The mutation engine can track mood, learned preferences, interaction patterns, and a mutation log based on conversation signals.
 
 This is stateful assistant behavior, not a guarantee of autonomous reasoning. Keep prompts and settings explicit for production workflows.
 
 ## Import and Export
 
-Personas can be exported as JSON and imported into another Libre WebUI instance. Exports include the persona configuration and advanced settings where present.
+Personas can be exported as JSON and imported into another Alcore instance. Exports include the persona configuration and advanced settings where present.
 
 There is also a DNA-style export route that includes the persona, memories, and mutation log when those records exist.
 

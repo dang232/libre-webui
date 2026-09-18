@@ -1,7 +1,7 @@
 ---
 sidebar_position: 8
 title: 'Work: Isolated Workspaces'
-description: 'Use Libre WebUI Work for persistent coding workspaces backed by isolated Docker or Kubernetes sandboxes'
+description: 'Use Alcore Work for persistent coding workspaces backed by isolated Docker or Kubernetes sandboxes'
 slug: /WORKSPACES
 keywords:
   [
@@ -20,13 +20,13 @@ keywords:
 
 # Work: Isolated Workspaces
 
-Work is Libre WebUI's native coding-agent surface. Each Work task combines a
+Work is Alcore's native coding-agent surface. Each Work task combines a
 durable conversation, an explicit model-provider route, and a dedicated
 filesystem at `/workspace`. The selected model can inspect and edit files, run
 commands in a task-scoped Docker container or Kubernetes Pod, and start a
 browser preview.
 
-Work is implemented directly in Libre WebUI. It does not require Libre Claw or
+Work is implemented directly in Alcore. It does not require Libre Claw or
 another agent daemon.
 
 :::warning Trusted users only
@@ -55,7 +55,7 @@ This release introduces Work as a complete task workflow:
   for every task. Sandboxes can be stopped or recreated without deleting task
   files.
 - Durable conversation, run state, tool activity, model selection, and task
-  ownership in Libre WebUI's database.
+  ownership in Alcore's database.
 - A live, authenticated run stream for assistant text, provider-exposed
   reasoning, tool calls and results, usage, worker skills, and state changes.
 - Server-owned worker skills that teach the selected model how to inspect,
@@ -76,7 +76,7 @@ This release introduces Work as a complete task workflow:
   command output remain left-to-right.
 
 The persistent unit is the task workspace, not a continuously running
-container. Libre WebUI starts, stops, and may recreate the task's container as
+container. Alcore starts, stops, and may recreate the task's container as
 needed while retaining its named volume.
 
 ## Architecture
@@ -85,7 +85,7 @@ needed while retaining its named volume.
 flowchart LR
     UI["Work interface"]
     API["Authenticated /api/work API"]
-    DB["Libre WebUI database"]
+    DB["Alcore database"]
     AGENT["Native model/tool loop"]
     PROVIDER["Selected Ollama or plugin provider"]
     CONTAINER["Task-scoped sandbox"]
@@ -102,7 +102,7 @@ flowchart LR
     CONTAINER --> PREVIEW
 ```
 
-Libre WebUI, rather than the model or browser, chooses the sandbox and
+Alcore, rather than the model or browser, chooses the sandbox and
 workspace names, image, mount, user, limits, network mode, and preview port. The
 model receives only these tools:
 
@@ -123,7 +123,7 @@ move destination. Because they run through the file-helper path rather than a
 shell, they also work while a preview is running, when `run_command` is
 blocked.
 
-Model requests are made by the Libre WebUI backend. They do not originate from
+Model requests are made by the Alcore backend. They do not originate from
 the Work container and do not depend on the container's network policy.
 
 ## Requirements
@@ -148,7 +148,7 @@ Every backend also needs:
 - An authenticated account with Work access. Work is admin-only by default;
   an administrator can open it to all active users.
 
-Libre WebUI checks Ollama's advertised model capabilities before creating a
+Alcore checks Ollama's advertised model capabilities before creating a
 run and rejects an Ollama model that does not advertise `tools`. Plugin-backed
 models must support their provider's tool-calling protocol. If a selected
 remote model rejects tools, the run fails; Work does not silently switch to a
@@ -156,7 +156,7 @@ different model or provider.
 
 ## Start Locally
 
-For the simplest supported Work setup, run Libre WebUI and Docker on the same
+For the simplest supported Work setup, run Alcore and Docker on the same
 computer as the browser:
 
 ```bash
@@ -271,7 +271,7 @@ agent's own page:
 Work agents can call the same [tool servers](./49-CHAT_TOOLS.md) configured
 for chat — MCP or OpenAPI, admin-registered under Settings → Tools. The
 tools appear to the agent under their namespaced names (`server__tool`) and
-the calls run from Libre WebUI's backend through the hardened tool gateway
+the calls run from Alcore's backend through the hardened tool gateway
 (SSRF-guarded egress, per-user credentials, size and time caps) — never
 from inside the sandbox.
 
@@ -472,7 +472,7 @@ output, and errors. Tool metadata can be expanded in the conversation. Command
 and tool output is displayed left-to-right even when the surrounding
 interface is right-to-left.
 
-While a run is active, Libre WebUI opens an authenticated server-sent event
+While a run is active, Alcore opens an authenticated server-sent event
 stream and renders progress as the backend receives it. The stream can carry:
 
 - an initial `snapshot` and later `run_state` changes;
@@ -484,7 +484,7 @@ stream and renders progress as the backend receives it. The stream can carry:
 - terminal `error` or `done` events.
 
 Reasoning availability and granularity depend on the model and provider.
-Libre WebUI displays only reasoning content the provider returns through its
+Alcore displays only reasoning content the provider returns through its
 API; it cannot recover hidden chain-of-thought, and some models provide no
 reasoning stream at all. Assistant text and tool activity still stream when
 supported independently of reasoning.
@@ -530,7 +530,7 @@ outside `/workspace`. Git write actions that could process file content are
 also blocked when repository configuration defines an executable clean,
 smudge, or process filter.
 
-These controls protect the Libre WebUI Git API. An administrator can still use
+These controls protect the Alcore Git API. An administrator can still use
 the Terminal, and the model can still use `run_command`, to run ordinary Git
 commands inside the sandbox. The sandbox and deployment boundary therefore
 remain the security controls for arbitrary commands.
@@ -551,7 +551,7 @@ built-in skills direct the model to:
 - verify the application before starting the preview as the final long-lived
   process.
 
-The guide exists in model context only. Libre WebUI does not create an
+The guide exists in model context only. Alcore does not create an
 `AGENTS.md`, skill directory, or other control file in the user's workspace.
 Project-provided instructions remain project guidance and cannot override the
 container or tool security boundary.
@@ -612,7 +612,7 @@ appear in the task's Activity timeline.
 ### Preview
 
 The Preview tab starts, stops, embeds, and opens the generated web application.
-When the command field is empty, Libre WebUI inspects the workspace and:
+When the command field is empty, Alcore inspects the workspace and:
 
 - runs a root `package.json` `dev` script with the required host and port;
 - serves a root `index.html` with a bundled, zero-dependency static server; or
@@ -636,7 +636,7 @@ the only supported way for a model to leave a process running. Ordinary
 <a href="https://librewebui.org/work-computer-demo/">
   <img
     src="https://s3.librewebui.org/app/screenshot.webp?v=0.28.0-7070d2c8"
-    alt="Watch a Libre WebUI Work agent research imagery and build an interactive space gallery"
+    alt="Watch a Alcore Work agent research imagery and build an interactive space gallery"
     width="2814"
     height="1748"
     loading="lazy"
@@ -838,7 +838,7 @@ command output returned through a tool becomes part of the model conversation
 and is sent to the selected provider. Review remote providers' retention,
 training, pricing, and usage policies before using sensitive source code.
 
-Provider credentials remain on the Libre WebUI backend, whether they are
+Provider credentials remain on the Alcore backend, whether they are
 configured deployment-wide or for an individual user. They are used for
 backend model requests and are never mounted into the Work container.
 
@@ -853,12 +853,12 @@ encryption when the deployment's threat model requires encryption at rest.
 Work treats plugin models and Ollama names ending in `:cloud` or `-cloud` as
 remote for disclosure purposes. Selecting one opens a dismissible notice that
 explains provider data flow and the possibility of multiple billable calls.
-The dismissal preference is remembered per Libre WebUI user.
+The dismissal preference is remembered per Alcore user.
 
 All provider routes use the same `WORK_MAX_AGENT_ROUNDS` budget, 48 rounds by
 default. There is no separate 12-round plugin clamp. The tool-call safety
 budget is the larger of 128 calls or eight calls per configured round. When the
-round budget is exhausted, Libre WebUI asks the model for one final no-tools
+round budget is exhausted, Alcore asks the model for one final no-tools
 handoff describing completed work, checks, blockers, and remaining steps. It
 then records the terminal run as **Needs input** instead of exposing a raw
 round-limit exception or marking incomplete work complete. A follow-up run
@@ -903,12 +903,12 @@ directories that are under version control.
 
 ## Persistence and Runtime Lifecycle
 
-Libre WebUI separates durable state from execution state:
+Alcore separates durable state from execution state:
 
 | State                                       | Storage                                | Lifetime                                                                 |
 | ------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------ |
-| Task ownership, title, provider, and status | Libre WebUI database                   | Until the task or owning user is deleted                                 |
-| Runs, errors, messages, and tool activity   | Libre WebUI database                   | Until the task is deleted                                                |
+| Task ownership, title, provider, and status | Alcore database                   | Until the task or owning user is deleted                                 |
+| Runs, errors, messages, and tool activity   | Alcore database                   | Until the task is deleted                                                |
 | Workspace files                             | Task-specific Docker volume or K8s PVC | Survive run cancellation, preview stop, sandbox restart, and app restart |
 | Root filesystem and temporary files         | Task-specific container or Pod         | Disposable; may be stopped or recreated                                  |
 | Preview process                             | Running task sandbox                   | Ephemeral; retained only while verified healthy                          |
@@ -974,7 +974,7 @@ query. Running sandboxes owned by known tasks are stopped because an
 interrupted command may still be executing without a supervisor; sandboxes
 already at rest remain unchanged; and managed sandboxes whose task row no
 longer exists are removed. Ownership comes from the task label, never the
-resource name. Orphan removal assumes one Libre WebUI instance owns a runtime
+resource name. Orphan removal assumes one Alcore instance owns a runtime
 namespace or Docker daemon. Do not point two instances at the same Work
 resources. If the driver cannot prove cleanup, Work stays fail-closed and
 blocks new mutable operations until runtime access is restored.
@@ -1028,7 +1028,7 @@ inter-container communication disabled
   shared default bridge, including a co-located database or Ollama container
   that is not deliberately published.
 
-Libre WebUI refuses to start a networked task if a network with the configured
+Alcore refuses to start a networked task if a network with the configured
 name already exists but is not the managed one, rather than silently attaching
 sandboxes to an operator's network.
 
@@ -1053,13 +1053,13 @@ For a stricter boundary, use these in combination:
 
 - **`WORK_RUNTIME_DNS` (Docker)** — comma-separated IPv4/IPv6 resolver
   addresses forced onto every networked sandbox (`--dns`). Pointing this at a filtering
-  resolver gives you name-based allow/deny lists without patching Libre WebUI.
+  resolver gives you name-based allow/deny lists without patching Alcore.
   Non-address entries are rejected and logged, so the value can never inject
   additional Docker flags.
 - **Host or upstream firewall rules (Docker)** on the managed bridge's subnet,
   which is stable because the network is named and managed.
 - **`WORK_NETWORK_NAME` (Docker)** pointed at a network you pre-create with
-  your own driver options — Libre WebUI verifies it carries the managed label
+  your own driver options — Alcore verifies it carries the managed label
   and ICC-disabled option, so create it with both.
 
 DNS filtering constrains name resolution, not raw IP egress. A deployment that
@@ -1071,13 +1071,13 @@ Grant Work access only to trusted users. Use a named network-disabled runtime
 policy when a task should start offline; there is no deployment-wide
 environment variable that changes the default policy.
 
-Network access does not add credentials. Libre WebUI does not mount SSH keys,
+Network access does not add credentials. Alcore does not mount SSH keys,
 cloud credentials, browser profiles, the host home directory, or the Docker
 socket into task containers. Code can still transmit any credentials or
 secrets that a user or model writes into `/workspace`.
 
 This sandbox traffic is separate from model traffic. Ollama and plugin
-requests are always sent by the Libre WebUI backend to the explicitly selected
+requests are always sent by the Alcore backend to the explicitly selected
 provider route.
 
 ## Sandbox Security Boundary
@@ -1101,7 +1101,7 @@ A Docker Work container:
 
 Every one of these is re-verified against `docker inspect` before a container
 is reused, and the whole set is hashed into the `ai.libre-webui.policy`
-container label. A container whose policy predates a Libre WebUI upgrade is
+container label. A container whose policy predates a Alcore upgrade is
 destroyed and recreated rather than reused, so a hardening change reaches
 existing tasks automatically.
 
@@ -1140,28 +1140,28 @@ deployment work for a private client instance.
 
 ### 1. Isolate Docker control
 
-The main Libre WebUI container needs daemon control to create and inspect Work
+The main Alcore container needs daemon control to create and inspect Work
 containers. A mounted Docker socket is therefore a control-plane credential,
 not an ordinary data mount: compromising the web application can become a
 Docker-host compromise.
 
 The first mitigation ships in this repository:
-`docker-compose.socket-proxy.yml` keeps the socket out of the Libre WebUI
+`docker-compose.socket-proxy.yml` keeps the socket out of the Alcore
 container entirely. A socket proxy holds `/var/run/docker.sock` on an
 internal network and forwards only the API sections Work uses — containers,
 images, volumes, networks, exec, info — while swarm, secrets, configs,
 build, commit, and system endpoints are denied before they reach the daemon.
-Libre WebUI is pointed at it with `DOCKER_HOST=tcp://docker-socket-proxy:2375`
+Alcore is pointed at it with `DOCKER_HOST=tcp://docker-socket-proxy:2375`
 and needs no socket mount and no socket-group membership; the CLI, the
 interactive terminal, and Docker diagnostics all follow that endpoint. The
 proxy narrows the API surface, not the blast radius of the endpoints it does
 forward: whoever can create containers can still bind-mount host paths, so
 the boundary below still matters.
 
-For a stronger production boundary, run Libre WebUI and its Work daemon on a
+For a stronger production boundary, run Alcore and its Work daemon on a
 dedicated VM with no unrelated workloads. Stronger still, give Work a
 dedicated rootless Docker daemon or a separate runtime host and expose only
-that daemon to Libre WebUI. Verify file ownership, preview routing, cleanup,
+that daemon to Alcore. Verify file ownership, preview routing, cleanup,
 and terminal support against that daemon before rollout. Merely mounting the
 same rootful host socket read-only does not make the Docker API read-only.
 
@@ -1221,7 +1221,7 @@ After every image or daemon-policy change, create a disposable Work task and
 verify the effective state with `docker inspect`: non-root UID, read-only root,
 all capabilities dropped, `no-new-privileges`, memory/swap/CPU/PID limits,
 only the task volume mounted, and the expected network. Also verify that the
-main Libre WebUI container has only the intended mounts and that public ingress
+main Alcore container has only the intended mounts and that public ingress
 reaches the app through the authenticated reverse proxy or tunnel—not through
 an accidentally published Docker or preview port.
 
@@ -1230,12 +1230,12 @@ an accidentally published Docker or preview port.
 For a Docker task, the driver publishes the configured preview port to a
 dynamically assigned port on backend loopback. For Kubernetes, the in-cluster
 backend targets the sandbox Pod IP directly. The model and browser cannot
-choose an arbitrary upstream. Libre WebUI signs a capability URL for the exact
+choose an arbitrary upstream. Alcore signs a capability URL for the exact
 task and endpoint, verifies that the preview is still running on every request,
 and proxies HTTP and WebSocket traffic through `/api/work/previews`. Stopping
 or restarting the preview revokes the old URL.
 
-Preview responses strip Libre WebUI credentials and upstream cookies. HTML is
+Preview responses strip Alcore credentials and upstream cookies. HTML is
 constrained by both an iframe sandbox and response CSP that allow scripts,
 forms, modals, and downloads without granting same-origin access. The CSP also
 protects a preview opened in a separate tab. Generated application code
@@ -1243,7 +1243,7 @@ remains untrusted and can use network egress to transmit anything it can read
 from its own workspace or browser inputs. Treat a running preview URL as a
 short-lived secret and do not share it.
 
-Because the browser loads the proxy on Libre WebUI's own public origin, remote
+Because the browser loads the proxy on Alcore's own public origin, remote
 browsers and HTTPS reverse proxies work without exposing Docker ports or Pod
 IPs and without triggering mixed-content blocking. Reverse proxies must
 preserve WebSocket upgrades for `/api/work/previews/`; the provided Nginx
@@ -1257,19 +1257,19 @@ not normally emit compatible resource headers.
 
 ## Deployment Matrix
 
-Work availability follows the machine and process running the Libre WebUI
+Work availability follows the machine and process running the Alcore
 backend, not merely the browser or desktop interface.
 
 | Deployment                                | Work runs and files                                                                                                                                                                                                                                                                                                                  | Embedded preview                                                                                  |
 | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
 | `npx libre-webui` on a local computer     | Supported when Docker is installed, running, and callable by the backend user.                                                                                                                                                                                                                                                       | Supported through the signed application-origin proxy.                                            |
 | Source development on a local computer    | Supported under the same Docker and provider requirements.                                                                                                                                                                                                                                                                           | Supported through the development API origin on port 3001.                                        |
-| Electron desktop client                   | Conditional. Electron uses an external Libre WebUI backend and does not provide a separate Work runtime.                                                                                                                                                                                                                             | Supported through that backend's signed proxy URL.                                                |
+| Electron desktop client                   | Conditional. Electron uses an external Alcore backend and does not provide a separate Work runtime.                                                                                                                                                                                                                             | Supported through that backend's signed proxy URL.                                                |
 | Bare-metal or VM backend on a remote host | Runs, files, and provider calls work when Docker is available on that host.                                                                                                                                                                                                                                                          | Supported when the public reverse proxy preserves HTTP and WebSocket traffic.                     |
-| Standard repository Docker Compose        | Supported by default on Docker Desktop: the image ships the Docker CLI, Compose mounts the host Docker socket, and Work ports route through `host.docker.internal`. Native Docker Engine additionally needs a reachable non-public `WORK_PREVIEW_BIND`.                                                                              | Supported through the same public Libre WebUI origin.                                             |
+| Standard repository Docker Compose        | Supported by default on Docker Desktop: the image ships the Docker CLI, Compose mounts the host Docker socket, and Work ports route through `host.docker.internal`. Native Docker Engine additionally needs a reachable non-public `WORK_PREVIEW_BIND`.                                                                              | Supported through the same public Alcore origin.                                             |
 | Current Kubernetes/Helm deployment        | Supported with `--set work.enabled=true`: sandboxes run as Pods with PVC workspaces (runs, files, commands, git, interactive terminals, and the Work Computer screen and audio at the Pod IP), under a namespace-scoped Role and default-deny NetworkPolicies — no Docker socket anywhere. See the [Kubernetes guide](./KUBERNETES). | Supported when the backend runs in-cluster: the signed proxy targets the sandbox Pod IP directly. |
 
-### Running Work when Libre WebUI is itself in Docker
+### Running Work when Alcore is itself in Docker
 
 Every repository Compose file enables Work: the image ships the Docker CLI and
 the Compose file mounts `/var/run/docker.sock`. Docker Desktop works with the
@@ -1278,14 +1278,14 @@ shipped routing defaults. Native Docker Engine additionally needs
 containers, as described below.
 
 Work drives the host daemon through that socket, so task containers are
-**siblings** of the Libre WebUI container rather than children. They appear in
+**siblings** of the Alcore container rather than children. They appear in
 `docker ps` on the host and are cleaned up by the same lifecycle rules as a
 native install.
 
 Mounting the Docker socket into a web application gives that container
 root-equivalent control over the Docker host. Work cannot function without it,
-so Libre WebUI enables it rather than shipping a feature that silently does
-nothing. The consequence is explicit: **every Libre WebUI administrator is
+so Alcore enables it rather than shipping a feature that silently does
+nothing. The consequence is explicit: **every Alcore administrator is
 effectively an administrator of the Docker host.** Operators own the
 daemon-security, network, lifecycle, backup, and access-control consequences.
 Delete the `/var/run/docker.sock` line from your Compose file to turn Work off;
@@ -1294,7 +1294,7 @@ nothing else depends on it.
 To keep Work without handing the socket to the web application, deploy with
 `docker-compose.socket-proxy.yml` instead: a socket proxy on an internal
 network holds the socket and forwards only the API sections Work uses, and
-Libre WebUI reaches it through `DOCKER_HOST`. See
+Alcore reaches it through `DOCKER_HOST`. See
 [Isolate Docker control](#1-isolate-docker-control) for what that boundary
 does and does not cover.
 
@@ -1308,7 +1308,7 @@ Three conditions must hold, and the Work panel names whichever one fails:
    `nodejs` (uid 1001) and the socket is typically owned by `root` or `docker`,
    so Compose passes `group_add: ['${DOCKER_GID:-0}']`. The default suits Docker
    Desktop; a Linux host needs its own group id. Otherwise: `The Docker socket
-is mounted but the Libre WebUI user cannot open it…`.
+is mounted but the Alcore user cannot open it…`.
 
 ```bash
 # Read the socket's group as seen INSIDE a container. A macOS host reports a
@@ -1318,7 +1318,7 @@ echo "DOCKER_GID=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock 
 docker compose up -d --force-recreate
 ```
 
-Task preview ports remain bound to Docker host loopback. Libre WebUI exposes
+Task preview ports remain bound to Docker host loopback. Alcore exposes
 each running preview through a signed same-origin proxy URL, including HTTP
 assets and WebSocket upgrades. This works behind HTTPS and remote tunnels
 without opening the ephemeral Docker ports to the network. Preview documents
@@ -1367,9 +1367,9 @@ Work reads these variables in the backend process:
 | `WORK_COMPUTER_SCREEN_PORT`           | `6080`                                                                                        | In-container WebSocket port of the screen bridge           |
 | `WORK_COMPUTER_AUDIO_PORT`            | `6081`                                                                                        | In-container WebSocket port of the audio bridge            |
 | `WORK_RUN_LEASE_WAIT_MS`              | `60000`                                                                                       | How long a run waits out a transient runtime-lease holder  |
-| `WORK_MAX_ACTIVE_RUNTIMES_GLOBAL`     | `3`                                                                                           | Concurrent container-backed tasks per Libre WebUI instance |
+| `WORK_MAX_ACTIVE_RUNTIMES_GLOBAL`     | `3`                                                                                           | Concurrent container-backed tasks per Alcore instance |
 | `WORK_MAX_ACTIVE_RUNTIMES_PER_USER`   | `2`                                                                                           | Concurrent container-backed tasks per administrator        |
-| `WORK_MAX_TASKS_GLOBAL`               | `500`                                                                                         | Persisted Work task limit per Libre WebUI instance         |
+| `WORK_MAX_TASKS_GLOBAL`               | `500`                                                                                         | Persisted Work task limit per Alcore instance         |
 | `WORK_MAX_TASKS_PER_USER`             | `100`                                                                                         | Persisted Work task limit per administrator                |
 | `WORK_NETWORK_NAME`                   | `libre-webui-work`                                                                            | Managed sandbox bridge network for networked tasks         |
 | `WORK_RUNTIME_DNS`                    | unset                                                                                         | Comma-separated resolver IPs forced onto networked tasks   |
@@ -1385,7 +1385,7 @@ Work reads these variables in the backend process:
 
 Use a fixed image version or digest in production. A mutable image tag can
 change both the available command-line tools and the security boundary without
-changing Libre WebUI.
+changing Alcore.
 
 Run, preview, file-helper, command, and sandbox-recreation operations share
 the same in-process capacity accounting. A nested operation on an already
@@ -1488,12 +1488,12 @@ Task deletion is intentionally destructive:
 1. The backend marks the task as retiring so no new mutable operation can
    begin.
 2. An active run is cancelled and the task sandbox is stopped.
-3. Libre WebUI validates the task-ownership labels on the runtime resources.
+3. Alcore validates the task-ownership labels on the runtime resources.
 4. The container/Pod and named volume/PVC are removed.
 5. The database task is deleted, cascading its runs and messages.
 6. Browser drafts for that task are cleared after the API succeeds.
 
-If runtime cleanup fails, Libre WebUI retains the task database record and
+If runtime cleanup fails, Alcore retains the task database record and
 returns an error so the operator can repair the Docker or Kubernetes backend
 and retry. It does not silently delete metadata while leaving an untracked
 sandbox or workspace.
@@ -1503,7 +1503,7 @@ preserves the named volume and conversation.
 
 ### Administrator demotion and user deletion
 
-When an administrator is demoted, Libre WebUI persists the role revocation
+When an administrator is demoted, Alcore persists the role revocation
 before depending on runtime cleanup. Every later Work request checks the
 current role and access mode. The backend then suspends the user's Work tasks
 when the new role no longer has access and attempts to abort active runs and
@@ -1520,7 +1520,7 @@ safe cleanup.
 
 A complete Work backup needs both:
 
-- the Libre WebUI database, which contains task ownership, Docker resource
+- the Alcore database, which contains task ownership, Docker resource
   or Kubernetes resource names, provider routing, runs, messages, and activity;
   and
 - every Docker volume or Kubernetes PVC labeled
@@ -1537,10 +1537,10 @@ task-ownership metadata, including `ai.libre-webui.task=<task UUID>` and
 `ai.libre-webui.managed=true`. Copying only files does not preserve Docker or
 Kubernetes labels. Restoring only the database produces task records whose
 files are absent; restoring only storage loses the task ownership and generated
-resource names that Libre WebUI uses to find and validate it.
+resource names that Alcore uses to find and validate it.
 
 If the installation also uses encrypted provider credentials, follow the main
-Libre WebUI backup guidance for its data directory and encryption key.
+Alcore backup guidance for its data directory and encryption key.
 
 ## Localization and Arabic RTL
 
@@ -1572,7 +1572,7 @@ use automatic text direction where appropriate.
 ### Runtime unavailable when using `npx`
 
 `npx libre-webui` runs the backend on the host, but it does not install Docker.
-Run `docker info` as the same operating-system user that starts Libre WebUI. If
+Run `docker info` as the same operating-system user that starts Alcore. If
 the command is absent or cannot reach the daemon, install/start Docker or fix
 that user's daemon permissions, then reload Work.
 
@@ -1587,7 +1587,7 @@ Docker CLI and the Compose file mounts the host socket. When it does, the panel
 names the cause — a missing CLI in a custom image, a removed or absent socket
 mount, or a socket group the container user is not in. For the last one, set
 `DOCKER_GID` and recreate the container. See
-[Running Work when Libre WebUI is itself in Docker](#running-work-when-libre-webui-is-itself-in-docker).
+[Running Work when Alcore is itself in Docker](#running-work-when-libre-webui-is-itself-in-docker).
 
 On Kubernetes, enable the native runtime with `--set work.enabled=true`.
 Libre then reports `kubernetes`, probes the Kubernetes API, and runs sandboxes
@@ -1722,7 +1722,7 @@ Before enabling Work for an installation, remember:
   revocable proxy URLs.
 - Standard Docker Compose provides the Docker runtime, and Kubernetes/Helm
   provides the native Pod/PVC runtime when `work.enabled=true`.
-- A complete backup requires both the Libre WebUI database and Work volumes.
+- A complete backup requires both the Alcore database and Work volumes.
 
 ## Related Docs
 

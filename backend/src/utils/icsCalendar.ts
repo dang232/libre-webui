@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -181,12 +181,12 @@ export const serializeCalendarToIcs = (
   const lines: string[] = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Libre WebUI//Calendar//EN',
+    'PRODID:-//Alcore//Calendar//EN',
     `X-WR-CALNAME:${escapeText(calendarName)}`,
   ];
   for (const event of events) {
     lines.push('BEGIN:VEVENT');
-    lines.push(`UID:${escapeText(event.id)}@libre-webui`);
+    lines.push(`UID:${escapeText(event.id)}@alcore`);
     lines.push(`DTSTAMP:${toUtcStamp(event.updatedAt)}`);
     if (event.allDay) {
       lines.push(`DTSTART;VALUE=DATE:${toDateStamp(event.startAt)}`);

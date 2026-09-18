@@ -1,6 +1,6 @@
 # Contributors
 
-We appreciate all the amazing people who have contributed to making Libre WebUI better! 🎉
+We appreciate all the amazing people who have contributed to making Alcore better! 🎉
 
 ## Project Maintainers
 
@@ -89,4 +89,4 @@ Contributors are recognized in the following ways:
 
 **Want to see your name here?** We'd love to have you contribute! Check out our [open issues](https://github.com/libre-webui/libre-webui/issues) or [join our discussions](https://github.com/libre-webui/libre-webui/discussions).
 
-Thank you to everyone who has helped make Libre WebUI what it is today! 🙏
+Thank you to everyone who has helped make Alcore what it is today! 🙏

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -558,7 +558,7 @@ export const getNextThemeMode = (mode: Theme['mode']): Theme['mode'] => {
  * boot script in index.html can paint it before the first render, instead
  * of flashing the built-in dark theme until /auth/system-info answers.
  */
-export const INSTANCE_THEME_STORAGE_KEY = 'libre-webui-instance-theme';
+export const INSTANCE_THEME_STORAGE_KEY = 'alcore-instance-theme';
 
 export const readCachedInstanceTheme = (): Theme | null => {
   if (typeof localStorage === 'undefined') return null;

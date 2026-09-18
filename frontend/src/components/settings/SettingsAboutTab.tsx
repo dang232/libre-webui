@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -290,7 +290,7 @@ export function SettingsAboutTab({ appVersion }: SettingsAboutTabProps) {
                 <button
                   type='button'
                   onClick={() =>
-                    window.dispatchEvent(new Event('libre:open-whats-new'))
+                    window.dispatchEvent(new Event('alcore:open-whats-new'))
                   }
                   className='inline-flex items-center gap-1.5 text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-dark-900'
                   data-testid='about-view-changelog'

@@ -4018,7 +4018,7 @@
         {
           "file": "docs/09-RAG_FEATURE.md",
           "patterns": [
-            "Document Chat lets Libre WebUI search uploaded documents",
+            "Document Chat lets Alcore search uploaded documents",
             "POST /api/documents/search"
           ]
         },

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -105,7 +105,7 @@ export const HomePage: React.FC = () => {
           data-testid='app-version'
           className='mt-1 font-mono text-xs text-ink-subtle'
         >
-          {window.location.host || 'Libre WebUI'}
+          {window.location.host || 'Alcore'}
           {appVersion ? ` · v${appVersion}` : ''}
         </p>
 

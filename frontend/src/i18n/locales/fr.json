@@ -41,8 +41,8 @@
     "more": "Plus"
   },
   "brand": {
-    "name": "Libre WebUI",
-    "shortName": "Libre"
+    "name": "Alcore",
+    "shortName": "Alcore"
   },
   "appInitialization": {
     "ollamaUnavailable": "Le service Ollama n’est pas disponible. Les modèles de plugins peuvent toujours être utilisés.",
@@ -191,9 +191,9 @@
   },
   "setup": {
     "welcome": {
-      "title": "Bienvenue sur Libre WebUI",
+      "title": "Bienvenue sur Alcore",
       "subtitle": "Commencer",
-      "description": "Configurez votre instance Libre WebUI en quelques étapes",
+      "description": "Configurez votre instance Alcore en quelques étapes",
       "createAdmin": "Créer un compte administrateur",
       "features": {
         "secure": {
@@ -213,7 +213,7 @@
     "admin": {
       "title": "Créer un compte administrateur",
       "subtitle": "Configuration administrateur",
-      "description": "Créez le premier compte administrateur pour votre instance Libre WebUI",
+      "description": "Créez le premier compte administrateur pour votre instance Alcore",
       "usernamePlaceholder": "Entrez le nom d'utilisateur admin",
       "passwordPlaceholder": "Saisissez un mot de passe (au moins 12 caractères)",
       "confirmPlaceholder": "Confirmez votre mot de passe",
@@ -223,7 +223,7 @@
       "failed": "Échec de la création du compte administrateur",
       "approvalUnexpected": "L'administrateur initial n'a pas pu être activé. Veuillez réessayer.",
       "fillAllFields": "Veuillez remplir tous les champs",
-      "note": "Ce sera le compte administrateur principal pour votre instance Libre WebUI"
+      "note": "Ce sera le compte administrateur principal pour votre instance Alcore"
     },
     "encryptionKey": {
       "title": "Sauvegardez votre clé de chiffrement",
@@ -239,7 +239,7 @@
       "envNote": "Cette clé est également sauvegardée dans votre fichier backend/.env sous ENCRYPTION_KEY",
       "acknowledgment": "J'ai sauvegardé ma clé de chiffrement dans un endroit sécurisé et je comprends que la perdre peut entraîner une perte de données.",
       "confirmRequired": "Veuillez confirmer que vous avez sauvegardé la clé de chiffrement",
-      "continue": "Continuer vers Libre WebUI"
+      "continue": "Continuer vers Alcore"
     },
     "connectModels": {
       "title": "Connectez vos modèles",
@@ -1047,7 +1047,7 @@
       "toSkip": "à ignorer",
       "documents": "Documents",
       "warnings": "Avertissements",
-      "refreshAfterImportFailed": "Les données ont été importées, mais certaines vues n’ont pas pu être actualisées. Rechargez Libre WebUI pour voir toutes les modifications.",
+      "refreshAfterImportFailed": "Les données ont été importées, mais certaines vues n’ont pas pu être actualisées. Rechargez Alcore pour voir toutes les modifications.",
       "exportSuccess": "Archive de données portable exportée",
       "exportFailed": "Échec de l’exportation",
       "importSuccess": "Archive de données portable importée",
@@ -1056,7 +1056,7 @@
         "invalidJson": "L’archive portable ne contient pas de JSON valide.",
         "objectRequired": "L’archive portable doit contenir un objet JSON.",
         "unsupportedVersion": "Version {{version}} de l’archive portable non prise en charge.",
-        "unrecognized": "Ce fichier n’est pas une archive portable Libre WebUI."
+        "unrecognized": "Ce fichier n’est pas une archive portable Alcore."
       },
       "errors": "Erreurs",
       "archivedChats": {
@@ -1322,7 +1322,7 @@
       "saveFile": "Enregistrer le fichier",
       "formatCode": "Formater le code"
     },
-    "description": "Tous les raccourcis clavier disponibles dans Libre WebUI.",
+    "description": "Tous les raccourcis clavier disponibles dans Alcore.",
     "newChat": "Nouvelle conversation",
     "newWork": "Nouvelle session Work",
     "openPalette": "Ouvrir la palette de commandes"
@@ -1701,7 +1701,7 @@
   "userManager": {
     "title": "Gestion des utilisateurs",
     "subtitle": "Gérez les comptes utilisateurs et les permissions",
-    "pageDescription": "Gérez les comptes utilisateurs, les permissions et les contrôles d'accès pour votre instance Libre WebUI.",
+    "pageDescription": "Gérez les comptes utilisateurs, les permissions et les contrôles d'accès pour votre instance Alcore.",
     "sections": {
       "users": "Utilisateurs",
       "access": "Accès et politiques",
@@ -1829,7 +1829,7 @@
     },
     "agentAccess": {
       "title": "Agents",
-      "description": "Proposer la section Agents (Libre Claw) aux administrateurs. Les CLI d'agents s'exécutent sur l'hôte avec l'utilisateur du serveur, hors du bac à sable Work.",
+      "description": "Proposer la section Agents (Alcore Claw) aux administrateurs. Les CLI d'agents s'exécutent sur l'hôte avec l'utilisateur du serveur, hors du bac à sable Work.",
       "saved": "Accès aux agents mis à jour",
       "saveFailed": "Impossible de mettre à jour l'accès aux agents",
       "lockedByEnv": "Fixé par la variable d'environnement AGENT_CLI_MODELS_ENABLED."
@@ -2041,7 +2041,7 @@
       "title": "Aucun appel fournisseur pour le moment",
       "description": "Les appels apparaîtront ici une fois qu'un plugin activé aura traité des requêtes de chat, Work, d'embedding, d'image, de parole, de son ou de vidéo."
     },
-    "privacyNote": "L'utilisation est mesurée sur le serveur à la limite du plugin sortant. Libre WebUI stocke le fournisseur, le modèle, le minutage, le statut et les compteurs signalés — jamais les prompts, les réponses, les points de terminaison, les identifiants ou les corps d'erreur du fournisseur. Les totaux de jetons incluent uniquement les appels où le fournisseur a renvoyé des métadonnées d'utilisation.",
+    "privacyNote": "L'utilisation est mesurée sur le serveur à la limite du plugin sortant. Alcore stocke le fournisseur, le modèle, le minutage, le statut et les compteurs signalés — jamais les prompts, les réponses, les points de terminaison, les identifiants ou les corps d'erreur du fournisseur. Les totaux de jetons incluent uniquement les appels où le fournisseur a renvoyé des métadonnées d'utilisation.",
     "heatmap": {
       "title": "Une année d'activité",
       "description": "Appels quotidiens aux fournisseurs sur l'année écoulée, colorés selon le modèle le plus utilisé chaque jour.",
@@ -2056,7 +2056,7 @@
   "systemPage": {
     "eyebrow": "Administration",
     "title": "Système",
-    "description": "Surveillez la machine et l'environnement d'exécution hébergeant cette instance de Libre WebUI.",
+    "description": "Surveillez la machine et l'environnement d'exécution hébergeant cette instance de Alcore.",
     "updated": "Mis à jour le {{date}}",
     "refresh": "Actualiser les informations système",
     "loadFailed": "Les informations système n'ont pas pu être chargées.",
@@ -2074,7 +2074,7 @@
     },
     "host": {
       "title": "Hôte et environnement d'exécution",
-      "description": "Détails du système d'exploitation, du processeur et du processus Libre WebUI.",
+      "description": "Détails du système d'exploitation, du processeur et du processus Alcore.",
       "container": "Environnement d'exécution de conteneurs",
       "native": "Runtime natif",
       "hostname": "Nom d'hôte",
@@ -2082,7 +2082,7 @@
       "processor": "Processeur",
       "logicalCpus": "CPU logiques",
       "loadAverage": "Charge moyenne · 1 / 5 / 15 min",
-      "libreVersion": "Libre WebUI",
+      "libreVersion": "Alcore",
       "nodeVersion": "Node.js",
       "process": "Processus",
       "workingDirectory": "Répertoire de travail"
@@ -2134,7 +2134,7 @@
       "internal": "interne",
       "empty": "Aucune interface réseau n'est visible pour l'environnement d'exécution de l'application."
     },
-    "securityNote": "Cette page est réservée aux administrateurs. Le serveur renvoie uniquement des résumés opérationnels : il n'expose pas les variables d'environnement, les identifiants, les étiquettes Docker, les points de montage, les commandes de conteneur ou les charges utiles d'inspection. Lorsque Libre WebUI s'exécute dans un conteneur, les détails du CPU et de la mémoire au niveau de l'hôte proviennent de Docker Engine lorsque son socket local est disponible ; les autres valeurs décrivent l'environnement d'exécution de l'application.",
+    "securityNote": "Cette page est réservée aux administrateurs. Le serveur renvoie uniquement des résumés opérationnels : il n'expose pas les variables d'environnement, les identifiants, les étiquettes Docker, les points de montage, les commandes de conteneur ou les charges utiles d'inspection. Lorsque Alcore s'exécute dans un conteneur, les détails du CPU et de la mémoire au niveau de l'hôte proviennent de Docker Engine lorsque son socket local est disponible ; les autres valeurs décrivent l'environnement d'exécution de l'application.",
     "work": {
       "title": "Work",
       "description": "Bacs à sable de tous les utilisateurs",
@@ -2314,9 +2314,9 @@
     "referenceTranscript": "Transcription exacte de la référence",
     "referenceTranscriptPlaceholder": "Saisissez exactement ce qui est prononcé dans l'enregistrement de référence…",
     "referenceAudioTooLarge": "L'audio de référence doit avoir une taille maximale de {{max}}.",
-    "cloneConsent": "Ne clonez une voix qu'avec l'autorisation de la personne qui parle. L'enregistrement est envoyé au fournisseur sélectionné pour cette génération et n'est pas conservé par Libre WebUI.",
+    "cloneConsent": "Ne clonez une voix qu'avec l'autorisation de la personne qui parle. L'enregistrement est envoyé au fournisseur sélectionné pour cette génération et n'est pas conservé par Alcore.",
     "saveVoiceProfile": "Enregistrer comme voix réutilisable",
-    "saveVoiceProfileDescription": "Conservez cet enregistrement de référence et sa transcription de façon sécurisée. Libre WebUI les envoie au fournisseur sélectionné pour chaque lot de parole utilisant cette voix.",
+    "saveVoiceProfileDescription": "Conservez cet enregistrement de référence et sa transcription de façon sécurisée. Alcore les envoie au fournisseur sélectionné pour chaque lot de parole utilisant cette voix.",
     "voiceProfileName": "Nom de la voix enregistrée",
     "voiceProfileNamePlaceholder": "Par exemple, Ma voix",
     "voiceStorageConsent": "Je confirme avoir l’autorisation de la personne qui parle pour cloner et enregistrer cette voix. La référence restera enregistrée jusqu’à ce que je la supprime.",
@@ -2554,7 +2554,7 @@
     "subtitle": "Exécutions d'agents locales, approbations, planifications, mémoire, outils et usage.",
     "dashboard": "Tableau de bord",
     "connection": {
-      "disconnectedTitle": "Le daemon Libre Claw n'est pas connecté",
+      "disconnectedTitle": "Le daemon Alcore Claw n'est pas connecté",
       "disconnectedDescription": "Démarrez-le localement avec <command>libre-claw start</command> ou définissez <env>LIBRE_CLAW_BASE_URL</env> dans l'environnement backend."
     },
     "status": {
@@ -2573,7 +2573,7 @@
     },
     "startRun": {
       "title": "Démarrer une exécution d'agent",
-      "placeholder": "Demandez à Libre Claw d'inspecter un dépôt, corriger un bug, faire une revue, planifier un rapport...",
+      "placeholder": "Demandez à Alcore Claw d'inspecter un dépôt, corriger un bug, faire une revue, planifier un rapport...",
       "chatRun": "Exécution chat",
       "goalMode": "Mode objectif",
       "providerOverride": "Fournisseur à utiliser",
@@ -2584,14 +2584,14 @@
       "title": "Routage du modèle",
       "providerPlaceholder": "fournisseur",
       "modelPlaceholder": "modèle",
-      "persistGlobal": "Enregistrer dans la configuration globale de Libre Claw",
+      "persistGlobal": "Enregistrer dans la configuration globale de Alcore Claw",
       "saveModel": "Enregistrer le modèle",
-      "theme": "Thème Libre Claw",
+      "theme": "Thème Alcore Claw",
       "saveTheme": "Enregistrer le thème"
     },
     "runs": {
       "title": "Exécutions",
-      "empty": "Aucune exécution Libre Claw pour le moment."
+      "empty": "Aucune exécution Alcore Claw pour le moment."
     },
     "timeline": {
       "title": "Chronologie de l'exécution",
@@ -2625,7 +2625,7 @@
       "schedulePlaceholder": "daily 09:00",
       "promptPlaceholder": "Prompt de l'automatisation",
       "create": "Créer",
-      "empty": "Aucune automatisation Libre Claw planifiée.",
+      "empty": "Aucune automatisation Alcore Claw planifiée.",
       "runNow": "Exécuter maintenant",
       "pause": "Mettre en pause",
       "resume": "Reprendre",
@@ -2666,19 +2666,19 @@
       "unknownError": "Erreur inconnue"
     },
     "toasts": {
-      "loadStatusFailed": "Impossible de charger l'état de Libre Claw",
-      "enterTask": "Entrez une tâche pour Libre Claw",
-      "runStarted": "Exécution Libre Claw démarrée",
-      "startRunFailed": "Impossible de démarrer l'exécution Libre Claw",
+      "loadStatusFailed": "Impossible de charger l'état de Alcore Claw",
+      "enterTask": "Entrez une tâche pour Alcore Claw",
+      "runStarted": "Exécution Alcore Claw démarrée",
+      "startRunFailed": "Impossible de démarrer l'exécution Alcore Claw",
       "runCancelled": "Exécution annulée",
       "cancelRunFailed": "Impossible d'annuler l'exécution",
       "approved": "Approuvé",
       "denied": "Refusé",
       "resolvePermissionFailed": "Impossible de résoudre l'approbation",
       "providerModelRequired": "Le fournisseur et le modèle sont requis",
-      "modelUpdated": "Modèle Libre Claw mis à jour",
+      "modelUpdated": "Modèle Alcore Claw mis à jour",
       "updateModelFailed": "Impossible de mettre à jour le modèle",
-      "themeUpdated": "Thème Libre Claw mis à jour",
+      "themeUpdated": "Thème Alcore Claw mis à jour",
       "updateThemeFailed": "Impossible de mettre à jour le thème",
       "automationRequired": "Le nom, la planification et le prompt de l'automatisation sont requis",
       "automationCreated": "Automatisation créée",
@@ -3049,7 +3049,7 @@
     "title": "Nouveautés",
     "releaseNotes": "Notes de version",
     "cta": "C'est parti",
-    "starAsk": "Vous aimez Libre WebUI ? Laissez une étoile sur GitHub"
+    "starAsk": "Vous aimez Alcore ? Laissez une étoile sur GitHub"
   },
   "notes": {
     "title": "Notes",
@@ -3502,7 +3502,7 @@
     "description": "Les serveurs d'outils que le modèle peut appeler, et les approbations que vous leur avez accordées.",
     "approvalNotice": "Les outils qui modifient des données en dehors de la conversation demandent toujours une approbation, sauf si vous leur avez accordé une approbation permanente ou valable pour la conversation.",
     "registerServer": "Enregistrer un serveur",
-    "registerHint": "Libre WebUI lit le serveur une fois et fige les outils qu'il expose. Actualisez le serveur plus tard pour récupérer les changements.",
+    "registerHint": "Alcore lit le serveur une fois et fige les outils qu'il expose. Actualisez le serveur plus tard pour récupérer les changements.",
     "editServer": "Modifier le serveur",
     "empty": "Aucun serveur d'outils",
     "emptyHintAdmin": "Enregistrez un serveur OpenAPI ou MCP pour donner au modèle quelque chose à appeler.",

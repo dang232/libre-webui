@@ -1,5 +1,5 @@
 ---
-name: Libre WebUI
+name: Alcore
 version: '1.0.0'
 colors:
   primary: '#F4F4F0'
@@ -149,7 +149,7 @@ light:
 
 ## Overview
 
-Libre WebUI is a privacy-first AI creation interface. Its design language is quiet futurism: precise typography, warm monochrome canvases, carefully layered surfaces, hairline separators, and motion that clarifies state. The interface should feel considered and unusually calm, leaving the conversation and the work as the most expressive material on screen.
+Alcore is a privacy-first AI creation interface. Its design language is quiet futurism: precise typography, warm monochrome canvases, carefully layered surfaces, hairline separators, and motion that clarifies state. The interface should feel considered and unusually calm, leaving the conversation and the work as the most expressive material on screen.
 
 Light and dark modes are equal first-class experiences. Light mode uses a warm off-white canvas rather than clinical gray; dark mode uses near-black rather than blue-black. Both preserve the same hierarchy and spacing.
 
@@ -362,6 +362,6 @@ Transitions are 140–180ms with an ease-out curve for interactive states. Sideb
 
 ## Brand Identity
 
-Libre WebUI's identity is the absence of excess. No ornamental gradients, neon glow, or mascot. Expressiveness comes from user-created work, not interface chrome. Custom accents personalize focus and selection without changing the restrained neutral system. The word "Libre" means free, and the design should feel uncluttered, unburdened, and focused entirely on creation.
+Alcore's identity is the absence of excess. No ornamental gradients, neon glow, or mascot. Expressiveness comes from user-created work, not interface chrome. Custom accents personalize focus and selection without changing the restrained neutral system. The word "Libre" means free, and the design should feel uncluttered, unburdened, and focused entirely on creation.
 
 The Kroonen AI wordmark may appear in the sidebar footer or settings page. It uses primary text color at body-sm size. It does not compete with the interface.

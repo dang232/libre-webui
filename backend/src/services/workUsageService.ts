@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -80,7 +80,7 @@ export const decodeUsageMember = (member: string): WorkTaskUsage | null => {
 
 class WorkUsageService {
   private readonly processId =
-    `${process.env.LIBRE_PROCESS_ROLE || 'standalone'}-${process.pid}-` +
+    `${process.env.ALCORE_PROCESS_ROLE || 'standalone'}-${process.pid}-` +
     randomUUID().slice(0, 8);
   private readonly timers = new Map<string, NodeJS.Timeout>();
 

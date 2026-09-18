@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -848,7 +848,7 @@ async function executeComfyUIRequest(
     },
     '9': {
       inputs: {
-        filename_prefix: `LibreWebUI_${model}`,
+        filename_prefix: `Alcore_${model}`,
         images: ['8', 0],
       },
       class_type: 'SaveImage',
@@ -964,7 +964,7 @@ async function executeComfyUIRequest(
   });
 
   try {
-    const clientId = `libre-webui-${Date.now()}`;
+    const clientId = `alcore-${Date.now()}`;
     const requestedPromptId = randomUUID();
     // Keep the client-selected ID before dispatch so a disconnect after the
     // provider accepts, but before the response is received, still has an

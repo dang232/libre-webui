@@ -1,11 +1,11 @@
 ---
 sidebar_position: 26
 title: 'Environment Variables'
-description: 'Supported backend and frontend environment variables in Libre WebUI.'
+description: 'Supported backend and frontend environment variables in Alcore.'
 slug: /ENVIRONMENT_VARIABLES
 keywords:
   [
-    libre webui environment variables,
+    Alcore environment variables,
     configuration,
     env,
     docker env,
@@ -17,7 +17,7 @@ keywords:
 # Environment Variables
 
 This page lists the supported operator-facing environment variables read by
-the current Libre WebUI backend, frontend, and maintenance scripts. Internal
+the current Alcore backend, frontend, and maintenance scripts. Internal
 test-only canaries are intentionally omitted.
 
 ## Backend Server
@@ -303,7 +303,7 @@ proxy controls.
 | `HUGGINGFACE_CLIENT_SECRET` | Hugging Face OAuth client secret   |
 | `HUGGINGFACE_CALLBACK_URL`  | Hugging Face callback URL override |
 
-If callback URLs are not set, Libre WebUI builds defaults from `BASE_URL`.
+If callback URLs are not set, Alcore builds defaults from `BASE_URL`.
 
 ## Ollama
 
@@ -337,7 +337,7 @@ the switch on, and each user still opts in per notification kind under
 | `SMTP_SECURITY`                | `starttls`                 | `starttls` (upgrade a plain connection), `tls` (implicit TLS), or `none` (trusted network)   |
 | `SMTP_USER`                    | unset                      | Authentication user; leave unset for a relay that accepts mail without signing in            |
 | `SMTP_PASSWORD`                | unset                      | Authentication password; a password saved in the UI is stored encrypted and takes precedence |
-| `SMTP_FROM`                    | unset                      | Sender, for example `Libre WebUI <notifications@example.com>`                                |
+| `SMTP_FROM`                    | unset                      | Sender, for example `Alcore <notifications@example.com>`                                |
 | `SMTP_TLS_REJECT_UNAUTHORIZED` | `true`                     | Set to `false` only for a relay with a self-signed certificate                               |
 | `BASE_URL`                     | unset                      | Public URL of the instance, used for the links inside messages                               |
 
@@ -351,7 +351,7 @@ the switch on, and each user still opts in per notification kind under
 ## Work Runtime
 
 These variables configure Work execution on the machine or Kubernetes cluster
-running the Libre WebUI backend. Docker is the default runtime; the Helm chart
+running the Alcore backend. Docker is the default runtime; the Helm chart
 selects Kubernetes when `work.enabled=true`.
 
 | Variable                              | Default                                                                                       | Purpose                                                                                                                                       |
@@ -420,7 +420,7 @@ through symlinks before they are checked against the roots, and folders such as
 
 Agent CLI models expose coding agents already installed on the server (`claude`,
 `codex`) as selectable chat models, so a subscription agent can answer without an
-API key. Only administrators see them, the CLI runs as the Libre WebUI server
+API key. Only administrators see them, the CLI runs as the Alcore server
 user, and it inherits that user's agent credentials — treat it as equivalent to
 granting shell access to those agents.
 
@@ -445,7 +445,7 @@ Docker CLI, which understands those endpoints on its own. On Kubernetes, the
 terminal uses the Pod exec subresource and does not use a Docker endpoint.
 
 Work reads these values when the backend starts. The preview port is internal to
-the task container; Libre WebUI publishes it to a dynamically assigned loopback
+the task container; Alcore publishes it to a dynamically assigned loopback
 port rather than exposing this value directly on every host interface.
 
 Keep the runtime image pinned to a reviewed version or digest. Increasing
@@ -532,7 +532,7 @@ Users can also store provider credentials in the UI when per-user keys are
 preferred. Environment keys are used only with the routing and authentication
 projection of an unshadowed bundled definition. Imported definitions, writable
 definitions that reuse a bundled ID, and administrator-saved custom routes
-require a credential stored by that account. Libre WebUI will not attach an
+require a credential stored by that account. Alcore will not attach an
 environment key to those routes or expose it through discovery and availability
 checks. Trust comes from a compiled hash of each shipped manifest, so container
 layouts where the legacy and bundled plugin directories share a path remain

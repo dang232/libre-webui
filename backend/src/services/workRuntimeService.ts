@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -707,7 +707,7 @@ export class WorkRuntimeService {
   private recoveryTimer?: NodeJS.Timeout;
   private shuttingDown = false;
   private readonly activityMemberId =
-    `${process.env.LIBRE_PROCESS_ROLE || 'standalone'}-${process.pid}-` +
+    `${process.env.ALCORE_PROCESS_ROLE || 'standalone'}-${process.pid}-` +
     randomUUID();
 
   constructor(driver: WorkRuntimeDriver = new DockerWorkRuntimeDriver()) {
@@ -717,7 +717,7 @@ export class WorkRuntimeService {
     workPreviewProxyService.onPreviewActivity(taskId =>
       this.noteTaskActivity(taskId)
     );
-    if (process.env.LIBRE_PROCESS_ROLE !== 'app-external') {
+    if (process.env.ALCORE_PROCESS_ROLE !== 'app-external') {
       this.scheduleIdleSweep();
     }
   }
@@ -1003,7 +1003,7 @@ export class WorkRuntimeService {
       }
       if (this.runtimeLeases.size >= config.maxActiveRuntimesGlobal) {
         throw new WorkRuntimeError(
-          `This Libre WebUI instance already has ${config.maxActiveRuntimesGlobal} active Work runtime(s). Wait for another operation or preview to stop.`,
+          `This Alcore instance already has ${config.maxActiveRuntimesGlobal} active Work runtime(s). Wait for another operation or preview to stop.`,
           429,
           'WORK_GLOBAL_RUNTIME_LIMIT'
         );
@@ -1454,7 +1454,7 @@ export class WorkRuntimeService {
       const unreachable = this.shuttingDown
         ? 'The Work runtime is shutting down.'
         : this.runtimeUnavailableReason ||
-          `The ${this.runtimeKind} runtime is not available to the Libre WebUI backend.`;
+          `The ${this.runtimeKind} runtime is not available to the Alcore backend.`;
       for (const item of this.recoveryDetails.values()) {
         this.noteRecoveryItem({
           kind: item.kind,
@@ -1647,7 +1647,7 @@ export class WorkRuntimeService {
    */
   async sweepIdleRuntimes(now = Date.now()): Promise<{ stopped: number }> {
     if (
-      process.env.LIBRE_PROCESS_ROLE === 'app-external' ||
+      process.env.ALCORE_PROCESS_ROLE === 'app-external' ||
       this.shuttingDown ||
       this.recoveryPending
     ) {
@@ -1742,7 +1742,7 @@ export class WorkRuntimeService {
    */
   async reconcileStalePreviews(now = Date.now()): Promise<{ stopped: number }> {
     if (
-      process.env.LIBRE_PROCESS_ROLE === 'app-external' ||
+      process.env.ALCORE_PROCESS_ROLE === 'app-external' ||
       this.shuttingDown ||
       this.recoveryPending
     ) {
@@ -2852,7 +2852,7 @@ export class WorkRuntimeService {
         [
           '/bin/sh',
           '-c',
-          'cat "${LIBRE_COMPUTER_STATE_DIR:-/tmp/libre-computer}/passwd"',
+          'cat "${ALCORE_COMPUTER_STATE_DIR:-/tmp/alcore-computer}/passwd"',
         ],
         {
           timeoutMs: 10_000,
@@ -4740,9 +4740,9 @@ process.stdout.write(results.join('\\n'));
 const COMPUTER_OBSERVE_COMMON = String.raw`
 const {execFileSync} = require('node:child_process');
 const {createHash} = require('node:crypto');
-process.env.DISPLAY = ':' + (process.env.LIBRE_COMPUTER_DISPLAY || '1');
+process.env.DISPLAY = ':' + (process.env.ALCORE_COMPUTER_DISPLAY || '1');
 const CDP_BASE =
-  'http://127.0.0.1:' + (process.env.LIBRE_COMPUTER_CDP_PORT || '9222');
+  'http://127.0.0.1:' + (process.env.ALCORE_COMPUTER_CDP_PORT || '9222');
 const out = (cmd, args, timeout = 10000) =>
   execFileSync(cmd, args, {encoding: 'utf8', timeout});
 const attempt = fn => {

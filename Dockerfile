@@ -178,6 +178,7 @@ COPY bin/cli.js bin/cli-args.js bin/runtime-paths.js ./bin/
 # Expose the same maintenance/server command used by npm and Homebrew. Keep
 # the link absolute so its backend/frontend resolution stays rooted at /app.
 RUN chmod 0755 /app/bin/cli.js && \
+    ln -s /app/bin/cli.js /usr/local/bin/alcore && \
     ln -s /app/bin/cli.js /usr/local/bin/libre-webui
 
 # Keep the runtime package metadata aligned with the version injected into the

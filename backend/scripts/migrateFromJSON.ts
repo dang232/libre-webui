@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
- * Libre WebUI - JSON to SQLite Migration Script
+ * Alcore - JSON to SQLite Migration Script
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

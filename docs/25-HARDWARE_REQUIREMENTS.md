@@ -1,7 +1,7 @@
 ---
 sidebar_position: 25
 title: 'Hardware Requirements'
-description: 'Hardware guidance for Libre WebUI, local Ollama models, and container-backed Work tasks.'
+description: 'Hardware guidance for Alcore, local Ollama models, and container-backed Work tasks.'
 slug: /HARDWARE_REQUIREMENTS
 keywords:
   [
@@ -15,7 +15,7 @@ keywords:
 
 # Hardware Requirements
 
-Libre WebUI's normal Chat interface is lightweight. Most resource demand comes
+Alcore's normal Chat interface is lightweight. Most resource demand comes
 from local Ollama models; container-backed Work tasks add a separate CPU, memory,
 process, image, and project-storage budget.
 
@@ -94,7 +94,7 @@ Every Work task also owns a Docker named volume for generated files and local
 dependencies. Volumes do not currently have per-task disk quotas, so package
 installs or generated projects can exhaust Docker storage. Monitor the Docker
 data root, set host-level limits where available, and back up task volumes
-separately from the Libre WebUI database.
+separately from the Alcore database.
 
 Tune the `WORK_MEMORY_LIMIT`, `WORK_CPU_LIMIT`, `WORK_PIDS_LIMIT`, and
 `WORK_MAX_ACTIVE_RUNTIMES_*` settings only after measuring the backend host. See

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -56,14 +56,14 @@ void i18nReady
 // The sessionStorage latch prevents a reload loop when the network itself is
 // the problem, and clears after a healthy minute.
 window.addEventListener('vite:preloadError', event => {
-  const LATCH = 'libre:chunk-reload';
+  const LATCH = 'alcore:chunk-reload';
   if (sessionStorage.getItem(LATCH)) return;
   event.preventDefault();
   sessionStorage.setItem(LATCH, String(Date.now()));
   window.location.reload();
 });
 window.setTimeout(() => {
-  sessionStorage.removeItem('libre:chunk-reload');
+  sessionStorage.removeItem('alcore:chunk-reload');
 }, 60_000);
 
 // Production only: the dev server serves fresh modules directly, and a dev

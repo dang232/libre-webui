@@ -1,13 +1,13 @@
 ---
 sidebar_position: 45
 title: 'Platform Foundation'
-description: 'Persistence, storage, coordination, and recovery contracts for Libre WebUI.'
+description: 'Persistence, storage, coordination, and recovery contracts for Alcore.'
 slug: /PLATFORM_FOUNDATION
 ---
 
 # Platform Foundation
 
-Libre WebUI supports a local-first `solo` profile and a shared `team` profile.
+Alcore supports a local-first `solo` profile and a shared `team` profile.
 Solo uses SQLite, encrypted local blobs, encrypted embedded vectors, local
 coordination, and an embedded durable worker. Team uses PostgreSQL,
 S3-compatible private blobs, PGVector, Redis coordination, and an external

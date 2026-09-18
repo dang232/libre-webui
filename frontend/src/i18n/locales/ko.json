@@ -41,8 +41,8 @@
     "more": "많음"
   },
   "brand": {
-    "name": "Libre WebUI",
-    "shortName": "Libre"
+    "name": "Alcore",
+    "shortName": "Alcore"
   },
   "appInitialization": {
     "ollamaUnavailable": "Ollama 서비스를 사용할 수 없습니다. 플러그인 모델은 계속 사용할 수도 있습니다.",
@@ -191,9 +191,9 @@
   },
   "setup": {
     "welcome": {
-      "title": "Libre WebUI에 오신 것을 환영합니다",
+      "title": "Alcore에 오신 것을 환영합니다",
       "subtitle": "시작하기",
-      "description": "몇 단계만으로 Libre WebUI 인스턴스를 설정하세요",
+      "description": "몇 단계만으로 Alcore 인스턴스를 설정하세요",
       "createAdmin": "관리자 계정 만들기",
       "features": {
         "secure": {
@@ -213,7 +213,7 @@
     "admin": {
       "title": "관리자 계정 만들기",
       "subtitle": "관리자 설정",
-      "description": "Libre WebUI 인스턴스의 첫 번째 관리자 계정을 만드세요",
+      "description": "Alcore 인스턴스의 첫 번째 관리자 계정을 만드세요",
       "usernamePlaceholder": "관리자 사용자 이름을 입력하세요",
       "passwordPlaceholder": "비밀번호 입력(12자 이상)",
       "confirmPlaceholder": "비밀번호를 다시 입력하세요",
@@ -223,7 +223,7 @@
       "failed": "관리자 계정 생성 실패",
       "approvalUnexpected": "초기 관리자를 활성화할 수 없습니다. 다시 시도해 주세요.",
       "fillAllFields": "모든 필드를 입력하세요",
-      "note": "이것은 Libre WebUI 인스턴스의 기본 관리자 계정이 됩니다"
+      "note": "이것은 Alcore 인스턴스의 기본 관리자 계정이 됩니다"
     },
     "encryptionKey": {
       "title": "암호화 키 저장",
@@ -239,7 +239,7 @@
       "envNote": "이 키는 backend/.env 파일에 ENCRYPTION_KEY로도 저장됩니다",
       "acknowledgment": "암호화 키를 안전한 장소에 저장했으며, 분실 시 데이터 손실이 발생할 수 있음을 이해합니다.",
       "confirmRequired": "암호화 키를 저장했음을 확인하세요",
-      "continue": "Libre WebUI로 계속"
+      "continue": "Alcore로 계속"
     },
     "connectModels": {
       "title": "모델 연결하기",
@@ -1047,7 +1047,7 @@
       "toSkip": "건너뛰기 예정",
       "documents": "문서",
       "warnings": "경고",
-      "refreshAfterImportFailed": "데이터를 가져왔지만 일부 화면을 새로 고치지 못했습니다. 모든 변경 사항을 보려면 Libre WebUI를 다시 로드하세요.",
+      "refreshAfterImportFailed": "데이터를 가져왔지만 일부 화면을 새로 고치지 못했습니다. 모든 변경 사항을 보려면 Alcore를 다시 로드하세요.",
       "exportSuccess": "이동식 데이터 아카이브를 내보냈습니다",
       "exportFailed": "내보내기에 실패했습니다",
       "importSuccess": "이동식 데이터 아카이브를 가져왔습니다",
@@ -1056,7 +1056,7 @@
         "invalidJson": "이동식 아카이브가 유효한 JSON이 아닙니다.",
         "objectRequired": "이동식 아카이브에는 JSON 객체가 포함되어야 합니다.",
         "unsupportedVersion": "이동식 아카이브 버전 {{version}}은(는) 지원되지 않습니다.",
-        "unrecognized": "이 파일은 Libre WebUI 이동식 아카이브가 아닙니다."
+        "unrecognized": "이 파일은 Alcore 이동식 아카이브가 아닙니다."
       },
       "errors": "오류",
       "archivedChats": {
@@ -1322,7 +1322,7 @@
       "saveFile": "파일 저장",
       "formatCode": "코드 서식 정리"
     },
-    "description": "Libre WebUI에서 사용할 수 있는 모든 키보드 단축키입니다.",
+    "description": "Alcore에서 사용할 수 있는 모든 키보드 단축키입니다.",
     "newChat": "새 채팅",
     "newWork": "새 Work 세션",
     "openPalette": "명령 팔레트 열기"
@@ -1701,7 +1701,7 @@
   "userManager": {
     "title": "사용자 관리",
     "subtitle": "사용자 계정 및 권한 관리",
-    "pageDescription": "Libre WebUI 인스턴스의 사용자 계정, 권한 및 액세스 제어를 관리합니다.",
+    "pageDescription": "Alcore 인스턴스의 사용자 계정, 권한 및 액세스 제어를 관리합니다.",
     "sections": {
       "users": "사용자",
       "access": "접근 및 정책",
@@ -1829,7 +1829,7 @@
     },
     "agentAccess": {
       "title": "에이전트",
-      "description": "관리자에게 에이전트 섹션(Libre Claw)을 제공합니다. 에이전트 CLI는 Work 샌드박스 밖에서 서버 사용자로 호스트에서 실행됩니다.",
+      "description": "관리자에게 에이전트 섹션(Alcore Claw)을 제공합니다. 에이전트 CLI는 Work 샌드박스 밖에서 서버 사용자로 호스트에서 실행됩니다.",
       "saved": "에이전트 접근이 업데이트되었습니다",
       "saveFailed": "에이전트 접근을 업데이트할 수 없습니다",
       "lockedByEnv": "AGENT_CLI_MODELS_ENABLED 환경 변수로 고정되어 있습니다."
@@ -2041,7 +2041,7 @@
       "title": "아직 제공자 호출이 없습니다",
       "description": "활성화된 플러그인이 채팅, Work, 임베딩, 이미지, 음성, 소리 또는 비디오 요청을 처리하면 호출이 여기에 표시됩니다."
     },
-    "privacyNote": "사용량은 아웃바운드 플러그인 경계에서 서버를 통해 측정됩니다. Libre WebUI는 제공자, 모델, 타이밍, 상태 및 보고된 카운터를 저장하며, 프롬프트, 응답, 엔드포인트, 자격 증명 또는 제공자 오류 본문은 절대 저장하지 않습니다. 토큰 총량에는 제공자가 사용 메타데이터를 반환한 호출만 포함됩니다.",
+    "privacyNote": "사용량은 아웃바운드 플러그인 경계에서 서버를 통해 측정됩니다. Alcore는 제공자, 모델, 타이밍, 상태 및 보고된 카운터를 저장하며, 프롬프트, 응답, 엔드포인트, 자격 증명 또는 제공자 오류 본문은 절대 저장하지 않습니다. 토큰 총량에는 제공자가 사용 메타데이터를 반환한 호출만 포함됩니다.",
     "heatmap": {
       "title": "1년간의 활동",
       "description": "지난 1년간의 일별 프로바이더 호출을 그날 가장 많이 사용된 모델별 색상으로 표시합니다.",
@@ -2056,7 +2056,7 @@
   "systemPage": {
     "eyebrow": "관리",
     "title": "시스템",
-    "description": "이 Libre WebUI 인스턴스를 호스팅하는 머신과 런타임을 모니터링합니다.",
+    "description": "이 Alcore 인스턴스를 호스팅하는 머신과 런타임을 모니터링합니다.",
     "updated": "{{date}}에 업데이트됨",
     "refresh": "시스템 정보 새로고침",
     "loadFailed": "시스템 정보를 불러올 수 없습니다.",
@@ -2074,7 +2074,7 @@
     },
     "host": {
       "title": "호스트 및 런타임",
-      "description": "운영 체제, 프로세서 및 Libre WebUI 프로세스 세부 정보입니다.",
+      "description": "운영 체제, 프로세서 및 Alcore 프로세스 세부 정보입니다.",
       "container": "컨테이너 런타임",
       "native": "네이티브 런타임",
       "hostname": "호스트 이름",
@@ -2082,7 +2082,7 @@
       "processor": "프로세서",
       "logicalCpus": "논리 CPU",
       "loadAverage": "평균 부하 · 1 / 5 / 15분",
-      "libreVersion": "Libre WebUI",
+      "libreVersion": "Alcore",
       "nodeVersion": "Node.js",
       "process": "프로세스",
       "workingDirectory": "작업 디렉터리"
@@ -2134,7 +2134,7 @@
       "internal": "내부",
       "empty": "애플리케이션 런타임에 표시되는 네트워크 인터페이스가 없습니다."
     },
-    "securityNote": "이 페이지는 관리자 전용입니다. 서버는 운영 요약만 반환합니다: 환경 변수, 자격 증명, Docker 레이블, 마운트, 컨테이너 명령 또는 검사 페이로드를 노출하지 않습니다. Libre WebUI가 컨테이너에서 실행될 때 로컬 소켓을 사용할 수 있는 경우 호스트 수준 CPU 및 메모리 세부 정보는 Docker Engine에서 가져옵니다. 다른 값은 애플리케이션 런타임을 설명합니다.",
+    "securityNote": "이 페이지는 관리자 전용입니다. 서버는 운영 요약만 반환합니다: 환경 변수, 자격 증명, Docker 레이블, 마운트, 컨테이너 명령 또는 검사 페이로드를 노출하지 않습니다. Alcore가 컨테이너에서 실행될 때 로컬 소켓을 사용할 수 있는 경우 호스트 수준 CPU 및 메모리 세부 정보는 Docker Engine에서 가져옵니다. 다른 값은 애플리케이션 런타임을 설명합니다.",
     "work": {
       "title": "Work",
       "description": "모든 사용자의 샌드박스",
@@ -2314,9 +2314,9 @@
     "referenceTranscript": "정확한 참조 녹취록",
     "referenceTranscriptPlaceholder": "참조 녹음에서 말한 내용을 정확히 입력하세요…",
     "referenceAudioTooLarge": "참조 오디오는 {{max}} 이하여야 합니다.",
-    "cloneConsent": "화자의 허가를 받은 경우에만 음성을 복제하세요. 이 생성 작업을 위해 녹음이 선택한 제공업체로 전송되며 Libre WebUI에는 저장되지 않습니다.",
+    "cloneConsent": "화자의 허가를 받은 경우에만 음성을 복제하세요. 이 생성 작업을 위해 녹음이 선택한 제공업체로 전송되며 Alcore에는 저장되지 않습니다.",
     "saveVoiceProfile": "재사용 가능한 음성으로 저장",
-    "saveVoiceProfileDescription": "이 참조 녹음과 녹취록을 안전하게 저장합니다. 이 음성을 사용하는 모든 음성 배치마다 Libre WebUI가 두 자료를 선택한 제공업체로 전송합니다.",
+    "saveVoiceProfileDescription": "이 참조 녹음과 녹취록을 안전하게 저장합니다. 이 음성을 사용하는 모든 음성 배치마다 Alcore가 두 자료를 선택한 제공업체로 전송합니다.",
     "voiceProfileName": "저장된 음성 이름",
     "voiceProfileNamePlaceholder": "예: 내 목소리",
     "voiceStorageConsent": "이 음성을 복제하고 저장할 수 있도록 화자의 허가를 받았음을 확인합니다. 참조 자료는 삭제할 때까지 저장됩니다.",
@@ -2554,7 +2554,7 @@
     "subtitle": "로컬 에이전트 실행, 승인, 일정, 메모리, 도구 및 사용량입니다.",
     "dashboard": "대시보드",
     "connection": {
-      "disconnectedTitle": "Libre Claw 데몬이 연결되지 않았습니다",
+      "disconnectedTitle": "Alcore Claw 데몬이 연결되지 않았습니다",
       "disconnectedDescription": "<command>libre-claw start</command>로 로컬에서 시작하거나 백엔드 환경에서 <env>LIBRE_CLAW_BASE_URL</env>을 설정하세요."
     },
     "status": {
@@ -2573,7 +2573,7 @@
     },
     "startRun": {
       "title": "에이전트 실행 시작",
-      "placeholder": "저장소 검사, 버그 수정, 검토 실행, 보고서 예약 등을 Libre Claw에 요청하세요.",
+      "placeholder": "저장소 검사, 버그 수정, 검토 실행, 보고서 예약 등을 Alcore Claw에 요청하세요.",
       "chatRun": "채팅 실행",
       "goalMode": "목표 모드",
       "providerOverride": "공급자 재정의",
@@ -2584,14 +2584,14 @@
       "title": "모델 루트",
       "providerPlaceholder": "공급자",
       "modelPlaceholder": "모델",
-      "persistGlobal": "Libre Claw 전역 구성 유지",
+      "persistGlobal": "Alcore Claw 전역 구성 유지",
       "saveModel": "모델 저장",
-      "theme": "Libre Claw 테마",
+      "theme": "Alcore Claw 테마",
       "saveTheme": "테마 저장"
     },
     "runs": {
       "title": "실행",
-      "empty": "아직 Libre Claw 실행이 없습니다."
+      "empty": "아직 Alcore Claw 실행이 없습니다."
     },
     "timeline": {
       "title": "실행 타임라인",
@@ -2625,7 +2625,7 @@
       "schedulePlaceholder": "daily 09:00",
       "promptPlaceholder": "자동화 프롬프트",
       "create": "만들기",
-      "empty": "예정된 Libre Claw 자동화가 없습니다.",
+      "empty": "예정된 Alcore Claw 자동화가 없습니다.",
       "runNow": "지금 실행",
       "pause": "일시중지",
       "resume": "재개",
@@ -2666,19 +2666,19 @@
       "unknownError": "알 수 없는 오류"
     },
     "toasts": {
-      "loadStatusFailed": "Libre Claw 상태를 로드할 수 없습니다.",
-      "enterTask": "Libre Claw에 대한 작업을 입력하세요.",
-      "runStarted": "Libre Claw 실행이 시작되었습니다",
-      "startRunFailed": "Libre Claw 실행을 시작할 수 없습니다",
+      "loadStatusFailed": "Alcore Claw 상태를 로드할 수 없습니다.",
+      "enterTask": "Alcore Claw에 대한 작업을 입력하세요.",
+      "runStarted": "Alcore Claw 실행이 시작되었습니다",
+      "startRunFailed": "Alcore Claw 실행을 시작할 수 없습니다",
       "runCancelled": "실행이 취소되었습니다",
       "cancelRunFailed": "실행을 취소할 수 없습니다",
       "approved": "승인됨",
       "denied": "거부됨",
       "resolvePermissionFailed": "권한을 확인할 수 없습니다.",
       "providerModelRequired": "제공업체 및 모델이 필요합니다.",
-      "modelUpdated": "Libre Claw 모델이 업데이트되었습니다",
+      "modelUpdated": "Alcore Claw 모델이 업데이트되었습니다",
       "updateModelFailed": "모델을 업데이트할 수 없습니다.",
-      "themeUpdated": "Libre Claw 테마가 업데이트되었습니다",
+      "themeUpdated": "Alcore Claw 테마가 업데이트되었습니다",
       "updateThemeFailed": "테마를 업데이트할 수 없습니다.",
       "automationRequired": "자동화 이름, 일정, 프롬프트가 필요합니다.",
       "automationCreated": "자동화가 생성되었습니다.",
@@ -3049,7 +3049,7 @@
     "title": "새로운 기능",
     "releaseNotes": "릴리스 노트",
     "cta": "좋아요, 시작하죠",
-    "starAsk": "Libre WebUI가 마음에 드시나요? GitHub에 스타를 남겨주세요"
+    "starAsk": "Alcore가 마음에 드시나요? GitHub에 스타를 남겨주세요"
   },
   "notes": {
     "title": "노트",
@@ -3502,7 +3502,7 @@
     "description": "모델이 호출할 수 있는 도구 서버와, 여러분이 부여한 승인입니다.",
     "approvalNotice": "대화 밖의 데이터를 바꾸는 도구는 항상 승인을 요청합니다. 해당 도구에 항상 허용이나 대화별 승인을 부여한 경우는 예외입니다.",
     "registerServer": "서버 등록",
-    "registerHint": "Libre WebUI는 서버를 한 번 읽어 노출된 도구를 고정합니다. 변경 사항을 반영하려면 나중에 서버를 새로 고치세요.",
+    "registerHint": "Alcore는 서버를 한 번 읽어 노출된 도구를 고정합니다. 변경 사항을 반영하려면 나중에 서버를 새로 고치세요.",
     "editServer": "서버 편집",
     "empty": "도구 서버가 없습니다",
     "emptyHintAdmin": "OpenAPI 또는 MCP 서버를 등록해 모델이 호출할 대상을 마련하세요.",

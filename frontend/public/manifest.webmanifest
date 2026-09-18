@@ -1,6 +1,6 @@
 {
-  "name": "Libre WebUI",
-  "short_name": "Libre WebUI",
+  "name": "Alcore",
+  "short_name": "Alcore",
   "description": "A private, local-first AI workspace: chat, documents, artifacts, and sandboxed model-driven work.",
   "id": "/",
   "start_url": "/",

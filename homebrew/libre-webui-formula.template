@@ -1,4 +1,4 @@
-# Libre WebUI Homebrew Formula
+# Alcore Homebrew Formula
 # Generated from the release template in the main repo.
 #
 # Installation:
@@ -29,7 +29,7 @@ class LibreWebui < Formula
 
   def caveats
     <<~EOS
-      Libre WebUI has been installed!
+      Alcore has been installed!
 
       To start the server:
         libre-webui

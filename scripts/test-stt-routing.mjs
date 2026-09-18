@@ -205,7 +205,7 @@ test('STT sends an OpenAI-compatible multipart request to the selected route', a
       pluginId: candidate.id,
       userId: 'user-a',
       language: 'en',
-      prompt: 'Libre WebUI',
+      prompt: 'Alcore',
     });
     assert.deepEqual(result, { text: 'hello from audio', language: 'en' });
     assert.equal(received.url, '/v1/audio/transcriptions');
@@ -217,7 +217,7 @@ test('STT sends an OpenAI-compatible multipart request to the selected route', a
     assert.match(received.body, /WAVEfmt/);
     assert.match(received.body, /name="model"\r\n\r\ntranscribe-model/);
     assert.match(received.body, /name="language"\r\n\r\nen/);
-    assert.match(received.body, /name="prompt"\r\n\r\nLibre WebUI/);
+    assert.match(received.body, /name="prompt"\r\n\r\nAlcore/);
     assert.deepEqual(
       usage.map(event => [event.capability, event.status, event.userId]),
       [['stt', 'success', 'user-a']]
@@ -482,7 +482,7 @@ test('STT upload accepts only the bounded transcription form', async () => {
     form.append('model', 'transcribe-model');
     form.append('pluginId', 'openai');
     form.append('language', 'en');
-    form.append('prompt', 'Libre WebUI');
+    form.append('prompt', 'Alcore');
     if (extra) form.append('unexpected', 'blocked');
     return form;
   };

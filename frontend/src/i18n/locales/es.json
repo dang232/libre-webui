@@ -41,8 +41,8 @@
     "more": "Más"
   },
   "brand": {
-    "name": "Libre WebUI",
-    "shortName": "Libre"
+    "name": "Alcore",
+    "shortName": "Alcore"
   },
   "appInitialization": {
     "ollamaUnavailable": "El servicio Ollama no está disponible. Los modelos de plugins aún se pueden usar.",
@@ -191,9 +191,9 @@
   },
   "setup": {
     "welcome": {
-      "title": "Bienvenido a Libre WebUI",
+      "title": "Bienvenido a Alcore",
       "subtitle": "Comencemos",
-      "description": "Configura tu instancia de Libre WebUI en solo unos pasos",
+      "description": "Configura tu instancia de Alcore en solo unos pasos",
       "createAdmin": "Crear cuenta de administrador",
       "features": {
         "secure": {
@@ -213,7 +213,7 @@
     "admin": {
       "title": "Crear cuenta de administrador",
       "subtitle": "Configuración del administrador",
-      "description": "Crea la primera cuenta de administrador para tu instancia de Libre WebUI",
+      "description": "Crea la primera cuenta de administrador para tu instancia de Alcore",
       "usernamePlaceholder": "Ingresa nombre de usuario admin",
       "passwordPlaceholder": "Introduce una contraseña (mínimo 12 caracteres)",
       "confirmPlaceholder": "Confirma tu contraseña",
@@ -223,7 +223,7 @@
       "failed": "Error al crear cuenta de administrador",
       "approvalUnexpected": "El administrador inicial no pudo ser activado. Por favor, inténtalo de nuevo.",
       "fillAllFields": "Por favor completa todos los campos",
-      "note": "Esta será la cuenta de administrador principal para tu instancia de Libre WebUI"
+      "note": "Esta será la cuenta de administrador principal para tu instancia de Alcore"
     },
     "encryptionKey": {
       "title": "Guarda tu clave de cifrado",
@@ -239,7 +239,7 @@
       "envNote": "Esta clave también está guardada en tu archivo backend/.env como ENCRYPTION_KEY",
       "acknowledgment": "He guardado mi clave de cifrado en un lugar seguro y entiendo que perderla puede resultar en pérdida de datos.",
       "confirmRequired": "Por favor confirma que has guardado la clave de cifrado",
-      "continue": "Continuar a Libre WebUI"
+      "continue": "Continuar a Alcore"
     },
     "connectModels": {
       "title": "Conecta tus modelos",
@@ -1047,7 +1047,7 @@
       "toSkip": "por omitir",
       "documents": "Documentos",
       "warnings": "Advertencias",
-      "refreshAfterImportFailed": "Los datos se importaron, pero algunas vistas no se pudieron actualizar. Recarga Libre WebUI para ver todos los cambios.",
+      "refreshAfterImportFailed": "Los datos se importaron, pero algunas vistas no se pudieron actualizar. Recarga Alcore para ver todos los cambios.",
       "exportSuccess": "Archivo de datos portátil exportado",
       "exportFailed": "Falló la exportación",
       "importSuccess": "Archivo de datos portátil importado",
@@ -1056,7 +1056,7 @@
         "invalidJson": "El archivo portátil no contiene JSON válido.",
         "objectRequired": "El archivo portátil debe contener un objeto JSON.",
         "unsupportedVersion": "Versión {{version}} del archivo portátil no compatible.",
-        "unrecognized": "Este archivo no es un archivo portátil de Libre WebUI."
+        "unrecognized": "Este archivo no es un archivo portátil de Alcore."
       },
       "errors": "Errores",
       "archivedChats": {
@@ -1322,7 +1322,7 @@
       "saveFile": "Guardar archivo",
       "formatCode": "Formatear código"
     },
-    "description": "Todos los atajos de teclado disponibles en Libre WebUI.",
+    "description": "Todos los atajos de teclado disponibles en Alcore.",
     "newChat": "Nuevo chat",
     "newWork": "Nueva sesión de Work",
     "openPalette": "Abrir la paleta de comandos"
@@ -1701,7 +1701,7 @@
   "userManager": {
     "title": "Gestión de usuarios",
     "subtitle": "Gestiona cuentas de usuario y permisos",
-    "pageDescription": "Gestiona cuentas de usuario, permisos y controles de acceso para tu instancia de Libre WebUI.",
+    "pageDescription": "Gestiona cuentas de usuario, permisos y controles de acceso para tu instancia de Alcore.",
     "sections": {
       "users": "Usuarios",
       "access": "Acceso y políticas",
@@ -1829,7 +1829,7 @@
     },
     "agentAccess": {
       "title": "Agentes",
-      "description": "Ofrecer la sección Agentes (Libre Claw) a los administradores. Las CLI de agentes se ejecutan en el host como el usuario del servidor, fuera del sandbox de Work.",
+      "description": "Ofrecer la sección Agentes (Alcore Claw) a los administradores. Las CLI de agentes se ejecutan en el host como el usuario del servidor, fuera del sandbox de Work.",
       "saved": "Acceso a agentes actualizado",
       "saveFailed": "No se pudo actualizar el acceso a agentes",
       "lockedByEnv": "Fijado por la variable de entorno AGENT_CLI_MODELS_ENABLED."
@@ -2041,7 +2041,7 @@
       "title": "Aún no hay llamadas al proveedor",
       "description": "Las llamadas aparecerán aquí después de que un complemento habilitado gestione solicitudes de chat, Work, incrustación, imagen, voz, sonido o video."
     },
-    "privacyNote": "El uso se mide en el servidor en el límite del complemento saliente. Libre WebUI almacena proveedor, modelo, tiempo, estado y contadores reportados, nunca prompts, respuestas, endpoints, credenciales ni cuerpos de error del proveedor. Los totales de tokens incluyen solo las llamadas en las que el proveedor devolvió metadatos de uso.",
+    "privacyNote": "El uso se mide en el servidor en el límite del complemento saliente. Alcore almacena proveedor, modelo, tiempo, estado y contadores reportados, nunca prompts, respuestas, endpoints, credenciales ni cuerpos de error del proveedor. Los totales de tokens incluyen solo las llamadas en las que el proveedor devolvió metadatos de uso.",
     "heatmap": {
       "title": "Un año de actividad",
       "description": "Llamadas diarias a proveedores durante el último año, coloreadas según el modelo más usado cada día.",
@@ -2056,7 +2056,7 @@
   "systemPage": {
     "eyebrow": "Administración",
     "title": "Sistema",
-    "description": "Monitoree la máquina y el entorno de ejecución que alojan esta instancia de Libre WebUI.",
+    "description": "Monitoree la máquina y el entorno de ejecución que alojan esta instancia de Alcore.",
     "updated": "Actualizado el {{date}}",
     "refresh": "Actualizar información del sistema",
     "loadFailed": "No se pudo cargar la información del sistema.",
@@ -2074,7 +2074,7 @@
     },
     "host": {
       "title": "Host y entorno de ejecución",
-      "description": "Detalles del sistema operativo, procesador y proceso de Libre WebUI.",
+      "description": "Detalles del sistema operativo, procesador y proceso de Alcore.",
       "container": "Entorno de ejecución de contenedores",
       "native": "Tiempo de ejecución nativo",
       "hostname": "Nombre de host",
@@ -2082,7 +2082,7 @@
       "processor": "Procesador",
       "logicalCpus": "CPU lógicas",
       "loadAverage": "Carga media · 1 / 5 / 15 min",
-      "libreVersion": "Libre WebUI",
+      "libreVersion": "Alcore",
       "nodeVersion": "Node.js",
       "process": "Proceso",
       "workingDirectory": "Directorio de trabajo"
@@ -2134,7 +2134,7 @@
       "internal": "interna",
       "empty": "No hay interfaces de red visibles para el entorno de ejecución de la aplicación."
     },
-    "securityNote": "Esta página está restringida a administradores. El servidor solo devuelve resúmenes operativos: no expone variables de entorno, credenciales, etiquetas de Docker, montajes, comandos de contenedor ni cargas útiles de inspección. Cuando Libre WebUI se ejecuta en un contenedor, los detalles de CPU y memoria a nivel de host provienen de Docker Engine cuando su socket local está disponible; otros valores describen el entorno de ejecución de la aplicación.",
+    "securityNote": "Esta página está restringida a administradores. El servidor solo devuelve resúmenes operativos: no expone variables de entorno, credenciales, etiquetas de Docker, montajes, comandos de contenedor ni cargas útiles de inspección. Cuando Alcore se ejecuta en un contenedor, los detalles de CPU y memoria a nivel de host provienen de Docker Engine cuando su socket local está disponible; otros valores describen el entorno de ejecución de la aplicación.",
     "work": {
       "title": "Work",
       "description": "Sandboxes de todos los usuarios",
@@ -2314,9 +2314,9 @@
     "referenceTranscript": "Transcripción exacta de la referencia",
     "referenceTranscriptPlaceholder": "Escribe exactamente lo que se dice en la grabación de referencia…",
     "referenceAudioTooLarge": "El audio de referencia debe ocupar {{max}} o menos.",
-    "cloneConsent": "Clona una voz solo si tienes el permiso del hablante. La grabación se envía al proveedor seleccionado para esta generación y Libre WebUI no la guarda.",
+    "cloneConsent": "Clona una voz solo si tienes el permiso del hablante. La grabación se envía al proveedor seleccionado para esta generación y Alcore no la guarda.",
     "saveVoiceProfile": "Guardar como voz reutilizable",
-    "saveVoiceProfileDescription": "Guarda de forma segura esta grabación de referencia y su transcripción. Libre WebUI las envía al proveedor seleccionado en cada lote de Voz que usa esta voz.",
+    "saveVoiceProfileDescription": "Guarda de forma segura esta grabación de referencia y su transcripción. Alcore las envía al proveedor seleccionado en cada lote de Voz que usa esta voz.",
     "voiceProfileName": "Nombre de la voz guardada",
     "voiceProfileNamePlaceholder": "Por ejemplo, Mi voz",
     "voiceStorageConsent": "Confirmo que tengo permiso del hablante para clonar y guardar esta voz. La referencia permanecerá guardada hasta que la elimine.",
@@ -2554,7 +2554,7 @@
     "subtitle": "Ejecuciones, aprobaciones, programaciones, memoria, herramientas y uso del agente local.",
     "dashboard": "Panel de control",
     "connection": {
-      "disconnectedTitle": "El demonio de Libre Claw no está conectado",
+      "disconnectedTitle": "El demonio de Alcore Claw no está conectado",
       "disconnectedDescription": "Inícielo localmente con <command>libre-claw start</command> o configure <env>LIBRE_CLAW_BASE_URL</env> en el entorno backend."
     },
     "status": {
@@ -2573,7 +2573,7 @@
     },
     "startRun": {
       "title": "Iniciar ejecución del agente",
-      "placeholder": "Pídale a Libre Claw que inspeccione un repositorio, corrija un error, ejecute una revisión, programe un informe...",
+      "placeholder": "Pídale a Alcore Claw que inspeccione un repositorio, corrija un error, ejecute una revisión, programe un informe...",
       "chatRun": "Ejecutar chat",
       "goalMode": "Modo objetivo",
       "providerOverride": "Anulación del proveedor",
@@ -2584,14 +2584,14 @@
       "title": "Ruta Modelo",
       "providerPlaceholder": "proveedor",
       "modelPlaceholder": "modelo",
-      "persistGlobal": "Persistir en la configuración global Libre Claw",
+      "persistGlobal": "Persistir en la configuración global Alcore Claw",
       "saveModel": "Guardar modelo",
-      "theme": "Tema de Libre Claw",
+      "theme": "Tema de Alcore Claw",
       "saveTheme": "Guardar tema"
     },
     "runs": {
       "title": "Ejecuciones",
-      "empty": "Aún no hay ejecuciones de Libre Claw."
+      "empty": "Aún no hay ejecuciones de Alcore Claw."
     },
     "timeline": {
       "title": "Cronología de la ejecución",
@@ -2625,7 +2625,7 @@
       "schedulePlaceholder": "daily 09:00",
       "promptPlaceholder": "Aviso de automatización",
       "create": "crear",
-      "empty": "No hay automatizaciones programadas Libre Claw.",
+      "empty": "No hay automatizaciones programadas Alcore Claw.",
       "runNow": "Ejecutar ahora",
       "pause": "Pausa",
       "resume": "Reanudar",
@@ -2666,19 +2666,19 @@
       "unknownError": "Error desconocido"
     },
     "toasts": {
-      "loadStatusFailed": "No se pudo cargar el estado Libre Claw",
-      "enterTask": "Ingrese una tarea para Libre Claw",
-      "runStarted": "Ejecución de Libre Claw iniciada",
-      "startRunFailed": "No se pudo iniciar la ejecución de Libre Claw",
+      "loadStatusFailed": "No se pudo cargar el estado Alcore Claw",
+      "enterTask": "Ingrese una tarea para Alcore Claw",
+      "runStarted": "Ejecución de Alcore Claw iniciada",
+      "startRunFailed": "No se pudo iniciar la ejecución de Alcore Claw",
       "runCancelled": "Ejecución cancelada",
       "cancelRunFailed": "No se pudo cancelar la ejecución",
       "approved": "Aprobado",
       "denied": "denegado",
       "resolvePermissionFailed": "No se pudo resolver el permiso",
       "providerModelRequired": "Se requiere proveedor y modelo.",
-      "modelUpdated": "Modelo de Libre Claw actualizado",
+      "modelUpdated": "Modelo de Alcore Claw actualizado",
       "updateModelFailed": "No se pudo actualizar el modelo",
-      "themeUpdated": "Tema de Libre Claw actualizado",
+      "themeUpdated": "Tema de Alcore Claw actualizado",
       "updateThemeFailed": "No se pudo actualizar el tema",
       "automationRequired": "Se requieren el nombre, el cronograma y el aviso de la automatización",
       "automationCreated": "Automatización creada",
@@ -3049,7 +3049,7 @@
     "title": "Novedades",
     "releaseNotes": "Notas de la versión",
     "cta": "Vale, vamos",
-    "starAsk": "¿Te gusta Libre WebUI? Deja una estrella en GitHub"
+    "starAsk": "¿Te gusta Alcore? Deja una estrella en GitHub"
   },
   "notes": {
     "title": "Notas",
@@ -3502,7 +3502,7 @@
     "description": "Servidores de herramientas que el modelo puede llamar y las aprobaciones que les has dado.",
     "approvalNotice": "Las herramientas que cambian datos fuera del chat siempre piden aprobación, salvo que le hayas dado a esa herramienta una aprobación permanente o para el chat.",
     "registerServer": "Registrar servidor",
-    "registerHint": "Libre WebUI lee el servidor una vez y fija las herramientas que expone. Actualiza el servidor más tarde para recoger los cambios.",
+    "registerHint": "Alcore lee el servidor una vez y fija las herramientas que expone. Actualiza el servidor más tarde para recoger los cambios.",
     "editServer": "Editar servidor",
     "empty": "Sin servidores de herramientas",
     "emptyHintAdmin": "Registra un servidor OpenAPI o MCP para darle al modelo algo que llamar.",

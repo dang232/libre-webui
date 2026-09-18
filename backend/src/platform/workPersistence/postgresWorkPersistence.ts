@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -157,7 +157,7 @@ export class PostgresWorkPersistence implements WorkPersistenceRepository {
 
   private async lockAdmission(executor: PostgresQueryExecutor): Promise<void> {
     await executor.query('SELECT pg_advisory_xact_lock(hashtext($1))', [
-      'libre:webui:work-admission:v1',
+      'alcore:work:admission:v1',
     ]);
   }
 
