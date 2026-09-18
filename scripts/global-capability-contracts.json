@@ -2108,10 +2108,7 @@
           "file": "scripts/test-tool-oauth.mjs",
           "runner": "test:package",
           "name": "the callback exchanges the code and stores an encrypted envelope",
-          "behaviorPatterns": [
-            "mcpOAuth=connected",
-            "status\\.connected, true"
-          ]
+          "behaviorPatterns": ["mcpOAuth=connected", "status\\.connected, true"]
         }
       ],
       "backendRoutes": [
@@ -3377,7 +3374,7 @@
           "file": "docs/12-AUTHENTICATION.md",
           "patterns": [
             "Every login also creates a server-side session record bound into the JWT",
-            "Settings → API keys mints personal access tokens"
+            "Settings \u2192 API keys mints personal access tokens"
           ]
         },
         {
@@ -3932,7 +3929,7 @@
         {
           "file": "docs/41-DATA_PORTABILITY.md",
           "patterns": [
-            "Settings → Data Management",
+            "Settings \u2192 Data Management",
             "GET`  \\| `/api/preferences/export"
           ]
         }
@@ -5264,6 +5261,128 @@
               "patterns": [
                 "DEFAULT_MAX_DURABLE_PAYLOAD_RECORDS",
                 "DEFAULT_MAX_DURABLE_CIPHERTEXT_BYTES"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "cordis-bridge",
+      "title": "Cordis bridge",
+      "uiRoutes": [],
+      "documentation": [
+        {
+          "file": "docs/64-CORDIS_BRIDGE.md",
+          "patterns": ["## HTTP surface", "libreDshEngine"]
+        },
+        {
+          "file": "docs/65-CORDIS_CONFIGURATION.md",
+          "patterns": ["## `cordis.patch.yml`", "LIBRE_CORDIS_ENABLED"]
+        },
+        {
+          "file": "docs/06-TROUBLESHOOTING.md",
+          "patterns": ["## Cordis Bridge Problems", "CORDIS_UNAVAILABLE"]
+        }
+      ],
+      "focusedTests": [
+        {
+          "file": "scripts/test-cordis-bridge-http.mjs",
+          "runner": "test:package",
+          "name": "a chat turn streams assistant text before the terminal chunk",
+          "behaviorPatterns": [
+            "/api/cordis/sessions/\\$\\{session\\.id\\}/messages",
+            "application\\\\/x-ndjson"
+          ]
+        },
+        {
+          "file": "scripts/test-cordis-bridge.mjs",
+          "runner": "test:package",
+          "name": "model adapter hot-swaps without restarting the engine",
+          "behaviorPatterns": [
+            "libre-webui-model-adapter",
+            "without restarting"
+          ]
+        }
+      ],
+      "backendRoutes": [
+        {
+          "file": "backend/src/routes/cordis.ts",
+          "mount": "/api/cordis",
+          "method": "GET",
+          "path": "/health"
+        },
+        {
+          "file": "backend/src/routes/cordis.ts",
+          "mount": "/api/cordis",
+          "method": "GET",
+          "path": "/sessions"
+        },
+        {
+          "file": "backend/src/routes/cordis.ts",
+          "mount": "/api/cordis",
+          "method": "POST",
+          "path": "/sessions"
+        },
+        {
+          "file": "backend/src/routes/cordis.ts",
+          "mount": "/api/cordis",
+          "method": "GET",
+          "path": "/sessions/:id"
+        },
+        {
+          "file": "backend/src/routes/cordis.ts",
+          "mount": "/api/cordis",
+          "method": "DELETE",
+          "path": "/sessions/:id"
+        },
+        {
+          "file": "backend/src/routes/cordis.ts",
+          "mount": "/api/cordis",
+          "method": "POST",
+          "path": "/sessions/:id/messages"
+        },
+        {
+          "file": "backend/src/routes/cordis.ts",
+          "mount": "/api/cordis",
+          "method": "POST",
+          "path": "/sessions/:id/cancel"
+        },
+        {
+          "file": "backend/src/routes/cordis.ts",
+          "mount": "/api/cordis",
+          "method": "GET",
+          "path": "/agents"
+        },
+        {
+          "file": "backend/src/routes/cordis.ts",
+          "mount": "/api/cordis",
+          "method": "GET",
+          "path": "/tools"
+        }
+      ],
+      "contractSurfaces": {
+        "schemas": {
+          "evidence": [
+            {
+              "file": "backend/src/cordis/contracts.ts",
+              "patterns": [
+                "export interface DshEngine",
+                "export type EngineStreamChunk"
+              ]
+            }
+          ]
+        },
+        "manifests": {
+          "notApplicable": "The Cordis bridge is enabled through a YAML composition document rather than an installed manifest, so no manifest surface exists for it to declare."
+        },
+        "defaults": {
+          "evidence": [
+            {
+              "file": "backend/src/cordis/host/config.ts",
+              "patterns": [
+                "export function resolveCordisHostConfig",
+                "CORDIS_PATCH_FILENAME"
               ]
             }
           ]
