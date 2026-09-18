@@ -310,6 +310,44 @@ HTTP, web search, MCP, memory, approvals, and schedules.
 - [Installed agent CLIs](https://docs.librewebui.org/AGENT_CLI_MODELS)
 - [Libre Claw integration](https://docs.librewebui.org/LIBRE_CLAW_INTEGRATION)
 
+## Cordis bridge
+
+The optional Cordis bridge embeds the
+[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) engine inside
+Libre WebUI's backend. The engine runs as a plugin tree in a
+[Cordis](https://github.com/cordiverse/cordis) runtime that Libre WebUI hosts, so
+its sessions, agents, and tools arrive as Cordis services rather than as
+imported modules.
+
+The bridge is off by default. Enable it with two documents in `backend/`:
+
+```bash
+cd backend
+cp cordis.patch.example.yml cordis.patch.yml
+cp cordis.config.example.yml cordis.config.yml
+# set features.enabled: true in cordis.config.yml
+```
+
+Because the engine is a plugin tree rather than an import, operators can:
+
+- **Retarget the model provider** by editing YAML — Ollama, an
+  OpenAI-compatible gateway, or the first-party DeepSeek adapter.
+- **Swap the model adapter at runtime** by reloading one plugin row, without
+  restarting Libre WebUI or losing the session store, tool registry, or agents.
+- **Remove the engine cleanly** by disposing the tree, which withdraws its
+  services, releases its listeners, and disposes the agents it created.
+
+```bash
+curl -s http://127.0.0.1:3001/api/cordis/health | jq
+```
+
+The engine runs tools with real filesystem access and is not mediated by Libre
+WebUI's tool-approval flow. Review the security notes before enabling it.
+
+- [Cordis bridge architecture](https://docs.librewebui.org/CORDIS_BRIDGE)
+- [Cordis configuration reference](https://docs.librewebui.org/CORDIS_CONFIGURATION)
+- [Writing Cordis plugins](https://docs.librewebui.org/CORDIS_PLUGIN_AUTHORING)
+
 ## Deployment options
 
 | Deployment          | Command or link                                                         | Use case                                 |
@@ -349,6 +387,9 @@ See the [deployment documentation](https://docs.librewebui.org) for details.
 - [Calendar](https://docs.librewebui.org/CALENDAR)
 - [Public API](https://docs.librewebui.org/PUBLIC_API)
 - [Plugin architecture](https://docs.librewebui.org/PLUGIN_ARCHITECTURE)
+- [Cordis bridge](https://docs.librewebui.org/CORDIS_BRIDGE)
+- [Cordis configuration](https://docs.librewebui.org/CORDIS_CONFIGURATION)
+- [Writing Cordis plugins](https://docs.librewebui.org/CORDIS_PLUGIN_AUTHORING)
 - [Capability contracts](https://docs.librewebui.org/CAPABILITY_CONTRACTS)
 - [Authentication](https://docs.librewebui.org/AUTHENTICATION)
 - [Data portability](https://docs.librewebui.org/DATA_PORTABILITY)

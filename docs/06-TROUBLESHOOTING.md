@@ -447,11 +447,11 @@ On Kubernetes, enable the native Pod/PVC runtime with Helm value
 deployment still reports **Runtime unavailable**, the Work page names which of
 these applies:
 
-| Message                                        | Cause and fix                                                                                                         |
-| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `The "docker" CLI is not installed…`           | A custom image without `docker-cli`. Use the official image, or point `WORK_DOCKER_COMMAND` at a CLI.                 |
-| `No Docker daemon is reachable…`               | The socket mount was removed, or the host daemon is stopped. Restore the mount in your Compose file and start Docker. |
-| `The Docker socket is mounted but…cannot open` | The socket's group differs from the container's. Set `DOCKER_GID` in `.env` (see below) and recreate the container.   |
+| Message                                                                         | Cause and fix                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `The "docker" CLI is not installed…`                                            | A custom image without `docker-cli`. Use the official image, or point `WORK_DOCKER_COMMAND` at a CLI.                                                                                                                                                                |
+| `No Docker daemon is reachable…`                                                | The socket mount was removed, or the host daemon is stopped. Restore the mount in your Compose file and start Docker.                                                                                                                                                |
+| `The Docker socket is mounted but…cannot open`                                  | The socket's group differs from the container's. Set `DOCKER_GID` in `.env` (see below) and recreate the container.                                                                                                                                                  |
 | Work screen/audio closes with WebSocket `1006` and logs `screen is unreachable` | The containerized backend is dialing its own loopback. On Docker Desktop use the shipped `WORK_DOCKER_PUBLISHED_HOST=host.docker.internal`; on native Docker Engine also set `WORK_PREVIEW_BIND` to the non-public Docker bridge gateway, then recreate Libre WebUI. |
 
 Read the socket group through a container, because a macOS host reports a
@@ -621,6 +621,108 @@ rm -rf backend/data
 ```
 
 Restart the backend and create a fresh account.
+
+## Cordis Bridge Problems
+
+The embedded Cordis/DSH engine is opt-in and reports its own state. Start with:
+
+```bash
+curl -s http://127.0.0.1:3001/api/cordis/health | jq
+```
+
+### Every route returns 503 with `CORDIS_DISABLED`
+
+The bridge is off. Set `features.enabled: true` in `backend/cordis.config.yml`,
+or export `LIBRE_CORDIS_ENABLED=true`, then restart the backend. The engine
+starts lazily on the first request, so no separate start step is needed.
+
+### Every route returns 503 with `CORDIS_UNAVAILABLE`
+
+The composition did not mount. The `error` field names the reason, and
+`LIBRE_CORDIS_TRACE=true` adds the Cordis activation log. The usual causes:
+
+- `cordis.patch.yml` is missing, or is a mapping instead of a top-level array.
+  The Cordis `Include` carrier rejects any file that is not an array, which is
+  why host settings live in `cordis.config.yml` instead.
+- A row's `name` is a `!!js` expression. `name` is imported directly and must be
+  a literal string.
+- A relative specifier points outside the composition file's directory.
+  Relative specifiers resolve against the composition, not against the backend.
+- A package named by a row is not installed in `backend/node_modules`.
+
+### The engine starts but a service stays `pending`
+
+`/api/cordis/health` reports each service's state. A service that is `pending`
+means its providing row never activated. Read the dependencies:
+
+- `dsh-tools` needs `systemPrompt`. Without it there is a session store and an
+  empty tool registry.
+- `dsh-agent-loop` needs `agents`, `sessions`, `llm`, `tools`, `systemPrompt`,
+  and `sessionProjections`. Without any of them, sessions work but no message is
+  ever answered.
+
+`GET /api/cordis/tools` returning an empty array has a different cause: no tool
+plugin row is mounted. `dsh-tools` provides the registry; a plugin such as
+`@deepseek-ai/dsh-tool-fs` provides the tools.
+
+### The backend refuses to start when the bridge is enabled
+
+Startup fails when a required service is missing, by design: a half-mounted
+engine that answers with empty lists is worse than a clear failure. The error
+names the missing services. Either add their rows to `cordis.patch.yml` or turn
+off the requirement that needs them, for example
+`features.persistence: false` when no persistence row is mounted.
+
+### A message is accepted but the reply is empty
+
+The turn ran and produced no assistant message. This almost always means the
+agent had no model pinned, so the engine resolved no route. Set `model.route`
+and `model.model` in `cordis.config.yml` — the host passes both to the bridge
+row. A turn that produces no text and no error is the symptom.
+
+If `model.provider` is `none`, this is expected: no adapter is mounted and no
+request can be served.
+
+### Swapping the model adapter fails with "already registered"
+
+`an adapter for provider "<name>" is already registered` means the previous
+adapter's routes were still registered when the replacement mounted. The
+controller awaits `Loader.remove()` before creating the replacement precisely to
+prevent this, so seeing it means two rows claim the same route: check that
+`cordis.patch.yml` does not mount a provider adapter while the host also mounts
+one through `model.provider`. Set `model.provider: none` if the composition owns
+the adapter rows.
+
+### Sessions vanish after a restart
+
+Set `features.persistence: true` and mount the
+`@deepseek-ai/dsh-session-persistence-jsonl` row. Without it the engine keeps
+sessions in memory only. The row's `root` config is the directory it writes;
+`LIBRE_CORDIS_SESSION_STORE` is the value the shipped composition reads.
+
+### Sessions collide or a session cannot be created
+
+Session ids carry a per-engine random prefix. Two engines in one process that
+both minted `session-1` would collide, because `dsh-session-persistence-jsonl`
+indexes live sessions process-wide. If you see `session "<id>" already exists`,
+a session file from an earlier run is present in the store directory or two
+engines share one store. Use a distinct `sessionStorePath` per engine.
+
+### The engine changed files it should not have
+
+The engine runs tools with real filesystem access, and tool execution is not
+mediated by Libre WebUI's tool-approval flow. Check `workspacePath`: it defaults
+to a directory under Libre WebUI's data directory, and an operator who points it
+at a source tree has granted the engine access to that tree. Turning the bridge
+off or removing the bridge row stops the engine; it does not undo file changes.
+
+### Rolling back the engine
+
+Removing the bridge row from `cordis.patch.yml` and restarting, or setting
+`features.enabled: false`, withdraws the `libreDshEngine` service, releases its
+session-event listener, and disposes every agent it created. Session files on
+disk remain, because they are data rather than a side effect; delete the
+`sessionStorePath` directory to remove them.
 
 ## Still Stuck
 
