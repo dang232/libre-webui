@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,7 @@ const MARK_SIZE: Record<NonNullable<LogoMarkProps['size']>, string> = {
 };
 
 /**
- * The Libre WebUI mark, drawn rather than typeset.
+ * The Alcore mark, drawn rather than typeset.
  *
  * Inlined instead of loaded from /logo.svg so the strokes take `currentColor`:
  * one file serves both themes, it repaints with the surrounding text in the
@@ -46,7 +46,7 @@ const MARK_SIZE: Record<NonNullable<LogoMarkProps['size']>, string> = {
 export const LogoMark: React.FC<LogoMarkProps> = ({
   className,
   size = 'md',
-  label = 'Libre WebUI',
+  label = 'Alcore',
 }) => {
   return (
     <svg

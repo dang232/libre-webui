@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,7 @@
 
 import { useEffect, useState } from 'react';
 
-const SEEN_STORAGE_KEY = 'libre-webui:whats-new-seen';
+const SEEN_STORAGE_KEY = 'alcore:whats-new-seen';
 
 export function useWhatsNew() {
   const notes = __LATEST_RELEASE_NOTES__;
@@ -35,8 +35,8 @@ export function useWhatsNew() {
   // Settings → About re-opens the release notes on demand.
   useEffect(() => {
     const onOpen = () => setOpen(true);
-    window.addEventListener('libre:open-whats-new', onOpen);
-    return () => window.removeEventListener('libre:open-whats-new', onOpen);
+    window.addEventListener('alcore:open-whats-new', onOpen);
+    return () => window.removeEventListener('alcore:open-whats-new', onOpen);
   }, []);
 
   const dismiss = () => {

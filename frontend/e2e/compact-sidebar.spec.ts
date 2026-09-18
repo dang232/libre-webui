@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -177,7 +177,7 @@ test('legacy User Management pins stay absent while System and Settings remain a
 }) => {
   await page.addInitScript(() => {
     localStorage.setItem(
-      'libre-webui-app-state',
+      'alcore-app-state',
       JSON.stringify({
         state: { pinnedAdminShortcuts: ['users', 'system'] },
         version: 0,

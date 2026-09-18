@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@ import {
 
 test('canonical digest ignores object key order and the integrity field', async () => {
   const first = {
-    format: 'libre-webui-user-data',
+    format: 'alcore-user-data',
     version: 3,
     notes: [{ id: 'note-1', content: 'portable' }],
     integrity: { digest: 'not-part-of-the-payload' },
@@ -33,7 +33,7 @@ test('canonical digest ignores object key order and the integrity field', async 
   const reordered = {
     notes: [{ content: 'portable', id: 'note-1' }],
     version: 3,
-    format: 'libre-webui-user-data',
+    format: 'alcore-user-data',
     integrity: { digest: 'different-and-still-ignored' },
   };
   assert.equal(
@@ -48,23 +48,34 @@ test('canonical digest ignores object key order and the integrity field', async 
 
 test('accepts the current portable archive format', () => {
   const archive = parsePortableArchiveJson(
-    JSON.stringify({ format: 'libre-webui-user-data', version: 3 })
+    JSON.stringify({ format: 'alcore-user-data', version: 3 })
   );
   assert.equal(archive.version, 3);
 });
 
 test('accepts version 2 so the backend can migrate it with a warning', () => {
   const archive = parsePortableArchiveJson(
-    JSON.stringify({ format: 'libre-webui-user-data', version: 2 })
+    JSON.stringify({ format: 'alcore-user-data', version: 2 })
   );
   assert.equal(archive.version, 2);
 });
 
 test('accepts the legacy archive so the backend can migrate it', () => {
   const archive = parsePortableArchiveJson(
+    JSON.stringify({ format: 'alcore-export', version: '1.0' })
+  );
+  assert.equal(archive.format, 'alcore-export');
+});
+
+test('accepts pre-rename archives for backward compatibility', () => {
+  const current = parsePortableArchiveJson(
+    JSON.stringify({ format: 'libre-webui-user-data', version: 3 })
+  );
+  assert.equal(current.version, 3);
+  const legacy = parsePortableArchiveJson(
     JSON.stringify({ format: 'libre-webui-export', version: '1.0' })
   );
-  assert.equal(archive.format, 'libre-webui-export');
+  assert.equal(legacy.format, 'libre-webui-export');
 });
 
 test('rejects malformed JSON, unrelated files, and future versions', () => {
@@ -88,7 +99,7 @@ test('rejects malformed JSON, unrelated files, and future versions', () => {
   assert.throws(
     () =>
       parsePortableArchiveJson(
-        JSON.stringify({ format: 'libre-webui-user-data', version: 4 })
+        JSON.stringify({ format: 'alcore-user-data', version: 4 })
       ),
     error =>
       error instanceof PortableArchiveParseError &&

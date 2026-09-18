@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,7 +57,7 @@ export const useInitializeApp = () => {
     const initialize = async () => {
       initializing.current = true;
       try {
-        logger.debug('Initializing Libre WebUI...');
+        logger.debug('Initializing Alcore...');
 
         // Initialize authentication first
         await UserService.initializeAuth();
@@ -97,7 +97,7 @@ export const useInitializeApp = () => {
         await Promise.all([loadModels(), loadSessions(), loadPlugins()]);
 
         initialized.current = true;
-        logger.debug('Libre WebUI initialized successfully');
+        logger.debug('Alcore initialized successfully');
       } catch (_error) {
         if (!isDemoMode()) {
           logger.error('Failed to initialize app:', _error);

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,11 +22,11 @@ import {
   getAgentsEnabled,
   setAgentsEnabled,
 } from '../services/agentAccessService.js';
-import libreClawService, {
-  LibreClawPermissionResolution,
-  LibreClawRunRequest,
-  LibreClawServiceError,
-} from '../services/libreClawService.js';
+import alcoreClawService, {
+  AlcoreClawPermissionResolution,
+  AlcoreClawRunRequest,
+  AlcoreClawServiceError,
+} from '../services/alcoreClawService.js';
 import { ApiResponse } from '../types/index.js';
 
 const router = express.Router();
@@ -81,30 +81,30 @@ router.use(async (_req: Request, res: Response, next): Promise<void> => {
 });
 
 router.get('/status', async (_req: Request, res: Response): Promise<void> => {
-  const status = await libreClawService.status();
+  const status = await alcoreClawService.status();
   sendSuccess(res, status);
 });
 
 router.get('/health', async (_req: Request, res: Response): Promise<void> => {
-  await sendLibreClaw(res, () => libreClawService.health());
+  await sendAlcoreClaw(res, () => alcoreClawService.health());
 });
 
 router.get('/dashboard', (_req: Request, res: Response): void => {
-  sendSuccess(res, { url: libreClawService.dashboardUrl() });
+  sendSuccess(res, { url: alcoreClawService.dashboardUrl() });
 });
 
 router.get(
   '/config/model',
   async (_req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () => libreClawService.currentModel());
+    await sendAlcoreClaw(res, () => alcoreClawService.currentModel());
   }
 );
 
 router.patch(
   '/config/model',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () =>
-      libreClawService.updateModel({
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.updateModel({
         provider: String(req.body?.provider || '').trim(),
         model: String(req.body?.model || '').trim(),
         persist_global: Boolean(req.body?.persist_global),
@@ -116,15 +116,15 @@ router.patch(
 router.get(
   '/config/fallback',
   async (_req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () => libreClawService.currentFallback());
+    await sendAlcoreClaw(res, () => alcoreClawService.currentFallback());
   }
 );
 
 router.patch(
   '/config/fallback',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () =>
-      libreClawService.updateFallback(req.body || {})
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.updateFallback(req.body || {})
     );
   }
 );
@@ -132,8 +132,8 @@ router.patch(
 router.patch(
   '/config/theme',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () =>
-      libreClawService.updateTheme({
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.updateTheme({
         theme: String(req.body?.theme || '').trim(),
         persist_global: req.body?.persist_global !== false,
       })
@@ -142,22 +142,22 @@ router.patch(
 );
 
 router.get('/runs', async (req: Request, res: Response): Promise<void> => {
-  await sendLibreClaw(res, () =>
-    libreClawService.listRuns(readLimit(req, 20, 100))
+  await sendAlcoreClaw(res, () =>
+    alcoreClawService.listRuns(readLimit(req, 20, 100))
   );
 });
 
 router.post('/runs', async (req: Request, res: Response): Promise<void> => {
-  const payload = req.body as Partial<LibreClawRunRequest>;
-  await sendLibreClaw(
+  const payload = req.body as Partial<AlcoreClawRunRequest>;
+  await sendAlcoreClaw(
     res,
     () =>
-      libreClawService.startRun({
+      alcoreClawService.startRun({
         message: String(payload?.message || '').trim(),
         kind: payload?.kind === 'goal' ? 'goal' : 'chat',
         provider: cleanOptionalString(payload?.provider),
         model: cleanOptionalString(payload?.model),
-        surface: 'libre-webui',
+        surface: 'alcore',
         session: payload?.session,
         attachments: payload?.attachments,
       }),
@@ -168,8 +168,8 @@ router.post('/runs', async (req: Request, res: Response): Promise<void> => {
 router.get(
   '/runs/:runId',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () =>
-      libreClawService.getRun(readParam(req, 'runId'))
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.getRun(readParam(req, 'runId'))
     );
   }
 );
@@ -177,8 +177,8 @@ router.get(
 router.get(
   '/runs/:runId/events',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () =>
-      libreClawService.getEvents(readParam(req, 'runId'), readAfter(req))
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.getEvents(readParam(req, 'runId'), readAfter(req))
     );
   }
 );
@@ -186,8 +186,8 @@ router.get(
 router.post(
   '/runs/:runId/cancel',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () =>
-      libreClawService.cancelRun(readParam(req, 'runId'))
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.cancelRun(readParam(req, 'runId'))
     );
   }
 );
@@ -196,11 +196,11 @@ router.post(
   '/runs/:runId/permissions/:toolCallId',
   async (req: Request, res: Response): Promise<void> => {
     const resolution = String(req.body?.resolution || 'deny');
-    const payload: LibreClawPermissionResolution = {
+    const payload: AlcoreClawPermissionResolution = {
       resolution: isPermissionResolution(resolution) ? resolution : 'deny',
     };
-    await sendLibreClaw(res, () =>
-      libreClawService.resolvePermission(
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.resolvePermission(
         readParam(req, 'runId'),
         readParam(req, 'toolCallId'),
         payload
@@ -210,8 +210,8 @@ router.post(
 );
 
 router.get('/usage', async (req: Request, res: Response): Promise<void> => {
-  await sendLibreClaw(res, () =>
-    libreClawService.usage(
+  await sendAlcoreClaw(res, () =>
+    alcoreClawService.usage(
       String(req.query.provider || '').trim(),
       readLimit(req, 250, 1000)
     )
@@ -221,8 +221,8 @@ router.get('/usage', async (req: Request, res: Response): Promise<void> => {
 router.get(
   '/automations',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () =>
-      libreClawService.listAutomations(readLimit(req, 50, 200))
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.listAutomations(readLimit(req, 50, 200))
     );
   }
 );
@@ -230,9 +230,9 @@ router.get(
 router.post(
   '/automations',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(
+    await sendAlcoreClaw(
       res,
-      () => libreClawService.createAutomation(req.body || {}),
+      () => alcoreClawService.createAutomation(req.body || {}),
       201
     );
   }
@@ -241,8 +241,8 @@ router.post(
 router.get(
   '/automations/:automationId',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () =>
-      libreClawService.getAutomation(readParam(req, 'automationId'))
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.getAutomation(readParam(req, 'automationId'))
     );
   }
 );
@@ -250,8 +250,8 @@ router.get(
 router.patch(
   '/automations/:automationId',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () =>
-      libreClawService.updateAutomation(
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.updateAutomation(
         readParam(req, 'automationId'),
         req.body || {}
       )
@@ -262,8 +262,8 @@ router.patch(
 router.put(
   '/automations/:automationId',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () =>
-      libreClawService.updateAutomation(
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.updateAutomation(
         readParam(req, 'automationId'),
         req.body || {}
       )
@@ -274,8 +274,8 @@ router.put(
 router.post(
   '/automations/:automationId/pause',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () =>
-      libreClawService.pauseAutomation(readParam(req, 'automationId'))
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.pauseAutomation(readParam(req, 'automationId'))
     );
   }
 );
@@ -283,8 +283,8 @@ router.post(
 router.post(
   '/automations/:automationId/resume',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () =>
-      libreClawService.resumeAutomation(readParam(req, 'automationId'))
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.resumeAutomation(readParam(req, 'automationId'))
     );
   }
 );
@@ -292,8 +292,8 @@ router.post(
 router.post(
   '/automations/:automationId/run',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () =>
-      libreClawService.runAutomationNow(readParam(req, 'automationId'))
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.runAutomationNow(readParam(req, 'automationId'))
     );
   }
 );
@@ -301,13 +301,13 @@ router.post(
 router.delete(
   '/automations/:automationId',
   async (req: Request, res: Response): Promise<void> => {
-    await sendLibreClaw(res, () =>
-      libreClawService.deleteAutomation(readParam(req, 'automationId'))
+    await sendAlcoreClaw(res, () =>
+      alcoreClawService.deleteAutomation(readParam(req, 'automationId'))
     );
   }
 );
 
-const sendLibreClaw = async <T>(
+const sendAlcoreClaw = async <T>(
   res: Response<ApiResponse<T>>,
   action: () => Promise<T>,
   successStatus = 200
@@ -316,9 +316,9 @@ const sendLibreClaw = async <T>(
     const data = await action();
     res.status(successStatus).json({ success: true, data });
   } catch (error) {
-    const status = error instanceof LibreClawServiceError ? error.status : 500;
+    const status = error instanceof AlcoreClawServiceError ? error.status : 500;
     const message =
-      error instanceof Error ? error.message : 'Libre Claw request failed';
+      error instanceof Error ? error.message : 'Alcore Claw request failed';
     res.status(status).json({
       success: false,
       error: message,
@@ -356,7 +356,7 @@ const cleanOptionalString = (value: unknown): string | undefined => {
 
 const isPermissionResolution = (
   value: string
-): value is LibreClawPermissionResolution['resolution'] =>
+): value is AlcoreClawPermissionResolution['resolution'] =>
   value === 'allow_once' ||
   value === 'deny' ||
   value === 'always_allow_tool' ||

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -194,7 +194,7 @@ test('slider edits preview immediately and coalesce into one save without losing
   context.mock.timers.tick(250);
   await Promise.all([first, second, last]);
   assert.deepEqual(requests, [{ backgroundSettings: initial }]);
-  const persisted = JSON.parse(storage.get('libre-webui-app-state')!);
+  const persisted = JSON.parse(storage.get('alcore-app-state')!);
   assert.equal(persisted.state.backgroundImage, undefined);
   assert.equal(persisted.state.preferences.backgroundSettings, undefined);
 });

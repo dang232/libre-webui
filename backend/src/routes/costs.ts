@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -216,7 +216,7 @@ router.get('/export', async (req, res) => {
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader(
       'Content-Disposition',
-      'attachment; filename="libre-webui-costs.csv"'
+      'attachment; filename="alcore-costs.csv"'
     );
     res.send(csv);
   } catch (error) {

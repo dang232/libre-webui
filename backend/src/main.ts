@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -119,7 +119,7 @@ try {
         readSQLitePreflightIdentity(databasePath),
         marker
       );
-    const skipScanByEnv = process.env.LIBRE_SKIP_STARTUP_INTEGRITY_SCAN === '1';
+    const skipScanByEnv = process.env.ALCORE_SKIP_STARTUP_INTEGRITY_SCAN === '1';
     if (!verifiedBefore) {
       legacyEncryptionKey = Buffer.from(encryptionKeyHex, 'hex');
       try {
@@ -158,7 +158,7 @@ try {
       }
       if (skipScanByEnv) {
         startupLogger.warn(
-          'LIBRE_SKIP_STARTUP_INTEGRITY_SCAN=1: skipping legacy ciphertext verification.'
+          'ALCORE_SKIP_STARTUP_INTEGRITY_SCAN=1: skipping legacy ciphertext verification.'
         );
       }
     }
@@ -195,7 +195,7 @@ if (platformConfig.mode === 'team') {
 const { initializeSelectedWorkPersistence } =
   await import('./platform/workPersistence/index.js');
 initializeSelectedWorkPersistence(platformConfig.database.backend);
-process.env.LIBRE_PROCESS_ROLE =
+process.env.ALCORE_PROCESS_ROLE =
   platformConfig.jobs.workerMode === 'external'
     ? 'app-external'
     : 'app-embedded';

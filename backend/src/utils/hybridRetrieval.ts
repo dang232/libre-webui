@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
 /**
  * Lexical scoring and rank fusion for hybrid document retrieval.
  *
- * Chunk text is encrypted at rest in both storage dialects, so Libre keeps
+ * Chunk text is encrypted at rest in both storage dialects, so Alcore keeps
  * lexical scoring in-process instead of building an on-disk full-text index
  * that would persist plaintext tokens next to the ciphertext. BM25 runs over
  * the ACL-scoped candidate set the caller already loaded, and reciprocal-rank

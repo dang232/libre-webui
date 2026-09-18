@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -165,7 +165,7 @@ export const CostGovernancePanel: React.FC<{ days: number }> = ({ days }) => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'libre-webui-costs.csv';
+      link.download = 'alcore-costs.csv';
       document.body.appendChild(link);
       link.click();
       link.remove();

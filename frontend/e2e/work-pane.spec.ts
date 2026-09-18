@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -298,7 +298,7 @@ test('uses the Libre identity and authenticated user avatar in Work', async ({
 
   const assistantAvatar = page.getByTestId('work-assistant-avatar');
   await expect(assistantAvatar).toHaveCount(1);
-  await expect(assistantAvatar).toHaveAttribute('aria-label', 'Libre WebUI');
+  await expect(assistantAvatar).toHaveAttribute('aria-label', 'Alcore');
   // The avatar is the drawn mark, not the wordmark; the accessible name above
   // is what carries the product name.
   await expect(assistantAvatar.locator('svg')).toHaveCount(1);
@@ -794,7 +794,7 @@ test('clears a selected persona removed by a later model refresh', async ({
 
   personas.splice(0, 1);
   await page.evaluate(() => {
-    window.dispatchEvent(new Event('libre:models-changed'));
+    window.dispatchEvent(new Event('alcore:models-changed'));
   });
 
   await expect(personaSelect).toHaveValue('');
@@ -2073,7 +2073,7 @@ test('renders live reasoning, tokens, skills, and tool activity from the Work ev
   // product name, as asserted for the conversation avatar above.
   await expect(
     liveRunMessage.getByTestId('work-assistant-avatar')
-  ).toHaveAttribute('aria-label', 'Libre WebUI');
+  ).toHaveAttribute('aria-label', 'Alcore');
   await expect(liveRun).toContainText('1/48');
   await expect(liveRun).toContainText('Workspace skills · 1');
   await expect(liveRun).not.toContainText('Web app workflow');

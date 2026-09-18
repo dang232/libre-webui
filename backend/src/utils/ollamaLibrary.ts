@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -320,7 +320,7 @@ async function fetchOllamaPage(
         Accept: 'text/html',
         'HX-Request': 'true',
         'User-Agent':
-          'Mozilla/5.0 (compatible; LibreWebUI/1.0; +https://librewebui.org)',
+          'Mozilla/5.0 (compatible; Alcore/1.0; +https://librewebui.org)',
       },
     }
   );

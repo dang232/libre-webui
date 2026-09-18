@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,7 @@ const session = {
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     // Tabs persist across reloads; start each test from a clean strip.
-    localStorage.removeItem('libre-webui-tabs');
+    localStorage.removeItem('alcore-tabs');
   });
 });
 

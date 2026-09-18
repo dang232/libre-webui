@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -208,7 +208,7 @@ router.post(
   requireAdmin,
   async (_req: Request, res: Response): Promise<void> => {
     try {
-      const results = await webSearch('libre webui', 3);
+      const results = await webSearch('alcore', 3);
       res.json({ success: true, data: { ok: true, results: results.length } });
     } catch (error) {
       res.status(502).json({

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -58,7 +58,7 @@ for (const { language, mode } of [
       ({ language, sessions }) => {
         localStorage.setItem('i18nextLng', language);
         localStorage.setItem(
-          'libre-webui-tabs',
+          'alcore-tabs',
           JSON.stringify({
             state: {
               tabs: [

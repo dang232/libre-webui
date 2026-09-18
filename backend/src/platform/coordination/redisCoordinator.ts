@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -213,7 +213,7 @@ export class RedisCoordinator implements Coordinator {
   private lastError?: Error;
 
   constructor(options: RedisCoordinatorOptions) {
-    this.prefix = options.keyPrefix?.trim() || 'libre';
+    this.prefix = options.keyPrefix?.trim() || 'alcore';
     this.connectTimeoutMs = options.connectTimeoutMs || 5_000;
     this.now = options.now || Date.now;
     const clients =

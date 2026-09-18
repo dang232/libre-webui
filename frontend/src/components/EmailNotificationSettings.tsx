@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -405,7 +405,7 @@ export const EmailNotificationSettings: React.FC = () => {
               <Input
                 value={draft.from}
                 onChange={event => update('from', event.target.value)}
-                placeholder='Libre WebUI <notifications@example.com>'
+                placeholder='Alcoreifications@example.com>'
                 spellCheck={false}
                 dir='ltr'
                 data-testid='email-smtp-from'

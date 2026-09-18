@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +43,7 @@ export function CompactSidebarSearch() {
       <button
         type='button'
         data-testid='sidebar-search-button'
-        onClick={() => window.dispatchEvent(new Event('libre:open-palette'))}
+        onClick={() => window.dispatchEvent(new Event('alcore:open-palette'))}
         title={t('palette.search', 'Search')}
         aria-label={t('palette.search', 'Search')}
         className={compactSidebarButtonClass}
@@ -207,7 +207,7 @@ export function SidebarHeader({
       <button
         type='button'
         data-testid='sidebar-search-button'
-        onClick={() => window.dispatchEvent(new Event('libre:open-palette'))}
+        onClick={() => window.dispatchEvent(new Event('alcore:open-palette'))}
         title={t('palette.search', 'Search')}
         aria-label={t('palette.search', 'Search')}
         className='mt-1.5 flex h-[34px] w-full items-center gap-2 rounded-xl px-2.5 text-sm text-ink-muted transition-colors hover:bg-interactive-hover hover:text-ink outline-none focus-visible:ring-2 focus-visible:ring-primary-500/30 touch-manipulation'

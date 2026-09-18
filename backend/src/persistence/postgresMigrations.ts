@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -167,7 +167,7 @@ const assertAppliedLedger = (
   for (const [index, row] of applied.entries()) {
     const expected = migrations[index];
     if (!expected) {
-      throw new Error('Database schema is newer than this Libre binary');
+      throw new Error('Database schema is newer than this Alcore binary');
     }
     if (
       Number(row.version) !== expected.version ||
@@ -202,7 +202,7 @@ const assertFreshSchemaIsEmpty = async (client: PoolClient): Promise<void> => {
   );
   if (Number(result.rows[0]?.relation_count || 0) !== 0) {
     throw new Error(
-      'PostgreSQL schema has application tables but no Libre migration ledger; migrate from SQLite with the supported import tool or use a clean schema'
+      'PostgreSQL schema has application tables but no Alcore migration ledger; migrate from SQLite with the supported import tool or use a clean schema'
     );
   }
 };
@@ -438,7 +438,7 @@ export const runPostgresMigrationCoordinator = async (
           migrations,
           'incompatible',
           target.version,
-          'PostgreSQL has an incomplete SQLite import; resume and validate the supported import before starting Libre'
+          'PostgreSQL has an incomplete SQLite import; resume and validate the supported import before starting Alcore'
         );
         await updateState(client, {
           status: 'incompatible',

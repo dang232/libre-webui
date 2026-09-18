@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -181,10 +181,10 @@ export const ChatSourcesPanel: React.FC<ChatSourcesPanelProps> = ({
         .catch(() => {});
     };
     load();
-    window.addEventListener('libre:documents-updated', load);
+    window.addEventListener('alcore:documents-updated', load);
     return () => {
       cancelled = true;
-      window.removeEventListener('libre:documents-updated', load);
+      window.removeEventListener('alcore:documents-updated', load);
     };
   }, [session.id, session.isPrivate]);
 

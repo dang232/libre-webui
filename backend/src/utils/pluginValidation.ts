@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,7 @@ const PLUGIN_API_MODES = new Set<PluginApiMode>([
 const MAX_API_PATH_DECODE_PASSES = 8;
 // https://openrouter.ai/docs/app-attribution
 const OPENROUTER_APP_URL = 'https://librewebui.org';
-const OPENROUTER_APP_TITLE = 'Libre WebUI';
+const OPENROUTER_APP_TITLE = 'Alcore';
 const OPENROUTER_APP_CATEGORIES = 'general-chat,personal-agent';
 export const PLUGIN_MODEL_DISCOVERY_VARIABLES = [
   'endpoint',

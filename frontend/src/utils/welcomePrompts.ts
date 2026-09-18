@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,7 @@
 
 const WELCOME_PROMPT_STORAGE_KEY = 'welcomePromptIndex';
 
-export const WELCOME_PROMPT_CHANGE_EVENT = 'libre:welcome-prompt-change';
+export const WELCOME_PROMPT_CHANGE_EVENT = 'alcore:welcome-prompt-change';
 
 export const WELCOME_PROMPT_IDS = [
   'time',

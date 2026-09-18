@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1135,7 +1135,7 @@ export class PluginService {
       }
       if (historicalEntries.some(entry => entry.name.endsWith('.json'))) {
         throw new Error(
-          `Legacy plugin definitions exist at ${historicalDirectory}, where the relative PLUGINS_DIR previously resolved from the caller working directory. Move them into ${this.pluginsDir} or configure an absolute PLUGINS_DIR; Libre will not silently choose between them.`
+          `Legacy plugin definitions exist at ${historicalDirectory}, where the relative PLUGINS_DIR previously resolved from the caller working directory. Move them into ${this.pluginsDir} or configure an absolute PLUGINS_DIR; Alcore will not silently choose between them.`
         );
       }
     }

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -33,7 +33,7 @@ export const BACKUP_SECRET_NAMES = [
   'S3_SESSION_TOKEN',
 ] as const;
 export const BACKUP_RUNTIME_NAMES = [
-  'LIBRE_PLATFORM_MODE',
+  'ALCORE_PLATFORM_MODE',
   'DATABASE_BACKEND',
   'BLOB_STORE_BACKEND',
   'BLOB_QUOTA_BYTES_PER_USER',
@@ -87,7 +87,7 @@ export interface BackupArchiveFile {
 }
 
 export interface BackupArchiveManifest {
-  format: 'libre-webui-integrated-backup';
+  format: 'alcore-integrated-backup';
   version: 1;
   backupId: string;
   createdAt: string;
@@ -459,7 +459,7 @@ const parseHeader = (
     const header = parsed as BackupArchiveHeader;
     if (
       !header ||
-      header.manifest?.format !== 'libre-webui-integrated-backup' ||
+      header.manifest?.format !== 'alcore-integrated-backup' ||
       header.manifest.version !== 1 ||
       header.encryption?.algorithm !== 'aes-256-gcm' ||
       header.signature?.algorithm !== 'ed25519' ||
@@ -1033,7 +1033,7 @@ export const createBackupArchive = async (
   }
   const env = options.env ?? process.env;
   if (
-    env.LIBRE_PLATFORM_MODE?.trim().toLowerCase() === 'team' ||
+    env.ALCORE_PLATFORM_MODE?.trim().toLowerCase() === 'team' ||
     env.DATABASE_BACKEND?.trim().toLowerCase() === 'postgres' ||
     env.BLOB_STORE_BACKEND?.trim().toLowerCase() === 's3' ||
     env.VECTOR_STORE_BACKEND?.trim().toLowerCase() === 'pgvector'
@@ -1066,17 +1066,17 @@ export const createBackupArchive = async (
     assertSourceMatchesStagedData(options.dataDir, inspectFiles(staged));
     const pkg = loadAppPackage(import.meta.url);
     const manifest: BackupArchiveManifestInput = {
-      format: 'libre-webui-integrated-backup',
+      format: 'alcore-integrated-backup',
       version: 1,
       backupId: crypto.randomUUID(),
       createdAt: (options.now ?? new Date()).toISOString(),
       application: {
-        name: 'libre-webui',
+          name: 'alcore',
         version: pkg.version || 'unknown',
         nodeVersion: process.version,
       },
       source: {
-        platformMode: env.LIBRE_PLATFORM_MODE || 'solo',
+        platformMode: env.ALCORE_PLATFORM_MODE || 'solo',
         databaseBackend: env.DATABASE_BACKEND || 'sqlite',
         blobBackend: env.BLOB_STORE_BACKEND || 'local',
         vectorBackend: env.VECTOR_STORE_BACKEND || 'embedded',

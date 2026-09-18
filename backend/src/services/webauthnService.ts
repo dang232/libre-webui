@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -218,7 +218,7 @@ export const registrationOptions = async (
     challengeToken: token,
     publicKey: {
       challenge,
-      rp: { id: rpId, name: 'Libre WebUI' },
+      rp: { id: rpId, name: 'Alcore' },
       user: {
         id: Buffer.from(user.id, 'utf8').toString('base64url'),
         name: user.username,

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -118,7 +118,7 @@ const otelHeaders = (): Record<string, string> => {
 };
 
 const serviceName = (): string =>
-  process.env.OTEL_SERVICE_NAME?.trim() || 'libre-webui';
+  process.env.OTEL_SERVICE_NAME?.trim() || 'alcore';
 
 const hexId = (bytes: number): string => randomBytes(bytes).toString('hex');
 
@@ -160,7 +160,7 @@ const resource = () => ({
   attributes: [{ key: 'service.name', value: { stringValue: serviceName() } }],
 });
 
-const scope = () => ({ name: 'libre-webui' });
+const scope = () => ({ name: 'alcore' });
 
 const ensureTimer = (): void => {
   if (state.timer || !isOtelEnabled()) return;

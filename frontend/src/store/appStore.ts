@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -623,7 +623,7 @@ export const useAppStore = create<AppState>()(
       },
     }),
     {
-      name: 'libre-webui-app-state',
+      name: 'alcore-app-state',
       onRehydrateStorage: () => state => {
         if (state) {
           state.setTheme(normalizeTheme(state.theme));

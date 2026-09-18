@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -26,11 +26,11 @@ interface CliOptions {
 
 const usage = (): string =>
   [
-    'Usage: libre-webui migrate-postgres --source <data.sqlite> [--plugins <directory>] --mode <dry-run|apply|validate> [--resume]',
+    'Usage: alcore migrate-postgres --source <data.sqlite> [--plugins <directory>] --mode <dry-run|apply|validate> [--resume]',
     'Source checkout: npm run migrate:postgres -- --source <data.sqlite> [--plugins <directory>] --mode <dry-run|apply|validate> [--resume]',
     '',
-    'DATABASE_URL and PostgreSQL TLS/pool settings are read from the normal Libre environment.',
-    'Stop every Libre app and worker before apply. Credentials and local paths are never printed.',
+    'DATABASE_URL and PostgreSQL TLS/pool settings are read from the normal Alcore environment.',
+    'Stop every Alcore app and worker before apply. Credentials and local paths are never printed.',
   ].join('\n');
 
 const parse = (argv: readonly string[]): CliOptions => {

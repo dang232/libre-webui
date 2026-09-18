@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,7 @@ const LEVEL_PRIORITY: Record<LogLevel, number> = {
   debug: 4,
 };
 
-const STORAGE_KEY = 'libre-webui:log-level';
+const STORAGE_KEY = 'alcore:log-level';
 
 const normalizeLogLevel = (level?: string): LogLevel | undefined => {
   const normalized = level?.trim().toLowerCase();

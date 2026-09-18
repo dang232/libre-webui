@@ -41,8 +41,8 @@
     "more": "أكثر"
   },
   "brand": {
-    "name": "Libre WebUI",
-    "shortName": "Libre"
+    "name": "Alcore",
+    "shortName": "Alcore"
   },
   "appInitialization": {
     "ollamaUnavailable": "خدمة Ollama غير متاحة. لا يزال من الممكن استخدام نماذج الإضافات.",
@@ -191,9 +191,9 @@
   },
   "setup": {
     "welcome": {
-      "title": "مرحباً بك في Libre WebUI",
+      "title": "مرحباً بك في Alcore",
       "subtitle": "لنبدأ",
-      "description": "قم بإعداد Libre WebUI الخاص بك في خطوات قليلة",
+      "description": "قم بإعداد Alcore الخاص بك في خطوات قليلة",
       "createAdmin": "إنشاء حساب المسؤول",
       "features": {
         "secure": {
@@ -213,7 +213,7 @@
     "admin": {
       "title": "إنشاء حساب المسؤول",
       "subtitle": "إعداد المسؤول",
-      "description": "أنشئ أول حساب مسؤول لـ Libre WebUI الخاص بك",
+      "description": "أنشئ أول حساب مسؤول لـ Alcore الخاص بك",
       "usernamePlaceholder": "أدخل اسم المسؤول",
       "passwordPlaceholder": "أدخل كلمة مرور (12 حرفًا على الأقل)",
       "confirmPlaceholder": "أكّد كلمة المرور",
@@ -223,7 +223,7 @@
       "failed": "فشل إنشاء حساب المسؤول",
       "approvalUnexpected": "تعذر تفعيل المسؤول الأولي. يرجى المحاولة مرة أخرى.",
       "fillAllFields": "يرجى ملء جميع الحقول",
-      "note": "سيكون هذا حساب المسؤول الرئيسي لـ Libre WebUI الخاص بك"
+      "note": "سيكون هذا حساب المسؤول الرئيسي لـ Alcore الخاص بك"
     },
     "encryptionKey": {
       "title": "احفظ مفتاح التشفير",
@@ -239,7 +239,7 @@
       "envNote": "هذا المفتاح محفوظ أيضاً في ملف backend/.env كـ ENCRYPTION_KEY",
       "acknowledgment": "لقد حفظت مفتاح التشفير في مكان آمن وأفهم أن فقدانه قد يؤدي إلى فقدان البيانات.",
       "confirmRequired": "يرجى التأكيد على أنك حفظت مفتاح التشفير",
-      "continue": "المتابعة إلى Libre WebUI"
+      "continue": "المتابعة إلى Alcore"
     },
     "connectModels": {
       "title": "قم بتوصيل نماذجك",
@@ -1047,7 +1047,7 @@
       "toSkip": "للتخطي",
       "documents": "المستندات",
       "warnings": "تحذيرات",
-      "refreshAfterImportFailed": "تم استيراد البيانات، لكن تعذّر تحديث بعض العروض. أعد تحميل Libre WebUI لرؤية جميع التغييرات.",
+      "refreshAfterImportFailed": "تم استيراد البيانات، لكن تعذّر تحديث بعض العروض. أعد تحميل Alcore لرؤية جميع التغييرات.",
       "exportSuccess": "تم تصدير أرشيف البيانات القابل للنقل",
       "exportFailed": "فشل التصدير",
       "importSuccess": "تم استيراد أرشيف البيانات القابل للنقل",
@@ -1056,7 +1056,7 @@
         "invalidJson": "أرشيف البيانات القابل للنقل ليس بتنسيق JSON صالح.",
         "objectRequired": "يجب أن يحتوي أرشيف البيانات القابل للنقل على كائن JSON.",
         "unsupportedVersion": "إصدار أرشيف البيانات القابل للنقل {{version}} غير مدعوم.",
-        "unrecognized": "هذا الملف ليس أرشيف بيانات قابلاً للنقل خاصاً بـ Libre WebUI."
+        "unrecognized": "هذا الملف ليس أرشيف بيانات قابلاً للنقل خاصاً بـ Alcore."
       },
       "errors": "أخطاء",
       "archivedChats": {
@@ -1322,7 +1322,7 @@
       "saveFile": "حفظ الملف",
       "formatCode": "تنسيق الشيفرة"
     },
-    "description": "كل اختصارات لوحة المفاتيح المتاحة في Libre WebUI.",
+    "description": "كل اختصارات لوحة المفاتيح المتاحة في Alcore.",
     "newChat": "محادثة جديدة",
     "newWork": "جلسة عمل جديدة",
     "openPalette": "فتح لوحة الأوامر"
@@ -1701,7 +1701,7 @@
   "userManager": {
     "title": "إدارة المستخدمين",
     "subtitle": "إدارة حسابات المستخدمين والصلاحيات",
-    "pageDescription": "إدارة حسابات المستخدمين والأذونات وعناصر التحكم في الوصول لمثيل Libre WebUI الخاص بك.",
+    "pageDescription": "إدارة حسابات المستخدمين والأذونات وعناصر التحكم في الوصول لمثيل Alcore الخاص بك.",
     "sections": {
       "users": "المستخدمون",
       "access": "الوصول والسياسات",
@@ -1829,7 +1829,7 @@
     },
     "agentAccess": {
       "title": "الوكلاء",
-      "description": "إتاحة قسم الوكلاء (Libre Claw) للمسؤولين. تعمل واجهات الوكلاء على المضيف بهوية مستخدم الخادم، خارج بيئة Work المعزولة.",
+      "description": "إتاحة قسم الوكلاء (Alcore Claw) للمسؤولين. تعمل واجهات الوكلاء على المضيف بهوية مستخدم الخادم، خارج بيئة Work المعزولة.",
       "saved": "تم تحديث الوصول إلى الوكلاء",
       "saveFailed": "تعذر تحديث الوصول إلى الوكلاء",
       "lockedByEnv": "مثبَّت بواسطة متغير البيئة AGENT_CLI_MODELS_ENABLED."
@@ -2041,7 +2041,7 @@
       "title": "لا توجد مكالمات مزود بعد",
       "description": "ستظهر المكالمات هنا بعد أن تعالج إضافة ممكّنة طلبات الدردشة، أو العمل، أو التضمين، أو الصورة، أو الكلام، أو الصوت، أو الفيديو."
     },
-    "privacyNote": "يتم قياس الاستخدام على الخادم عند حدود الإضافة الصادرة. يخزن Libre WebUI المزود، والنموذج، والتوقيت، والحالة، والعدادات المُبلغ عنها — وليس المطالبات، أو الاستجابات، أو نقاط النهاية، أو بيانات الاعتماد، أو هيئات أخطاء المزود. تشمل إجماليات الرموز فقط المكالمات التي أعاد فيها المزود بيانات الاستخدام الوصفية.",
+    "privacyNote": "يتم قياس الاستخدام على الخادم عند حدود الإضافة الصادرة. يخزن Alcore المزود، والنموذج، والتوقيت، والحالة، والعدادات المُبلغ عنها — وليس المطالبات، أو الاستجابات، أو نقاط النهاية، أو بيانات الاعتماد، أو هيئات أخطاء المزود. تشمل إجماليات الرموز فقط المكالمات التي أعاد فيها المزود بيانات الاستخدام الوصفية.",
     "heatmap": {
       "title": "عام من النشاط",
       "description": "استدعاءات المزوّد اليومية خلال العام الماضي، ملوّنة حسب النموذج الأكثر استخدامًا في كل يوم.",
@@ -2056,7 +2056,7 @@
   "systemPage": {
     "eyebrow": "الإدارة",
     "title": "النظام",
-    "description": "راقب الجهاز ووقت التشغيل الذي يستضيف مثيل Libre WebUI هذا.",
+    "description": "راقب الجهاز ووقت التشغيل الذي يستضيف مثيل Alcore هذا.",
     "updated": "تم التحديث {{date}}",
     "refresh": "تحديث معلومات النظام",
     "loadFailed": "تعذر تحميل معلومات النظام.",
@@ -2074,7 +2074,7 @@
     },
     "host": {
       "title": "المضيف ووقت التشغيل",
-      "description": "تفاصيل نظام التشغيل والمعالج وعملية Libre WebUI.",
+      "description": "تفاصيل نظام التشغيل والمعالج وعملية Alcore.",
       "container": "وقت تشغيل الحاوية",
       "native": "وقت تشغيل أصلي",
       "hostname": "اسم المضيف",
@@ -2082,7 +2082,7 @@
       "processor": "المعالج",
       "logicalCpus": "وحدات CPU منطقية",
       "loadAverage": "متوسط الحمل · 1 / 5 / 15 دقيقة",
-      "libreVersion": "Libre WebUI",
+      "libreVersion": "Alcore",
       "nodeVersion": "Node.js",
       "process": "العملية",
       "workingDirectory": "دليل العمل"
@@ -2134,7 +2134,7 @@
       "internal": "داخلي",
       "empty": "لا توجد واجهات شبكة مرئية لوقت تشغيل التطبيق."
     },
-    "securityNote": "هذه الصفحة مخصصة للمسؤولين فقط. يُرجع الخادم ملخصات تشغيلية فقط: فهو لا يكشف متغيرات البيئة، أو بيانات الاعتماد، أو تسميات Docker، أو التثبيتات، أو أوامر الحاوية، أو حمولات الفحص. عندما يعمل Libre WebUI في حاوية، تأتي تفاصيل CPU والذاكرة على مستوى المضيف من Docker Engine عندما يكون مقبسه المحلي متاحًا؛ تصف القيم الأخرى وقت تشغيل التطبيق.",
+    "securityNote": "هذه الصفحة مخصصة للمسؤولين فقط. يُرجع الخادم ملخصات تشغيلية فقط: فهو لا يكشف متغيرات البيئة، أو بيانات الاعتماد، أو تسميات Docker، أو التثبيتات، أو أوامر الحاوية، أو حمولات الفحص. عندما يعمل Alcore في حاوية، تأتي تفاصيل CPU والذاكرة على مستوى المضيف من Docker Engine عندما يكون مقبسه المحلي متاحًا؛ تصف القيم الأخرى وقت تشغيل التطبيق.",
     "work": {
       "title": "Work",
       "description": "بيئات معزولة لجميع المستخدمين",
@@ -2314,9 +2314,9 @@
     "referenceTranscript": "النص المطابق للتسجيل المرجعي",
     "referenceTranscriptPlaceholder": "أدخل بالضبط ما يُقال في التسجيل المرجعي…",
     "referenceAudioTooLarge": "يجب ألا يتجاوز حجم الصوت المرجعي {{max}}.",
-    "cloneConsent": "لا تستنسخ صوتًا إلا بإذن المتحدث. يُرسل التسجيل إلى المزوّد المحدد لإنشاء هذا المقطع ولا يحفظه Libre WebUI.",
+    "cloneConsent": "لا تستنسخ صوتًا إلا بإذن المتحدث. يُرسل التسجيل إلى المزوّد المحدد لإنشاء هذا المقطع ولا يحفظه Alcore.",
     "saveVoiceProfile": "حفظ كصوت قابل لإعادة الاستخدام",
-    "saveVoiceProfileDescription": "خزّن هذا التسجيل المرجعي ونصه بأمان. يرسلهما Libre WebUI إلى المزوّد المحدد مع كل دفعة كلام تستخدم هذا الصوت.",
+    "saveVoiceProfileDescription": "خزّن هذا التسجيل المرجعي ونصه بأمان. يرسلهما Alcore إلى المزوّد المحدد مع كل دفعة كلام تستخدم هذا الصوت.",
     "voiceProfileName": "اسم الصوت المحفوظ",
     "voiceProfileNamePlaceholder": "مثال: صوتي",
     "voiceStorageConsent": "أؤكد أن لدي إذن المتحدث لاستنساخ هذا الصوت وحفظه. سيبقى المرجع محفوظًا حتى أحذفه.",
@@ -2554,7 +2554,7 @@
     "subtitle": "يعمل الوكيل المحلي والموافقات والجداول الزمنية والذاكرة والأدوات والاستخدام.",
     "dashboard": "لوحة المعلومات",
     "connection": {
-      "disconnectedTitle": "خدمة Libre Claw غير متصلة",
+      "disconnectedTitle": "خدمة Alcore Claw غير متصلة",
       "disconnectedDescription": "ابدأ تشغيله محليًا باستخدام <command>libre-claw start</command> أو قم بتعيين <env>LIBRE_CLAW_BASE_URL</env> في بيئة الواجهة الخلفية."
     },
     "status": {
@@ -2573,7 +2573,7 @@
     },
     "startRun": {
       "title": "بدء تشغيل الوكيل",
-      "placeholder": "اطلب من Libre Claw فحص الريبو، أو إصلاح الخلل، أو إجراء مراجعة، أو جدولة تقرير...",
+      "placeholder": "اطلب من Alcore Claw فحص الريبو، أو إصلاح الخلل، أو إجراء مراجعة، أو جدولة تقرير...",
       "chatRun": "تشغيل الدردشة",
       "goalMode": "وضع الهدف",
       "providerOverride": "تجاوز الموفر",
@@ -2584,14 +2584,14 @@
       "title": "الطريق النموذجي",
       "providerPlaceholder": "مزود",
       "modelPlaceholder": "نموذج",
-      "persistGlobal": "استمر في Libre Claw التكوين العام",
+      "persistGlobal": "استمر في Alcore Claw التكوين العام",
       "saveModel": "حفظ النموذج",
-      "theme": "سمة Libre Claw",
+      "theme": "سمة Alcore Claw",
       "saveTheme": "حفظ الموضوع"
     },
     "runs": {
       "title": "التشغيلات",
-      "empty": "لا توجد تشغيلات Libre Claw بعد."
+      "empty": "لا توجد تشغيلات Alcore Claw بعد."
     },
     "timeline": {
       "title": "الخط الزمني للتشغيل",
@@ -2625,7 +2625,7 @@
       "schedulePlaceholder": "daily 09:00",
       "promptPlaceholder": "موجه الأتمتة",
       "create": "إنشاء",
-      "empty": "لا توجد عمليات أتمتة مجدولة Libre Claw.",
+      "empty": "لا توجد عمليات أتمتة مجدولة Alcore Claw.",
       "runNow": "تشغيل الآن",
       "pause": "وقفة",
       "resume": "استئناف",
@@ -2666,19 +2666,19 @@
       "unknownError": "خطأ غير معروف"
     },
     "toasts": {
-      "loadStatusFailed": "لا يمكن تحميل حالة Libre Claw",
-      "enterTask": "أدخل مهمة لـ Libre Claw",
-      "runStarted": "بدأ تشغيل Libre Claw",
-      "startRunFailed": "تعذر بدء تشغيل Libre Claw",
+      "loadStatusFailed": "لا يمكن تحميل حالة Alcore Claw",
+      "enterTask": "أدخل مهمة لـ Alcore Claw",
+      "runStarted": "بدأ تشغيل Alcore Claw",
+      "startRunFailed": "تعذر بدء تشغيل Alcore Claw",
       "runCancelled": "تم إلغاء التشغيل",
       "cancelRunFailed": "تعذر إلغاء التشغيل",
       "approved": "تمت الموافقة عليه",
       "denied": "مرفوض",
       "resolvePermissionFailed": "لا يمكن حل الإذن",
       "providerModelRequired": "مطلوب الموفر والنموذج",
-      "modelUpdated": "تم تحديث نموذج Libre Claw",
+      "modelUpdated": "تم تحديث نموذج Alcore Claw",
       "updateModelFailed": "لا يمكن تحديث النموذج",
-      "themeUpdated": "تم تحديث سمة Libre Claw",
+      "themeUpdated": "تم تحديث سمة Alcore Claw",
       "updateThemeFailed": "لا يمكن تحديث الموضوع",
       "automationRequired": "مطلوب اسم الأتمتة والجدول الزمني والموجه",
       "automationCreated": "تم إنشاء الأتمتة",
@@ -3049,7 +3049,7 @@
     "title": "ما الجديد",
     "releaseNotes": "ملاحظات الإصدار",
     "cta": "حسنًا، هيا بنا",
-    "starAsk": "هل يعجبك Libre WebUI؟ اترك نجمة على GitHub"
+    "starAsk": "هل يعجبك Alcore؟ اترك نجمة على GitHub"
   },
   "notes": {
     "title": "الملاحظات",
@@ -3502,7 +3502,7 @@
     "description": "خوادم الأدوات التي يمكن للنموذج استدعاؤها، والموافقات التي منحتها لها.",
     "approvalNotice": "الأدوات التي تغيّر بيانات خارج المحادثة تطلب الموافقة دائمًا، إلا إذا منحت تلك الأداة موافقة دائمة أو موافقة لكل محادثة.",
     "registerServer": "تسجيل خادم",
-    "registerHint": "يقرأ Libre WebUI الخادم مرة واحدة ويثبّت الأدوات التي يعرضها. حدّث الخادم لاحقًا لالتقاط التغييرات.",
+    "registerHint": "يقرأ Alcore الخادم مرة واحدة ويثبّت الأدوات التي يعرضها. حدّث الخادم لاحقًا لالتقاط التغييرات.",
     "editServer": "تحرير الخادم",
     "empty": "لا توجد خوادم أدوات",
     "emptyHintAdmin": "سجّل خادم OpenAPI أو MCP لتمنح النموذج ما يستدعيه.",

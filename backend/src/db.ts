@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +38,7 @@ let db: Database.Database | null = null;
 let dbInitializationFailed = false;
 
 const PREFLIGHT_MARKER_FILE = '.preflight-verification.json';
-const PREFLIGHT_MARKER_FORMAT = 'libre-preflight-verification';
+const PREFLIGHT_MARKER_FORMAT = 'alcore-preflight-verification';
 
 /**
  * Cheap identity of an existing database for preflight caching: the inode
@@ -224,7 +224,7 @@ export function preflightExistingSQLiteDatabase(
     }
   }
   const inspectionDirectory = fs.mkdtempSync(
-    path.join(scratchRoot || path.dirname(databasePath), '.libre-bootstrap-')
+    path.join(scratchRoot || path.dirname(databasePath), '.alcore-bootstrap-')
   );
   const inspectionDatabasePath = path.join(
     inspectionDirectory,

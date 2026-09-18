@@ -41,8 +41,8 @@
     "more": "Nhiều"
   },
   "brand": {
-    "name": "Libre WebUI",
-    "shortName": "Libre"
+    "name": "Alcore",
+    "shortName": "Alcore"
   },
   "appInitialization": {
     "ollamaUnavailable": "Dịch vụ Ollama không khả dụng. Vẫn có thể sử dụng các mô hình plugin.",
@@ -191,9 +191,9 @@
   },
   "setup": {
     "welcome": {
-      "title": "Chào mừng đến với Libre WebUI",
+      "title": "Chào mừng đến với Alcore",
       "subtitle": "Hãy bắt đầu",
-      "description": "Thiết lập phiên bản Libre WebUI của bạn chỉ trong vài bước",
+      "description": "Thiết lập phiên bản Alcore của bạn chỉ trong vài bước",
       "createAdmin": "Tạo tài khoản quản trị",
       "features": {
         "secure": {
@@ -213,7 +213,7 @@
     "admin": {
       "title": "Tạo tài khoản quản trị",
       "subtitle": "Thiết lập quản trị viên",
-      "description": "Tạo tài khoản quản trị đầu tiên cho phiên bản Libre WebUI của bạn",
+      "description": "Tạo tài khoản quản trị đầu tiên cho phiên bản Alcore của bạn",
       "usernamePlaceholder": "Nhập tên người dùng quản trị",
       "passwordPlaceholder": "Nhập mật khẩu (ít nhất 12 ký tự)",
       "confirmPlaceholder": "Xác nhận mật khẩu của bạn",
@@ -223,7 +223,7 @@
       "failed": "Không thể tạo tài khoản quản trị",
       "approvalUnexpected": "Không thể kích hoạt quản trị viên ban đầu. Vui lòng thử lại.",
       "fillAllFields": "Vui lòng điền tất cả các trường",
-      "note": "Đây sẽ là tài khoản quản trị chính cho phiên bản Libre WebUI của bạn"
+      "note": "Đây sẽ là tài khoản quản trị chính cho phiên bản Alcore của bạn"
     },
     "encryptionKey": {
       "title": "Lưu khóa mã hóa của bạn",
@@ -239,7 +239,7 @@
       "envNote": "Khóa này cũng được lưu trong tệp backend/.env của bạn dưới dạng ENCRYPTION_KEY",
       "acknowledgment": "Tôi đã lưu khóa mã hóa của tôi ở nơi an toàn và hiểu rằng việc mất nó có thể dẫn đến mất dữ liệu.",
       "confirmRequired": "Vui lòng xác nhận rằng bạn đã lưu khóa mã hóa",
-      "continue": "Tiếp tục đến Libre WebUI"
+      "continue": "Tiếp tục đến Alcore"
     },
     "connectModels": {
       "title": "Kết nối mô hình của bạn",
@@ -1047,7 +1047,7 @@
       "toSkip": "sẽ bỏ qua",
       "documents": "Tài liệu",
       "warnings": "Cảnh báo",
-      "refreshAfterImportFailed": "Dữ liệu đã được nhập, nhưng không thể làm mới một số chế độ xem. Hãy tải lại Libre WebUI để xem mọi thay đổi.",
+      "refreshAfterImportFailed": "Dữ liệu đã được nhập, nhưng không thể làm mới một số chế độ xem. Hãy tải lại Alcore để xem mọi thay đổi.",
       "exportSuccess": "Đã xuất tệp lưu trữ dữ liệu di động",
       "exportFailed": "Xuất thất bại",
       "importSuccess": "Đã nhập tệp lưu trữ dữ liệu di động",
@@ -1056,7 +1056,7 @@
         "invalidJson": "Tệp lưu trữ di động không phải là JSON hợp lệ.",
         "objectRequired": "Tệp lưu trữ di động phải chứa một đối tượng JSON.",
         "unsupportedVersion": "Không hỗ trợ phiên bản {{version}} của tệp lưu trữ di động.",
-        "unrecognized": "Tệp này không phải là tệp lưu trữ di động của Libre WebUI."
+        "unrecognized": "Tệp này không phải là tệp lưu trữ di động của Alcore."
       },
       "errors": "Lỗi",
       "archivedChats": {
@@ -1322,7 +1322,7 @@
       "saveFile": "Lưu tệp",
       "formatCode": "Định dạng mã"
     },
-    "description": "Tất cả phím tắt có trong Libre WebUI.",
+    "description": "Tất cả phím tắt có trong Alcore.",
     "newChat": "Trò chuyện mới",
     "newWork": "Phiên Work mới",
     "openPalette": "Mở bảng lệnh"
@@ -1701,7 +1701,7 @@
   "userManager": {
     "title": "Quản lý người dùng",
     "subtitle": "Quản lý tài khoản và quyền hạn người dùng",
-    "pageDescription": "Quản lý tài khoản người dùng, quyền và kiểm soát truy cập cho phiên bản Libre WebUI của bạn.",
+    "pageDescription": "Quản lý tài khoản người dùng, quyền và kiểm soát truy cập cho phiên bản Alcore của bạn.",
     "sections": {
       "users": "Người dùng",
       "access": "Quyền truy cập và chính sách",
@@ -1829,7 +1829,7 @@
     },
     "agentAccess": {
       "title": "Tác nhân",
-      "description": "Cung cấp mục Tác nhân (Libre Claw) cho quản trị viên. CLI tác nhân chạy trên máy chủ với tư cách người dùng máy chủ, bên ngoài sandbox Work.",
+      "description": "Cung cấp mục Tác nhân (Alcore Claw) cho quản trị viên. CLI tác nhân chạy trên máy chủ với tư cách người dùng máy chủ, bên ngoài sandbox Work.",
       "saved": "Đã cập nhật quyền truy cập tác nhân",
       "saveFailed": "Không thể cập nhật quyền truy cập tác nhân",
       "lockedByEnv": "Bị khóa bởi biến môi trường AGENT_CLI_MODELS_ENABLED."
@@ -2041,7 +2041,7 @@
       "title": "Chưa có lệnh gọi nhà cung cấp",
       "description": "Các lệnh gọi sẽ hiển thị tại đây sau khi một plugin đã bật xử lý yêu cầu trò chuyện, Work, nhúng, hình ảnh, giọng nói, âm thanh hoặc video."
     },
-    "privacyNote": "Mức sử dụng được đo trên máy chủ tại ranh giới plugin gửi đi. Libre WebUI lưu trữ nhà cung cấp, mô hình, thời gian, trạng thái và bộ đếm đã báo cáo—không bao gồm lời nhắc, phản hồi, điểm cuối, thông tin xác thực hoặc nội dung lỗi của nhà cung cấp. Tổng token chỉ bao gồm các lệnh gọi mà nhà cung cấp trả về siêu dữ liệu sử dụng.",
+    "privacyNote": "Mức sử dụng được đo trên máy chủ tại ranh giới plugin gửi đi. Alcore lưu trữ nhà cung cấp, mô hình, thời gian, trạng thái và bộ đếm đã báo cáo—không bao gồm lời nhắc, phản hồi, điểm cuối, thông tin xác thực hoặc nội dung lỗi của nhà cung cấp. Tổng token chỉ bao gồm các lệnh gọi mà nhà cung cấp trả về siêu dữ liệu sử dụng.",
     "heatmap": {
       "title": "Một năm hoạt động",
       "description": "Lượt gọi nhà cung cấp hằng ngày trong năm qua, tô màu theo mô hình được dùng nhiều nhất mỗi ngày.",
@@ -2056,7 +2056,7 @@
   "systemPage": {
     "eyebrow": "Quản trị",
     "title": "Hệ thống",
-    "description": "Giám sát máy và môi trường chạy lưu trữ phiên bản Libre WebUI này.",
+    "description": "Giám sát máy và môi trường chạy lưu trữ phiên bản Alcore này.",
     "updated": "Đã cập nhật {{date}}",
     "refresh": "Làm mới thông tin hệ thống",
     "loadFailed": "Không thể tải thông tin hệ thống.",
@@ -2074,7 +2074,7 @@
     },
     "host": {
       "title": "Máy chủ & môi trường chạy",
-      "description": "Hệ điều hành, bộ xử lý và chi tiết tiến trình Libre WebUI.",
+      "description": "Hệ điều hành, bộ xử lý và chi tiết tiến trình Alcore.",
       "container": "Môi trường chạy container",
       "native": "Runtime gốc",
       "hostname": "Tên máy chủ",
@@ -2082,7 +2082,7 @@
       "processor": "Bộ xử lý",
       "logicalCpus": "CPU logic",
       "loadAverage": "Tải trung bình · 1 / 5 / 15 phút",
-      "libreVersion": "Libre WebUI",
+      "libreVersion": "Alcore",
       "nodeVersion": "Node.js",
       "process": "Tiến trình",
       "workingDirectory": "Thư mục làm việc"
@@ -2134,7 +2134,7 @@
       "internal": "nội bộ",
       "empty": "Không có giao diện mạng nào hiển thị với thời gian chạy của ứng dụng."
     },
-    "securityNote": "Trang này chỉ dành cho quản trị viên. Máy chủ chỉ trả về tóm tắt hoạt động: nó không tiết lộ biến môi trường, thông tin xác thực, nhãn Docker, điểm gắn kết, lệnh container hoặc payload kiểm tra. Khi Libre WebUI chạy trong container, chi tiết CPU và bộ nhớ cấp máy chủ đến từ Docker Engine khi socket cục bộ của nó khả dụng; các giá trị khác mô tả thời gian chạy của ứng dụng.",
+    "securityNote": "Trang này chỉ dành cho quản trị viên. Máy chủ chỉ trả về tóm tắt hoạt động: nó không tiết lộ biến môi trường, thông tin xác thực, nhãn Docker, điểm gắn kết, lệnh container hoặc payload kiểm tra. Khi Alcore chạy trong container, chi tiết CPU và bộ nhớ cấp máy chủ đến từ Docker Engine khi socket cục bộ của nó khả dụng; các giá trị khác mô tả thời gian chạy của ứng dụng.",
     "work": {
       "title": "Work",
       "description": "Sandbox của mọi người dùng",
@@ -2314,9 +2314,9 @@
     "referenceTranscript": "Bản chép lời tham chiếu chính xác",
     "referenceTranscriptPlaceholder": "Nhập chính xác nội dung được nói trong bản ghi tham chiếu…",
     "referenceAudioTooLarge": "Âm thanh tham chiếu phải có dung lượng {{max}} trở xuống.",
-    "cloneConsent": "Chỉ sao chép giọng khi bạn có sự cho phép của người nói. Bản ghi được gửi đến nhà cung cấp đã chọn cho lần tạo này và Libre WebUI không lưu bản ghi.",
+    "cloneConsent": "Chỉ sao chép giọng khi bạn có sự cho phép của người nói. Bản ghi được gửi đến nhà cung cấp đã chọn cho lần tạo này và Alcore không lưu bản ghi.",
     "saveVoiceProfile": "Lưu làm giọng có thể tái sử dụng",
-    "saveVoiceProfileDescription": "Lưu an toàn bản ghi tham chiếu và bản chép lời này. Libre WebUI gửi chúng đến nhà cung cấp đã chọn cho mỗi lô Giọng nói sử dụng giọng này.",
+    "saveVoiceProfileDescription": "Lưu an toàn bản ghi tham chiếu và bản chép lời này. Alcore gửi chúng đến nhà cung cấp đã chọn cho mỗi lô Giọng nói sử dụng giọng này.",
     "voiceProfileName": "Tên giọng đã lưu",
     "voiceProfileNamePlaceholder": "Ví dụ: Giọng của tôi",
     "voiceStorageConsent": "Tôi xác nhận đã được người nói cho phép sao chép và lưu giọng này. Bản tham chiếu sẽ được lưu cho đến khi tôi xóa.",
@@ -2554,7 +2554,7 @@
     "subtitle": "Tác nhân cục bộ chạy, phê duyệt, lịch trình, bộ nhớ, công cụ và cách sử dụng.",
     "dashboard": "Bảng điều khiển",
     "connection": {
-      "disconnectedTitle": "Daemon Libre Claw chưa được kết nối",
+      "disconnectedTitle": "Daemon Alcore Claw chưa được kết nối",
       "disconnectedDescription": "Bắt đầu cục bộ với <command>libre-claw start</command> hoặc đặt <env>LIBRE_CLAW_BASE_URL</env> trong môi trường phụ trợ."
     },
     "status": {
@@ -2573,7 +2573,7 @@
     },
     "startRun": {
       "title": "Bắt đầu phiên chạy tác tử",
-      "placeholder": "Yêu cầu Libre Claw kiểm tra kho lưu trữ, sửa lỗi, chạy đánh giá, lên lịch báo cáo...",
+      "placeholder": "Yêu cầu Alcore Claw kiểm tra kho lưu trữ, sửa lỗi, chạy đánh giá, lên lịch báo cáo...",
       "chatRun": "Chạy trò chuyện",
       "goalMode": "Chế độ mục tiêu",
       "providerOverride": "Ghi đè nhà cung cấp",
@@ -2584,14 +2584,14 @@
       "title": "Tuyến đường mẫu",
       "providerPlaceholder": "nhà cung cấp",
       "modelPlaceholder": "người mẫu",
-      "persistGlobal": "Kiên trì với cấu hình chung Libre Claw",
+      "persistGlobal": "Kiên trì với cấu hình chung Alcore Claw",
       "saveModel": "Lưu mô hình",
-      "theme": "Chủ đề Libre Claw",
+      "theme": "Chủ đề Alcore Claw",
       "saveTheme": "Lưu chủ đề"
     },
     "runs": {
       "title": "Phiên chạy",
-      "empty": "Chưa có phiên chạy Libre Claw nào."
+      "empty": "Chưa có phiên chạy Alcore Claw nào."
     },
     "timeline": {
       "title": "Dòng thời gian phiên chạy",
@@ -2625,7 +2625,7 @@
       "schedulePlaceholder": "daily 09:00",
       "promptPlaceholder": "Lời nhắc tự động hóa",
       "create": "Tạo",
-      "empty": "Không có tự động hóa Libre Claw theo lịch trình.",
+      "empty": "Không có tự động hóa Alcore Claw theo lịch trình.",
       "runNow": "Chạy ngay",
       "pause": "Tạm dừng",
       "resume": "Tiếp tục",
@@ -2666,19 +2666,19 @@
       "unknownError": "Lỗi không xác định"
     },
     "toasts": {
-      "loadStatusFailed": "Không thể tải trạng thái Libre Claw",
-      "enterTask": "Nhập nhiệm vụ cho Libre Claw",
-      "runStarted": "Phiên chạy Libre Claw đã bắt đầu",
-      "startRunFailed": "Không thể bắt đầu phiên chạy Libre Claw",
+      "loadStatusFailed": "Không thể tải trạng thái Alcore Claw",
+      "enterTask": "Nhập nhiệm vụ cho Alcore Claw",
+      "runStarted": "Phiên chạy Alcore Claw đã bắt đầu",
+      "startRunFailed": "Không thể bắt đầu phiên chạy Alcore Claw",
       "runCancelled": "Phiên chạy đã bị hủy",
       "cancelRunFailed": "Không thể hủy phiên chạy",
       "approved": "Đã được phê duyệt",
       "denied": "Bị từ chối",
       "resolvePermissionFailed": "Không thể giải quyết quyền",
       "providerModelRequired": "Nhà cung cấp và mô hình là bắt buộc",
-      "modelUpdated": "Đã cập nhật mô hình Libre Claw",
+      "modelUpdated": "Đã cập nhật mô hình Alcore Claw",
       "updateModelFailed": "Không thể cập nhật mô hình",
-      "themeUpdated": "Đã cập nhật chủ đề Libre Claw",
+      "themeUpdated": "Đã cập nhật chủ đề Alcore Claw",
       "updateThemeFailed": "Không thể cập nhật chủ đề",
       "automationRequired": "Bắt buộc phải có tên, lịch trình và lời nhắc tự động hóa",
       "automationCreated": "Đã tạo tự động hóa",
@@ -3049,7 +3049,7 @@
     "title": "Có gì mới",
     "releaseNotes": "Ghi chú phát hành",
     "cta": "Được rồi, bắt đầu thôi",
-    "starAsk": "Thích Libre WebUI? Hãy để lại một ngôi sao trên GitHub"
+    "starAsk": "Thích Alcore? Hãy để lại một ngôi sao trên GitHub"
   },
   "notes": {
     "title": "Ghi chú",
@@ -3502,7 +3502,7 @@
     "description": "Các máy chủ công cụ mà mô hình có thể gọi, và những phê duyệt bạn đã cấp cho chúng.",
     "approvalNotice": "Các công cụ làm thay đổi dữ liệu bên ngoài cuộc trò chuyện luôn hỏi phê duyệt, trừ khi bạn đã cấp cho công cụ đó phê duyệt vĩnh viễn hoặc phê duyệt cho cuộc trò chuyện.",
     "registerServer": "Đăng ký máy chủ",
-    "registerHint": "Libre WebUI đọc máy chủ một lần và ghim lại các công cụ mà nó cung cấp. Làm mới máy chủ sau này để cập nhật thay đổi.",
+    "registerHint": "Alcore đọc máy chủ một lần và ghim lại các công cụ mà nó cung cấp. Làm mới máy chủ sau này để cập nhật thay đổi.",
     "editServer": "Sửa máy chủ",
     "empty": "Không có máy chủ công cụ",
     "emptyHintAdmin": "Đăng ký một máy chủ OpenAPI hoặc MCP để mô hình có thứ để gọi.",

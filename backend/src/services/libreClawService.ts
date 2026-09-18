@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,15 +21,15 @@ import {
 } from '../utils/providerFetch.js';
 import { createLogger } from '../utils/logger.js';
 
-const logger = createLogger('services:libre-claw');
+const logger = createLogger('services:alcore-claw');
 const DEFAULT_BASE_URL = 'http://127.0.0.1:8766';
 
-export type LibreClawRunState =
+export type AlcoreClawRunState =
   'queued' | 'running' | 'blocked' | 'done' | 'failed' | 'cancelled';
 
-export interface LibreClawRun {
+export interface AlcoreClawRun {
   run_id: string;
-  state: LibreClawRunState;
+  state: AlcoreClawRunState;
   title: string;
   kind: string;
   provider: string;
@@ -40,14 +40,14 @@ export interface LibreClawRun {
   path?: string;
 }
 
-export interface LibreClawEvent {
+export interface AlcoreClawEvent {
   event_id: number;
   timestamp: string;
   type: string;
   data: Record<string, unknown>;
 }
 
-export interface LibreClawAutomation {
+export interface AlcoreClawAutomation {
   automation_id: string;
   name: string;
   prompt: string;
@@ -62,7 +62,7 @@ export interface LibreClawAutomation {
   [key: string]: unknown;
 }
 
-export interface LibreClawStatus {
+export interface AlcoreClawStatus {
   connected: boolean;
   baseUrl: string;
   dashboardUrl: string;
@@ -70,7 +70,7 @@ export interface LibreClawStatus {
   error?: string;
 }
 
-export interface LibreClawRunRequest {
+export interface AlcoreClawRunRequest {
   message: string;
   kind?: 'chat' | 'goal';
   provider?: string;
@@ -80,42 +80,42 @@ export interface LibreClawRunRequest {
   attachments?: unknown;
 }
 
-export interface LibreClawModelUpdate {
+export interface AlcoreClawModelUpdate {
   provider: string;
   model: string;
   persist_global?: boolean;
 }
 
-export interface LibreClawPermissionResolution {
+export interface AlcoreClawPermissionResolution {
   resolution: 'allow_once' | 'deny' | 'always_allow_tool' | 'always_allow_call';
 }
 
-export class LibreClawServiceError extends Error {
+export class AlcoreClawServiceError extends Error {
   status: number;
   details?: unknown;
 
   constructor(message: string, status = 502, details?: unknown) {
     super(message);
-    this.name = 'LibreClawServiceError';
+    this.name = 'AlcoreClawServiceError';
     this.status = status;
     this.details = details;
   }
 }
 
-export class LibreClawService {
+export class AlcoreClawService {
   private readonly timeoutMs: number;
   readonly baseUrl: string;
 
-  constructor(baseUrl = process.env.LIBRE_CLAW_BASE_URL || DEFAULT_BASE_URL) {
+  constructor(baseUrl = process.env.ALCORE_CLAW_BASE_URL || DEFAULT_BASE_URL) {
     this.baseUrl = baseUrl.replace(/\/+$/, '');
-    this.timeoutMs = Number(process.env.LIBRE_CLAW_TIMEOUT_MS || 30000);
+    this.timeoutMs = Number(process.env.ALCORE_CLAW_TIMEOUT_MS || 30000);
   }
 
   dashboardUrl(): string {
     return `${this.baseUrl}/dashboard`;
   }
 
-  async status(): Promise<LibreClawStatus> {
+  async status(): Promise<AlcoreClawStatus> {
     try {
       const health = await this.health();
       return {
@@ -125,8 +125,8 @@ export class LibreClawService {
         health,
       };
     } catch (error) {
-      const message = getLibreClawErrorMessage(error);
-      logger.debug('Libre Claw status check failed:', message);
+      const message = getAlcoreClawErrorMessage(error);
+      logger.debug('Alcore Claw status check failed:', message);
       return {
         connected: false,
         baseUrl: this.baseUrl,
@@ -145,7 +145,7 @@ export class LibreClawService {
   }
 
   async updateModel(
-    payload: LibreClawModelUpdate
+    payload: AlcoreClawModelUpdate
   ): Promise<Record<string, unknown>> {
     return this.request('PATCH', '/config/model', payload);
   }
@@ -167,7 +167,7 @@ export class LibreClawService {
     return this.request('PATCH', '/config/theme', payload);
   }
 
-  async listRuns(limit = 20): Promise<{ runs: LibreClawRun[] }> {
+  async listRuns(limit = 20): Promise<{ runs: AlcoreClawRun[] }> {
     return this.request(
       'GET',
       `/runs?limit=${encodeURIComponent(String(limit))}`
@@ -181,17 +181,17 @@ export class LibreClawService {
   async getEvents(
     runId: string,
     after = 0
-  ): Promise<{ events: LibreClawEvent[] }> {
+  ): Promise<{ events: AlcoreClawEvent[] }> {
     return this.request(
       'GET',
       `/runs/${encodeURIComponent(runId)}/events?after=${encodeURIComponent(String(after))}`
     );
   }
 
-  async startRun(payload: LibreClawRunRequest): Promise<{ run: LibreClawRun }> {
+  async startRun(payload: AlcoreClawRunRequest): Promise<{ run: AlcoreClawRun }> {
     return this.request('POST', '/runs', {
       ...payload,
-      surface: payload.surface || 'libre-webui',
+      surface: payload.surface || 'alcore',
     });
   }
 
@@ -202,7 +202,7 @@ export class LibreClawService {
   async resolvePermission(
     runId: string,
     toolCallId: string,
-    payload: LibreClawPermissionResolution
+    payload: AlcoreClawPermissionResolution
   ): Promise<Record<string, unknown>> {
     return this.request(
       'POST',
@@ -221,7 +221,7 @@ export class LibreClawService {
 
   async listAutomations(
     limit = 50
-  ): Promise<{ automations: LibreClawAutomation[] }> {
+  ): Promise<{ automations: AlcoreClawAutomation[] }> {
     return this.request(
       'GET',
       `/automations?limit=${encodeURIComponent(String(limit))}`
@@ -304,12 +304,12 @@ export class LibreClawService {
       });
       return response.data;
     } catch (error) {
-      throw normalizeLibreClawError(error);
+      throw normalizeAlcoreClawError(error);
     }
   }
 }
 
-const normalizeLibreClawError = (error: unknown): LibreClawServiceError => {
+const normalizeAlcoreClawError = (error: unknown): AlcoreClawServiceError => {
   if (isProviderHttpError(error)) {
     const status = error.response.status || 502;
     const data = error.response.data as
@@ -319,24 +319,24 @@ const normalizeLibreClawError = (error: unknown): LibreClawServiceError => {
       body?.error ||
       body?.message ||
       error.message ||
-      'Libre Claw daemon request failed';
-    return new LibreClawServiceError(message, status, error.response.data);
+      'Alcore Claw daemon request failed';
+    return new AlcoreClawServiceError(message, status, error.response.data);
   }
 
-  if (error instanceof LibreClawServiceError) {
+  if (error instanceof AlcoreClawServiceError) {
     return error;
   }
 
-  return new LibreClawServiceError(getLibreClawErrorMessage(error));
+  return new AlcoreClawServiceError(getAlcoreClawErrorMessage(error));
 };
 
-const getLibreClawErrorMessage = (error: unknown): string => {
+const getAlcoreClawErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
     return error.message;
   }
-  return 'Libre Claw daemon is not reachable';
+  return 'Alcore Claw daemon is not reachable';
 };
 
-export const libreClawService = new LibreClawService();
+export const alcoreClawService = new AlcoreClawService();
 
-export default libreClawService;
+export default alcoreClawService;

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -548,7 +548,7 @@ class NotificationService {
     };
     const secret = decryptOptional(target.secret);
     if (secret) {
-      headers['X-Libre-Signature'] =
+      headers['X-Alcore-Signature'] =
         'sha256=' + createHmac('sha256', secret).update(body).digest('hex');
     }
     const { secureToolRequest } = await import('../utils/toolEgress.js');

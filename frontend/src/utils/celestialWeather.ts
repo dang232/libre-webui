@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
  * Live weather for the celestial theme, from Open-Meteo (no key, CORS).
  * Opt-in: nothing is fetched until the user turns it on, and the request
  * goes straight from the browser to api.open-meteo.com with the rounded
- * coordinates the user chose; the Libre WebUI server never sees them.
+ * coordinates the user chose; the Alcore server never sees them.
  */
 
 export type WeatherKind =

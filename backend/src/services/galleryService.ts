@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -70,7 +70,7 @@ const parseDataUrl = (
   if (!match) {
     // Remote provider URLs were historically persisted and redirected to.
     // New writes reject them: provider content must be downloaded first so
-    // retention, checksums, deletion, and access policy stay under Libre.
+    // retention, checksums, deletion, and access policy stay under Alcore.
     throw new Error('Generated media must be a base64 data URL');
   }
   const mimeType = match[1].toLowerCase();

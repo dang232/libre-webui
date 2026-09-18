@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -137,7 +137,7 @@ test('unauthenticated login cannot open protected global UI', async ({
   }
 
   await page.evaluate(() => {
-    window.dispatchEvent(new Event('libre:open-palette'));
+    window.dispatchEvent(new Event('alcore:open-palette'));
   });
   await expect(page.getByTestId('command-palette')).toHaveCount(0);
 
@@ -166,7 +166,7 @@ test('login preserves an explicit light theme preference', async ({ page }) => {
 
   await page.addInitScript(theme => {
     localStorage.setItem(
-      'libre-webui-app-state',
+      'alcore-app-state',
       JSON.stringify({ state: { theme } })
     );
   }, lightTheme);
@@ -218,7 +218,7 @@ test('login page follows the administrator default theme until the visitor picks
   await expect
     .poll(() =>
       page.evaluate(() => {
-        const value = localStorage.getItem('libre-webui-instance-theme');
+        const value = localStorage.getItem('alcore-instance-theme');
         return value ? JSON.parse(value).mode : undefined;
       })
     )

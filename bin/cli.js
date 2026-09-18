@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,13 +33,13 @@ const maintenanceCommands = new Map([
 
 const printHelp = () => {
   console.log(`
-Libre WebUI - Local-First AI Workspace
+Alcore - Local-First AI Workspace
 
 Usage:
-  npx libre-webui [options]
-  npx libre-webui recovery-check [options]
-  npx libre-webui backup <command> [options]
-  npx libre-webui migrate-postgres [options]
+  npx alcore [options]
+  npx alcore recovery-check [options]
+  npx alcore backup <command> [options]
+  npx alcore migrate-postgres [options]
 
 Options:
   -h, --help      Show this help message
@@ -56,7 +56,7 @@ Maintenance Commands:
 
 Environment Variables:
   PORT                    Server port (default: 8080)
-  DATA_DIR                Persistent data directory (default: ~/.libre-webui)
+  DATA_DIR                Persistent data directory (default: ~/.alcore)
   PLUGINS_DIR             Custom plugin directory (default: DATA_DIR/plugins)
   PLATFORM_PREFLIGHT_TMP_DIR
                           Writable database-inspection scratch directory
@@ -67,14 +67,14 @@ Environment Variables:
   ANTHROPIC_API_KEY       Anthropic API key (optional)
 
 Examples:
-  npx libre-webui
-  npx libre-webui --port 3000
-  npx libre-webui --model llama3.2 --ollama-url http://localhost:11434
-  ollama launch libre-webui
-  npx libre-webui recovery-check --json
-  npx libre-webui backup --help
-  npx libre-webui migrate-postgres --help
-  PORT=3000 npx libre-webui
+  npx alcore
+  npx alcore --port 3000
+  npx alcore --model llama3.2 --ollama-url http://localhost:11434
+  ollama launch alcore
+  npx alcore recovery-check --json
+  npx alcore backup --help
+  npx alcore migrate-postgres --help
+  PORT=3000 npx alcore
 
 Documentation: https://docs.librewebui.org
 `);
@@ -112,7 +112,7 @@ const launch = (artifactPath, forwardedArgs, env) => {
   });
 
   child.on('error', error => {
-    console.error('Failed to start Libre WebUI:', error.message);
+    console.error('Failed to start Alcore:', error.message);
     process.exit(1);
   });
 
@@ -128,7 +128,7 @@ const requireArtifact = relativePath => {
   const artifact = resolveBackendArtifact(relativePath);
   if (!artifact) {
     console.error('Error: Backend not found. The package may be corrupted.');
-    console.error('Please try reinstalling: npm install -g libre-webui');
+    console.error('Please try reinstalling: npm install -g alcore');
     process.exit(1);
   }
   return artifact;
@@ -153,14 +153,14 @@ const main = () => {
 
   if (args.some(arg => versionFlags.includes(arg))) {
     const packageJson = require('../package.json');
-    console.log(`libre-webui v${packageJson.version}`);
+    console.log(`alcore v${packageJson.version}`);
     return;
   }
 
   const launchArgs = parseLaunchArgs(args);
   if (launchArgs.errors.length > 0) {
     for (const error of launchArgs.errors) console.error(`Error: ${error}`);
-    console.error('Run `npx libre-webui --help` for usage.');
+    console.error('Run `npx alcore --help` for usage.');
     process.exit(1);
   }
   Object.assign(process.env, launchArgs.env);
@@ -172,7 +172,7 @@ const main = () => {
   ];
   if (!frontendPaths.some(candidate => fs.existsSync(candidate))) {
     console.error('Error: Frontend not found. The package may be corrupted.');
-    console.error('Please try reinstalling: npm install -g libre-webui');
+    console.error('Please try reinstalling: npm install -g alcore');
     process.exit(1);
   }
 
@@ -184,7 +184,7 @@ const main = () => {
   console.log(`
 ╭─────────────────────────────────────────────────╮
 │                                                 │
-│   Libre WebUI                                   │
+│   Alcore                                        │
 │   Local-First AI Workspace                      │
 │                                                 │
 ╰─────────────────────────────────────────────────╯

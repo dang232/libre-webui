@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
 import './env.js';
 
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -94,7 +94,7 @@ import imageGenRoutes from './routes/imageGen.js';
 import mediaRoutes from './routes/media.js';
 import embeddingsRoutes from './routes/embeddings.js';
 import huggingfaceHubRoutes from './routes/huggingfaceHub.js';
-import libreClawRoutes from './routes/libreClaw.js';
+import alcoreClawRoutes from './routes/libreClaw.js';
 import workRoutes from './routes/work.js';
 import systemDiagnosticsRoutes from './routes/systemDiagnostics.js';
 import artifactsRoutes from './routes/artifacts.js';
@@ -341,14 +341,14 @@ app.use(
           // WebSocket connections - flexible for Docker networking
           `ws://localhost:${port}`,
           `wss://localhost:${port}`,
-          'ws://libre-webui:3001',
-          'wss://libre-webui:3001',
+          'ws://alcore:3001',
+          'wss://alcore:3001',
           ...(process.env.NODE_ENV !== 'production'
             ? [
                 'http://localhost:*',
                 'ws://localhost:*',
-                'http://libre-webui:*',
-                'ws://libre-webui:*',
+                'http://alcore:*',
+                'ws://alcore:*',
               ]
             : []),
         ],
@@ -565,14 +565,14 @@ const imageGenRateLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Rate limiter for Libre Claw agent routes
-const libreClawRateLimiter = rateLimit({
-  keyPrefix: 'api-libre-claw',
+// Rate limiter for Alcore Claw agent routes
+const alcoreClawRateLimiter = rateLimit({
+  keyPrefix: 'api-alcore-claw',
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 500, // agent dashboards poll run/event state while active
   message: {
     success: false,
-    error: 'Too many Libre Claw requests from this IP, please try again later.',
+    error: 'Too many Alcore Claw requests from this IP, please try again later.',
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -669,7 +669,7 @@ app.use('/api/evaluations', evaluationsRoutes);
 app.use('/api/image-gen', imageGenRateLimiter, optionalAuth, imageGenRoutes);
 app.use('/api/media', mediaRoutes);
 app.use('/api/huggingface-hub', huggingfaceHubRoutes);
-app.use('/api/libre-claw', libreClawRateLimiter, libreClawRoutes);
+app.use('/api/alcore-claw', alcoreClawRateLimiter, alcoreClawRoutes);
 app.use('/api/work', workRateLimiter, workRoutes);
 app.use('/api/system', systemDiagnosticsRoutes);
 app.use('/api/artifacts', artifactsRoutes);
@@ -683,7 +683,7 @@ app.use('/api/audit', auditRoutes);
 // OpenAI-compatible surface for external SDKs; authenticated by scoped
 // personal API keys (or a normal session token).
 
-// Serve frontend static files in production (for npx libre-webui)
+// Serve frontend static files in production (for npx alcore)
 if (
   process.env.NODE_ENV === 'production' ||
   process.env.SERVE_FRONTEND === 'true'
@@ -715,7 +715,7 @@ if (
     // SPA fallback - serve index.html for all non-API routes. Pass the file
     // relative to a root instead of as an absolute path: send() rejects
     // absolute paths that contain a dot-segment, and the npx cache lives
-    // under ~/.npm/_npx, so every `npx libre-webui` install 500s on deep
+    // under ~/.npm/_npx, so every `npx alcore` install 500s on deep
     // links without the root option.
     const indexFile = 'index.html';
     const sendIndex = (res: express.Response) => {
@@ -870,7 +870,7 @@ server.listen({ port, host }, () => {
       ? `[${host}]`
       : host;
   const url = `http://${displayHost}:${port}`;
-  logger.info(`Libre WebUI v${pkg.version}`);
+  logger.info(`Alcore v${pkg.version}`);
   logger.info(url);
 
   // One quiet line on the very first boot, never repeated. Not a nag, not a
@@ -881,7 +881,7 @@ server.listen({ port, host }, () => {
       if (!seen) {
         await setSystemSetting('first_run_star_note', 'shown');
         logger.info(
-          'If Libre WebUI is useful to you, a star helps others find it: https://github.com/libre-webui/libre-webui'
+          'If Alcore is useful to you, a star helps others find it: https://github.com/libre-webui/libre-webui'
         );
       }
     } catch {

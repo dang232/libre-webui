@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -91,7 +91,7 @@ export const resolvePostgresRuntimeConfig = (
   }
 
   const applicationName =
-    env.POSTGRES_APPLICATION_NAME?.trim() || 'libre-webui';
+    env.POSTGRES_APPLICATION_NAME?.trim() || 'alcore';
   if (!/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,62}$/.test(applicationName)) {
     problems.push(
       'POSTGRES_APPLICATION_NAME must contain 1-63 safe identifier characters.'

@@ -1,9 +1,9 @@
-# Default values for libre-webui
+# Default values for alcore
 
 replicaCount: 1
 
 image:
-  repository: librewebui/libre-webui
+  repository: alcore/alcore
   pullPolicy: IfNotPresent
   # Optional digest override; release automation clears the 0.14.1 transition pin.
   tag: ''
@@ -49,14 +49,14 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # cert-manager.io/cluster-issuer: letsencrypt-prod
   hosts:
-    - host: libre-webui.local
+    - host: alcore.local
       paths:
         - path: /
           pathType: Prefix
   tls: []
-  #  - secretName: libre-webui-tls
+  #  - secretName: alcore-tls
   #    hosts:
-  #      - libre-webui.local
+  #      - alcore.local
 
 resources:
   limits:
@@ -106,7 +106,7 @@ env:
   VITE_API_TIMEOUT: '300000'
   DATA_DIR: '/app/backend/data'
   PLATFORM_PREFLIGHT_TMP_DIR: '/app/backend/temp/preflight'
-  LIBRE_PLATFORM_MODE: 'solo'
+  ALCORE_PLATFORM_MODE: 'solo'
   DATABASE_BACKEND: 'sqlite'
   # Managed PostgreSQL defaults to verified TLS. The bundled team Compose
   # profile overrides this to disable only on its private project network.
@@ -122,7 +122,7 @@ env:
   BLOB_QUOTA_RESERVATION_TTL_MS: 3600000
   VECTOR_STORE_BACKEND: 'embedded'
   COORDINATION_BACKEND: 'local'
-  REDIS_KEY_PREFIX: 'libre'
+  REDIS_KEY_PREFIX: 'alcore'
   REDIS_CONNECT_TIMEOUT_MS: '5000'
   JOB_WORKER_MODE: 'embedded'
   STORAGE_ENCRYPTION_ACTIVE_KEY_ID: ''
@@ -130,7 +130,7 @@ env:
   S3_REGION: ''
   S3_ENDPOINT: ''
   S3_FORCE_PATH_STYLE: 'false'
-  S3_BLOB_PREFIX: 'libre/blobs'
+  S3_BLOB_PREFIX: 'alcore/blobs'
 
 # Secrets - provide via --set or external secret management
 secrets:
@@ -163,7 +163,7 @@ networkPolicy:
   enabled: false
 
 # Team mode runs durable handlers outside application replicas. This
-# Deployment is rendered only when LIBRE_PLATFORM_MODE=team.
+# Deployment is rendered only when ALCORE_PLATFORM_MODE=team.
 worker:
   replicaCount: 1
   resources: {}
@@ -179,7 +179,7 @@ team:
 # persistentvolumeclaims), and NetworkPolicies isolate the sandboxes.
 work:
   enabled: false
-  namespace: libre-webui-work
+  namespace: alcore-work
   createNamespace: true
   # StorageClass for workspace PVCs; empty uses the cluster default.
   storageClass: ''

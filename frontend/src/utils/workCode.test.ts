@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -148,7 +148,7 @@ describe('formatWorkCode', () => {
 
   test('returns consistently indented JSON', async () => {
     const source = {
-      name: 'Libre WebUI',
+      name: 'Alcore',
       features: ['work', 'chat'],
       description:
         'A private and extensible local AI workspace for many different models',
@@ -159,7 +159,7 @@ describe('formatWorkCode', () => {
     );
 
     assert.deepEqual(JSON.parse(formatted), source);
-    assert.match(formatted, /^\{\n {2}"name": "Libre WebUI"/);
+    assert.match(formatted, /^\{\n {2}"name": "Alcore"/);
     assert.equal(formatted.endsWith('\n'), true);
   });
 

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,7 @@ interface State {
   error?: Error;
 }
 
-// The app-level fallback should feel like Libre WebUI, not the browser's default
+// The app-level fallback should feel like Alcore, not the browser's default
 // crash card. Keep this local so ErrorBoundary remains self-contained.
 const DefaultErrorFallback: React.FC<{ error?: Error }> = ({ error }) => {
   const { t } = useTranslation();

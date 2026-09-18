@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -578,7 +578,7 @@ export async function configureServerOAuth(input: {
   const registered = await registerOAuthClient({
     registrationEndpoint: discovered.registrationEndpoint,
     redirectUri: mcpOAuthRedirectUri(input.serverId),
-    clientName: `Libre WebUI (${input.serverName})`,
+    clientName: `Alcore (${input.serverName})`,
     ...(discovered.scope ? { scope: discovered.scope } : {}),
     ...(input.timeoutMs ? { timeoutMs: input.timeoutMs } : {}),
   });

@@ -41,8 +41,8 @@
     "more": "Meira"
   },
   "brand": {
-    "name": "Libre WebUI",
-    "shortName": "Libre"
+    "name": "Alcore",
+    "shortName": "Alcore"
   },
   "appInitialization": {
     "ollamaUnavailable": "Ollama-þjónustan er ekki tiltæk. Enn er hægt að nota líkön úr viðbótum.",
@@ -191,9 +191,9 @@
   },
   "setup": {
     "welcome": {
-      "title": "Velkomin í Libre WebUI",
+      "title": "Velkomin í Alcore",
       "subtitle": "Byrjum",
-      "description": "Settu upp Libre WebUI í örfáum skrefum",
+      "description": "Settu upp Alcore í örfáum skrefum",
       "createAdmin": "Stofna stjórnendareikning",
       "features": {
         "secure": {
@@ -213,7 +213,7 @@
     "admin": {
       "title": "Stofna stjórnendareikning",
       "subtitle": "Uppsetning stjórnanda",
-      "description": "Stofnaðu fyrsta stjórnandareikninginn fyrir Libre WebUI",
+      "description": "Stofnaðu fyrsta stjórnandareikninginn fyrir Alcore",
       "usernamePlaceholder": "Sláðu inn notandanafn stjórnanda",
       "passwordPlaceholder": "Sláðu inn lykilorð (minnst 12 stafir)",
       "confirmPlaceholder": "Staðfestu lykilorðið",
@@ -223,7 +223,7 @@
       "failed": "Ekki tókst að stofna stjórnendareikning",
       "approvalUnexpected": "Ekki tókst að virkja upphaflega stjórnandann. Reyndu aftur.",
       "fillAllFields": "Fylltu út alla reiti",
-      "note": "Þetta verður aðal stjórnandareikningurinn fyrir Libre WebUI"
+      "note": "Þetta verður aðal stjórnandareikningurinn fyrir Alcore"
     },
     "encryptionKey": {
       "title": "Vistaðu dulritunarlyklinn þinn",
@@ -239,7 +239,7 @@
       "envNote": "Þessi lykill er einnig vistaður í backend/.env skránni sem ENCRYPTION_KEY",
       "acknowledgment": "Ég hef vistað dulritunarlyklinn minn á öruggum stað og skil að ef ég týni honum gætu gögn glatast.",
       "confirmRequired": "Staðfestu að þú hafir vistað dulritunarlyklinn",
-      "continue": "Halda áfram í Libre WebUI"
+      "continue": "Halda áfram í Alcore"
     },
     "connectModels": {
       "title": "Tengdu líkönin þín",
@@ -1047,7 +1047,7 @@
       "toSkip": "til að sleppa",
       "documents": "Skjöl",
       "warnings": "Viðvaranir",
-      "refreshAfterImportFailed": "Gögn voru flutt inn, en ekki tókst að endurnýja sumar sýnir. Endurhlaðið Libre WebUI til að sjá allar breytingar.",
+      "refreshAfterImportFailed": "Gögn voru flutt inn, en ekki tókst að endurnýja sumar sýnir. Endurhlaðið Alcore til að sjá allar breytingar.",
       "exportSuccess": "Færanlegt gagnasafn var flutt út",
       "exportFailed": "Útflutningur mistókst",
       "importSuccess": "Færanlegt gagnasafn var flutt inn",
@@ -1056,7 +1056,7 @@
         "invalidJson": "Færanlega safnið er ekki gilt JSON.",
         "objectRequired": "Færanlega safnið verður að innihalda JSON-hlut.",
         "unsupportedVersion": "Óstudd útgáfa færanlegs safns: {{version}}.",
-        "unrecognized": "Þessi skrá er ekki færanlegt Libre WebUI-safn."
+        "unrecognized": "Þessi skrá er ekki færanlegt Alcore-safn."
       },
       "errors": "Villur",
       "archivedChats": {
@@ -1322,7 +1322,7 @@
       "saveFile": "Vista skrá",
       "formatCode": "Forsníða kóða"
     },
-    "description": "Allar flýtileiðir sem eru í boði í Libre WebUI.",
+    "description": "Allar flýtileiðir sem eru í boði í Alcore.",
     "newChat": "Nýtt spjall",
     "newWork": "Ný Work-lota",
     "openPalette": "Opna skipanaspjaldið"
@@ -1701,7 +1701,7 @@
   "userManager": {
     "title": "Notendastjórnun",
     "subtitle": "Stjórnaðu notendareikningum og heimildum",
-    "pageDescription": "Stjórnaðu notendareikningum, heimildum og aðgangsstýringum fyrir Libre WebUI tilvikið þitt.",
+    "pageDescription": "Stjórnaðu notendareikningum, heimildum og aðgangsstýringum fyrir Alcore tilvikið þitt.",
     "sections": {
       "users": "Notendur",
       "access": "Aðgangur og reglur",
@@ -1829,7 +1829,7 @@
     },
     "agentAccess": {
       "title": "Fulltrúar",
-      "description": "Bjóða stjórnendum upp á Fulltrúa-hlutann (Libre Claw). Fulltrúa-skipanalínur keyra á hýslinum sem netþjónsnotandinn, utan Work-sandkassans.",
+      "description": "Bjóða stjórnendum upp á Fulltrúa-hlutann (Alcore Claw). Fulltrúa-skipanalínur keyra á hýslinum sem netþjónsnotandinn, utan Work-sandkassans.",
       "saved": "Aðgangur að fulltrúum uppfærður",
       "saveFailed": "Ekki tókst að uppfæra aðgang að fulltrúum",
       "lockedByEnv": "Fest með umhverfisbreytunni AGENT_CLI_MODELS_ENABLED."
@@ -2041,7 +2041,7 @@
       "title": "Engar beiningar til þjónustu enn",
       "description": "Beiningar birtast hér eftir að virk viðbót sér um spjall, vinnu, ígræðslu, mynd, tal, hljóð eða myndbandabeiningar."
     },
-    "privacyNote": "Notkun er mæld á netþjóninum við jaðar útleiðarviðbótar. Libre WebUI geymir þjónustu, líkan, tímasetningu, stöðu og skráða teljara—aldrei kvaðningu, svör, endapunkta, skilríki eða villumeldingar þjónustu. Heildarfjöldi táknanna inniheldur aðeins beiningar þar sem þjónustan skilaði notkunarmetögögnum.",
+    "privacyNote": "Notkun er mæld á netþjóninum við jaðar útleiðarviðbótar. Alcore geymir þjónustu, líkan, tímasetningu, stöðu og skráða teljara—aldrei kvaðningu, svör, endapunkta, skilríki eða villumeldingar þjónustu. Heildarfjöldi táknanna inniheldur aðeins beiningar þar sem þjónustan skilaði notkunarmetögögnum.",
     "heatmap": {
       "title": "Ár af virkni",
       "description": "Dagleg köll til veitna síðastliðið ár, lituð eftir mest notaða líkani hvers dags.",
@@ -2056,7 +2056,7 @@
   "systemPage": {
     "eyebrow": "Stjórnun",
     "title": "Kerfi",
-    "description": "Fylgstu með vél og keyrsluumhverfi sem hýsa þetta Libre WebUI tilvik.",
+    "description": "Fylgstu með vél og keyrsluumhverfi sem hýsa þetta Alcore tilvik.",
     "updated": "Uppfært {{date}}",
     "refresh": "Endurlesa kerfisupplýsingar",
     "loadFailed": "Ekki tókst að hlaða kerfisupplýsingum.",
@@ -2074,7 +2074,7 @@
     },
     "host": {
       "title": "Netþjónn & keyrsluumhverfi",
-      "description": "Stýrikerfi, örgjörvi og upplýsingar um Libre WebUI ferli.",
+      "description": "Stýrikerfi, örgjörvi og upplýsingar um Alcore ferli.",
       "container": "Keyrsluumhverfi gáms",
       "native": "Native keyrsluumhverfi",
       "hostname": "Vélarheiti",
@@ -2082,7 +2082,7 @@
       "processor": "Örgjörvi",
       "logicalCpus": "logical CPUs",
       "loadAverage": "Meðalálag · 1 / 5 / 15 mín",
-      "libreVersion": "Libre WebUI",
+      "libreVersion": "Alcore",
       "nodeVersion": "Node.js",
       "process": "Ferli",
       "workingDirectory": "Vinnuskrá"
@@ -2134,7 +2134,7 @@
       "internal": "innra",
       "empty": "Engin netkerfisviðmót eru sjáanleg keyrslutíma forritsins."
     },
-    "securityNote": "Þessi síða er aðeins fyrir kerfisstjóra. Þjónninn skilar aðeins rekstraryfirliti: hann gefur ekki upp umhverfisbreytur, skilríki, Docker merki, tengipunkta, gámaskipanir eða inspect gagnalöð. Þegar Libre WebUI keyrir í gámi koma upplýsingar um CPU og minni hýsitölvu frá Docker Engine þegar staðbundinn sökkull þess er tiltækur; aðrar gildi lýsa keyrslutíma forritsins.",
+    "securityNote": "Þessi síða er aðeins fyrir kerfisstjóra. Þjónninn skilar aðeins rekstraryfirliti: hann gefur ekki upp umhverfisbreytur, skilríki, Docker merki, tengipunkta, gámaskipanir eða inspect gagnalöð. Þegar Alcore keyrir í gámi koma upplýsingar um CPU og minni hýsitölvu frá Docker Engine þegar staðbundinn sökkull þess er tiltækur; aðrar gildi lýsa keyrslutíma forritsins.",
     "work": {
       "title": "Work",
       "description": "Sandkassar allra notenda",
@@ -2314,9 +2314,9 @@
     "referenceTranscript": "Nákvæm afritun viðmiðunarupptöku",
     "referenceTranscriptPlaceholder": "Sláðu nákvæmlega inn það sem sagt er í viðmiðunarupptökunni…",
     "referenceAudioTooLarge": "Viðmiðunarhljóðið má að hámarki vera {{max}}.",
-    "cloneConsent": "Klónaðu aðeins rödd með leyfi mælandans. Upptakan er send völdum þjónustuveitanda fyrir þessa myndun og Libre WebUI vistar hana ekki.",
+    "cloneConsent": "Klónaðu aðeins rödd með leyfi mælandans. Upptakan er send völdum þjónustuveitanda fyrir þessa myndun og Alcore vistar hana ekki.",
     "saveVoiceProfile": "Vista sem endurnýtanlega rödd",
-    "saveVoiceProfileDescription": "Vistaðu þessa viðmiðunarupptöku og afritun á öruggan hátt. Libre WebUI sendir þær völdum þjónustuveitanda fyrir hverja tallotu sem notar röddina.",
+    "saveVoiceProfileDescription": "Vistaðu þessa viðmiðunarupptöku og afritun á öruggan hátt. Alcore sendir þær völdum þjónustuveitanda fyrir hverja tallotu sem notar röddina.",
     "voiceProfileName": "Heiti vistaðrar raddar",
     "voiceProfileNamePlaceholder": "Til dæmis Röddin mín",
     "voiceStorageConsent": "Ég staðfesti að ég hafi leyfi mælandans til að klóna og vista þessa rödd. Viðmiðið verður vistað þar til ég eyði því.",
@@ -2554,7 +2554,7 @@
     "subtitle": "Staðbundin umboðsmaður keyrir, samþykki, áætlanir, minni, verkfæri og notkun.",
     "dashboard": "Stjórnborð",
     "connection": {
-      "disconnectedTitle": "Libre Claw-daemoninn er ekki tengdur",
+      "disconnectedTitle": "Alcore Claw-daemoninn er ekki tengdur",
       "disconnectedDescription": "Byrjaðu það á staðnum með <command>libre-claw start</command> eða stilltu <env>LIBRE_CLAW_BASE_URL</env> í bakendaumhverfinu."
     },
     "status": {
@@ -2573,7 +2573,7 @@
     },
     "startRun": {
       "title": "Hefja keyrslu umboðsmanns",
-      "placeholder": "Biddu Libre Claw um að skoða endurhverfu, laga villu, keyra yfirferð, tímasetja skýrslu...",
+      "placeholder": "Biddu Alcore Claw um að skoða endurhverfu, laga villu, keyra yfirferð, tímasetja skýrslu...",
       "chatRun": "Spjallhlaup",
       "goalMode": "Markmiðshamur",
       "providerOverride": "Hnekkt þjónustuveitanda",
@@ -2584,14 +2584,14 @@
       "title": "Fyrirmyndarleið",
       "providerPlaceholder": "veitanda",
       "modelPlaceholder": "fyrirmynd",
-      "persistGlobal": "Haltu áfram að Libre Claw alþjóðlegri stillingu",
+      "persistGlobal": "Haltu áfram að Alcore Claw alþjóðlegri stillingu",
       "saveModel": "Vista líkan",
-      "theme": "Libre Claw-þema",
+      "theme": "Alcore Claw-þema",
       "saveTheme": "Vista þema"
     },
     "runs": {
       "title": "Keyrslur",
-      "empty": "Engar Libre Claw-keyrslur enn."
+      "empty": "Engar Alcore Claw-keyrslur enn."
     },
     "timeline": {
       "title": "Tímalína keyrslu",
@@ -2625,7 +2625,7 @@
       "schedulePlaceholder": "daily 09:00",
       "promptPlaceholder": "Sjálfvirkni hvetja",
       "create": "Búa til",
-      "empty": "Engar áætlaðar Libre Claw sjálfvirkni.",
+      "empty": "Engar áætlaðar Alcore Claw sjálfvirkni.",
       "runNow": "Keyra núna",
       "pause": "Gera hlé",
       "resume": "Halda áfram",
@@ -2666,19 +2666,19 @@
       "unknownError": "Óþekkt villa"
     },
     "toasts": {
-      "loadStatusFailed": "Gat ekki hlaðið Libre Claw stöðu",
-      "enterTask": "Sláðu inn verkefni fyrir Libre Claw",
-      "runStarted": "Libre Claw-keyrsla hafin",
-      "startRunFailed": "Gat ekki hafið Libre Claw-keyrslu",
+      "loadStatusFailed": "Gat ekki hlaðið Alcore Claw stöðu",
+      "enterTask": "Sláðu inn verkefni fyrir Alcore Claw",
+      "runStarted": "Alcore Claw-keyrsla hafin",
+      "startRunFailed": "Gat ekki hafið Alcore Claw-keyrslu",
       "runCancelled": "Hætt við keyrslu",
       "cancelRunFailed": "Gat ekki hætt við keyrslu",
       "approved": "Samþykkt",
       "denied": "Neitað",
       "resolvePermissionFailed": "Ekki tókst að leysa heimild",
       "providerModelRequired": "Þjónustuaðili og líkan eru nauðsynleg",
-      "modelUpdated": "Libre Claw-líkan uppfært",
+      "modelUpdated": "Alcore Claw-líkan uppfært",
       "updateModelFailed": "Ekki tókst að uppfæra gerð",
-      "themeUpdated": "Libre Claw-þema uppfært",
+      "themeUpdated": "Alcore Claw-þema uppfært",
       "updateThemeFailed": "Ekki tókst að uppfæra þema",
       "automationRequired": "Nafn sjálfvirkni, áætlun og hvetja er krafist",
       "automationCreated": "Sjálfvirkni búin til",
@@ -3049,7 +3049,7 @@
     "title": "Nýjungar",
     "releaseNotes": "Útgáfuskýringar",
     "cta": "Allt í lagi, byrjum",
-    "starAsk": "Líkar þér Libre WebUI? Gefðu stjörnu á GitHub"
+    "starAsk": "Líkar þér Alcore? Gefðu stjörnu á GitHub"
   },
   "notes": {
     "title": "Glósur",
@@ -3502,7 +3502,7 @@
     "description": "Tólaþjónar sem líkanið getur kallað á, og samþykkin sem þú hefur veitt þeim.",
     "approvalNotice": "Tól sem breyta gögnum utan spjallsins biðja alltaf um samþykki, nema þú hafir veitt því tóli varanlegt samþykki eða samþykki fyrir spjallið.",
     "registerServer": "Skrá þjón",
-    "registerHint": "Libre WebUI les þjóninn einu sinni og festir tólin sem hann býður. Endurlestu þjóninn síðar til að ná í breytingar.",
+    "registerHint": "Alcore les þjóninn einu sinni og festir tólin sem hann býður. Endurlestu þjóninn síðar til að ná í breytingar.",
     "editServer": "Breyta þjóni",
     "empty": "Engir tólaþjónar",
     "emptyHintAdmin": "Skráðu OpenAPI- eða MCP-þjón svo líkanið hafi eitthvað til að kalla á.",

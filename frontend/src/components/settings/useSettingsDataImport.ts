@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -108,7 +108,7 @@ export function useSettingsDataImport({
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `libre-webui-user-data-v3-${
+      a.download = `alcore-user-data-v3-${
         new Date().toISOString().split('T')[0]
       }.json`;
       document.body.appendChild(a);
@@ -218,7 +218,7 @@ export function useSettingsDataImport({
         if (reloads.some(reload => reload.status === 'rejected')) {
           toast.error(t('settings.data.refreshAfterImportFailed'));
         }
-        window.dispatchEvent(new Event('libre:documents-updated'));
+        window.dispatchEvent(new Event('alcore:documents-updated'));
       } else {
         throw new Error(result.error || t('settings.data.importFailed'));
       }

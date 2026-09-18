@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -214,7 +214,7 @@ export async function mcpInitialize(
     {
       protocolVersion: MCP_PROTOCOL_VERSION,
       capabilities: {},
-      clientInfo: { name: 'libre-webui', version: '1.0' },
+      clientInfo: { name: 'alcore', version: '1.0' },
     },
     signal
   )) as {

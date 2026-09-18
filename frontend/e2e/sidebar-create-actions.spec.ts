@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -120,7 +120,7 @@ test('Work and Agents are hidden and route-protected for non-admin users', async
   });
   await page.addInitScript(() => {
     localStorage.setItem(
-      'libre-webui-tabs',
+      'alcore-tabs',
       JSON.stringify({
         state: {
           tabs: [

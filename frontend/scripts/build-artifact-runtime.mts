@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -403,7 +403,7 @@ const stripMermaidElk = (): Plugin => ({
     if (id !== MERMAID_ELK_STUB) return null;
     return [
       'export const render = () => {',
-      "  throw new Error('The ELK layout is not bundled with Libre WebUI artifacts; use the dagre layout.');",
+      "  throw new Error('The ELK layout is not bundled with Alcore artifacts; use the dagre layout.');",
       '};',
     ].join('\n');
   },

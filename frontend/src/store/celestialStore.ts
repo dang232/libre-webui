@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,7 +36,7 @@ import {
  * part of the synced theme preference, so the server never learns where a
  * user is; the only network call is the opt-in weather fetch to Open-Meteo.
  */
-const LOCAL_KEY = 'libre-webui-celestial';
+const LOCAL_KEY = 'alcore-celestial';
 
 type Persisted = {
   location?: CelestialLocation | null;

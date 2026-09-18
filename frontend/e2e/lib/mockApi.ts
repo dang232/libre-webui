@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -759,7 +759,7 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
       // Init scripts run in every frame, including the sandboxed artifact
       // frame, where touching storage throws and would surface as a page error.
       try {
-        localStorage.setItem('libre-webui:whats-new-seen', version);
+        localStorage.setItem('alcore:whats-new-seen', version);
       } catch {
         // No storage in an opaque origin; nothing to remember there anyway.
       }

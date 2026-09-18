@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -999,7 +999,7 @@ test('theme preference survives refresh and retries a failed save', async ({
   await expect
     .poll(() =>
       page.evaluate(() => {
-        const value = localStorage.getItem('libre-webui-app-state');
+        const value = localStorage.getItem('alcore-app-state');
         return value ? JSON.parse(value).state.themeSyncPending : undefined;
       })
     )
@@ -1194,7 +1194,7 @@ test('accent palette can adapt the full light and dark interface and persists', 
   await expect
     .poll(() =>
       page.evaluate(() => {
-        const value = localStorage.getItem('libre-webui-app-state');
+        const value = localStorage.getItem('alcore-app-state');
         return value ? JSON.parse(value).state.themeSyncPending : undefined;
       })
     )
@@ -2044,8 +2044,8 @@ test.describe('celestial location and weather', () => {
     await expect
       .poll(() =>
         page.evaluate(() => {
-          const raw = localStorage.getItem('libre-webui-celestial');
-          const state = localStorage.getItem('libre-webui-app-state') ?? '';
+          const raw = localStorage.getItem('alcore-celestial');
+          const state = localStorage.getItem('alcore-app-state') ?? '';
           return {
             local: raw ? JSON.parse(raw).location?.latitude : null,
             leaked: state.includes('45.5'),

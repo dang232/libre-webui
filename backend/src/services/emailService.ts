@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -443,7 +443,7 @@ class EmailService {
       return { authenticated: session.authenticated, sentTo: null };
     }
     const message = renderNotificationEmail({
-      heading: 'Libre WebUI email is working',
+      heading: 'Alcore email is working',
       lines: [
         `This test message was requested by ${options.requestedBy}.`,
         'Notifications you opt into will arrive from this address.',
@@ -453,7 +453,7 @@ class EmailService {
     await sendSmtpMail(config, {
       from: view.from,
       to: [recipient],
-      subject: 'Libre WebUI test message',
+      subject: 'Alcore test message',
       ...message,
     });
     return { authenticated: Boolean(view.username), sentTo: recipient };
@@ -586,7 +586,7 @@ class EmailService {
         markdown = truncate(result, MAX_TEXT_LENGTH);
       } else {
         lines.push(
-          'The run finished. Open Libre WebUI to see the full result.'
+          'The run finished. Open Alcore to see the full result.'
         );
       }
     } else {
@@ -654,7 +654,7 @@ export const renderNotificationEmail = (input: {
   if (link) textParts.push('', `${input.linkLabel ?? 'Open'}: ${link}`);
   textParts.push(
     '',
-    'Sent by Libre WebUI. Change what you receive under Settings > Notifications.'
+    'Sent by Alcore. Change what you receive under Settings > Notifications.'
   );
 
   const theme = DEFAULT_EMAIL_MARKDOWN_THEME;
@@ -680,14 +680,14 @@ export const renderNotificationEmail = (input: {
     `<body style="margin:0;padding:0;background:${BRAND.page};color:${BRAND.text};font-family:${theme.fontBody}">`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BRAND.page}"><tr><td align="center" style="padding:32px 16px">`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px">`,
-    `<tr><td style="padding:0 4px 18px"><a href="${BRAND.site}" style="text-decoration:none;color:${BRAND.text}"><img src="${BRAND.logo}" width="28" height="28" alt="" style="vertical-align:middle;border:0;border-radius:6px"> <span style="vertical-align:middle;margin-left:8px;font-family:'Space Grotesk', ${theme.fontBody};font-size:17px;font-weight:700;letter-spacing:-0.01em">Libre WebUI</span></a></td></tr>`,
+    `<tr><td style="padding:0 4px 18px"><a href="${BRAND.site}" style="text-decoration:none;color:${BRAND.text}"><img src="${BRAND.logo}" width="28" height="28" alt="" style="vertical-align:middle;border:0;border-radius:6px"> <span style="vertical-align:middle;margin-left:8px;font-family:'Space Grotesk', ${theme.fontBody};font-size:17px;font-weight:700;letter-spacing:-0.01em">Alcore</span></a></td></tr>`,
     `<tr><td style="background:${BRAND.surface};border:1px solid ${BRAND.border};border-radius:12px;padding:28px 28px 22px">`,
     `<h1 style="margin:0 0 16px;font-family:'Space Grotesk', ${theme.fontBody};font-size:22px;line-height:1.25;font-weight:700;letter-spacing:-0.01em;color:${BRAND.text}">${escapeHtml(input.heading)}</h1>`,
     paragraphs,
     body,
     button,
     '</td></tr>',
-    `<tr><td style="padding:18px 4px 0;font-size:12px;line-height:1.6;color:${BRAND.muted}">Sent by Libre WebUI. Change what you receive under ${settingsLink}.<br><a href="${BRAND.site}" style="color:${BRAND.muted};text-decoration:none">librewebui.org</a></td></tr>`,
+    `<tr><td style="padding:18px 4px 0;font-size:12px;line-height:1.6;color:${BRAND.muted}">Sent by Alcore. Change what you receive under ${settingsLink}.<br><a href="${BRAND.site}" style="color:${BRAND.muted};text-decoration:none">librewebui.org</a></td></tr>`,
     '</table></td></tr></table></body></html>',
   ].join('');
   return { text: textParts.join('\n'), html };

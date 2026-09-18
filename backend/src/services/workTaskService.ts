@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1256,7 +1256,7 @@ const translatePersistenceError = (
       );
     case 'WORK_GLOBAL_TASK_LIMIT':
       return new WorkAdmissionError(
-        `This Libre WebUI instance already has the maximum of ${workAdmissionLimits.maxTasksGlobal} Work tasks.`,
+        `This Alcore instance already has the maximum of ${workAdmissionLimits.maxTasksGlobal} Work tasks.`,
         error.code
       );
     case 'WORK_USER_RUNTIME_LIMIT':
@@ -1266,7 +1266,7 @@ const translatePersistenceError = (
       );
     case 'WORK_GLOBAL_RUNTIME_LIMIT':
       return new WorkAdmissionError(
-        `This Libre WebUI instance already has ${workAdmissionLimits.maxActiveRuntimesGlobal} active Work runtime(s). Wait for a run or preview to stop.`,
+        `This Alcore instance already has ${workAdmissionLimits.maxActiveRuntimesGlobal} active Work runtime(s). Wait for a run or preview to stop.`,
         error.code
       );
     case 'WORK_ACTIVE_RUN':
