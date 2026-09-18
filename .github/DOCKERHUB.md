@@ -1,4 +1,4 @@
-# Libre WebUI
+# Alcore
 
 **A local-first workspace for chat, private knowledge, artifacts, and isolated model-driven work.**
 
@@ -8,9 +8,9 @@ Self-hosted. Provider-flexible. Apache 2.0. No application telemetry.
 [![License](https://img.shields.io/badge/license-Apache--2.0-15803d?style=flat-square)](https://github.com/libre-webui/libre-webui/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/libre-webui/libre-webui?style=flat-square&label=stars&color=ff7b52)](https://github.com/libre-webui/libre-webui)
 
-![Libre WebUI](https://raw.githubusercontent.com/libre-webui/libre-webui/main/screenshot.png)
+![Alcore](https://raw.githubusercontent.com/libre-webui/libre-webui/main/screenshot.png)
 
-Libre WebUI connects to local models through Ollama or to providers you choose. It includes document search, interactive artifacts, personas, multi-user access controls, image and speech providers, and task-scoped Work containers for model-driven file and command workflows.
+Alcore connects to local models through Ollama or to providers you choose. It includes document search, interactive artifacts, personas, multi-user access controls, image and speech providers, and task-scoped Work containers for model-driven file and command workflows.
 
 ## Start with Docker
 

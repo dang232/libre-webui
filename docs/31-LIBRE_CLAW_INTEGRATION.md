@@ -1,16 +1,16 @@
 ---
 title: 'Libre Claw Integration'
-description: 'Connect Libre WebUI to Libre Claw for local agent runs, approvals, schedules, memory, skills, tools, and usage reporting'
+description: 'Connect Alcore to Libre Claw for local agent runs, approvals, schedules, memory, skills, tools, and usage reporting'
 slug: /LIBRE_CLAW_INTEGRATION
 keywords: [libre claw, agent, integration, tools, approvals, schedules, memory]
 ---
 
 # Libre Claw Integration
 
-Libre WebUI includes a native integration for
+Alcore includes a native integration for
 [Libre Claw](https://github.com/kroonen-ai/libre-claw), Kroonen AI's local
 agent harness. Libre Claw is exposed as a first-class agent surface inside
-Libre WebUI rather than as a generic completion-provider plugin.
+Alcore rather than as a generic completion-provider plugin.
 
 Libre Claw remains the runtime that owns the powerful agent behavior:
 
@@ -24,7 +24,7 @@ Libre Claw remains the runtime that owns the powerful agent behavior:
 - daemon-owned automations and Telegram delivery
 - the standalone local dashboard
 
-Libre WebUI talks to the Libre Claw daemon over HTTP and exposes those features
+Alcore talks to the Libre Claw daemon over HTTP and exposes those features
 inside the normal authenticated WebUI shell.
 
 In the interface this surface is called **Agents** — the icon in the sidebar,
@@ -35,14 +35,14 @@ variables keep their own name throughout this guide.
 ## Libre Claw And Work Are Different
 
 Libre Claw remains an optional external runtime. It is not required for
-Libre WebUI's built-in **Work** mode.
+Alcore's built-in **Work** mode.
 
 |                         | Work                                                                   | Libre Claw                                                                |
 | ----------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| Runtime                 | Native Libre WebUI model/tool loop plus Docker                         | Separate Libre Claw daemon                                                |
+| Runtime                 | Native Alcore model/tool loop plus Docker                         | Separate Libre Claw daemon                                                |
 | Primary scope           | One persistent, isolated coding workspace per task                     | Broader agent runs, memory, approvals, schedules, browser, MCP, and tools |
 | Persistence             | SQLite task history plus a task-owned Docker named volume              | Libre Claw's own run and memory stores                                    |
-| Model routing           | Ollama, Ollama Cloud, or configured Libre WebUI completion/chat plugin | Libre Claw provider, model, and fallback configuration                    |
+| Model routing           | Ollama, Ollama Cloud, or configured Alcore completion/chat plugin | Libre Claw provider, model, and fallback configuration                    |
 | Availability without it | Work continues normally                                                | Only the `/agents` Libre Claw surface is disconnected                     |
 
 Use Work when a model should build or modify files inside a constrained
@@ -53,8 +53,8 @@ set, approval system, memory, goals, or automations.
 
 ```mermaid
 flowchart LR
-    UI["Libre WebUI<br/>/agents page"]
-    API["Libre WebUI backend<br/>/api/libre-claw/*"]
+    UI["Alcore<br/>/agents page"]
+    API["Alcore backend<br/>/api/libre-claw/*"]
     LC["Libre Claw daemon<br/>127.0.0.1:8766"]
     RUNS["~/.libre-claw/runs"]
     MEM["~/.libre-claw/memory.db"]
@@ -96,11 +96,11 @@ The default dashboard and API are available at:
 http://127.0.0.1:8766/dashboard
 ```
 
-Then open **Libre WebUI → Libre Claw**.
+Then open **Alcore → Libre Claw**.
 
 ## Backend Environment
 
-Libre WebUI uses the local daemon URL by default:
+Alcore uses the local daemon URL by default:
 
 ```bash
 LIBRE_CLAW_BASE_URL=http://127.0.0.1:8766
@@ -163,7 +163,7 @@ the admin's choice through the daemon API.
 
 ## Automations
 
-Libre WebUI can create and manage Libre Claw daemon automations:
+Alcore can create and manage Libre Claw daemon automations:
 
 - report automations
 - Telegram-routed automations

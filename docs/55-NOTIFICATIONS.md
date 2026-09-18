@@ -8,7 +8,7 @@ keywords: [notifications, inbox, webhooks, mentions, alerts]
 
 # Notifications
 
-Libre WebUI keeps a durable, per-user notification inbox so team activity
+Alcore keeps a durable, per-user notification inbox so team activity
 — mentions, direct messages, shares, automation failures, and calendar
 reminders — reaches people even when the relevant page is closed.
 
@@ -96,7 +96,7 @@ closed. The implementation is standard and self-contained:
 
 Push requires the production app (the service worker registers only there)
 and a secure origin. The offline shell and installability come from the same
-service worker: the app manifest makes Libre WebUI installable, navigations
+service worker: the app manifest makes Alcore installable, navigations
 fall back to the cached shell when offline, and hashed build assets are
 cached immutably. API traffic is never cached.
 
@@ -132,7 +132,7 @@ relay failures, and the SMTP client is a small built-in implementation
 (EHLO, STARTTLS, AUTH PLAIN or LOGIN) that never sends credentials over an
 unencrypted connection unless the mode is explicitly `none`. Every message
 has a plain-text part and an HTML alternative in the website's look: the
-Libre WebUI wordmark, one card with the content, a coral button to the
+Alcore wordmark, one card with the content, a coral button to the
 target, and a footer pointing back to Settings → Notifications. An
 automation result is rendered from Markdown (headings, lists, emphasis,
 code, links to http(s) targets only); everything else is escaped, and the

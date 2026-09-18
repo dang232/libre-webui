@@ -1,20 +1,20 @@
 ---
 sidebar_position: 30
 title: 'Local GPU Stack'
-description: 'Run Libre WebUI locally with Docker, an external Ollama instance, and GPU-aware model choices.'
+description: 'Run Alcore locally with Docker, an external Ollama instance, and GPU-aware model choices.'
 slug: /LOCAL_GPU_STACK
 keywords: [local setup, gpu, docker compose, ollama, nvidia]
 ---
 
 # Local GPU Stack
 
-This guide describes the repository-supported local GPU setup: Ollama runs natively on the host for direct GPU access, and Libre WebUI runs in Docker with `docker-compose.dev.external-ollama.yml`.
+This guide describes the repository-supported local GPU setup: Ollama runs natively on the host for direct GPU access, and Alcore runs in Docker with `docker-compose.dev.external-ollama.yml`.
 
 ## Work Availability
 
 Ollama runs natively on the host GPU. Work is enabled through the mounted host
-Docker socket, letting Libre WebUI create task-scoped containers on the same
-daemon. No native Libre WebUI install is needed.
+Docker socket, letting Alcore create task-scoped containers on the same
+daemon. No native Alcore install is needed.
 
 The socket grants root-equivalent control of the Docker host. Remove its mount
 unless Work is needed, and on Linux set `DOCKER_GID` in `.env`.
@@ -25,9 +25,9 @@ pressure, but Docker is still required for the task workspace and commands.
 
 ## What You Get
 
-- Libre WebUI using the `librewebui/libre-webui:dev` image.
+- Alcore using the `librewebui/libre-webui:dev` image.
 - Native host Ollama for local model inference.
-- Persistent Libre WebUI data volumes.
+- Persistent Alcore data volumes.
 - A clean path for testing the dev image without containerizing Ollama.
 
 ## Prerequisites
@@ -67,7 +67,7 @@ Verify the API:
 curl http://localhost:11434/api/version
 ```
 
-## Start Libre WebUI
+## Start Alcore
 
 From the repository root:
 

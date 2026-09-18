@@ -1,5 +1,5 @@
 [Unit]
-Description=Run the Libre WebUI backup every night
+Description=Run the Alcore backup every night
 
 [Timer]
 OnCalendar=*-*-* 03:20:00

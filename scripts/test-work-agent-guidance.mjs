@@ -144,7 +144,7 @@ test('a hired persona renames the agent and prepends its instructions', () => {
   const withoutPersona = buildWorkAgentSystemPrompt(guidanceContext);
   assert.match(
     withoutPersona,
-    /^You are Libre WebUI Work, an autonomous implementation agent\./
+    /^You are Alcore Work, an autonomous implementation agent\./
   );
 
   const named = buildWorkAgentSystemPrompt({
@@ -153,7 +153,7 @@ test('a hired persona renames the agent and prepends its instructions', () => {
   });
   assert.match(
     named,
-    /^You are Chief of Staff, a persistent agent running on Libre WebUI Work/
+    /^You are Chief of Staff, a persistent agent running on Alcore Work/
   );
   assert.doesNotMatch(named, /hired you with this persona/);
 

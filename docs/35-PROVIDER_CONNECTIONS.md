@@ -1,7 +1,7 @@
 ---
 sidebar_position: 4
 title: 'Connect Third-Party and Self-Hosted Providers'
-description: 'Connect bundled, OpenAI-compatible, and self-hosted model APIs through the Libre WebUI Provider connections workspace.'
+description: 'Connect bundled, OpenAI-compatible, and self-hosted model APIs through the Alcore Provider connections workspace.'
 slug: /PROVIDER_CONNECTIONS
 keywords:
   [
@@ -17,14 +17,14 @@ keywords:
 
 # Connect Third-Party and Self-Hosted Providers
 
-Libre WebUI 0.16.0 adds a focused **Provider connections** workspace inside
+Alcore 0.16.0 adds a focused **Provider connections** workspace inside
 **Settings > Plugins**. Use it to activate a bundled provider, point a
 compatible plugin at another API, inspect the effective model catalog, or
 connect a self-hosted gateway on a trusted network.
 
-![Libre WebUI Provider connections with provider search and selection, connection controls, model refresh, and a provider-qualified capability catalog.](./assets/provider-connections-0.16.0.png)
+![Alcore Provider connections with provider search and selection, connection controls, model refresh, and a provider-qualified capability catalog.](./assets/provider-connections-0.16.0.png)
 
-Libre WebUI currently ships support for these provider wire formats:
+Alcore currently ships support for these provider wire formats:
 
 - OpenAI Chat Completions;
 - OpenAI Responses;
@@ -65,7 +65,7 @@ local Ollama runtime with its health and version, a list of the existing
 OpenAI-compatible connections, and a small form to add another.
 
 Adding a connection takes a display name, the full chat completions URL, and
-an optional API key. Libre WebUI derives the connection ID from the name,
+an optional API key. Alcore derives the connection ID from the name,
 installs the provider definition, stores the key server-side, activates the
 connection, and asks the endpoint which models it serves. The discovered
 models replace the placeholder catalog and appear in the chat model picker.
@@ -94,7 +94,7 @@ or point at a different sign-in with `CODEX_HOME`.
 
 ## Choose a Bundled or Imported Provider
 
-Libre WebUI includes definitions for OpenAI, Anthropic, Gemini, Groq, Mistral,
+Alcore includes definitions for OpenAI, Anthropic, Gemini, Groq, Mistral,
 DeepSeek, OpenRouter, Kimi Code by Moonshot AI, Hugging Face, GitHub Models,
 local MLX LM, and other model or media services. Start with a bundled entry when
 its protocol and authentication contract match the service you want to use.
@@ -148,7 +148,7 @@ server implements compatible Responses request and event shapes.
 
 ## Configure a Base URL or Full Endpoint
 
-Libre WebUI resolves a completion route in this order:
+Alcore resolves a completion route in this order:
 
 1. A non-default full `endpoint` override.
 2. `base_url` plus an optional `api_path`.
@@ -184,14 +184,14 @@ keeps the explicitly selected API mode.
 After a route or API-key change, save the provider again before testing Chat.
 When the plugin declares authentication, a custom connection route requires a
 credential saved by the same account. An intentionally authless plugin can
-leave both authentication fields empty. Libre WebUI does not send an
+leave both authentication fields empty. Alcore does not send an
 operator-managed environment key to a user-defined destination; environment
 fallback is reserved for the trusted bundled route.
 
 ## Discover or Maintain Model IDs
 
 Select an active chat provider and use **Refresh models** to run discovery.
-Libre WebUI reloads both the selected provider's catalog and Chat's model list.
+Alcore reloads both the selected provider's catalog and Chat's model list.
 
 Discovery also runs without being asked: an active provider's catalog is
 rediscovered when it is missing or has aged past
@@ -261,7 +261,7 @@ are not health checks.
 Model IDs are not globally unique. Chat stores the raw model ID together with
 its exact Ollama or plugin provider identity, so an Ollama model and multiple
 plugins can safely expose the same name. If the saved provider becomes
-unavailable, Libre WebUI shows that selection as unavailable instead of
+unavailable, Alcore shows that selection as unavailable instead of
 silently routing the request to another provider.
 
 ## Configure Image Generation Separately
@@ -277,7 +277,7 @@ the image endpoint declared by the plugin, or set it to the complete compatible
 Image API operation URL when your provider supplies one.
 
 Image choices are provider-qualified, just like Chat choices. If two active
-plugins expose the same image model ID, Libre WebUI sends the request only to
+plugins expose the same image model ID, Alcore sends the request only to
 the provider selected in the image panel.
 
 ## Connect an HTTP Gateway Safely
@@ -288,7 +288,7 @@ network, but it sends API keys, prompts, tool results, and generated content
 without transport encryption. Prefer HTTPS whenever the route crosses a
 network boundary or the gateway supports TLS.
 
-Requests originate from the Libre WebUI backend, not from the browser. Choose
+Requests originate from the Alcore backend, not from the browser. Choose
 an address that is reachable from that backend:
 
 | Backend location              | Example provider root                 |
@@ -298,16 +298,16 @@ an address that is reachable from that backend:
 | Container to supported host   | `http://host.docker.internal:8081/v1` |
 | Trusted LAN or Tailscale host | `http://192.168.1.20:8081/v1`         |
 
-Inside a container, `localhost` identifies the Libre WebUI container itself.
+Inside a container, `localhost` identifies the Alcore container itself.
 It does not identify another Compose service or automatically reach the host.
 
-Libre WebUI accepts only HTTP and HTTPS provider URLs, validates the final
+Alcore accepts only HTTP and HTTPS provider URLs, validates the final
 destination before selecting a credential, and does not follow redirects for
 provider or discovery requests. Configure the final operation URL directly.
 
 ## Verify the Gateway Before Activating It
 
-Test model discovery from the machine or container that runs the Libre WebUI
+Test model discovery from the machine or container that runs the Alcore
 backend:
 
 ```bash
@@ -355,12 +355,12 @@ model reliably supports tool calling.
 | Requests still reach the bundled endpoint   | Remove a stale full endpoint override, then save the intended Base URL and API Path.                                    |
 | The provider receives the wrong payload     | Match API Mode to the upstream Chat Completions or Responses protocol and verify the final suffix.                      |
 | Refresh models returns no IDs               | Test `/models`, verify the `data[].id` shape, expose/configure the `models_endpoint` variable, or maintain `model_map`. |
-| A previous model remains after a route edit | Save the connection change; Libre WebUI clears that user's obsolete discovered catalog before refreshing.               |
+| A previous model remains after a route edit | Save the connection change; Alcore clears that user's obsolete discovered catalog before refreshing.               |
 | The API key is reported missing             | Save a per-user credential for the custom route; bundled environment fallback does not follow overrides.                |
 | A Docker deployment cannot reach localhost  | Use the gateway's Compose service name, a supported host alias, or a reachable private-network address.                 |
 | Chat works but image generation does not    | Configure the separate complete `image_endpoint` and select a model exposed by that image capability.                   |
 | Chat works but Work rejects the model       | Confirm the model supports compatible tool calls; ordinary text completion is not sufficient.                           |
-| The provider returns a redirect             | Configure the final validated URL directly; Libre WebUI intentionally does not follow provider redirects.               |
+| The provider returns a redirect             | Configure the final validated URL directly; Alcore intentionally does not follow provider redirects.               |
 
 For detailed routing, credential, replay-state, and authorization behavior,
 read [Plugins](./PLUGIN_ARCHITECTURE). For deployment-specific failures, see
@@ -368,7 +368,7 @@ read [Plugins](./PLUGIN_ARCHITECTURE). For deployment-specific failures, see
 
 ## Community Acknowledgment
 
-This guide and Libre WebUI 0.16.0's Provider connections experience were
+This guide and Alcore 0.16.0's Provider connections experience were
 shaped by [ZhengJin (@fangzhengjin)](https://github.com/fangzhengjin), whose
 detailed third-party-provider feedback and AI-assisted UX concept in
 [#163](https://github.com/libre-webui/libre-webui/issues/163) helped define the

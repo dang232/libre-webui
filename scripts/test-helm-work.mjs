@@ -193,7 +193,7 @@ test('the chart makes its data PVC writable by the non-root process', () => {
 
 test('the chart keeps solo single-replica safety and admits only a complete team profile', t => {
   const deployment = read('deployment.yaml');
-  assert.match(deployment, /Solo Libre WebUI requires replicaCount=0 or 1/);
+  assert.match(deployment, /Solo Alcore requires replicaCount=0 or 1/);
   assert.match(deployment, /autoscaling requires the complete team profile/);
   assert.match(
     deployment,

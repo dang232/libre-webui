@@ -1,14 +1,14 @@
 ---
 sidebar_position: 24
 title: 'Kubernetes'
-description: 'Deploy Libre WebUI on Kubernetes with Helm.'
+description: 'Deploy Alcore on Kubernetes with Helm.'
 slug: /KUBERNETES
-keywords: [libre webui kubernetes, helm chart, k8s deployment]
+keywords: [Alcore kubernetes, helm chart, k8s deployment]
 ---
 
 # Kubernetes
 
-Libre WebUI ships a Helm chart under `helm/libre-webui`.
+Alcore ships a Helm chart under `helm/libre-webui`.
 
 ## Work on Kubernetes
 
@@ -62,7 +62,7 @@ is unnecessary.
 helm install libre-webui oci://ghcr.io/libre-webui/charts/libre-webui
 ```
 
-The default chart deploys Libre WebUI with persistent storage and a bundled
+The default chart deploys Alcore with persistent storage and a bundled
 Ollama service. The 0.14.1 transition is pinned to its verified
 multi-architecture image digest; subsequent charts default to the matching
 semantic `appVersion` image. Set `image.tag` or `image.digest` explicitly only
@@ -73,7 +73,7 @@ The default `solo` profile accepts `replicaCount: 0` for a deliberate suspension
 or `replicaCount: 1` for normal operation. It rejects larger values and the
 HorizontalPodAutoscaler because SQLite, local files, and process-local
 coordination are not safe behind multiple pods. A zero-replica release
-provisions its control-plane resources but serves no Libre WebUI traffic.
+provisions its control-plane resources but serves no Alcore traffic.
 
 For multiple replicas, configure the complete `team` profile. It uses
 PostgreSQL/PGVector, S3-compatible blob storage, Redis, and a separate durable
@@ -246,10 +246,10 @@ isolation.
 
 ## Persistence
 
-Keep the Libre WebUI data PVC and Ollama model PVC on persistent storage. Back up the Libre WebUI data volume and the encryption key together.
+Keep the Alcore data PVC and Ollama model PVC on persistent storage. Back up the Alcore data volume and the encryption key together.
 
 Work task workspaces live in their own PVCs in the sandbox namespace, not in
-the Libre WebUI data PVC. Complete Work recovery needs both the database
+the Alcore data PVC. Complete Work recovery needs both the database
 (task ownership, resource names, runs) and those PVCs; back them up together
 under the same policy.
 

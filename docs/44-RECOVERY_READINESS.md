@@ -1,13 +1,13 @@
 ---
 sidebar_position: 44
 title: 'Recovery Readiness'
-description: 'Inventory the state that must be coordinated for a reliable Libre WebUI backup and restore.'
+description: 'Inventory the state that must be coordinated for a reliable Alcore backup and restore.'
 slug: /RECOVERY_READINESS
 ---
 
 # Recovery Readiness
 
-Libre WebUI provides a read-only recovery inventory as the first backup and
+Alcore provides a read-only recovery inventory as the first backup and
 restore safety gate. It reports what known state exists and which detected
 conditions block a snapshot. It does not acquire a maintenance lock, copy,
 encrypt, upload, delete, repair, or restore data.
@@ -87,7 +87,7 @@ are emitted.
 
 A read-only data mount is valid for recovery inspection and produces a warning,
 not a blocker. Application readiness still requires writable storage; never
-start Libre WebUI against the read-only snapshot used by the backup helper.
+start Alcore against the read-only snapshot used by the backup helper.
 
 ## Blockers
 

@@ -1,4 +1,4 @@
-# LongCat AudioDiT adapter for Libre WebUI
+# LongCat AudioDiT adapter for Alcore
 
 This directory supplies the HTTP layer that the official
 [LongCat AudioDiT](https://github.com/meituan-longcat/LongCat-AudioDiT)
@@ -31,7 +31,7 @@ the official 3.5B checkpoint extends that context to 60 seconds. The plugin and
 adapter nevertheless enforce a conservative 140-character generated-text cap
 for both checkpoints. Under LongCat's official duration heuristic, roughly 143
 Chinese characters can already fill the 1B window. Keeping one cross-model cap
-lets Libre WebUI create safe, natural batches before inference rather than
+lets Alcore create safe, natural batches before inference rather than
 silently clipping a dense Chinese chunk. The 3.5B model retains its longer
 context for reference-audio conditioning and duration estimation.
 
@@ -75,7 +75,7 @@ python examples/longcat-audiodit-server/server.py \
 The first start downloads the selected Hugging Face checkpoint. The server
 binds to `127.0.0.1:8300` by default and intentionally has no authentication;
 do not expose it directly to an untrusted network. Start the server with the
-same checkpoint selected in Libre WebUI. To use the 3.5B checkpoint, restart it
+same checkpoint selected in Alcore. To use the 3.5B checkpoint, restart it
 with `--model meituan-longcat/LongCat-AudioDiT-3.5B`.
 
 ### Docker with NVIDIA Container Toolkit
@@ -146,9 +146,9 @@ curl http://localhost:8300/v1/audio/voice-clone \
   --output cloned.wav
 ```
 
-Generated `input` is limited to 140 characters per request so Libre WebUI can
+Generated `input` is limited to 140 characters per request so Alcore can
 batch longer passages without silent duration clipping. `steps` is bounded to
-2–64, `cfg_strength` to 0–20, and `seed` to 0–2,147,483,647. Libre WebUI
+2–64, `cfg_strength` to 0–20, and `seed` to 0–2,147,483,647. Alcore
 forwards those four controls from the plugin's declared request variables to
 both JSON synthesis and multipart cloning. Both endpoints reject
 empty/control-only text and oversized input before inference. Voice cloning

@@ -15,11 +15,11 @@ const openRouterPlugin = JSON.parse(
 );
 const expectedAttribution = {
   'HTTP-Referer': 'https://librewebui.org',
-  'X-OpenRouter-Title': 'Libre WebUI',
+  'X-OpenRouter-Title': 'Alcore',
   'X-OpenRouter-Categories': 'general-chat,personal-agent',
 };
 
-test('official OpenRouter requests identify Libre WebUI for app attribution', () => {
+test('official OpenRouter requests identify Alcore for app attribution', () => {
   assert.deepEqual(
     pluginValidation.buildPluginAttributionHeaders(
       openRouterPlugin,

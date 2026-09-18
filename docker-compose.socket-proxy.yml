@@ -1,4 +1,4 @@
-# Socket-isolated deployment: Libre WebUI never sees the Docker socket.
+# Socket-isolated deployment: Alcore never sees the Docker socket.
 #
 # A socket proxy holds /var/run/docker.sock and forwards only the API
 # sections Work needs (containers, images, volumes, networks, exec, info).

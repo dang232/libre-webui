@@ -3,7 +3,7 @@
 Qwen3-TTS OpenAI-Compatible API Server
 
 This server provides an OpenAI-compatible TTS endpoint for Qwen3-TTS models.
-It allows Libre WebUI to use Qwen3-TTS through the standard plugin system.
+It allows Alcore to use Qwen3-TTS through the standard plugin system.
 
 Requirements:
     pip install qwen-tts fastapi uvicorn python-multipart

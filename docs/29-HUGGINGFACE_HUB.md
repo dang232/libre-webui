@@ -1,7 +1,7 @@
 ---
 sidebar_position: 12
 title: 'Hugging Face Hub'
-description: 'Use Hugging Face models and Inference Providers from Libre WebUI.'
+description: 'Use Hugging Face models and Inference Providers from Alcore.'
 slug: /HUGGINGFACE_HUB
 keywords:
   [
@@ -17,7 +17,7 @@ keywords:
 
 # Hugging Face Hub
 
-Libre WebUI integrates with Hugging Face in two ways:
+Alcore integrates with Hugging Face in two ways:
 
 - Provider plugin access through Hugging Face Inference Providers.
 - In-app Hub browsing for compatible models, including GGUF models that can be pulled through Ollama.
@@ -60,7 +60,7 @@ current administrator can clear the shared model cache.
 
 ## GGUF and Ollama
 
-For local inference, look for GGUF-format models. Libre WebUI can use Ollama-compatible `hf.co/...` model references when a repository exposes suitable GGUF files.
+For local inference, look for GGUF-format models. Alcore can use Ollama-compatible `hf.co/...` model references when a repository exposes suitable GGUF files.
 
 Example pattern:
 
@@ -81,7 +81,7 @@ Some models require accepting terms before use:
 1. Open the model page on Hugging Face.
 2. Accept the license or terms.
 3. Confirm your token has access.
-4. Retry from Libre WebUI.
+4. Retry from Alcore.
 
 Gated models can appear in discovery before your token is allowed to run them.
 

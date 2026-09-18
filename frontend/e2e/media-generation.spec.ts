@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -282,7 +282,7 @@ test('Imagine keeps rendering gallery images across filter changes', async ({
     id,
     userId: 'default',
     kind: 'image',
-    prompt: `Libre WebUI as ${id}`,
+    prompt: `Alcore as ${id}`,
     model: 'meta/muse-image',
     mediaData: `/api/media/gallery/${id}/content`,
     mimeType: 'image/png',
@@ -307,7 +307,7 @@ test('Imagine keeps rendering gallery images across filter changes', async ({
   });
 
   await page.goto('/gallery');
-  const cards = page.locator('img[alt^="Libre WebUI as img-"]');
+  const cards = page.locator('img[alt^="Alcore as img-"]');
   await expect(cards).toHaveCount(2);
   const rendered = () =>
     cards.evaluateAll(images =>

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -172,7 +172,7 @@ function WorkAvatar({
     return (
       <div
         role='img'
-        aria-label='Libre WebUI'
+        aria-label='Alcore'
         data-testid='work-assistant-avatar'
         className={cn(
           'flex shrink-0 items-center justify-center rounded-full border border-line bg-surface-raised text-ink shadow-subtle',

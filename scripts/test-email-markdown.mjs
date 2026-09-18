@@ -116,7 +116,7 @@ test('the branded notification email renders the run result as HTML and keeps th
     linkLabel: 'Open the result',
   });
   assert.match(email.html, /https:\/\/librewebui\.org\/logo-dark\.png/);
-  assert.match(email.html, /Libre WebUI<\/span>/);
+  assert.match(email.html, /Alcore<\/span>/);
   assert.match(email.html, /<h2 style="[^"]*">Funding<\/h2>/);
   assert.match(email.html, /<strong>OpenAI<\/strong> raised/);
   assert.match(email.html, /background:#bd4225/);

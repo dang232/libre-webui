@@ -1,7 +1,7 @@
 ---
 sidebar_position: 13
 title: 'MLX LM on Apple Silicon'
-description: 'Run a local OpenAI-compatible MLX server on macOS and connect it to Libre WebUI.'
+description: 'Run a local OpenAI-compatible MLX server on macOS and connect it to Alcore.'
 slug: /MLX_APPLE_SILICON
 keywords:
   [mlx, mlx-lm, apple silicon, macos, local ai, openai compatible, metal]
@@ -9,7 +9,7 @@ keywords:
 
 # MLX LM on Apple Silicon
 
-Libre WebUI includes an **MLX LM (Apple Silicon)** plugin for running
+Alcore includes an **MLX LM (Apple Silicon)** plugin for running
 MLX-formatted language models directly on an M-series Mac. The plugin connects
 to the OpenAI-compatible HTTP API built into
 [MLX LM](https://github.com/ml-explore/mlx-lm).
@@ -20,7 +20,7 @@ MLX checkpoint to an Ollama or GGUF model.
 ## Architecture
 
 ```text
-Libre WebUI in native development mode
+Alcore in native development mode
   frontend http://localhost:5173
   backend  http://localhost:3001
                   |
@@ -41,7 +41,7 @@ with the packaged `npx libre-webui` server.
 - macOS with the Xcode command-line tools available.
 - Python 3.10 or newer.
 - Enough unified memory for the selected model, its KV cache, and macOS.
-- Libre WebUI running natively. The source development workflow is the simplest
+- Alcore running natively. The source development workflow is the simplest
   setup because both backends can use the Mac loopback interface.
 
 The default Ternary Bonsai model is about 8.5 GB on disk and needs more memory
@@ -141,9 +141,9 @@ curl http://127.0.0.1:8081/v1/chat/completions \
 
 The server also supports streaming Server-Sent Events when `"stream": true`.
 
-## Connect Libre WebUI
+## Connect Alcore
 
-From the Libre WebUI repository root:
+From the Alcore repository root:
 
 ```bash
 npm install
@@ -163,7 +163,7 @@ The built-in model list includes:
 
 - `prism-ml/Ternary-Bonsai-27B-mlx-2bit`
 
-The model selected in Libre WebUI must match a model available to the MLX
+The model selected in Alcore must match a model available to the MLX
 server. To use another checkpoint, export or copy `plugins/mlx-lm.json`, add the
 repository ID to `model_map`, and import the edited definition from
 **Settings > Plugins**.
@@ -178,7 +178,7 @@ Ternary Bonsai's published recommendations are:
 | Top P       | `0.95` |
 | Top K       | `20`   |
 
-Libre WebUI sends temperature and Top P through the plugin. Start the server
+Alcore sends temperature and Top P through the plugin. Start the server
 with `--top-k 20` when you want its Top K recommendation:
 
 ```bash
@@ -203,10 +203,10 @@ server, and try a model whose MLX card explicitly documents tool use.
 
 ## Docker Networking
 
-Native Libre WebUI development is recommended. A container cannot reach the
+Native Alcore development is recommended. A container cannot reach the
 Mac's `127.0.0.1`.
 
-If Libre WebUI runs in Docker:
+If Alcore runs in Docker:
 
 1. Start MLX LM with `--host 0.0.0.0`.
 2. Use a private Mac LAN address such as
@@ -229,7 +229,7 @@ which -a mlx_lm.server
 uv tool upgrade mlx-lm
 ```
 
-**Libre WebUI shows the model but requests fail**
+**Alcore shows the model but requests fail**
 
 Verify the same model ID works directly:
 
@@ -241,7 +241,7 @@ Then confirm the plugin endpoint includes `/v1/chat/completions`.
 
 **Address already in use**
 
-Keep Libre WebUI on its normal port and move MLX:
+Keep Alcore on its normal port and move MLX:
 
 ```bash
 mlx_lm.server --model "owner/model" --port 8082

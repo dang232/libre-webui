@@ -1,13 +1,13 @@
 ---
 sidebar_position: 1
-title: 'Libre WebUI'
-description: 'Install Libre WebUI, give models governed tools and cited knowledge, collaborate with a team, create with voice and media, and operate a production deployment.'
+title: 'Alcore'
+description: 'Install Alcore, give models governed tools and cited knowledge, collaborate with a team, create with voice and media, and operate a production deployment.'
 slug: /
 hide_title: true
 hide_table_of_contents: true
 keywords:
   [
-    libre webui,
+    Alcore,
     ollama,
     local ai,
     self-hosted ai,
@@ -26,14 +26,14 @@ import CodeBlock from '@theme/CodeBlock';
 
 <div className="docs-landing">
   <header>
-    <p className="docs-landing__eyebrow">Libre WebUI</p>
+    <p className="docs-landing__eyebrow">Alcore</p>
     <h1 className="docs-landing__title">Make whatever comes next.</h1>
     <p className="docs-landing__lede">
-      {"Run Libre WebUI on infrastructure you control. Give supported models governed tools, ground answers in cited documents, work with a team, speak in turn-based voice mode, create and edit media, and carry the same workspace from a laptop to a multi-replica deployment."}
+      {"Run Alcore on infrastructure you control. Give supported models governed tools, ground answers in cited documents, work with a team, speak in turn-based voice mode, create and edit media, and carry the same workspace from a laptop to a multi-replica deployment."}
     </p>
     <div className="docs-landing__actions">
       <a className="docs-landing__primary" href="/QUICK_START">
-        {"Install Libre WebUI"}
+        {"Install Alcore"}
       </a>
       <a className="docs-landing__secondary" href="https://demo.librewebui.org">
         {"Try the demo"}
@@ -46,7 +46,7 @@ import CodeBlock from '@theme/CodeBlock';
       </a>
     </div>
     <div className="docs-landing__command-block">
-      <p className="docs-landing__command-label">One command, no Libre WebUI vendor account</p>
+      <p className="docs-landing__command-label">One command, no Alcore vendor account</p>
       <div className="docs-landing__command">
         <CodeBlock language="bash">npx libre-webui@latest</CodeBlock>
       </div>
@@ -68,7 +68,7 @@ import CodeBlock from '@theme/CodeBlock';
           {"Run one command, use a local Ollama model or a supported provider, and keep deployment choices in your hands."}
         </p>
         <a className="docs-landing-card__link" href="/QUICK_START">
-          {"Install Libre WebUI"}
+          {"Install Alcore"}
         </a>
       </article>
 

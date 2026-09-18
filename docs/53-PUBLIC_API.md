@@ -1,14 +1,14 @@
 ---
 sidebar_position: 53
 title: 'Public API'
-description: 'OpenAI-compatible /v1 endpoints and scoped API tokens for programmatic access to Libre WebUI.'
+description: 'OpenAI-compatible /v1 endpoints and scoped API tokens for programmatic access to Alcore.'
 slug: /PUBLIC_API
 keywords: [public api, openai compatible, api tokens, chat completions]
 ---
 
 # Public API
 
-Libre WebUI exposes an OpenAI-compatible API so existing SDKs, editors, and
+Alcore exposes an OpenAI-compatible API so existing SDKs, editors, and
 scripts can point at your instance with only a base-URL change.
 
 ## Authentication

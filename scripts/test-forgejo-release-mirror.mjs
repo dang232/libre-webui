@@ -651,7 +651,7 @@ test('matching release metadata and assets are skipped idempotently', async () =
 test('a missing asset is created as an external attachment by name', async () => {
   const asset = {
     id: 701,
-    name: 'Libre WebUI 0.8.6 mac-arm64.zip',
+    name: 'Alcore 0.8.6 mac-arm64.zip',
     browser_download_url:
       'https://github.test/downloads/Libre%20WebUI%200.8.6%20mac-arm64.zip',
   };

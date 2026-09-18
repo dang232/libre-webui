@@ -5,7 +5,7 @@ description: 'Administrator-only System and Usage pages for live host diagnostic
 slug: /SYSTEM_MONITORING
 keywords:
   [
-    libre webui system diagnostics,
+    Alcore system diagnostics,
     usage analytics,
     model usage,
     provider metering,
@@ -16,7 +16,7 @@ keywords:
 
 # System Diagnostics & Usage Analytics
 
-Libre WebUI gives administrators two live views of the instance: a **System**
+Alcore gives administrators two live views of the instance: a **System**
 page with host and runtime diagnostics, and a **Usage** page with model and
 provider usage analytics. Both are administrator-only in the backend and the
 interface. Reading either page stays inside the deployment; optional external
@@ -77,8 +77,8 @@ response.
 
 The page still shows real infrastructure detail — hostname, working directory,
 internal IP addresses, and the names and images of every container on the
-Docker host, not only Libre WebUI's own. That is consistent with the trust
-model: in a Docker deployment every Libre WebUI administrator is already
+Docker host, not only Alcore's own. That is consistent with the trust
+model: in a Docker deployment every Alcore administrator is already
 effectively a host administrator (see [Docker](./DOCKER)). Grant the `admin`
 role accordingly.
 

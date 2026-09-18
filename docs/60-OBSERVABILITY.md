@@ -8,13 +8,13 @@ keywords: [observability, structured logs, opentelemetry, otlp, tracing, metrics
 
 # Observability
 
-Libre WebUI provides two operator-facing observability paths:
+Alcore provides two operator-facing observability paths:
 
 - structured application logs, written locally to standard output and error;
 - an optional OpenTelemetry exporter for HTTP requests, durable jobs, counters,
   and warning/error log records.
 
-Neither path sends telemetry to the Libre WebUI project. OpenTelemetry is off
+Neither path sends telemetry to the Alcore project. OpenTelemetry is off
 until an operator configures a collector endpoint. The administrator
 [System and Usage](./37-SYSTEM_MONITORING.md) pages are separate: they read
 diagnostics and model/provider usage from the deployment itself rather than

@@ -1,6 +1,6 @@
 # Security Policy
 
-Libre WebUI treats vulnerability reports as confidential until a fix and a
+Alcore treats vulnerability reports as confidential until a fix and a
 coordinated disclosure plan are ready.
 
 ## Supported versions
@@ -32,7 +32,7 @@ Reports about authentication, authorization, secret handling, cross-user data
 access, request forgery, injection, unsafe file processing, and sandbox escapes
 are in scope.
 
-Libre WebUI's Work feature can deliberately run administrator-approved commands
+Alcore's Work feature can deliberately run administrator-approved commands
 inside task containers. Local repository Compose files mount the Docker socket
 by default; the private remote profile requires its explicit Work override.
 Either arrangement grants the application root-equivalent control of that

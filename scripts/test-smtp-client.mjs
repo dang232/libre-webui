@@ -146,7 +146,7 @@ test('address helpers accept mailboxes and reject junk', () => {
   assert.equal(isEmailAddress('not an address'), false);
   assert.equal(isEmailAddress('a@b'), false);
   assert.equal(
-    extractEmailAddress('Libre WebUI <notify@example.test>'),
+    extractEmailAddress('Alcore <notify@example.test>'),
     'notify@example.test'
   );
   assert.equal(extractEmailAddress('<broken'), null);
@@ -155,14 +155,14 @@ test('address helpers accept mailboxes and reject junk', () => {
 test('the MIME builder encodes headers, strips header breaks and wraps HTML', () => {
   const single = buildMimeMessage(
     {
-      from: 'Libre WebUI <notify@example.test>',
+      from: 'Alcore <notify@example.test>',
       to: ['Robin <robin@example.test>'],
       subject: 'Mentioned in #général\r\nBcc: attacker@example.test',
       text: 'Bonjour.\n.leading dot line',
     },
     { date: new Date('2026-09-16T12:00:00Z') }
   );
-  assert.match(single, /^From: "Libre WebUI" <notify@example\.test>\r\n/);
+  assert.match(single, /^From: "Alcore" <notify@example\.test>\r\n/);
   assert.match(single, /\r\nSubject: =\?UTF-8\?B\?[A-Za-z0-9+/=]+\?=\r\n/);
   assert.doesNotMatch(single, /\r\nBcc:/);
   assert.match(single, /\r\nDate: Wed, 16 Sep 2026 12:00:00 \+0000\r\n/);
@@ -197,7 +197,7 @@ test('a message is delivered with PLAIN auth and dot stuffing survives the wire'
     const result = await sendSmtpMail(
       { ...baseConfig(smtp.port), username: 'relay', password: 'secret' },
       {
-        from: 'Libre WebUI <notify@example.test>',
+        from: 'Alcore <notify@example.test>',
         to: ['robin@example.test'],
         subject: 'Hello',
         text: 'line one\n.dot line\nline three',

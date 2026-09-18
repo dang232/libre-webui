@@ -742,7 +742,7 @@ async function renderInventory(manifests) {
   const lines = [
     '---',
     "title: 'Capability Contracts'",
-    "description: 'Generated inventory of every executable provider capability in Libre WebUI.'",
+    "description: 'Generated inventory of every executable provider capability in Alcore.'",
     'slug: /CAPABILITY_CONTRACTS',
     '---',
     '',

@@ -5,7 +5,7 @@ description: 'Render interactive HTML, React components, Mermaid diagrams, SVG, 
 slug: /ARTIFACTS_FEATURE
 keywords:
   [
-    libre webui artifacts,
+    Alcore artifacts,
     interactive ai content,
     html preview,
     svg preview,
@@ -26,7 +26,7 @@ container.
 
 ## Supported Inputs
 
-Libre WebUI detects:
+Alcore detects:
 
 - Explicit `<artifact>` blocks
 - Fenced code blocks with artifact-friendly languages
@@ -51,7 +51,7 @@ Libre WebUI detects:
 
 ## Multi-File HTML Bundles
 
-When a model returns related HTML, CSS, and JavaScript blocks, Libre WebUI tries to merge them into a runnable HTML artifact. It removes local stylesheet/script references and inlines matching generated CSS and JavaScript.
+When a model returns related HTML, CSS, and JavaScript blocks, Alcore tries to merge them into a runnable HTML artifact. It removes local stylesheet/script references and inlines matching generated CSS and JavaScript.
 
 For the most reliable result, ask the model for one self-contained HTML file:
 

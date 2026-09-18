@@ -1,10 +1,10 @@
 {{- $team := eq .Values.env.LIBRE_PLATFORM_MODE "team" }}
 {{- $existingSecret := .Values.secrets.existingSecret }}
 {{- if or (lt (int .Values.replicaCount) 0) (and (not $team) (gt (int .Values.replicaCount) 1)) }}
-{{- fail "Solo Libre WebUI requires replicaCount=0 or 1; select the complete team profile before adding replicas." }}
+{{- fail "Solo Alcore requires replicaCount=0 or 1; select the complete team profile before adding replicas." }}
 {{- end }}
 {{- if and .Values.autoscaling.enabled (not $team) }}
-{{- fail "Libre WebUI autoscaling requires the complete team profile." }}
+{{- fail "Alcore autoscaling requires the complete team profile." }}
 {{- end }}
 {{- if and $team (or .Values.autoscaling.enabled (gt (int .Values.replicaCount) 0)) (lt (int .Values.worker.replicaCount) 1) }}
 {{- fail "An active team application requires worker.replicaCount>=1; set both application and worker replicas to zero only for full suspension." }}

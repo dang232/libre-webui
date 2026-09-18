@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,7 +48,7 @@ const addressless = {
 const configuredServer: Partial<MockEmailSettings> = {
   enabled: true,
   host: 'smtp.example.test',
-  from: 'Libre WebUI <notify@example.test>',
+  from: 'Alcore <notify@example.test>',
 };
 
 async function prepare(
@@ -193,7 +193,7 @@ test('an administrator configures the mail server and proves it with a test mess
   await card.getByTestId('email-smtp-password').fill('hunter2');
   await card
     .getByTestId('email-smtp-from')
-    .fill('Libre WebUI <notify@example.test>');
+    .fill('Alcore <notify@example.test>');
   await card.getByTestId('email-app-url').fill('https://chat.example.test');
 
   const save = page.waitForRequest(
@@ -209,7 +209,7 @@ test('an administrator configures the mail server and proves it with a test mess
     security: 'starttls',
     username: 'relay',
     password: 'hunter2',
-    from: 'Libre WebUI <notify@example.test>',
+    from: 'Alcore <notify@example.test>',
     appUrl: 'https://chat.example.test',
     rejectUnauthorized: true,
   });

@@ -1,7 +1,7 @@
-# MLX LM Server for Libre WebUI
+# MLX LM Server for Alcore
 
 This example launches the official `mlx_lm.server` with safe defaults for a
-native Libre WebUI development environment on Apple Silicon.
+native Alcore development environment on Apple Silicon.
 
 ## Quick Start with uv
 
@@ -30,7 +30,7 @@ python -m pip install -r requirements.txt
 python server.py
 ```
 
-The server listens only on `127.0.0.1:8081`. Libre WebUI's bundled MLX plugin
+The server listens only on `127.0.0.1:8081`. Alcore's bundled MLX plugin
 uses:
 
 ```text
@@ -56,9 +56,9 @@ curl http://127.0.0.1:8081/v1/chat/completions \
   }'
 ```
 
-## Libre WebUI
+## Alcore
 
-Start Libre WebUI from the repository root with `npm run dev`, open
+Start Alcore from the repository root with `npm run dev`, open
 `http://localhost:5173`, then activate **MLX LM (Apple Silicon)** in
 **Settings > Plugins**. No API key is required.
 

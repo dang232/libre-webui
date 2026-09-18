@@ -8,7 +8,7 @@ keywords: [calendar, events, schedule, recurrence, month view, week view]
 
 # Calendar
 
-Libre WebUI includes a personal calendar. Every signed-in user gets their own
+Alcore includes a personal calendar. Every signed-in user gets their own
 month and week views with one-off and recurring events, and scheduled
 automations project their upcoming occurrences and run history onto the same
 grid.

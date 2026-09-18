@@ -1,14 +1,14 @@
 ---
 sidebar_position: 4
 title: 'Pro Tips'
-description: 'Practical workflows for getting more out of Libre WebUI.'
+description: 'Practical workflows for getting more out of Alcore.'
 slug: /PRO_TIPS
-keywords: [libre webui pro tips, ai workflows, ollama tips, productivity]
+keywords: [Alcore pro tips, ai workflows, ollama tips, productivity]
 ---
 
 # Pro Tips
 
-This page collects practical workflows that make Libre WebUI feel faster, cleaner, and more reliable in daily use.
+This page collects practical workflows that make Alcore feel faster, cleaner, and more reliable in daily use.
 
 ## Keep a Small Daily Model Loaded
 
@@ -139,7 +139,7 @@ light flash. An administrator can change the instance-wide default from
 **Settings > User Management > Defaults > Default theme** (Light, Dark, or Pure Black). That default paints the
 sign-in page, seeds every new account, and applies in any browser that has not
 picked a theme of its own; a saved personal preference is always respected.
-Libre WebUI does not follow the operating system's theme setting; switch
+Alcore does not follow the operating system's theme setting; switch
 explicitly with `Cmd/Ctrl + D`, the sun/moon button, or from Settings. The
 toggle cycles Light, Dark, Pure Black, and Celestial.
 
@@ -260,7 +260,7 @@ the instance and are not part of the archive.
 
 ## Make Artifacts More Reliable
 
-Libre WebUI detects explicit artifact tags, fenced code blocks, standalone HTML documents, and common multi-file HTML bundles. To get the best artifact output from a model, ask for:
+Alcore detects explicit artifact tags, fenced code blocks, standalone HTML documents, and common multi-file HTML bundles. To get the best artifact output from a model, ask for:
 
 ```text
 Create one complete self-contained HTML file.
@@ -284,7 +284,7 @@ If you want separate blocks, name them clearly:
 ```
 ````
 
-Libre WebUI will try to bundle local CSS and JavaScript blocks into the HTML preview.
+Alcore will try to bundle local CSS and JavaScript blocks into the HTML preview.
 
 ## Queue Prompts While a Reply Streams
 
@@ -412,7 +412,7 @@ Then open the machine’s LAN or Tailscale IP **on port 8080** from the other de
 tells you when you're current, links the release page when you're behind, and
 says so when a `-dev` build is running ahead of the pinned release. The same
 line has a **View changelog** button that reopens the release notes you saw
-after upgrading — and if Libre WebUI is useful to you, the **Star on GitHub**
+after upgrading — and if Alcore is useful to you, the **Star on GitHub**
 link there is the easiest way to help others find it.
 
 ## Keep Docs and UI in Sync

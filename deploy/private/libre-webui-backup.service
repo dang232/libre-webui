@@ -1,5 +1,5 @@
 [Unit]
-Description=Back up the Libre WebUI data volume
+Description=Back up the Alcore data volume
 Requires=docker.service
 After=docker.service
 

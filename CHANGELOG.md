@@ -40,7 +40,7 @@ the open, and stops idle sandboxes on its own.
   kind, with an optional title filter and a one-minute cooldown. Inbound
   webhook calls forward their JSON body into the run as a trigger payload.
 - **Interactive OAuth for MCP servers.** A tool server can be registered
-  with **Interactive OAuth**: Libre WebUI discovers the authorization server
+  with **Interactive OAuth**: Alcore discovers the authorization server
   from the 401 challenge, registers a client where the provider allows it,
   signs each user in with PKCE, keeps their tokens encrypted, refreshes them
   before they expire, and asks to reconnect when a call is refused. The
@@ -598,7 +598,7 @@ Getting started stops assuming Ollama, and staying current stops hurting:
 a first-run screen connects whatever you already use — a local runtime, your
 own OpenAI-compatible server, or a cloud key — while stale browser shells
 heal themselves after updates, years-old databases upgrade instead of being
-refused, and Libre WebUI lands on Debian, Ubuntu, Arch, and the Omarchy
+refused, and Alcore lands on Debian, Ubuntu, Arch, and the Omarchy
 desktop.
 
 ### ✨ New Features
@@ -623,7 +623,7 @@ desktop.
   dedicated system user, plus an Arch Linux PKGBUILD, from the new
   `linux-packages` repository — each package install-tested against the
   live health endpoint before publishing.
-- **Omarchy bar plugin.** Libre WebUI ships a verified plugin on the
+- **Omarchy bar plugin.** Alcore ships a verified plugin on the
   Omarchy marketplace: server status, health, and latency in the bar, with
   one-click launch as a web-app window. Documented on the docs site.
 
@@ -887,7 +887,7 @@ Signing in gets serious — two-factor with recovery codes, passkeys, and a live
 ### ✨ New Features
 
 - **Two-factor and passkeys.** TOTP two-factor with one-time recovery codes, passkey (WebAuthn) sign-in, a per-role step-up policy administrators can require, and admin reset of a locked-out user's factors. Ships with a schema migration (SQLite v21 / PostgreSQL v20).
-- **Install it like an app.** Libre WebUI is now an installable PWA with an offline shell, and notifications can reach your device through web push — riding the same durable notification inbox introduced in 0.26.
+- **Install it like an app.** Alcore is now an installable PWA with an offline shell, and notifications can reach your device through web push — riding the same durable notification inbox introduced in 0.26.
 - **Knowledge reads scans and audio.** Images and scanned PDFs are OCR'd through the vision model, and uploaded audio is transcribed through speech-to-text, so screenshots, paper scans, and recordings become searchable, citable documents.
 - **Backups that prove they restore.** Scheduled recovery drills restore a real backup into an isolated area on a cadence you set, verify the result, and measure actual RTO and RPO — so restore confidence is measured, not assumed.
 - **A split-screen artifact panel.** On desktop, artifacts open beside the conversation instead of covering it, with a pin toggle that keeps the panel open while you chat, optional auto-open when a new artifact is generated, and compact chrome.
@@ -897,7 +897,7 @@ Signing in gets serious — two-factor with recovery codes, passkeys, and a live
 
 ### 🔧 Improvements
 
-- **The desktop app is now Libre WebUI Desktop.** Renamed from "Libre WebUI Frontend" across installers and Homebrew: the old cask tokens migrate automatically on upgrade, installer assets use the new name from this release on, and existing installs keep their data and sessions through the rename.
+- **The desktop app is now Alcore Desktop.** Renamed from "Alcore Frontend" across installers and Homebrew: the old cask tokens migrate automatically on upgrade, installer assets use the new name from this release on, and existing installs keep their data and sessions through the rename.
 - Your chosen accent color now carries through approval cards, Work panes, the git panel, and the terminal instead of falling back to the default coral.
 
 ### 🐛 Bug Fixes
@@ -1142,7 +1142,7 @@ A same-day repair release for 0.22.0. If 0.22.0 refused to start after an upgrad
 
 ## [0.22.0] - 2026-08-15
 
-The largest release so far. Libre WebUI now scales past a single machine: a new team profile runs on PostgreSQL, Redis, and S3-compatible storage with external workers, while the solo SQLite setup stays the default and works exactly as before. Around it: speech input, voice cloning, a redesigned interface, real data portability, and integrated backup tooling. The local database schema migrates automatically on first start — back up your data directory before upgrading, as always.
+The largest release so far. Alcore now scales past a single machine: a new team profile runs on PostgreSQL, Redis, and S3-compatible storage with external workers, while the solo SQLite setup stays the default and works exactly as before. Around it: speech input, voice cloning, a redesigned interface, real data portability, and integrated backup tooling. The local database schema migrates automatically on first start — back up your data directory before upgrading, as always.
 
 ### ✨ New Features
 
@@ -1150,7 +1150,7 @@ The largest release so far. Libre WebUI now scales past a single machine: a new 
 - **Durable chat and media generation.** Generations now run as durable jobs with a replayable event stream: workers run concurrently, responses are recorded as they stream, Stop actually cancels the upstream provider request instead of letting it burn tokens, and accepted media jobs recover after a crash instead of vanishing. Old streams are pruned on a retention schedule.
 - **Speech to text.** A microphone button in Chat transcribes voice into the composer. The browser's own speech recognition is used by default when available; otherwise recordings go to a configured provider with a speech-to-text capability, with explicit disclosure of where the audio is sent.
 - **Voice cloning and natural speech playback.** LongCat AudioDiT joins as a local text-to-speech provider (a ready-to-run example server is included) with consent-based voice cloning: a reference recording plus its exact transcript, entered in Imagine → Audio. Cloned voices can be saved as encrypted, owner-bound profiles and reused for Speech playback anywhere. Playback itself got natural: phrase-aware batches generate through a look-ahead window and play in order, so speech starts before the full reply is finished.
-- **Data portability.** Settings → Data Management exports a versioned per-user archive of your data and imports it into any Libre WebUI installation. Exports are verifiable and restorable — not a dump that only looks complete — and deleting a user account now sweeps every store the account touched.
+- **Data portability.** Settings → Data Management exports a versioned per-user archive of your data and imports it into any Alcore installation. Exports are verifiable and restorable — not a dump that only looks complete — and deleting a user account now sweeps every store the account touched.
 - **Backup and recovery tooling.** A read-only recovery inventory reports what state exists and what would block a snapshot, and packaged maintenance commands produce signed, verifiable backups and restore them — for solo and team deployments alike. See [Recovery Readiness](https://docs.librewebui.org/RECOVERY_READINESS).
 
 ### 🔧 Improvements
@@ -1194,7 +1194,7 @@ Documents attached to chats are finally manageable: see what is in a conversatio
 
 ## [0.21.2] - 2026-08-09
 
-The important fix: Work tasks on Ollama models broke with a 400 on every message after the first one that used tools; 0.21.2 repairs that, so upgrade if you use Work with local models. Alongside it, the Git tab in Work grew into a real diff manager, and this is the first Libre WebUI release carrying code from outside contributors.
+The important fix: Work tasks on Ollama models broke with a 400 on every message after the first one that used tools; 0.21.2 repairs that, so upgrade if you use Work with local models. Alongside it, the Git tab in Work grew into a real diff manager, and this is the first Alcore release carrying code from outside contributors.
 
 ### ✨ New Features
 
@@ -1222,7 +1222,7 @@ First release with outside contributions. Thank you [Rohit Babu](https://github.
 
 ## [0.21.1] - 2026-08-08
 
-A small patch that matters if you start Libre WebUI with `npx`: deep links no longer fail, so the app actually loads past the home screen. Upgrading is safe in place; nothing else changed behavior.
+A small patch that matters if you start Alcore with `npx`: deep links no longer fail, so the app actually loads past the home screen. Upgrading is safe in place; nothing else changed behavior.
 
 ### 🔧 Improvements
 
@@ -1239,7 +1239,7 @@ A small patch that matters if you start Libre WebUI with `npx`: deep links no lo
 
 ## [0.21.0] - 2026-08-08
 
-Libre WebUI 0.21.0 adds self-hosted web search, repairs document retrieval (RAG) so every document in scope is actually used, and puts each dual-use capability behind an explicit administrator access control. Chat picks up long-requested quality of life: pinned chats, drag-and-drop foldering, message avatars, and a sources panel that shows exactly what fed each reply.
+Alcore 0.21.0 adds self-hosted web search, repairs document retrieval (RAG) so every document in scope is actually used, and puts each dual-use capability behind an explicit administrator access control. Chat picks up long-requested quality of life: pinned chats, drag-and-drop foldering, message avatars, and a sources panel that shows exactly what fed each reply.
 
 Upgrading notes: database migrations (the `pinned` session column and the new settings) run automatically at startup, and every new capability ships off or admins-only. Two defaults changed deliberately: **the Agents section (Libre Claw and agent CLI models) is now disabled until an administrator enables it** in User Management — or pins it with `AGENT_CLI_MODELS_ENABLED=true`, which is now tri-state (unset defers to the toggle) — and **the private deployment stack now requires `SEARXNG_SECRET` in `.env`** for its bundled search service.
 
@@ -1281,7 +1281,7 @@ Upgrading notes: database migrations (the `pinned` session column and the new se
 
 ## [0.20.0] - 2026-08-08
 
-Libre WebUI 0.20.0 introduces a major expansion of the Work sandbox system, headlined by an experimental Kubernetes runtime backend, named runtime policies, and idle-stop for unwatched sandboxes. This release also strengthens deployment security with Docker socket proxy isolation, adds an admin overview panel for monitoring all sandboxes, and allows per-user access control behind an admin setting.
+Alcore 0.20.0 introduces a major expansion of the Work sandbox system, headlined by an experimental Kubernetes runtime backend, named runtime policies, and idle-stop for unwatched sandboxes. This release also strengthens deployment security with Docker socket proxy isolation, adds an admin overview panel for monitoring all sandboxes, and allows per-user access control behind an admin setting.
 
 Upgrading is safe in place: database migrations (the `work_policies` table, the `policy_id` task column, and the access-mode setting) run automatically at startup, every new capability is off or admins-only by default, and the per-task policy fingerprint is byte-compatible with the previous global fingerprint, so existing sandboxes are not recreated by the upgrade.
 
@@ -1522,7 +1522,7 @@ across the application.
 
 ## [0.19.2] - 2026-08-05
 
-Libre WebUI 0.19.2 sharpens the mobile experience and restores real-time
+Alcore 0.19.2 sharpens the mobile experience and restores real-time
 reasoning for plugin-backed models. Notes, sidebar navigation, tab menus, and
 optional Android haptics now work more naturally on touch screens, while
 OpenAI-compatible reasoning stays separate from answer text and is saved with
@@ -1562,7 +1562,7 @@ the conversation.
 
 ## [0.19.1] - 2026-08-03
 
-Libre WebUI 0.19.1 fixes a container startup regression in 0.19.0. The
+Alcore 0.19.1 fixes a container startup regression in 0.19.0. The
 production image omitted dependencies that npm installed inside the backend
 workspace, causing the compiled server to exit when it could not resolve
 packages such as `undici`.
@@ -1575,7 +1575,7 @@ packages such as `undici`.
 
 ## [0.19.0] - 2026-08-03
 
-Libre WebUI 0.19.0 expands the chat workspace with reusable knowledge
+Alcore 0.19.0 expands the chat workspace with reusable knowledge
 collections, standalone notes, folders, per-chat controls, webpage attachments,
 voice dictation, follow-up suggestions, message editing, response ratings, and
 richer artifact tools. Agents gain OpenCode and Pi support plus explicit model
@@ -1605,7 +1605,7 @@ against the release candidate are fixed in code with regression coverage.
   attach a knowledge collection, or fetch a public webpage into chat context.
 - **Voice dictation.** Browsers with the Web Speech API can transcribe speech
   directly into the message composer while preserving already typed text.
-- **Follow-up suggestions.** After a completed assistant response, Libre WebUI
+- **Follow-up suggestions.** After a completed assistant response, Alcore
   can generate short, clickable suggestions for the user's next message.
 - **Editable conversations and ratings.** Edit and resend a previous user
   message from that point in the conversation, and record a positive or
@@ -1655,7 +1655,7 @@ against the release candidate are fixed in code with regression coverage.
 - Added focused regression suites for webpage fetching, HTML artifacts, OAuth,
   registration, password handling, public deployment defaults, content limits,
   agent chats, Codex OAuth, and usage analytics.
-- Refined the project and Helm descriptions and keywords around Libre WebUI's
+- Refined the project and Helm descriptions and keywords around Alcore's
   local-first chat, private knowledge, artifact, agent, and Work capabilities.
 
 ### 🐛 Bug Fixes
@@ -1732,7 +1732,7 @@ against the release candidate are fixed in code with regression coverage.
 - Added Docker Hub publishing metadata with installation paths, image-tag
   semantics, architecture support, security notes, and canonical project links.
 - Replaced certification-style compliance claims with precise regulated-
-  deployment guidance: Libre WebUI can support local, private, or air-gapped
+  deployment guidance: Alcore can support local, private, or air-gapped
   controls, but the complete deployment and organizational process determine
   compliance.
 - Clarified the project charter's no-relicensing examples, added the canonical
@@ -1741,7 +1741,7 @@ against the release candidate are fixed in code with regression coverage.
 
 ## [0.18.0] - 2026-08-02
 
-Libre WebUI 0.18.0 closes the remaining unauthenticated API surface, puts new
+Alcore 0.18.0 closes the remaining unauthenticated API surface, puts new
 registrations behind administrator approval, and gives administrators two new
 views of the instance: live system diagnostics and provider usage analytics.
 Work gains a guarded local Git panel, previews now work behind HTTPS and for
@@ -1865,7 +1865,7 @@ before upgrading.
 
 ## [0.17.0] - 2026-08-01
 
-Libre WebUI 0.17.0 reorganizes the interface around tabs. Home is a launcher,
+Alcore 0.17.0 reorganizes the interface around tabs. Home is a launcher,
 chats and Work sessions open beside it, and `Cmd/Ctrl + K` reaches anything you
 have. Work gains an in-browser terminal and an optional host folder workspace,
 and a coding-agent CLI already installed on the server can now answer in chat
@@ -1886,7 +1886,7 @@ without an API key.
 - **Installed agent CLIs as chat models.** When `claude` or `codex` is on the
   server's `PATH`, administrators see an **Agents** group in the model selector
   and can hold a normal conversation using the subscription that CLI is already
-  signed in with. The CLI runs as the Libre WebUI server user and inherits its
+  signed in with. The CLI runs as the Alcore server user and inherits its
   agent credentials, so it is admin-only and can be disabled entirely with
   `AGENT_CLI_MODELS_ENABLED=false`.
 - **Work terminal.** A real interactive shell attaches to the task's sandboxed
@@ -1943,17 +1943,17 @@ without an API key.
 
 ## [0.16.1] - 2026-07-31
 
-Libre WebUI 0.16.1 makes Work usable when Libre WebUI itself runs in Docker,
+Alcore 0.16.1 makes Work usable when Alcore itself runs in Docker,
 and makes provider model catalogs keep themselves current. A model refresh now
 reports what actually happened instead of always confirming success.
 
 ### ✨ New Features
 
-- Work now runs when Libre WebUI itself runs in Docker. The image ships the
+- Work now runs when Alcore itself runs in Docker. The image ships the
   Docker CLI and every repository Compose file mounts the host Docker socket
   with its group, so `docker compose up -d` provides a working Work runtime.
-  Task containers run as siblings of the Libre WebUI container on the same
-  daemon. This gives every Libre WebUI administrator root-equivalent control
+  Task containers run as siblings of the Alcore container on the same
+  daemon. This gives every Alcore administrator root-equivalent control
   of the Docker host; remove the `/var/run/docker.sock` mount from the Compose
   file to disable Work.
 - Added `DOCKER_GID` and `DOCKER_SOCKET` Compose variables for hosts whose
@@ -1992,7 +1992,7 @@ reports what actually happened instead of always confirming success.
 ### 📚 Documentation
 
 - Added a Provider connections guide for the workspace introduced in 0.16.0.
-- Documented running Work when Libre WebUI is itself in Docker, including the
+- Documented running Work when Alcore is itself in Docker, including the
   socket requirement, its security consequence, how to read the socket group
   id, and how to disable Work, across the README, quick start, Docker,
   external Ollama, GPU, dev branch, Kubernetes, troubleshooting, environment
@@ -2000,7 +2000,7 @@ reports what actually happened instead of always confirming success.
 
 ## [0.16.0] - 2026-07-31
 
-Libre WebUI 0.16.0 makes third-party and self-hosted model services a
+Alcore 0.16.0 makes third-party and self-hosted model services a
 first-class provider workflow. It adds a dedicated Provider connections
 workspace, OpenAI Responses and Image API support, reliable custom endpoint
 and model discovery routing, and safer provider-scoped configuration across
@@ -2091,7 +2091,7 @@ Chat and Work.
 
 ## [0.15.1] - 2026-07-29
 
-Libre WebUI 0.15.1 makes Work feel native to Chat, adds an efficient local
+Alcore 0.15.1 makes Work feel native to Chat, adds an efficient local
 MLX LM route for Apple Silicon, restores the live Ollama catalogue, and
 hardens provider execution and dual-remote release publication.
 
@@ -2110,7 +2110,7 @@ hardens provider execution and dual-remote release publication.
   composer.
 - Unified Work conversation identities with Chat. User messages now use the
   authenticated account avatar with an initials fallback, while worker
-  messages use the Libre WebUI assistant avatar and matching conversation
+  messages use the Alcore assistant avatar and matching conversation
   spacing.
 - Added verified GitHub-to-Forgejo release mirroring with tag-parity checks,
   idempotent single-release and backfill commands, dry-run support,
@@ -2127,7 +2127,7 @@ hardens provider execution and dual-remote release publication.
   actionable retry instead of risking partial tool execution. Worker guidance
   also keeps individual file writes below 8,000 characters.
 - Restored the complete live Ollama catalogue after ollama.com changed its
-  model-card markup. Libre WebUI now loads and deduplicates every available
+  model-card markup. Alcore now loads and deduplicates every available
   page, decodes descriptions and metadata, recognizes capability badges such
   as `thinking`, `vision`, and `embedding`, removes the 50-model display cap,
   and falls back to the curated catalogue only when the live response is
@@ -2142,8 +2142,8 @@ hardens provider execution and dual-remote release publication.
 
 ## [0.15.0] - 2026-07-27
 
-Libre WebUI 0.15.0 introduces **Work**, a native, admin-only coding-agent
-environment built directly into Libre WebUI. Every Work task combines a durable
+Alcore 0.15.0 introduces **Work**, a native, admin-only coding-agent
+environment built directly into Alcore. Every Work task combines a durable
 conversation and exact provider route in SQLite with its own persistent Docker
 named volume and an on-demand, disposable container for isolated execution.
 Users can return to an older task and continue with the same files, history,
@@ -2162,13 +2162,13 @@ hardening.
   retain their title, provider, status, conversation, run history, and files
   when reopened.
 - Added a durable workspace for every Work task: ownership, messages, runs,
-  errors, provider routing, and activity are stored in Libre WebUI's database,
+  errors, provider routing, and activity are stored in Alcore's database,
   while project files live in a task-specific Docker named volume mounted at
   `/workspace`.
 - Added a managed, disposable Docker container identity for each task.
   Containers are created, started, stopped, or recreated on demand while the
   named volume survives run cancellation, preview shutdown, container
-  replacement, and Libre WebUI restarts.
+  replacement, and Alcore restarts.
 - Added a native autonomous tool loop with `list_files`, `read_file`,
   `write_file`, `search_files`, `run_command`, `start_preview`, and
   `stop_preview`. Server-owned workspace skills guide project discovery,
@@ -2273,7 +2273,7 @@ hardening.
   startup reconciliation, graceful shutdown, and fail-closed cleanup retries
   so resources with conflicting ownership are not reused or silently deleted.
 - Published previews only to a Docker-assigned loopback host port and embedded
-  them in a separate-origin sandboxed frame without Libre WebUI authentication
+  them in a separate-origin sandboxed frame without Alcore authentication
   credentials.
 - Added authenticated per-user and guest-IP rate limiting to plugin discovery
   routes, stricter mutation limits, and a pre-authentication burst guard.
@@ -2288,7 +2288,7 @@ hardening.
 ### 🚀 Deployment Notes
 
 - Work requires Docker to be installed, running, and callable by the Libre
-  WebUI backend user. Running Libre WebUI through `npx` does not install Docker;
+  WebUI backend user. Running Alcore through `npx` does not install Docker;
   when it is unavailable, Work reports the runtime as unavailable and never
   falls back to running model commands on the host. Chat continues to work
   without Docker.
@@ -2298,8 +2298,8 @@ hardening.
   deployments can use Work when their backend has Docker access.
 - Embedded previews are published on the backend's loopback interface. They are
   suitable for a local browser but are not currently forwarded to remote
-  browsers when Libre WebUI runs on another server.
-- Complete Work backup and recovery requires both Libre WebUI's SQLite/data
+  browsers when Alcore runs on another server.
+- Complete Work backup and recovery requires both Alcore's SQLite/data
   storage and its labeled Docker workspace volumes.
 
 ### 📚 Documentation
@@ -2318,7 +2318,7 @@ hardening.
 
 ## [0.14.3] - 2026-07-25
 
-Libre WebUI 0.14.3 completes the migration to the patched React Router 8 line, aligns the frontend with React 19 and Node.js 22.22, and hardens the bundled Qwen and Kyutai text-to-speech examples against local-path injection and unsafe or pathological text processing. The release removes the temporary router advisory exception and restores a strict zero-vulnerability npm audit gate.
+Alcore 0.14.3 completes the migration to the patched React Router 8 line, aligns the frontend with React 19 and Node.js 22.22, and hardens the bundled Qwen and Kyutai text-to-speech examples against local-path injection and unsafe or pathological text processing. The release removes the temporary router advisory exception and restores a strict zero-vulnerability npm audit gate.
 
 ### 🔧 Improvements
 
@@ -2340,7 +2340,7 @@ Libre WebUI 0.14.3 completes the migration to the patched React Router 8 line, a
 
 ## [0.14.2] - 2026-07-24
 
-Libre WebUI 0.14.2 adds Kimi Code and Claude Opus 5, brings native Anthropic streaming and tool events up to the current Messages API, repairs macOS and Homebrew installation metadata, hardens versioned Docker and Helm releases, and resolves applicable dependency advisories.
+Alcore 0.14.2 adds Kimi Code and Claude Opus 5, brings native Anthropic streaming and tool events up to the current Messages API, repairs macOS and Homebrew installation metadata, hardens versioned Docker and Helm releases, and resolves applicable dependency advisories.
 
 ### ✨ New Features
 
@@ -2356,13 +2356,13 @@ Libre WebUI 0.14.2 adds Kimi Code and Claude Opus 5, brings native Anthropic str
 ### 🐛 Bug Fixes
 
 - Fixed Anthropic requests for Opus 5 and other current Claude models by omitting rejected sampling parameters, using the native Messages payload and version header while streaming, parsing Anthropic text and tool-use events, and discovering models from the correct `/v1/models` endpoint.
-- Fixed the macOS DMG installation canvas so Finder exposes only Libre WebUI and Applications, embeds the Retina background inside the app, preserves its Finder alias, and uses correctly scaled artwork and icon positions.
+- Fixed the macOS DMG installation canvas so Finder exposes only Alcore and Applications, embeds the Retina background inside the app, preserves its Finder alias, and uses correctly scaled artwork and icon positions.
 - Repaired Homebrew packaging by installing the CLI formula from the published npm tarball, matching the cask to the actual arm64 DMG and application bundle, separating the `libre-webui` formula from the `libre-webui-frontend` cask, and clarifying explicit formula installation.
 
 ### 🔒 Security & Dependencies
 
 - Updated `body-parser` to 2.3.0, `fast-uri` to 3.1.4, PostCSS to 8.5.23, and tar to 7.5.22, and enforced patched transitive versions of `brace-expansion` 5.0.7, `js-yaml` 4.3.0, and `shell-quote` 1.10.0.
-- Pinned React Router to 7.18.1 and added a time-bounded, fail-closed audit exception for an unstable-RSC-only advisory that does not apply to Libre WebUI's declarative browser SPA; the gate rejects version drift, RSC usage, malformed reports, additional advisories, and registry failures.
+- Pinned React Router to 7.18.1 and added a time-bounded, fail-closed audit exception for an unstable-RSC-only advisory that does not apply to Alcore's declarative browser SPA; the gate rejects version drift, RSC usage, malformed reports, additional advisories, and registry failures.
 
 ### 📚 Documentation
 
@@ -2371,7 +2371,7 @@ Libre WebUI 0.14.2 adds Kimi Code and Claude Opus 5, brings native Anthropic str
 
 ## [0.14.1] - 2026-07-16
 
-Libre WebUI 0.14.1 corrects the macOS installer artwork introduced in 0.14.0 so Finder presents the complete branded layout at the intended scale, keeps packaging support files out of the installation canvas, and preserves valid update metadata after finalization.
+Alcore 0.14.1 corrects the macOS installer artwork introduced in 0.14.0 so Finder presents the complete branded layout at the intended scale, keeps packaging support files out of the installation canvas, and preserves valid update metadata after finalization.
 
 ### 🔧 Improvements
 
@@ -2381,12 +2381,12 @@ Libre WebUI 0.14.1 corrects the macOS installer artwork introduced in 0.14.0 so 
 ### 🐛 Bug Fixes
 
 - Fixed Finder enlarging and cropping the branded installer background because the generated PNG was encoded at 25 DPI instead of the expected 72 DPI.
-- Marked the background, volume icon, and disk-image metadata as Finder-invisible so the installation window exposes only Libre WebUI and the Applications shortcut.
+- Marked the background, volume icon, and disk-image metadata as Finder-invisible so the installation window exposes only Alcore and the Applications shortcut.
 - Regenerated the DMG blockmap and release checksum metadata after Finder finalization so differential updates and `latest-mac.yml` continue to describe the published artifact exactly.
 
 ## [0.14.0] - 2026-07-16
 
-Libre WebUI 0.14.0 adds a compact conversation history rail for navigating long chats and brings the Electron desktop experience closer to the main product aesthetic with reliable scrolling, valid ad-hoc macOS packages, and a purpose-built installer.
+Alcore 0.14.0 adds a compact conversation history rail for navigating long chats and brings the Electron desktop experience closer to the main product aesthetic with reliable scrolling, valid ad-hoc macOS packages, and a purpose-built installer.
 
 ### ✨ New Features
 
@@ -2415,7 +2415,7 @@ Libre WebUI 0.14.0 adds a compact conversation history rail for navigating long 
 
 ## [0.13.4] - 2026-07-15
 
-Libre WebUI 0.13.4 restores purpose-built code rendering throughout streamed responses, makes automatic titles reliable with reasoning-capable Ollama models, hardens the plugin API against abusive request volumes, and modernizes Electron packaging to remove deprecated dependency warnings.
+Alcore 0.13.4 restores purpose-built code rendering throughout streamed responses, makes automatic titles reliable with reasoning-capable Ollama models, hardens the plugin API against abusive request volumes, and modernizes Electron packaging to remove deprecated dependency warnings.
 
 ### 🔧 Improvements
 
@@ -2444,7 +2444,7 @@ Libre WebUI 0.13.4 restores purpose-built code rendering throughout streamed res
 
 ## [0.13.3] - 2026-07-15
 
-Libre WebUI 0.13.3 fixes automatic chat titles so generated summaries appear immediately in the sidebar, strengthens accent-adapted light themes while preserving the existing dark palette, and refocuses the project documentation around local-first operation, provider choice, and inspectable independence.
+Alcore 0.13.3 fixes automatic chat titles so generated summaries appear immediately in the sidebar, strengthens accent-adapted light themes while preserving the existing dark palette, and refocuses the project documentation around local-first operation, provider choice, and inspectable independence.
 
 ### 🔧 Improvements
 
@@ -2461,13 +2461,13 @@ Libre WebUI 0.13.3 fixes automatic chat titles so generated summaries appear imm
 
 ### 📚 Documentation
 
-- Reworked the README around Libre WebUI's local-first model, provider flexibility, Apache 2.0 licensing, inspectable project commitments, inclusive participation, deployment choices, and clearly stated privacy and security boundaries.
+- Reworked the README around Alcore's local-first model, provider flexibility, Apache 2.0 licensing, inspectable project commitments, inclusive participation, deployment choices, and clearly stated privacy and security boundaries.
 - Updated the design guide to document the clearer light-mode accent treatment and unchanged dark-mode behavior.
 - Added project-scoped release instructions covering dual-remote verification, main-before-tag CI gates, release artifact checks, and the final `main`-to-`dev` synchronization.
 
 ## [0.13.2] - 2026-07-15
 
-Libre WebUI 0.13.2 is a focused interface and provider-routing release. It keeps appearance choices stable across reloads, adds an optional accent-adapted palette for light and dark mode, routes speech through the exact selected TTS plugin and per-user valve, restores bundled plugin discovery for packed `npx` installs, and improves Arabic right-to-left behavior across desktop and mobile layouts.
+Alcore 0.13.2 is a focused interface and provider-routing release. It keeps appearance choices stable across reloads, adds an optional accent-adapted palette for light and dark mode, routes speech through the exact selected TTS plugin and per-user valve, restores bundled plugin discovery for packed `npx` installs, and improves Arabic right-to-left behavior across desktop and mobile layouts.
 
 ### ✨ New Features
 
@@ -2494,7 +2494,7 @@ Libre WebUI 0.13.2 is a focused interface and provider-routing release. It keeps
 
 ## [0.13.1] - 2026-07-14
 
-Libre WebUI 0.13.1 is a maintenance release focused on reliable npm packaging and cross-platform installation. It fixes `npx libre-webui` on Windows, restores the CLI entry point in the published package, and hardens Docker and release automation against the same packaging regressions.
+Alcore 0.13.1 is a maintenance release focused on reliable npm packaging and cross-platform installation. It fixes `npx libre-webui` on Windows, restores the CLI entry point in the published package, and hardens Docker and release automation against the same packaging regressions.
 
 ### 🔧 Improvements
 
@@ -2510,7 +2510,7 @@ Libre WebUI 0.13.1 is a maintenance release focused on reliable npm packaging an
 
 ## [0.13.0] - 2026-07-13
 
-Libre WebUI 0.13.0 is a creator-focused interface release. It brings a quieter, warm-neutral design system to the full workspace and gives every new chat a broader range of localized starting prompts, making the blank canvas feel more considered and less repetitive.
+Alcore 0.13.0 is a creator-focused interface release. It brings a quieter, warm-neutral design system to the full workspace and gives every new chat a broader range of localized starting prompts, making the blank canvas feel more considered and less repetitive.
 
 ### ✨ New Features
 
@@ -2531,11 +2531,11 @@ Libre WebUI 0.13.0 is a creator-focused interface release. It brings a quieter, 
 
 ## [0.12.1] - 2026-07-08
 
-Libre WebUI 0.12.1 introduces a refreshed brand identity alongside verified provider catalog updates and significant repository maintenance. This release refreshes 14 dependencies to keep the build environment secure and modern, while streamlining internal release automation and removing obsolete scripts and documentation.
+Alcore 0.12.1 introduces a refreshed brand identity alongside verified provider catalog updates and significant repository maintenance. This release refreshes 14 dependencies to keep the build environment secure and modern, while streamlining internal release automation and removing obsolete scripts and documentation.
 
 ### ✨ New Features
 
-- Introduced a new Libre WebUI wordmark logo featuring bold "Libre" and regular "WebUI" text in white on black, with updated favicons, logos, and the Electron application icon.
+- Introduced a new Alcore wordmark logo featuring bold "Libre" and regular "WebUI" text in white on black, with updated favicons, logos, and the Electron application icon.
 
 ### 🔧 Improvements
 
@@ -2554,8 +2554,8 @@ Libre WebUI 0.12.1 introduces a refreshed brand identity alongside verified prov
 
 ## [0.12.0] - 2026-06-30
 
-Libre WebUI 0.12.0 is the agent integration release. It replaces the previous
-OpenClaw bridge with a first-class Libre Claw control surface inside Libre WebUI,
+Alcore 0.12.0 is the agent integration release. It replaces the previous
+OpenClaw bridge with a first-class Libre Claw control surface inside Alcore,
 including admin-only backend routes, a dedicated frontend page, run timelines,
 approvals, automations, usage/fallback visibility, docs, and full localization.
 
@@ -2622,17 +2622,17 @@ approvals, automations, usage/fallback visibility, docs, and full localization.
 
 - The old OpenClaw integration path has been removed and replaced by Libre Claw.
   Users who relied on the previous OpenClaw plugin/config should run the Libre
-  Claw daemon and configure Libre WebUI with `LIBRE_CLAW_BASE_URL` when the
+  Claw daemon and configure Alcore with `LIBRE_CLAW_BASE_URL` when the
   daemon is not on `http://127.0.0.1:8766`.
 
 ## [0.11.0] - 2026-06-22
 
-Libre WebUI 0.11.0 is a stabilization and architecture release. It focuses on artifact reliability, demo/auth hardening, smoother streaming, test coverage, and a large backend/frontend cleanup pass on top of the 0.10.0 theme and model-provider work.
+Alcore 0.11.0 is a stabilization and architecture release. It focuses on artifact reliability, demo/auth hardening, smoother streaming, test coverage, and a large backend/frontend cleanup pass on top of the 0.10.0 theme and model-provider work.
 
 ### ✨ New Features
 
 - Added optional Cloudflare Turnstile protection for public account creation, configured from backend environment variables and rendered only when enabled.
-- Added Tailscale-friendly development hosting/origin support so Libre WebUI can be reached from another device during local development.
+- Added Tailscale-friendly development hosting/origin support so Alcore can be reached from another device during local development.
 - Added Playwright e2e coverage for demo login, one-user mode, artifact detection/rendering, artifact resize behavior, cloud-model regression coverage, mobile sidebar behavior, and async locale loading.
 
 ### 🔧 Improvements
@@ -2664,7 +2664,7 @@ Libre WebUI 0.11.0 is a stabilization and architecture release. It focuses on ar
 
 ### 📚 Documentation
 
-- Refreshed the README to describe the current Libre WebUI product, model/provider story, install paths, and project positioning.
+- Refreshed the README to describe the current Alcore product, model/provider story, install paths, and project positioning.
 - Audited and rewrote the project docs so the model examples, setup guidance, plugin docs, auth docs, artifacts docs, environment variables, and deployment guides match the current application.
 - Updated DESIGN.md with the current blue-accent direction and UI guidance without repeating the 0.10.0 custom-accent release notes.
 
@@ -2692,7 +2692,7 @@ Libre WebUI 0.11.0 is a stabilization and architecture release. It focuses on ar
 - Persisted accent preferences through frontend state, backend preferences, import/export defaults, local rehydration, logout cleanup, and demo mode
 - Added accent translation keys across all supported locales and verified locale key parity against English
 - Expanded demo-mode preference APIs so Appearance, generation, embedding, system-message, and default-model settings can be exercised without a backend connection
-- Standardized the Libre WebUI wordmark through a shared `Logo` component across loading, login, setup, sidebar, and settings surfaces
+- Standardized the Alcore wordmark through a shared `Logo` component across loading, login, setup, sidebar, and settings surfaces
 - Replaced fixed violet styling in persona adaptive-learning controls with active-accent tokens
 - Recolored Ollama library and Cloud badges from cyan to the design-system info-blue treatment
 - Reduced noisy debug logging across optional auth, chat, document search, plugin lookup, plugin deletion, TTS, image generation, and WebSocket auth paths
@@ -2892,7 +2892,7 @@ This release focuses on stability and security improvements with enhanced docume
 
 ### What's New
 
-This release introduces OpenClaw agent integration, bringing advanced AI agent capabilities to Libre WebUI through a comprehensive plugin system. Enhanced plugin infrastructure now supports real-time streaming, image content handling, and automatic model discovery, while expanded internationalization covers 19 languages.
+This release introduces OpenClaw agent integration, bringing advanced AI agent capabilities to Alcore through a comprehensive plugin system. Enhanced plugin infrastructure now supports real-time streaming, image content handling, and automatic model discovery, while expanded internationalization covers 19 languages.
 
 ### ✨ New Features
 
@@ -2997,7 +2997,7 @@ This release introduces comprehensive desktop support with native Windows and Li
 
 ### What's New
 
-This release brings Libre WebUI desktop app to Windows and Linux, alongside the existing macOS version. The Electron frontend app now works on all three major platforms, allowing users to run the UI natively while connecting to a locally-running backend server.
+This release brings Alcore desktop app to Windows and Linux, alongside the existing macOS version. The Electron frontend app now works on all three major platforms, allowing users to run the UI natively while connecting to a locally-running backend server.
 
 ### ✨ New Features
 
@@ -3101,7 +3101,7 @@ This release addresses dependency version requirements for the Qwen3-TTS integra
 
 ### What's New
 
-This release introduces Qwen3-TTS integration, bringing advanced text-to-speech capabilities to Libre WebUI. Users can now generate high-quality speech output using Qwen's latest TTS model with a complete server setup and plugin configuration.
+This release introduces Qwen3-TTS integration, bringing advanced text-to-speech capabilities to Alcore. Users can now generate high-quality speech output using Qwen's latest TTS model with a complete server setup and plugin configuration.
 
 ### ✨ New Features
 
@@ -3160,7 +3160,7 @@ This release includes critical security patches and improved CI/CD infrastructur
 
 ### What's New
 
-This release introduces comprehensive internationalization support, making Libre WebUI accessible to users worldwide with 21 new language options. The interface now supports multiple languages with proper right-to-left text rendering for Arabic and includes a convenient language switcher component.
+This release introduces comprehensive internationalization support, making Alcore accessible to users worldwide with 21 new language options. The interface now supports multiple languages with proper right-to-left text rendering for Arabic and includes a convenient language switcher component.
 
 ### ✨ New Features
 
@@ -3201,7 +3201,7 @@ This release introduces private chat sessions with in-memory storage, allowing u
 
 ### What's New
 
-This release introduces Kubernetes deployment support with a complete Helm chart, making it easier to deploy Libre WebUI in production environments. We've also enhanced the Docker development workflow with dedicated development builds and improved documentation.
+This release introduces Kubernetes deployment support with a complete Helm chart, making it easier to deploy Alcore in production environments. We've also enhanced the Docker development workflow with dedicated development builds and improved documentation.
 
 ### ✨ New Features
 
@@ -3562,7 +3562,7 @@ This release introduces a native desktop app for macOS, comprehensive text-to-sp
 
 ## [0.1.7] - 2025-07-22
 
-## Libre WebUI v0.1.7 - 2025-07-22
+## Alcore v0.1.7 - 2025-07-22
 
 This release focuses on enhanced security and usability with the addition of Single Sign-On (SSO) options and improvements to the overall user experience. We've also invested in streamlining our development process with AI-powered tools for analysis and changelog generation.
 
@@ -3593,7 +3593,7 @@ This release focuses on enhanced security and usability with the addition of Sin
 
 ## [0.1.6] - 2025-07-20
 
-## Libre WebUI v0.1.6 - 2025-07-20
+## Alcore v0.1.6 - 2025-07-20
 
 This release focuses on enhancing the user experience with improved streaming performance, a more refined chat interface, and expanded documentation. We've also streamlined the release process and improved overall stability. This version delivers a smoother and more feature-rich experience for both casual users and developers.
 
@@ -3639,16 +3639,16 @@ This release focuses on enhancing the user experience with improved streaming pe
 
 - **Faster Chat Experience:** The streaming performance improvements result in a noticeably faster and more responsive chat experience, especially when interacting with AI models.
 - **Improved Usability:** The enhanced scrolling behavior makes it easier to follow conversations and review past messages.
-- **Clearer Guidance:** Updated documentation provides clearer instructions and guidance for using Libre WebUI, making it easier for new users to get started.
+- **Clearer Guidance:** Updated documentation provides clearer instructions and guidance for using Alcore, making it easier for new users to get started.
 - **More Flexible AI Choices:** Support for OpenRouter expands the range of AI providers users can choose from.
 
 ---
 
 ## [0.1.5] - 2025-07-20
 
-## Libre WebUI v0.1.5 - 2025-07-20
+## Alcore v0.1.5 - 2025-07-20
 
-This release focuses on bolstering the core infrastructure of Libre WebUI, enhancing security, and significantly expanding documentation to empower both users and developers. We've added support for OpenRouter, improved key management for persistent storage, and streamlined the overall user experience through various refinements.
+This release focuses on bolstering the core infrastructure of Alcore, enhancing security, and significantly expanding documentation to empower both users and developers. We've added support for OpenRouter, improved key management for persistent storage, and streamlined the overall user experience through various refinements.
 
 ### ✨ Added
 
@@ -3695,24 +3695,24 @@ This release focuses on bolstering the core infrastructure of Libre WebUI, enhan
 
 - **SQLite & OpenSSL Dependencies:** The Dockerfile now explicitly includes SQLite and OpenSSL, ensuring consistent build environments and resolving potential dependency issues.
 - **Encryption Key Storage:** Encryption keys are now designed to be stored persistently outside the container, preventing data loss on container restarts. This is achieved through volume mounting in Docker.
-- **OpenRouter Integration:** The OpenRouter integration connects Libre WebUI to the OpenRouter API and its provider-backed model catalog.
+- **OpenRouter Integration:** The OpenRouter integration connects Alcore to the OpenRouter API and its provider-backed model catalog.
 - **JWT Handling:** JWTs are now generated and validated with enhanced security measures, including stronger algorithms and key rotation considerations.
 
 ### User Impact
 
-This release provides a more robust and secure experience for all Libre WebUI users. The addition of OpenRouter expands model options, while improved documentation empowers users to customize and extend the platform. The enhanced security features protect user data and ensure a reliable and trustworthy experience. The streamlined build process and improved changelog make development and contribution easier for the community.
+This release provides a more robust and secure experience for all Alcore users. The addition of OpenRouter expands model options, while improved documentation empowers users to customize and extend the platform. The enhanced security features protect user data and ensure a reliable and trustworthy experience. The streamlined build process and improved changelog make development and contribution easier for the community.
 
 ---
 
 ## [0.1.4] - 2025-07-17
 
-## Libre WebUI v0.1.4 - 2025-07-17
+## Alcore v0.1.4 - 2025-07-17
 
-This release focuses on enhancing the security and reliability of Libre WebUI, introducing database encryption and improved error handling. We've also made significant improvements to API rate limiting and streamlined dependency management. These changes aim to provide a more secure and robust experience for all users.
+This release focuses on enhancing the security and reliability of Alcore, introducing database encryption and improved error handling. We've also made significant improvements to API rate limiting and streamlined dependency management. These changes aim to provide a more secure and robust experience for all users.
 
 ### ✨ Added
 
-- **Automatic Encryption Key Generation:** Libre WebUI now automatically generates and stores an encryption key in the `.env` file during initial setup, simplifying the configuration process.
+- **Automatic Encryption Key Generation:** Alcore now automatically generates and stores an encryption key in the `.env` file during initial setup, simplifying the configuration process.
 - **Database Encryption Service:** Implemented a robust database encryption service utilizing AES-256-GCM to protect sensitive user data at rest.
 
 ### 🔧 Improved
@@ -3758,9 +3758,9 @@ This release focuses on enhancing the security and reliability of Libre WebUI, i
 
 ## [0.1.3] - 2025-07-16
 
-## Libre WebUI v0.1.3 - 2025-07-16
+## Alcore v0.1.3 - 2025-07-16
 
-This release focuses on enhancing the Persona management experience, improving security, and laying the groundwork for more advanced features like memory and mutation engines. We've also made significant improvements to documentation and developer tooling, making it easier to contribute and extend Libre WebUI.
+This release focuses on enhancing the Persona management experience, improving security, and laying the groundwork for more advanced features like memory and mutation engines. We've also made significant improvements to documentation and developer tooling, making it easier to contribute and extend Alcore.
 
 ### ✨ Added
 
@@ -3807,13 +3807,13 @@ This release focuses on enhancing the Persona management experience, improving s
 - **CI/CD:** Updated the Docker build action to version 6.
 - **Refactoring:** Removed unused components and cleaned up the codebase for improved maintainability. Simplified API calls and streamlined component rendering.
 - **Rate Limiting Implementation:** Rate limiting is implemented using a token bucket algorithm with configurable limits per IP address.
-- **Gemini Plugin Integration:** The Gemini plugin integration utilizes a specific payload format and response conversion logic to ensure compatibility with the Libre WebUI API.
+- **Gemini Plugin Integration:** The Gemini plugin integration utilizes a specific payload format and response conversion logic to ensure compatibility with the Alcore API.
 
 ---
 
 ## [0.1.2] - 2025-07-09
 
-## Libre WebUI v0.1.2 - 2025-07-09
+## Alcore v0.1.2 - 2025-07-09
 
 This release focuses on significantly expanding user personalization and management capabilities with the introduction of the Persona Development Framework. Alongside this, we’ve made substantial improvements to security, user experience, and core functionality like model pulling and chat interactions. This version delivers a more robust and customizable experience for all users.
 
@@ -3868,9 +3868,9 @@ This release focuses on significantly expanding user personalization and managem
 
 ## [0.1.1] - 2025-07-07
 
-## Libre WebUI v0.1.1 - 2025-07-07
+## Alcore v0.1.1 - 2025-07-07
 
-This release focuses on significantly improving Docker deployment, enhancing configuration options, and streamlining the release process. We've added robust automation for releases and made it easier to customize and deploy Libre WebUI in various environments, including support for external Ollama instances. This version also lays the groundwork for future scalability and maintainability.
+This release focuses on significantly improving Docker deployment, enhancing configuration options, and streamlining the release process. We've added robust automation for releases and made it easier to customize and deploy Alcore in various environments, including support for external Ollama instances. This version also lays the groundwork for future scalability and maintainability.
 
 ### ✨ Added
 
@@ -3912,7 +3912,7 @@ This release focuses on significantly improving Docker deployment, enhancing con
 
 ### User Impact
 
-- **Easier Deployment:** The improved Docker configuration and external Ollama support make it significantly easier to deploy Libre WebUI in various environments.
+- **Easier Deployment:** The improved Docker configuration and external Ollama support make it significantly easier to deploy Alcore in various environments.
 - **Increased Customization:** The `DATA_DIR` environment variable allows users to customize data storage locations.
 - **Enhanced Reliability:** Improved timeout configurations and WebSocket stability contribute to a more reliable and responsive user experience.
 - **Automatic Updates:** The automated release system ensures users receive timely updates with new features and bug fixes.

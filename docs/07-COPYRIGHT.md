@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 title: 'Copyright & License'
-description: 'Copyright header management, license information, and legal guidelines for Libre WebUI'
+description: 'Copyright header management, license information, and legal guidelines for Alcore'
 slug: /COPYRIGHT
 keywords: [copyright, license, legal, apache, headers, attribution]
 image: /img/social/07.png
@@ -17,7 +17,7 @@ All source files (`.ts`, `.tsx`, `.js`, `.jsx`) in the `frontend/src` and `backe
 
 ```javascript
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

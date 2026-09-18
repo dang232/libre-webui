@@ -5,7 +5,7 @@ description: 'Generate video, speech, and sound through provider plugins and bro
 slug: /MEDIA_GENERATION
 keywords:
   [
-    libre webui video generation,
+    Alcore video generation,
     audio generation,
     media gallery,
     plugin capabilities,
@@ -15,7 +15,7 @@ keywords:
 
 # Video & Audio Generation
 
-Libre WebUI 0.18.0 extends generation beyond images: provider plugins can
+Alcore 0.18.0 extends generation beyond images: provider plugins can
 declare video and audio capabilities, and everything generated — images,
 videos, speech, and sound — lands in one per-user media gallery.
 
@@ -77,12 +77,12 @@ the complete cancellation contract.
 
 TTS plugins can also declare voice cloning. For those models, the Audio panel
 shows a reference-audio upload and, when the provider requires it, an exact
-transcript field. Libre WebUI validates the manifest's file type and size
+transcript field. Alcore validates the manifest's file type and size
 limits, holds the upload in memory, and forwards it only to the selected
 provider. Only the generated speech is placed in the gallery.
 
 A clone can optionally be saved as a reusable, named voice for the same plugin
-and model. Saving requires a separate storage-consent confirmation. Libre WebUI
+and model. Saving requires a separate storage-consent confirmation. Alcore
 encrypts the original reference and transcript in a user-owned voice profile;
 it does not use generated speech as the reference. Saved profiles can be
 selected or permanently deleted under **Settings → Text-to-Speech**. The
@@ -92,7 +92,7 @@ the plugin definition or endpoint changes, recreate the profile to consent to
 the new destination. Only use recordings from speakers who consented to both
 the cloning request and any requested storage.
 
-Voice profiles are intentionally omitted from Libre WebUI's general data
+Voice profiles are intentionally omitted from Alcore's general data
 export because they contain biometric source material. Back up the encrypted
 application database and `ENCRYPTION_KEY` together if you need disaster
 recovery; otherwise recreate profiles from the original consented recordings.
