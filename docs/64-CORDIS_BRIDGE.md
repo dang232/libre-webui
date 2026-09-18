@@ -256,6 +256,12 @@ Every route except `/health` requires an authenticated session and answers
 `503` with a `code` of `CORDIS_DISABLED`, `CORDIS_STARTING`, or
 `CORDIS_UNAVAILABLE` while the bridge cannot serve requests.
 
+The browser client is `frontend/src/utils/api/cordisApi.ts`. It talks to this
+surface only — it imports no backend type and no `@deepseek-ai/*` package — so
+the engine stays swappable without a frontend change. A turn is consumed with
+`sendMessage(sessionId, text, { onChunk })`; the client parses the
+newline-delimited JSON itself and tolerates chunks split across network reads.
+
 ## Security boundary
 
 The engine runs tools with real filesystem access, and tool execution is not

@@ -379,8 +379,10 @@ These are the current boundaries, not a roadmap.
 - **The alpha pin.** The engine packages are published under npm's `alpha`
   dist-tag. Upgrading is a deliberate version change rather than an automatic
   range bump.
-- **No frontend UI yet.** The `/api/cordis` surface is complete and tested, but
-  no Libre WebUI page consumes it. The routes are the integration point.
+- **No engine page in the UI yet.** The `/api/cordis` surface is complete and
+  covered by tests, and `frontend/src/utils/api/cordisApi.ts` is the typed
+  browser client for it, but no Libre WebUI page renders sessions or chat for
+  the engine. The client and the HTTP contract are the integration point.
 
 ## Verifying a configuration
 
