@@ -1,0 +1,89 @@
+# Example host settings for Libre WebUI's embedded DSH engine.
+#
+# Copy this file to the backend package root as `cordis.config.yml` (or point
+# LIBRE_CORDIS_SETTINGS at it), pair it with `cordis.patch.yml` (see
+# cordis.patch.example.yml), then set `enabled: true` below.
+#
+# This document holds Libre WebUI's own settings for the engine: which provider
+# the model adapter mounts, where its credential comes from, and which features
+# are exposed. It never contains a secret — `apiKeyEnv` names the environment
+# variable holding the key, and the adapter resolves that variable per request,
+# so rotating a key needs no restart.
+#
+# The engine's plugin list lives in `cordis.patch.yml`, because the Cordis
+# `Include` carrier requires that file to be a top-level array.
+#
+# Every value here can be overridden by a LIBRE_CORDIS_* environment variable.
+
+# Log every Cordis activation transition. Useful when a row does not start.
+trace: false
+
+model:
+  # deepseek | pi-ai | none
+  #
+  #  * `deepseek` mounts the first-party DeepSeek adapter.
+  #  * `pi-ai`    mounts the generic adapter, which covers Ollama and any
+  #               OpenAI-compatible gateway through the routes below.
+  #  * `none`     mounts no provider; the engine starts without model access.
+  provider: pi-ai
+
+  # The environment variable holding the key, never the key itself.
+  apiKeyEnv: OPENAI_API_KEY
+
+  # Provider route the engine names in requests. For `pi-ai` this must be a key
+  # in `providers` (or a provider that pi-ai itself ships).
+  route: ollama
+
+  # Default model identifier; empty lets the adapter pick the route's default.
+  model: ''
+
+  # Base URL override. Empty means "use the adapter's own endpoint", which is
+  # the right choice for a route that names an installed pi-ai provider.
+  baseUrl: ''
+
+  # Hand-declared provider routes. A key that names an installed pi-ai provider
+  # inherits that provider's endpoint and catalog and only overrides what it
+  # states; any other key is a complete declaration.
+  providers:
+    # A local Ollama server speaking the OpenAI-compatible dialect. Nothing
+    # leaves the machine, which is the local-first default.
+    ollama:
+      displayName: Ollama (local)
+      api: openai-completions
+      baseURL: http://127.0.0.1:11434/v1
+      # Ollama ignores the key, but the OpenAI client requires one to be set.
+      # Export OLLAMA_API_KEY=ollama to satisfy it without inventing a secret.
+      apiKeyEnv: OLLAMA_API_KEY
+      models:
+        - id: llama3.2
+          name: Llama 3.2
+          contextWindow: 131072
+          maxTokens: 4096
+
+    # A generic OpenAI-compatible gateway. Uncomment and set the base URL and
+    # key variable to use it, then point `route` at it.
+    # openai-compatible:
+    #   displayName: Local gateway
+    #   api: openai-completions
+    #   baseURL: http://127.0.0.1:8080/v1
+    #   apiKeyEnv: LOCAL_GATEWAY_API_KEY
+    #   models:
+    #     - id: local-model
+    #       contextWindow: 32768
+    #       maxTokens: 4096
+
+features:
+  # The host stays inert until this is true (or LIBRE_CORDIS_ENABLED=true).
+  enabled: false
+  # Accept chat turns that stream model output back to the UI.
+  streaming: true
+  # Expose the engine's tool registry to the UI.
+  tools: true
+  # Keep sessions on disk so a restart resumes conversations.
+  persistence: true
+
+# Where the engine may treat as its default workspace, and where it persists
+# sessions. Both default under Libre WebUI's data directory, which keeps engine
+# state inside the same private runtime directory as the rest of the app.
+# workspacePath: ''
+# sessionStorePath: ''
