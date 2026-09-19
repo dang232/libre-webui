@@ -1,4 +1,4 @@
-{{- $team := eq .Values.env.LIBRE_PLATFORM_MODE "team" }}
+{{- $team := eq .Values.env.ALCORE_PLATFORM_MODE "team" }}
 {{- $existingSecret := .Values.secrets.existingSecret }}
 {{- if or (lt (int .Values.replicaCount) 0) (and (not $team) (gt (int .Values.replicaCount) 1)) }}
 {{- fail "Solo Alcore requires replicaCount=0 or 1; select the complete team profile before adding replicas." }}
@@ -131,8 +131,8 @@ spec:
               value: {{ ternary "/tmp/libre-data" .Values.env.DATA_DIR $team | quote }}
             - name: PLATFORM_PREFLIGHT_TMP_DIR
               value: {{ ternary "/tmp/libre-preflight" .Values.env.PLATFORM_PREFLIGHT_TMP_DIR $team | quote }}
-            - name: LIBRE_PLATFORM_MODE
-              value: {{ .Values.env.LIBRE_PLATFORM_MODE | quote }}
+            - name: ALCORE_PLATFORM_MODE
+              value: {{ .Values.env.ALCORE_PLATFORM_MODE | quote }}
             - name: DATABASE_BACKEND
               value: {{ .Values.env.DATABASE_BACKEND | quote }}
             - name: DATABASE_SSL_MODE

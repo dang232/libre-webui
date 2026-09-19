@@ -20,7 +20,7 @@ spec:
     - ports:
         - protocol: TCP
           port: 3001
-{{- if eq .Values.env.LIBRE_PLATFORM_MODE "team" }}
+{{- if eq .Values.env.ALCORE_PLATFORM_MODE "team" }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
