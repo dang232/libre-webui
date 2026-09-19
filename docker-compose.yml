@@ -1,6 +1,9 @@
 services:
   alcore:
     image: alcore/alcore:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - '${WEBUI_BIND_ADDRESS:-127.0.0.1}:${WEBUI_PORT:-8080}:3001'
     extra_hosts:

@@ -30,4 +30,6 @@ jobs:
             docker compose up -d --build
             docker image prune -f
             docker compose ps
-            curl --fail --max-time 15 http://localhost:8080/ > /dev/null
+            PORT=$(grep -E '^WEBUI_PORT=' .env | cut -d= -f2 || true)
+            PORT=${PORT:-8080}
+            curl --fail --max-time 15 "http://localhost:${PORT}/" > /dev/null
