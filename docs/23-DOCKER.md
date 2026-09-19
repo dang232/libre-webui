@@ -73,7 +73,7 @@ docker compose up -d
 
 Open [http://localhost:8080](http://localhost:8080).
 
-The WebUI port binds to host loopback by default. Set
+The Alcore port binds to host loopback by default. Set
 `WEBUI_BIND_ADDRESS=0.0.0.0` only when a trusted LAN or a host reverse proxy must
 reach it, and restrict the port with the host firewall.
 
@@ -161,7 +161,7 @@ Docker named volumes and are not included in the normal
 
 ## Public Access
 
-Repository Compose files bind the WebUI to loopback and set `CORS_ORIGIN`
+Repository Compose files bind Alcore to loopback and set `CORS_ORIGIN`
 directly. A value in
 your shell or `.env` file does not replace that literal. Edit the
 `libre-webui.environment` entry or save an explicit override as

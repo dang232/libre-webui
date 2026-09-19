@@ -126,8 +126,8 @@ capability-specific endpoint fields. The bundled
 is a complete example.
 
 For an intentionally authless gateway on a trusted network, set both
-`auth.header` and `auth.key_env` to empty strings and omit `auth.prefix`. Libre
-WebUI then does not require or send an API key for that plugin.
+`auth.header` and `auth.key_env` to empty strings and omit `auth.prefix`. Alcore
+then does not require or send an API key for that plugin.
 
 ## Choose Chat Completions or Responses
 
@@ -138,8 +138,8 @@ OpenAI-compatible completion plugins can use either API mode:
 | `chat_completions` | `/chat/completions`  | `messages`            |
 | `responses`        | `/responses`         | `input`               |
 
-The bundled OpenAI provider exposes **API Mode** in its configuration. Libre
-WebUI maps completed and streamed Responses output back into Chat and Work,
+The bundled OpenAI provider exposes **API Mode** in its configuration. Alcore
+maps completed and streamed Responses output back into Chat and Work,
 including bounded replay state for reasoning and tool calls.
 
 Changing the mode affects the default operation path. It does not change the

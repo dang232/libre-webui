@@ -145,8 +145,8 @@ Many providers expose an OpenAI-compatible API. A plugin can define:
 - Optional model map fallback
 
 If a provider does not support live model discovery, Alcore uses the configured model map.
-Imported plugin JSON configures providers that already speak one of Libre
-WebUI's supported wire formats: OpenAI Chat Completions, OpenAI Responses,
+Imported plugin JSON configures providers that already speak one of Alcore's
+supported wire formats: OpenAI Chat Completions, OpenAI Responses,
 Anthropic Messages, or Gemini. JSON alone does not translate an arbitrary
 proprietary protocol; a provider with a different request, streaming, tool-call,
 or response shape needs a small backend adapter.

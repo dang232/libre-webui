@@ -53,7 +53,7 @@ implements it (Calico, Cilium, recent kind releases, and most
 managed-cluster defaults do) — verify with your cluster before treating
 sandbox isolation as active; the CI end-to-end suite reports whether the
 cluster it runs on enforces. And never mount a node's container-runtime
-socket into the WebUI pod; the Kubernetes backend exists precisely so that
+socket into the Alcore pod; the Kubernetes backend exists precisely so that
 is unnecessary.
 
 ## Install
@@ -219,8 +219,8 @@ For production automation, prefer `secrets.existingSecret` with an
 external-secrets controller or supply stable values through an encrypted Helm
 values workflow. Command-line `--set` values can be exposed through process
 inspection and are retained in Helm release metadata. Add provider credentials
-through a deliberate chart extension or configure per-user credentials in the
-WebUI.
+through a deliberate chart extension or configure per-user credentials in
+Alcore.
 
 ## Application and worker NetworkPolicies
 

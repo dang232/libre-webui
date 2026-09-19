@@ -119,7 +119,8 @@ try {
         readSQLitePreflightIdentity(databasePath),
         marker
       );
-    const skipScanByEnv = process.env.ALCORE_SKIP_STARTUP_INTEGRITY_SCAN === '1';
+    const skipScanByEnv =
+      process.env.ALCORE_SKIP_STARTUP_INTEGRITY_SCAN === '1';
     if (!verifiedBefore) {
       legacyEncryptionKey = Buffer.from(encryptionKeyHex, 'hex');
       try {

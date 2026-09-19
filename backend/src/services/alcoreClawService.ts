@@ -188,7 +188,9 @@ export class AlcoreClawService {
     );
   }
 
-  async startRun(payload: AlcoreClawRunRequest): Promise<{ run: AlcoreClawRun }> {
+  async startRun(
+    payload: AlcoreClawRunRequest
+  ): Promise<{ run: AlcoreClawRun }> {
     return this.request('POST', '/runs', {
       ...payload,
       surface: payload.surface || 'alcore',

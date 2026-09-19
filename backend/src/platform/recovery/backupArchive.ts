@@ -1071,7 +1071,7 @@ export const createBackupArchive = async (
       backupId: crypto.randomUUID(),
       createdAt: (options.now ?? new Date()).toISOString(),
       application: {
-          name: 'alcore',
+        name: 'alcore',
         version: pkg.version || 'unknown',
         nodeVersion: process.version,
       },

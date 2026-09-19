@@ -4825,163 +4825,163 @@
           "file": "frontend/e2e/sidebar-create-actions.spec.ts",
           "runner": "test:e2e",
           "name": "Work and Agents are hidden and route-protected for non-admin users",
-          "behaviorPatterns": ["/api/libre-claw", "libreClawRequests"]
+          "behaviorPatterns": ["/api/alcore-claw", "libreClawRequests"]
         }
       ],
       "backendRoutes": [
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/access"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "PUT",
           "path": "/access"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/status"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/health"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/dashboard"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/config/model"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "PATCH",
           "path": "/config/model"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/config/fallback"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "PATCH",
           "path": "/config/fallback"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "PATCH",
           "path": "/config/theme"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/runs"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/runs"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/runs/:runId"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/runs/:runId/events"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/runs/:runId/cancel"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/runs/:runId/permissions/:toolCallId"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/usage"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/automations"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/automations"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/automations/:automationId"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "PATCH",
           "path": "/automations/:automationId"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "PUT",
           "path": "/automations/:automationId"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/automations/:automationId/pause"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/automations/:automationId/resume"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/automations/:automationId/run"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "DELETE",
           "path": "/automations/:automationId"
         }
@@ -4990,10 +4990,10 @@
         "schemas": {
           "evidence": [
             {
-              "file": "backend/src/services/libreClawService.ts",
+              "file": "backend/src/services/alcoreClawService.ts",
               "patterns": [
-                "export interface LibreClawRun",
-                "export interface LibreClawAutomation"
+                "export interface AlcoreClawRun",
+                "export interface AlcoreClawAutomation"
               ]
             }
           ]
@@ -5004,8 +5004,8 @@
         "defaults": {
           "evidence": [
             {
-              "file": "backend/src/services/libreClawService.ts",
-              "patterns": ["DEFAULT_BASE_URL", "LIBRE_CLAW_TIMEOUT_MS"]
+              "file": "backend/src/services/alcoreClawService.ts",
+              "patterns": ["DEFAULT_BASE_URL", "ALCORE_CLAW_TIMEOUT_MS"]
             }
           ]
         }
@@ -5252,7 +5252,7 @@
               "file": "backend/src/platform/recovery/backupArchive.ts",
               "patterns": [
                 "export interface BackupArchiveManifest",
-                "format: 'libre-webui-integrated-backup'"
+                "format: 'alcore-integrated-backup'"
               ]
             }
           ]

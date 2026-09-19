@@ -168,8 +168,8 @@ Open `http://localhost:8080`, sign in as an administrator, select **Work** in
 the sidebar, choose a compatible model, and describe the project or change.
 
 If Docker is missing, stopped, or inaccessible, Work shows **Runtime
-unavailable** with the backend's reason and disables the Run composer. Libre
-WebUI never falls back to executing Work commands directly on the host.
+unavailable** with the backend's reason and disables the Run composer. Alcore
+never falls back to executing Work commands directly on the host.
 
 The runtime image is inspected on first use and pulled automatically when it
 is absent. The first operation can therefore take longer than later ones.
@@ -915,8 +915,8 @@ Alcore separates durable state from execution state:
 | Unsaved editor draft                        | Browser session storage                | Temporary browser-session convenience state                              |
 
 Every task gets a server-generated UUID. Its sandbox and workspace names are
-derived on the backend and are never accepted from a browser request. Libre
-WebUI creates the runtime resources with managed and task-ownership labels.
+derived on the backend and are never accepted from a browser request. Alcore
+creates the runtime resources with managed and task-ownership labels.
 Before
 reuse or deletion, it verifies the task-ownership label and refuses a resource
 whose label belongs to another task.

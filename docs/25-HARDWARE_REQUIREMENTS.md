@@ -73,7 +73,7 @@ AMD and Intel support depends on Ollama and driver support for your platform. CP
 
 ## Work Runtime Capacity
 
-Work adds container resources beyond the WebUI and model process. Each active
+Work adds container resources beyond Alcore and model process. Each active
 task container defaults to:
 
 - 2 GB of memory;
@@ -82,7 +82,7 @@ task container defaults to:
 
 The backend allows two active container-backed tasks across the instance and one
 per administrator by default. These are limits, not reservations, but operators
-should budget for the WebUI backend, browser, Docker, Ollama, and task container
+should budget for the Alcore backend, browser, Docker, Ollama, and task container
 at the same time. On Apple Silicon, they all ultimately compete for the same
 unified-memory pool.
 

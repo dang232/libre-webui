@@ -572,7 +572,8 @@ const alcoreClawRateLimiter = rateLimit({
   max: 500, // agent dashboards poll run/event state while active
   message: {
     success: false,
-    error: 'Too many Alcore Claw requests from this IP, please try again later.',
+    error:
+      'Too many Alcore Claw requests from this IP, please try again later.',
   },
   standardHeaders: true,
   legacyHeaders: false,
