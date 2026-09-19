@@ -348,6 +348,68 @@ in Provider connections. Activate the provider, select **Refresh models**, and
 then choose its provider-qualified model in Chat. Work can also use it when the
 model reliably supports tool calling.
 
+## Detect, Validate, and Sync Provider Models
+
+Administrators get three JSON endpoints under `/admin/providers` that
+cover the onboarding flow end to end: detect the provider behind a
+credential, validate the credential against its base URL, then sync
+the stored model catalog on demand. All three share the admin gate
+and rate limit of the detect/validate endpoints, never log or return
+secret material, and refuse unsafe base URLs the same way.
+
+```bash
+curl http://localhost:3001/admin/providers \
+  -H 'Authorization: Bearer YOUR_ADMIN_TOKEN'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "providers": [
+      {
+        "id": "private-ai-gateway",
+        "active": true,
+        "available": true,
+        "health": "healthy",
+        "healthDetails": ["no adverse signals"],
+        "lastSync": {
+          "outcome": "updated",
+          "at": 1758249600000
+        }
+      }
+    ]
+  }
+}
+```
+
+Health is derived, never probed: `disabled` when the provider is
+inactive, `unavailable` when the last discovery could not reach it,
+`rate_limited` when the last reason reports throttling, `degraded`
+when recent usage errors reach one quarter of calls (at least five
+calls) or average latency triples the supplied baseline, and
+`healthy` otherwise. Unknown telemetry is not a bad signal.
+
+```bash
+curl http://localhost:3001/admin/providers/private-ai-gateway/models \
+  -H 'Authorization: Bearer YOUR_ADMIN_TOKEN'
+
+curl -X POST \
+  http://localhost:3001/admin/providers/private-ai-gateway/sync-models \
+  -H 'Authorization: Bearer YOUR_ADMIN_TOKEN'
+```
+
+`GET /:id/models` returns the stored catalog with normalized
+capabilities: every capability is `true`, `false`, or `"unknown"`,
+and `"unknown"` means the provider listing never said — Alcore does
+not guess. Only `contextWindow` and `maxOutputTokens` appear as
+limits, and only when the listing stated them. `POST /:id/sync-models`
+re-runs the same discovery persist path as **Refresh models**, so a
+retry is identical to a first run; models the fresh catalog drops are
+named in `unavailableMarked` and render as unavailable in the picker
+instead of being deleted. There is no periodic sync: catalogs refresh
+lazily past their TTL, and anything stricter is a deferred scheduler.
+
 ## Troubleshooting
 
 | Symptom                                     | Check                                                                                                                   |
