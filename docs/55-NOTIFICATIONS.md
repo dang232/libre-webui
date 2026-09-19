@@ -60,7 +60,7 @@ Administrators can register webhook targets that receive team events.
   `TOOLS_PRIVATE_NETWORK_ALLOWLIST`. Hostnames are re-resolved and
   re-checked on every delivery.
 - **Signed.** With a configured secret, every delivery carries
-  `X-Libre-Signature: sha256=<hmac>` computed over the exact body.
+  `X-Alcore-Signature: sha256=<hmac>` computed over the exact body.
 - **Redacted.** The envelope contains the event kind, notification type,
   title, identifiers, and timestamps. Notification bodies, message
   content, prompts, and documents never leave the instance.
