@@ -395,6 +395,14 @@
         {
           "file": "docs/02-WORKING_WITH_MODELS.md",
           "patterns": ["## Model Manager"]
+        },
+        {
+          "file": "docs/35-PROVIDER_CONNECTIONS.md",
+          "patterns": [
+            "Verify the Gateway Before Activating It",
+            "does not follow redirects for",
+            "Detect, Validate, and Sync Provider Models"
+          ]
         }
       ],
       "focusedTests": [
@@ -403,6 +411,45 @@
           "runner": "test:e2e",
           "name": "cloud library pulls append the Ollama cloud suffix automatically",
           "behaviorPatterns": ["/api/ollama/pull/stream", "gpt-oss:cloud"]
+        },
+        {
+          "file": "scripts/test-provider-detection-admin.mjs",
+          "runner": "test:package",
+          "name": "admin provider routes reject callers without administrator rights",
+          "behaviorPatterns": [
+            "No authorization token provided",
+            "Admin access required"
+          ]
+        },
+        {
+          "file": "scripts/test-provider-detection-admin.mjs",
+          "runner": "test:package",
+          "name": "admin provider detect ranks known endpoints without live secrets",
+          "behaviorPatterns": ["providerId, 'openai'", "method, 'explicit'"]
+        },
+        {
+          "file": "scripts/test-provider-detection-admin.mjs",
+          "runner": "test:package",
+          "name": "admin provider validate refuses unsafe targets and redacts secrets",
+          "behaviorPatterns": ["private_network_blocked", "abcdef123456"]
+        },
+        {
+          "file": "scripts/test-provider-detection-admin.mjs",
+          "runner": "test:package",
+          "name": "admin provider validation throttles repeated callers",
+          "behaviorPatterns": ["status, 429", "Retry-After"]
+        },
+        {
+          "file": "scripts/test-provider-detection-models.mjs",
+          "runner": "test:package",
+          "name": "admin providers list reports derived health without secrets",
+          "behaviorPatterns": ["Admin access required", "healthDetails"]
+        },
+        {
+          "file": "scripts/test-provider-detection-models.mjs",
+          "runner": "test:package",
+          "name": "admin provider sync reuses discovery and marks disappeared models",
+          "behaviorPatterns": ["unavailableMarked", "'unchanged'"]
         }
       ],
       "backendRoutes": [
@@ -699,6 +746,36 @@
           "mount": "/api/plugins",
           "method": "POST",
           "path": "/probe-endpoint"
+        },
+        {
+          "file": "backend/src/routes/adminProviders.ts",
+          "mount": "/admin/providers",
+          "method": "POST",
+          "path": "/detect"
+        },
+        {
+          "file": "backend/src/routes/adminProviders.ts",
+          "mount": "/admin/providers",
+          "method": "POST",
+          "path": "/validate"
+        },
+        {
+          "file": "backend/src/routes/adminProviders.ts",
+          "mount": "/admin/providers",
+          "method": "GET",
+          "path": "/"
+        },
+        {
+          "file": "backend/src/routes/adminProviders.ts",
+          "mount": "/admin/providers",
+          "method": "GET",
+          "path": "/:id/models"
+        },
+        {
+          "file": "backend/src/routes/adminProviders.ts",
+          "mount": "/admin/providers",
+          "method": "POST",
+          "path": "/:id/sync-models"
         },
         {
           "file": "backend/src/routes/ollama.ts",
@@ -2108,10 +2185,7 @@
           "file": "scripts/test-tool-oauth.mjs",
           "runner": "test:package",
           "name": "the callback exchanges the code and stores an encrypted envelope",
-          "behaviorPatterns": [
-            "mcpOAuth=connected",
-            "status\\.connected, true"
-          ]
+          "behaviorPatterns": ["mcpOAuth=connected", "status\\.connected, true"]
         }
       ],
       "backendRoutes": [
