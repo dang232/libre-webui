@@ -3891,6 +3891,7 @@
     "local": {
       "title": "Staðbundinn netþjónn",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "API lykill (valfrjálst)",
       "test": "Prófa tengingu",
       "testing": "Prófar…",

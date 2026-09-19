@@ -3891,6 +3891,7 @@
     "local": {
       "title": "เซิร์ฟเวอร์ในเครื่อง",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "API Key (ไม่บังคับ)",
       "test": "ทดสอบการเชื่อมต่อ",
       "testing": "กำลังทดสอบ…",

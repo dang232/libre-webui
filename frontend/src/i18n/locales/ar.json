@@ -3891,6 +3891,7 @@
     "local": {
       "title": "خادم محلي",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "مفتاح API (اختياري)",
       "test": "اختبار الاتصال",
       "testing": "جارٍ الاختبار…",

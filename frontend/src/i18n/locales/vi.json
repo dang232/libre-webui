@@ -3891,6 +3891,7 @@
     "local": {
       "title": "Máy chủ cục bộ",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "Khóa API (tùy chọn)",
       "test": "Kiểm tra kết nối",
       "testing": "Đang kiểm tra…",

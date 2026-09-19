@@ -3891,6 +3891,7 @@
     "local": {
       "title": "Pelayan tempatan",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "Kunci API (pilihan)",
       "test": "Uji sambungan",
       "testing": "Menguji…",

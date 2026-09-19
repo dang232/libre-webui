@@ -3891,6 +3891,7 @@
     "local": {
       "title": "स्थानीय सर्वर",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "API कुंजी (वैकल्पिक)",
       "test": "कनेक्शन जाँचें",
       "testing": "जाँच हो रही है…",

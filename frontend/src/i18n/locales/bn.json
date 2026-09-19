@@ -3891,6 +3891,7 @@
     "local": {
       "title": "লোকাল সার্ভার",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "API কী (ঐচ্ছিক)",
       "test": "সংযোগ পরীক্ষা করুন",
       "testing": "পরীক্ষা করা হচ্ছে…",

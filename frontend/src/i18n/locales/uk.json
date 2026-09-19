@@ -3891,6 +3891,7 @@
     "local": {
       "title": "Локальний сервер",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "API-ключ (необов'язково)",
       "test": "Перевірити з'єднання",
       "testing": "Перевірка…",

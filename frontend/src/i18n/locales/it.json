@@ -3891,6 +3891,7 @@
     "local": {
       "title": "Server locale",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "API key (opzionale)",
       "test": "Test connessione",
       "testing": "Test in corso…",

@@ -3891,6 +3891,7 @@
     "local": {
       "title": "Yerel sunucu",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "API anahtarı (isteğe bağlı)",
       "test": "Bağlantıyı test et",
       "testing": "Test ediliyor…",
