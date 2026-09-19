@@ -105,6 +105,7 @@ import jobsRoutes from './routes/jobs.js';
 import groupsRoutes from './routes/groups.js';
 import accessRoutes from './routes/access.js';
 import auditRoutes from './routes/audit.js';
+import adminProvidersRoutes from './routes/adminProviders.js';
 import ollamaService from './services/ollamaService.js';
 import { initializeOllamaRuntime } from './services/ollamaSettingsService.js';
 import workRuntimeService from './services/workRuntimeService.js';
@@ -681,6 +682,7 @@ app.use('/api/jobs', jobsRoutes);
 app.use('/api/groups', groupsRoutes);
 app.use('/api/access', accessRoutes);
 app.use('/api/audit', auditRoutes);
+app.use('/admin/providers', adminProvidersRoutes);
 // OpenAI-compatible surface for external SDKs; authenticated by scoped
 // personal API keys (or a normal session token).
 
