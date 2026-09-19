@@ -491,7 +491,7 @@ test('the chart keeps solo single-replica safety and admits only a complete team
     'each Deployment must prevent its own old/new pods from overlapping; the runbook coordinates the app and worker pre-drain'
   );
   assert.doesNotMatch(team, /type: RollingUpdate/);
-  assert.match(team, /name: render-test-libre-webui-worker/);
+  assert.match(team, /name: render-test-alcore-worker/);
   assert.match(
     team,
     /command:\s*(?:\["node", "backend\/dist\/worker\.js"\]|\n\s+- node\n\s+- backend\/dist\/worker\.js)/
@@ -505,7 +505,7 @@ test('the chart keeps solo single-replica safety and admits only a complete team
   );
   assert.match(team, /emptyDir:\n\s+sizeLimit: "1Gi"/);
   assert.doesNotMatch(team, /mountPath: \/app\/backend\/data/);
-  assert.doesNotMatch(team, /name: render-test-libre-webui-data/);
+  assert.doesNotMatch(team, /name: render-test-alcore-data/);
   assert.equal(
     team.match(/- name: TRUST_PROXY\n\s+value: "2"/g)?.length,
     1,
@@ -647,11 +647,11 @@ test('the chart keeps solo single-replica safety and admits only a complete team
   );
   assert.match(
     suspendedTeam,
-    /name: render-test-libre-webui\n[\s\S]*?spec:\n[\s\S]*?replicas: 0/
+    /name: render-test-alcore\n[\s\S]*?spec:\n[\s\S]*?replicas: 0/
   );
   assert.match(
     suspendedTeam,
-    /name: render-test-libre-webui-worker\n[\s\S]*?spec:\n\s+replicas: 0/
+    /name: render-test-alcore-worker\n[\s\S]*?spec:\n\s+replicas: 0/
   );
   const workerOnlyTeam = execFileSync(
     'helm',
@@ -660,7 +660,7 @@ test('the chart keeps solo single-replica safety and admits only a complete team
   );
   assert.match(
     workerOnlyTeam,
-    /name: render-test-libre-webui-worker\n[\s\S]*?spec:\n\s+replicas: 1/
+    /name: render-test-alcore-worker\n[\s\S]*?spec:\n\s+replicas: 1/
   );
 });
 
