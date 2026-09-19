@@ -75,7 +75,7 @@ jobs:
 
       - name: Build a ServiceAccount-scoped kubeconfig
         run: |
-          TOKEN=$(kubectl create token lw-ci-libre-webui --duration=1h)
+          TOKEN=$(kubectl create token lw-ci-alcore --duration=1h)
           SERVER=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
           kubectl config view --minify --raw \
             -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' \

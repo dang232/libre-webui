@@ -183,7 +183,7 @@ try {
   const fetched = await probe(
     'lw-e2e-backend-probe',
     releaseNamespace,
-    `app.kubernetes.io/name=libre-webui,app.kubernetes.io/instance=${releaseName}`,
+    `app.kubernetes.io/name=alcore,app.kubernetes.io/instance=${releaseName}`,
     `http://${endpoint.host}:${endpoint.port}/`
   );
   if (!fetched.includes('preview-e2e')) fail(`backend fetch: ${fetched}`);
