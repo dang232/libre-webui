@@ -34,6 +34,7 @@ import { ollamaApi, pluginApi } from '@/utils/api';
 import { useAuthStore } from '@/store/authStore';
 import { useChatStore } from '@/store/chatStore';
 import { cn } from '@/utils';
+import { customKeyEnv, customProviderId } from '@/utils/customProvider';
 import { createLogger } from '@/utils/logger';
 import type { Plugin } from '@/types';
 
@@ -91,6 +92,7 @@ export const ConnectModels: React.FC<ConnectModelsProps> = ({
     LOCAL_PRESETS[0]
   );
   const [localUrl, setLocalUrl] = useState<string>(LOCAL_PRESETS[0].baseUrl);
+  const [localName, setLocalName] = useState<string>(LOCAL_PRESETS[0].name);
   const [localKey, setLocalKey] = useState('');
   const [probing, setProbing] = useState(false);
   const [probedModels, setProbedModels] = useState<string[] | null>(null);
@@ -182,13 +184,29 @@ export const ConnectModels: React.FC<ConnectModelsProps> = ({
   const handleEnableLocal = async () => {
     setEnablingLocal(true);
     try {
+      const displayName = localName.trim() || preset.name;
       const trimmed = localUrl.replace(/\/+$/, '');
       const root = trimmed.endsWith('/v1') ? trimmed : `${trimmed}/v1`;
+      // Custom names get their own provider id so several endpoints can
+      // coexist. A name resolving to an installed id with the same root
+      // updates that entry in place instead of duplicating it.
+      const installedResponse = await pluginApi.getAllPlugins();
+      const installedPlugins =
+        installedResponse.success && installedResponse.data
+          ? installedResponse.data
+          : [];
+      const takenIds = installedPlugins.map(plugin => plugin.id);
+      const baseId = customProviderId(displayName, []);
+      const baseMatch = installedPlugins.find(plugin => plugin.id === baseId);
+      const id =
+        baseMatch && baseMatch.base_url === root
+          ? baseId
+          : customProviderId(displayName, takenIds);
       const usesKey = localKey.trim().length > 0;
-      const keyEnv = `${preset.id.toUpperCase().replace(/-/g, '_')}_API_KEY`;
+      const keyEnv = customKeyEnv(id);
       const definition: Omit<Plugin, 'created_at' | 'updated_at'> = {
-        id: preset.id,
-        name: preset.name,
+        id,
+        name: displayName,
         type: 'completion',
         endpoint: `${root}/chat/completions`,
         api_mode: 'chat_completions',
@@ -200,19 +218,26 @@ export const ConnectModels: React.FC<ConnectModelsProps> = ({
       };
       const installed = await pluginApi.installPlugin(definition);
       if (!installed.success) {
-        // Already-installed presets are updated in place instead.
-        const updated = await pluginApi.updatePlugin(preset.id, definition);
+        // Already-installed entries are updated in place, but only when the
+        // stored root matches — a colliding id with another root surfaces
+        // the failure instead of overwriting it.
+        const existing = installedPlugins.find(plugin => plugin.id === id);
+        if (!existing || existing.base_url !== root) {
+          toast.error(t('connectModels.local.enableFailed'));
+          return;
+        }
+        const updated = await pluginApi.updatePlugin(id, definition);
         if (!updated.success) {
           toast.error(t('connectModels.local.enableFailed'));
           return;
         }
       }
       if (usesKey) {
-        await pluginApi.setApiKey(preset.id, localKey.trim());
+        await pluginApi.setApiKey(id, localKey.trim());
       }
-      await pluginApi.activatePlugin(preset.id);
+      await pluginApi.activatePlugin(id);
       await loadModels({ quiet: true });
-      toast.success(t('connectModels.local.enabled', { name: preset.name }));
+      toast.success(t('connectModels.local.enabled', { name: displayName }));
       onDone?.();
     } catch (error) {
       logger.error('Failed to enable local provider:', error);
@@ -380,6 +405,7 @@ export const ConnectModels: React.FC<ConnectModelsProps> = ({
                       type='button'
                       onClick={() => {
                         setPreset(candidate);
+                        setLocalName(candidate.name);
                         setLocalUrl(candidate.baseUrl);
                         setProbedModels(null);
                       }}
@@ -394,6 +420,14 @@ export const ConnectModels: React.FC<ConnectModelsProps> = ({
                     </button>
                   ))}
                 </div>
+                <input
+                  className={inputClass}
+                  value={localName}
+                  onChange={event => setLocalName(event.target.value)}
+                  placeholder={t('connectModels.local.nameLabel')}
+                  aria-label={t('connectModels.local.nameLabel')}
+                  spellCheck={false}
+                />
                 <input
                   className={inputClass}
                   value={localUrl}
