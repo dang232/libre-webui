@@ -79,7 +79,7 @@ test('mobile sidebar keeps titles readable without hover previews', async ({
   expect(sidebarBox).not.toBeNull();
   expect(sidebarBox!.width).toBeGreaterThanOrEqual(290);
 
-  await expect(sidebar.getByText(/Libre/).first()).toBeVisible();
+  await expect(sidebar.getByText(/Alcore/).first()).toBeVisible();
   const sessionTitle = sidebar.getByText(mobileSession.title, { exact: true });
   await expect(sessionTitle).toBeVisible();
 
