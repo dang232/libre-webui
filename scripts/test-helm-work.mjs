@@ -102,7 +102,7 @@ test('deployment probes separate process liveness from dependency readiness', ()
 test('the chart renders platform selectors and secret connection material', t => {
   const deployment = read('deployment.yaml');
   for (const variable of [
-    'LIBRE_PLATFORM_MODE',
+    'ALCORE_PLATFORM_MODE',
     'TRUST_PROXY',
     'DATABASE_BACKEND',
     'DATABASE_SSL_MODE',
@@ -419,7 +419,7 @@ test('the chart keeps solo single-replica safety and admits only a complete team
     '--set',
     'replicaCount=3',
     '--set',
-    'env.LIBRE_PLATFORM_MODE=team',
+    'env.ALCORE_PLATFORM_MODE=team',
     '--set',
     'env.DATABASE_BACKEND=postgres',
     '--set',

@@ -37,7 +37,7 @@ const env = {
   JWT_SECRET: 'integrated-backup-jwt-secret',
   SESSION_SECRET: 'integrated-backup-session-secret',
   NODE_ENV: 'production',
-  LIBRE_PLATFORM_MODE: 'solo',
+  ALCORE_PLATFORM_MODE: 'solo',
   DATABASE_BACKEND: 'sqlite',
   BLOB_STORE_BACKEND: 'local',
   VECTOR_STORE_BACKEND: 'embedded',
