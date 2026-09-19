@@ -126,8 +126,12 @@ jobs:
             backend/src frontend/src .github/workflows
 
       - name: Upload SAST findings to code scanning
+        # Code scanning results can only be uploaded where the feature
+        # exists (public repositories, or private ones with GHAS). Other
+        # repositories still run the scans, enforce them, and retain reports.
         if: >-
           always() &&
+          github.repository_visibility == 'public' &&
           (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository)
         uses: github/codeql-action/upload-sarif@v4
@@ -177,8 +181,12 @@ jobs:
           exit-code: '1'
 
       - name: Upload secret findings to code scanning
+        # Code scanning results can only be uploaded where the feature
+        # exists (public repositories, or private ones with GHAS). Other
+        # repositories still run the scans, enforce them, and retain reports.
         if: >-
           always() &&
+          github.repository_visibility == 'public' &&
           (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository)
         uses: github/codeql-action/upload-sarif@v4
@@ -255,8 +263,12 @@ jobs:
           exit-code: '1'
 
       - name: Upload container findings to code scanning
+        # Code scanning results can only be uploaded where the feature
+        # exists (public repositories, or private ones with GHAS). Other
+        # repositories still run the scans, enforce them, and retain reports.
         if: >-
           always() &&
+          github.repository_visibility == 'public' &&
           (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository)
         uses: github/codeql-action/upload-sarif@v4

@@ -55,7 +55,7 @@ jobs:
 
       # Login to Docker Hub
       - name: Log in to Docker Hub
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && secrets.DOCKERHUB_TOKEN != ''
         uses: docker/login-action@v4
         with:
           registry: ${{ env.DOCKERHUB_REGISTRY }}
@@ -78,6 +78,19 @@ jobs:
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Building version: $VERSION"
+
+      # Forks rarely configure Docker Hub credentials. Keep building and
+      # publishing to GHCR (covered by GITHUB_TOKEN) and only push the
+      # Docker Hub copy when its token is configured. Repositories with
+      # DOCKERHUB_TOKEN set behave exactly as before.
+      - name: Resolve push registries
+        id: registries
+        run: |
+          names='${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}'
+          if [ -n '${{ secrets.DOCKERHUB_TOKEN }}' ]; then
+            names="$names,${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_USERNAME }}/libre-webui"
+          fi
+          echo "push_names=$names" >> $GITHUB_OUTPUT
 
       # Prepare platform name for artifact
       - name: Prepare platform name
@@ -115,7 +128,7 @@ jobs:
           no-cache-filters: runner
           build-args: |
             APP_VERSION=${{ steps.version.outputs.version }}
-          outputs: type=image,"name=${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }},${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_USERNAME }}/libre-webui",push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
+          outputs: type=image,"name=${{ steps.registries.outputs.push_names }}",push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
 
       # Export digest
       - name: Export digest
@@ -202,6 +215,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Extract metadata for Docker Hub
+        if: secrets.DOCKERHUB_TOKEN != ''
         id: meta-dockerhub
         uses: docker/metadata-action@v6
         with:
@@ -222,6 +236,7 @@ jobs:
           DOCKER_METADATA_OUTPUT_JSON: ${{ steps.meta-ghcr.outputs.json }}
 
       - name: Create manifest list and push to Docker Hub
+        if: secrets.DOCKERHUB_TOKEN != ''
         working-directory: ${{ runner.temp }}/digests
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
@@ -234,11 +249,12 @@ jobs:
           docker buildx imagetools inspect ${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta-ghcr.outputs.version }}
 
       - name: Inspect Docker Hub image
+        if: secrets.DOCKERHUB_TOKEN != ''
         run: |
           docker buildx imagetools inspect ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_USERNAME }}/libre-webui:${{ steps.meta-dockerhub.outputs.version }}
 
       - name: Update Docker Hub description
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && secrets.DOCKERHUB_TOKEN != ''
         uses: peter-evans/dockerhub-description@v5
         with:
           username: ${{ env.DOCKERHUB_USERNAME }}
