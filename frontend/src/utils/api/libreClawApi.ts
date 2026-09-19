@@ -330,7 +330,9 @@ export const libreClawApi = {
       });
     }
     return api
-      .post(`/alcore-claw/automations/${encodeURIComponent(automationId)}/pause`)
+      .post(
+        `/alcore-claw/automations/${encodeURIComponent(automationId)}/pause`
+      )
       .then(res => res.data);
   },
 

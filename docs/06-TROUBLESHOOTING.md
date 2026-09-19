@@ -509,8 +509,8 @@ the task container.
 - Stop an existing preview before starting another command that needs the
   container.
 
-Preview URLs use a dynamically assigned loopback port. The browser and Libre
-WebUI backend therefore need to run on the same machine. A browser connected to
+Preview URLs use a dynamically assigned loopback port. The browser and Alcore
+backend therefore need to run on the same machine. A browser connected to
 a remote backend cannot reach that backend's loopback preview, and an HTTPS page
 may block a plain-HTTP preview as mixed content.
 

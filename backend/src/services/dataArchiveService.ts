@@ -893,9 +893,7 @@ function normalizeArchive(value: unknown): NormalizedArchive {
   }
 
   if (source.format !== DATA_ARCHIVE_FORMAT) {
-    throw new DataArchiveValidationError(
-      'Unrecognized Alcore archive format'
-    );
+    throw new DataArchiveValidationError('Unrecognized Alcore archive format');
   }
   if (source.version !== DATA_ARCHIVE_VERSION) {
     throw new DataArchiveValidationError(

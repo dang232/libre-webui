@@ -149,7 +149,7 @@ policies**; the setting
 persists across restarts and takes effect immediately, including for open
 terminal sessions. Host-folder workspaces remain admin-only in every mode
 because they bind-mount server paths. Treat everyone granted Work access as
-a trusted runtime operator, not only as a WebUI user.
+a trusted runtime operator, not only as an Alcore user.
 
 Admin authorization is checked against the current database role rather than
 only the role cached in an existing JWT. Demoting an administrator therefore

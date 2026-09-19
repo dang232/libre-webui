@@ -585,9 +585,7 @@ class EmailService {
       if (result) {
         markdown = truncate(result, MAX_TEXT_LENGTH);
       } else {
-        lines.push(
-          'The run finished. Open Alcore to see the full result.'
-        );
+        lines.push('The run finished. Open Alcore to see the full result.');
       }
     } else {
       lines.push(

@@ -103,7 +103,7 @@ test('Work and Agents are hidden and route-protected for non-admin users', async
 }) => {
   let libreClawRequests = 0;
   page.on('request', request => {
-    if (new URL(request.url()).pathname.startsWith('/api/libre-claw')) {
+    if (new URL(request.url()).pathname.startsWith('/api/alcore-claw')) {
       libreClawRequests += 1;
     }
   });

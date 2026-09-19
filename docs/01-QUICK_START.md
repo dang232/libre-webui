@@ -103,8 +103,8 @@ files later. Stopping a run or preview preserves the workspace. Deleting the
 task permanently deletes its workspace.
 
 Work can use an installed Ollama model, an Ollama Cloud model, or a configured
-chat or completion-provider plugin. When you select a remote provider, Libre
-WebUI shows a disclosure before the run: the provider receives the
+chat or completion-provider plugin. When you select a remote provider, Alcore
+shows a disclosure before the run: the provider receives the
 conversation, tool definitions, and any tool results requested by the model.
 An autonomous run can make multiple paid provider calls.
 
