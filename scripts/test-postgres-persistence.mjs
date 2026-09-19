@@ -3684,7 +3684,7 @@ test(
       DATABASE_BACKEND: process.env.DATABASE_BACKEND,
       DATABASE_URL: process.env.DATABASE_URL,
       DATABASE_SSL_MODE: process.env.DATABASE_SSL_MODE,
-      LIBRE_PLATFORM_MODE: process.env.LIBRE_PLATFORM_MODE,
+      ALCORE_PLATFORM_MODE: process.env.ALCORE_PLATFORM_MODE,
       COORDINATION_BACKEND: process.env.COORDINATION_BACKEND,
       ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
       SHARED_PLUGIN_TEST_KEY: process.env.SHARED_PLUGIN_TEST_KEY,
@@ -3722,7 +3722,7 @@ test(
     process.env.DATABASE_BACKEND = 'postgres';
     process.env.DATABASE_URL = schemaUrl.toString();
     process.env.DATABASE_SSL_MODE = 'disable';
-    process.env.LIBRE_PLATFORM_MODE = 'solo';
+    process.env.ALCORE_PLATFORM_MODE = 'solo';
     process.env.COORDINATION_BACKEND = 'local';
     const coordination =
       await import('../backend/dist/platform/coordination/service.js');

@@ -291,13 +291,13 @@ test('plugin variable invalidation reaches peer service caches before the write 
   const previousEnvironment = new Map(
     [
       'DATA_DIR',
-      'LIBRE_PLATFORM_MODE',
+      'ALCORE_PLATFORM_MODE',
       'DATABASE_BACKEND',
       'COORDINATION_BACKEND',
     ].map(name => [name, process.env[name]])
   );
   process.env.DATA_DIR = dataDirectory;
-  process.env.LIBRE_PLATFORM_MODE = 'solo';
+  process.env.ALCORE_PLATFORM_MODE = 'solo';
   process.env.DATABASE_BACKEND = 'sqlite';
   process.env.COORDINATION_BACKEND = 'local';
 

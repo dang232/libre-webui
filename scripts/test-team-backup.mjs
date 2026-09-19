@@ -304,7 +304,7 @@ test(
 
       const encryptionKey = process.env.ENCRYPTION_KEY;
       const baseEnvironment = {
-        LIBRE_PLATFORM_MODE: 'team',
+        ALCORE_PLATFORM_MODE: 'team',
         DATABASE_BACKEND: 'postgres',
         DATABASE_SSL_MODE: 'disable',
         POSTGRES_MIGRATION_MODE: 'apply',
