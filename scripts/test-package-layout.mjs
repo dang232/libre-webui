@@ -419,7 +419,7 @@ test('packed npm artifact resolves package metadata and frontend dist', async ()
     const pkg = JSON.parse(
       fs.readFileSync(path.join(packedRoot, 'package.json'), 'utf8')
     );
-    assert.equal(pkg.bin?.['libre-webui'], 'bin/cli.js');
+    assert.equal(pkg.bin?.['alcore'], 'bin/cli.js');
     assert.equal(pkg.scripts?.postinstall, 'node scripts/postinstall.js');
     assert.equal(
       pkg.scripts?.['migrate:postgres'],
@@ -806,9 +806,9 @@ test('packed maintenance help creates no runtime state', async () => {
       [cliPath, 'migrate-postgres', '--help'],
       { cwd: callerDirectory, env, encoding: 'utf8' }
     );
-    assert.match(recoveryHelp, /libre-webui recovery-check \[--json\]/);
-    assert.match(backupHelp, /libre-webui backup create/);
-    assert.match(migrationHelp, /libre-webui migrate-postgres --source/);
+  assert.match(recoveryHelp, /alcore recovery-check \[--json\]/);
+  assert.match(backupHelp, /alcore backup create/);
+  assert.match(migrationHelp, /alcore migrate-postgres --source/);
 
     const blocked = spawnSync(
       process.execPath,
