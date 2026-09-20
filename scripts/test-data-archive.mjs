@@ -246,7 +246,7 @@ async function asVersion2Archive() {
 
 test('v3 export is complete, checksummed, user-scoped, and explicit about exclusions', async () => {
   const archive = await dataArchiveService.exportUserData(SOURCE_USER);
-  assert.equal(archive.format, 'libre-webui-user-data');
+  assert.equal(archive.format, 'alcore-user-data');
   assert.equal(archive.version, 3);
   assert.equal(archive.integrity.algorithm, 'sha256');
   assert.equal(archive.integrity.canonicalization, 'libre-json-sort-v1');
@@ -866,7 +866,7 @@ test('authenticated routes export only the caller and accept multipart preflight
   assert.equal(exportResponse.headers.get('cache-control'), 'no-store');
   const exportBody = await exportResponse.json();
   assert.equal(exportBody.success, true);
-  assert.equal(exportBody.data.format, 'libre-webui-user-data');
+  assert.equal(exportBody.data.format, 'alcore-user-data');
   assert.equal(exportBody.data.version, 3);
   assert.match(exportBody.data.integrity.digest, /^[a-f0-9]{64}$/);
   assert.equal(exportBody.data.notes.length, 0);

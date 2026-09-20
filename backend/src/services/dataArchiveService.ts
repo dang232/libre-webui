@@ -52,6 +52,13 @@ export const DATA_ARCHIVE_MAX_BYTES = 50 * 1024 * 1024;
 export const DATA_ARCHIVE_CANONICALIZATION = 'libre-json-sort-v1';
 
 const LEGACY_ARCHIVE_FORMAT = 'alcore-export';
+// Pre-rename exports still migrate: the legacy browser format and the
+// Libre-branded user-data marker were written by older releases.
+const LEGACY_ARCHIVE_FORMATS = new Set([
+  LEGACY_ARCHIVE_FORMAT,
+  'libre-webui-export',
+]);
+const PRE_RENAME_USER_DATA_FORMAT = 'libre-webui-user-data';
 const MAX_ARCHIVE_SESSIONS = 5_000;
 const MAX_ARCHIVE_MESSAGES = 100_000;
 const MAX_ARCHIVE_DOCUMENTS = 5_000;
@@ -863,7 +870,10 @@ function normalizeArchive(value: unknown): NormalizedArchive {
   let migratedFromVersion: string | undefined;
   let source = raw;
 
-  if (raw.format === LEGACY_ARCHIVE_FORMAT) {
+  if (
+    typeof raw.format === 'string' &&
+    LEGACY_ARCHIVE_FORMATS.has(raw.format)
+  ) {
     migratedFromVersion = String(raw.version ?? '1.0');
     source = {
       format: DATA_ARCHIVE_FORMAT,
@@ -879,10 +889,15 @@ function normalizeArchive(value: unknown): NormalizedArchive {
     warnings.push(
       'Legacy archive migrated to version 3 without integrity verification. Legacy exports did not contain folders, Notes, collections, or document chunks.'
     );
-  } else if (raw.format === DATA_ARCHIVE_FORMAT && raw.version === 2) {
+  } else if (
+    (raw.format === DATA_ARCHIVE_FORMAT ||
+      raw.format === PRE_RENAME_USER_DATA_FORMAT) &&
+    raw.version === 2
+  ) {
     migratedFromVersion = '2';
     source = {
       ...raw,
+      format: DATA_ARCHIVE_FORMAT,
       version: DATA_ARCHIVE_VERSION,
       notes: [],
     };
