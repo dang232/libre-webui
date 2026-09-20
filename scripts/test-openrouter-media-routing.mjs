@@ -831,7 +831,7 @@ test('prepared video and resume publications resolve lost commit acknowledgement
   } finally {
     repository.createPreparedAndEnqueue = originalCreate;
   }
-  assert.equal(job.providerJobId, 'libre:prepared');
+  assert.equal(job.providerJobId, 'alcore:prepared');
   const submitJob = await getDurableJobRuntime().service.getByIdempotency(
     'default',
     'media.video.submit.v1',
