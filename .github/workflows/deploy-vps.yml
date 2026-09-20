@@ -32,4 +32,14 @@ jobs:
             docker compose ps
             PORT=$(grep -E '^WEBUI_PORT=' .env | cut -d= -f2 || true)
             PORT=${PORT:-8080}
-            curl --fail --max-time 15 "http://localhost:${PORT}/" > /dev/null
+            for attempt in $(seq 1 36); do
+              if curl --fail --max-time 10 "http://localhost:${PORT}/" > /dev/null 2>&1; then
+                echo "Healthy on port ${PORT}."
+                break
+              fi
+              if [ "$attempt" -eq 36 ]; then
+                docker compose logs --tail=100 alcore
+                exit 1
+              fi
+              sleep 5
+            done
