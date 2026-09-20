@@ -9,7 +9,7 @@
 #
 #   docker compose -f docker-compose.yml -f docker-compose.work-proxy.yml up -d
 services:
-  libre-webui:
+  alcore:
     environment:
       DOCKER_HOST: tcp://docker-socket-proxy:2375
     networks:

@@ -140,7 +140,7 @@ test('document data is scoped to the authenticated user', () => {
 
 test('private deployment template defaults to main and publishes no ports', () => {
   const compose = read('deploy/private/docker-compose.yml');
-  assert.match(compose, /libre-webui\/libre-webui:main/);
+  assert.match(compose, /alcore\/alcore:main/);
   assert.doesNotMatch(compose, /^\s+ports:/m);
   assert.match(compose, /read_only: true/);
   assert.match(compose, /cap_drop:\n\s+- ALL/);
@@ -158,7 +158,7 @@ test('private deployment template defaults to main and publishes no ports', () =
   assert.doesNotMatch(compose, /docker\.sock/);
   assert.doesNotMatch(compose, /^\s+watchtower:/m);
   const application = compose.slice(
-    compose.indexOf('  libre-webui:'),
+    compose.indexOf('  alcore:'),
     compose.indexOf('\n  ollama:')
   );
   assert.match(
@@ -311,7 +311,7 @@ test('private backup discovers the rendered Work proxy network and keeps verific
     ['docker-proxy']
   );
   assert.equal(
-    rendered.services['libre-webui'].environment.DOCKER_HOST,
+    rendered.services['alcore'].environment.DOCKER_HOST,
     'tcp://docker-socket-proxy:2375'
   );
 
@@ -605,7 +605,7 @@ test('private Watchtower opt-in excludes stateful application updates', () => {
   const watchtower = read('deploy/private/docker-compose.watchtower.yml');
 
   assert.match(
-    service('libre-webui', 'ollama'),
+    service('alcore', 'ollama'),
     /com\.centurylinklabs\.watchtower\.enable: 'false'/
   );
   assert.match(
