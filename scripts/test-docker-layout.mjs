@@ -404,7 +404,7 @@ test('team environment example renders the shipped PostgreSQL and Work profiles'
   );
   for (const name of ['libre-webui', 'durable-worker']) {
     const environment = rendered.services[name].environment;
-    assert.equal(environment.LIBRE_PLATFORM_MODE, 'team');
+    assert.equal(environment.ALCORE_PLATFORM_MODE, 'team');
     assert.equal(environment.DATABASE_BACKEND, 'postgres');
     assert.equal(environment.BLOB_STORE_BACKEND, 's3');
     assert.equal(environment.VECTOR_STORE_BACKEND, 'pgvector');

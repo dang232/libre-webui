@@ -4,7 +4,7 @@ x-libre-team-environment: &libre-team-environment
   PORT: '3001'
   DATA_DIR: /tmp/libre-data
   PLATFORM_PREFLIGHT_TMP_DIR: /tmp/libre-preflight
-  LIBRE_PLATFORM_MODE: team
+  ALCORE_PLATFORM_MODE: team
   DATABASE_BACKEND: postgres
   DATABASE_URL: postgresql://libre:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/libre
   # This Compose-owned PostgreSQL listener is isolated on the private project
