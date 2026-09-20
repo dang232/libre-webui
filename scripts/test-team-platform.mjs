@@ -954,7 +954,7 @@ test(
         model: 'libre-video-model',
         pluginId: 'libre-team-video-fixture',
         prompt:
-          'LIBRE_VIDEO_POST_SUBMIT_KILL LIBRE_MEDIA_POST_SAVE_KILL durable video',
+          'ALCORE_VIDEO_POST_SUBMIT_KILL ALCORE_MEDIA_POST_SAVE_KILL durable video',
       },
     });
     const videoSubmitJob = await waitFor(
