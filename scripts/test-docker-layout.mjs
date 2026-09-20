@@ -209,7 +209,7 @@ test('Compose files forward every operable platform selector', () => {
     privateCompose,
     /PLATFORM_PREFLIGHT_TMP_DIR: \/app\/backend\/temp\/preflight/
   );
-  assert.match(privateCompose, /libre-webui-preflight:\/app\/backend\/temp/);
+  assert.match(privateCompose, /alcore-preflight:\/app\/backend\/temp/);
   assert.match(privateCompose, /WORK_PREVIEW_BIND: 172\.30\.0\.1/);
   assert.match(privateCompose, /WORK_DOCKER_PUBLISHED_HOST: 172\.30\.0\.1/);
   assert.doesNotMatch(
@@ -232,7 +232,7 @@ test('Compose routes Docker-published Work ports back to the backend', () => {
         { cwd: repoRoot, encoding: 'utf8' }
       )
     );
-    const app = rendered.services['libre-webui'];
+    const app = rendered.services['alcore'];
     assert.equal(app.environment.WORK_PREVIEW_BIND, '127.0.0.1');
     assert.equal(
       app.environment.WORK_DOCKER_PUBLISHED_HOST,
@@ -254,7 +254,7 @@ test('Compose routes Docker-published Work ports back to the backend', () => {
           },
         }
       )
-    ).services['libre-webui'];
+    ).services['alcore'];
     assert.equal(overridden.environment.WORK_PREVIEW_BIND, '172.31.0.1');
     assert.equal(
       overridden.environment.WORK_DOCKER_PUBLISHED_HOST,
@@ -404,7 +404,7 @@ test('team environment example renders the shipped PostgreSQL and Work profiles'
   );
   for (const name of ['libre-webui', 'durable-worker']) {
     const environment = rendered.services[name].environment;
-    assert.equal(environment.ALCORE_PLATFORM_MODE, 'team');
+    assert.equal(environment.LIBRE_PLATFORM_MODE, 'team');
     assert.equal(environment.DATABASE_BACKEND, 'postgres');
     assert.equal(environment.BLOB_STORE_BACKEND, 's3');
     assert.equal(environment.VECTOR_STORE_BACKEND, 'pgvector');
