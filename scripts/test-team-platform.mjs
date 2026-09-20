@@ -985,7 +985,7 @@ test(
       sql(
         `SELECT provider_job_id FROM platform_media_generation_jobs WHERE id = '${video.data.id}'`
       ),
-      'libre:prepared',
+      'alcore:prepared',
       'provider acceptance must precede the reconciled SQL commit in this fault window'
     );
     killAndRestartWorker();
