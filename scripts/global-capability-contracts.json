@@ -1757,7 +1757,7 @@
           "file": "scripts/test-notifications.mjs",
           "runner": "test:package",
           "name": "webhook targets are egress-guarded, signed, redacted, and retried",
-          "behaviorPatterns": ["x-libre-signature", "must never leave"]
+          "behaviorPatterns": ["x-alcore-signature", "must never leave"]
         },
         {
           "file": "scripts/test-web-push.mjs",
