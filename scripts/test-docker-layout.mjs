@@ -784,11 +784,11 @@ test('socket-proxy Compose variant keeps the Docker socket out of the app', () =
   );
 
   const services = compose.split(/^  (?=\S+:$)/m);
-  const app = services.find(block => block.startsWith('libre-webui:'));
+  const app = services.find(block => block.startsWith('alcore:'));
   const proxy = services.find(block =>
     block.startsWith('docker-socket-proxy:')
   );
-  assert.ok(app, 'variant must define the libre-webui service');
+  assert.ok(app, 'variant must define the alcore service');
   assert.ok(proxy, 'variant must define the docker-socket-proxy service');
 
   // The whole point: the app container gets a filtered tcp endpoint, never
