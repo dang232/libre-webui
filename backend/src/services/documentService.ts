@@ -324,14 +324,14 @@ const delayAfterVectorUpsertForRecoveryDrill = async (
   signal?: AbortSignal
 ): Promise<void> => {
   if (
-    process.env.LIBRE_ENABLE_TEST_FAULT_INJECTION !== 'true' ||
+    process.env.ALCORE_ENABLE_TEST_FAULT_INJECTION !== 'true' ||
     attemptCount !== 1 ||
     !document.content?.includes(DOCUMENT_POST_VECTOR_FAULT_MARKER)
   ) {
     return;
   }
   const delayMs = Number.parseInt(
-    process.env.LIBRE_TEST_FAULT_DELAY_MS ?? '60000',
+    process.env.ALCORE_TEST_FAULT_DELAY_MS ?? '60000',
     10
   );
   if (!Number.isSafeInteger(delayMs) || delayMs < 1 || delayMs > 300_000) {
