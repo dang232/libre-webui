@@ -17,7 +17,9 @@ const startApp = async () => {
       isOriginAllowed: origin => !origin || origin === ALLOWED,
       rejection: () => new Error('Not allowed by CORS'),
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      // Must mirror backend/src/index.ts: Idempotency-Key is required for
+      // BFF idempotent writes (todos 19-23); dropping it here must fail.
+      allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key'],
       credentials: true,
     })
   );
@@ -73,7 +75,7 @@ test('a preflight is answered with 204 and the configured methods and headers', 
     );
     assert.equal(
       response.headers.get('access-control-allow-headers'),
-      'Content-Type,Authorization'
+      'Content-Type,Authorization,Idempotency-Key'
     );
     assert.equal(response.headers.get('content-length'), '0');
     assert.equal(await response.text(), '');

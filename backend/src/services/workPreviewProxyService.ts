@@ -38,6 +38,13 @@ const SIGNATURE_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 // An unset JWT secret already makes sessions process-local; the random fallback
 // gives preview capabilities the same restart semantics without importing the
 // auth service (whose model singleton opens the database during module load).
+// In production an ephemeral secret is a silent auth breakage, so fail fast
+// here as well (mirrors the authService.ts guard): never log the secret value.
+if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET?.trim()) {
+  throw new Error(
+    'Missing required JWT_SECRET in production: set JWT_SECRET to a stable random value (32+ characters) and restart. Refusing to derive an ephemeral preview capability secret.'
+  );
+}
 const WORK_PREVIEW_SECRET = crypto
   .createHash('sha256')
   .update(
