@@ -3461,6 +3461,13 @@
             "recovery codes are stored only as keyed one-way",
             "Challenges are one-use and expire after five minutes"
           ]
+        },
+        {
+          "file": "docs/12-AUTHENTICATION.md",
+          "patterns": [
+            "Settings → API Platform mints a 120s portal token",
+            "first-login link creates the TokenPanel"
+          ]
         }
       ],
       "focusedTests": [
@@ -3517,6 +3524,15 @@
           "runner": "test:e2e",
           "name": "the signup password field grades strength live against the real policy",
           "behaviorPatterns": ["password-strength-label", "At least one number"]
+        },
+        {
+          "file": "scripts/test-tokenpanel-bridge.mjs",
+          "runner": "test:package",
+          "name": "tokenpanel bridge exchanges a Libre session for a portal token",
+          "behaviorPatterns": [
+            "first-login link creates the TokenPanel customer",
+            "existing link never re-registers"
+          ]
         }
       ],
       "backendRoutes": [
@@ -3759,6 +3775,12 @@
           "mount": "/api/auth",
           "method": "POST",
           "path": "/passkeys/login"
+        },
+        {
+          "file": "backend/src/routes/auth.ts",
+          "mount": "/api/auth",
+          "method": "POST",
+          "path": "/tokenpanel/portal-token"
         }
       ],
       "contractSurfaces": {

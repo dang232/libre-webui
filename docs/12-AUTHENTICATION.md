@@ -270,6 +270,18 @@ only by administrators and still require the account to hold the admin role
 when used. A `chat`-scoped token is also the key for the OpenAI-compatible
 [public `/v1` API](./53-PUBLIC_API.md).
 
+## TokenPanel Bridge
+
+Settings → API Platform mints a 120s portal token for the TokenPanel
+customer portal without a second password prompt. The backend exchanges the
+caller's Libre session server-side: first-login link creates the TokenPanel
+customer by verified email (a server-generated password nobody can type),
+returning customers reuse the existing link, and the 120s viewer JWT is
+handed to the portal in a one-time URL fragment the portal consumes and
+strips. The management key authorizing the mint (`TOKENPANEL_MGMT_KEY`,
+`customers:read`+`customers:write`) never leaves the server, and every
+exchange is recorded in the security audit log.
+
 ## Cloudflare Turnstile
 
 Turnstile protects password login and signup when both keys are configured:
