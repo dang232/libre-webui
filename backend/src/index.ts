@@ -83,6 +83,9 @@ import promptsRoutes from './routes/prompts.js';
 import skillsRoutes from './routes/skills.js';
 import toolsRoutes from './routes/tools.js';
 import authRoutes from './routes/auth.js';
+import tokenpanelBillingRoutes from './routes/tokenpanelBilling.js';
+import tokenpanelAccountRoutes from './routes/tokenpanelAccount.js';
+import tokenpanelUsageRoutes from './routes/tokenpanelUsage.js';
 import usersRoutes from './routes/users.js';
 import personaRoutes from './routes/personas.js';
 import ttsRoutes from './routes/tts.js';
@@ -105,6 +108,7 @@ import jobsRoutes from './routes/jobs.js';
 import groupsRoutes from './routes/groups.js';
 import accessRoutes from './routes/access.js';
 import auditRoutes from './routes/audit.js';
+import tokenpanelRoutes from './routes/tokenpanel.js';
 import adminProvidersRoutes from './routes/adminProviders.js';
 import ollamaService from './services/ollamaService.js';
 import { initializeOllamaRuntime } from './services/ollamaSettingsService.js';
@@ -420,7 +424,9 @@ app.use(
     isOriginAllowed,
     rejection: () => new Error('Not allowed by CORS'),
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    // Idempotency-Key must be preflight-allowed: BFF idempotent writes
+    // (provision/topup/keys, todos 19-23) send it from the browser.
+    allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key'],
     credentials: true,
   })
 );
@@ -632,6 +638,9 @@ const pluginRouteRateLimiter = rateLimit({
 
 // API routes
 app.use('/api/auth', authRateLimiter, optionalAuth, authRoutes);
+app.use('/api/tokenpanel', tokenpanelBillingRoutes);
+app.use('/api/tokenpanel', tokenpanelAccountRoutes);
+app.use('/api/tokenpanel', tokenpanelUsageRoutes);
 app.use('/api/users', usersRateLimiter, optionalAuth, usersRoutes);
 app.use('/api/ollama', ollamaRateLimiter, ollamaRoutes);
 app.use('/api/chat', chatRateLimiter, optionalAuth, chatRoutes);
@@ -682,6 +691,7 @@ app.use('/api/jobs', jobsRoutes);
 app.use('/api/groups', groupsRoutes);
 app.use('/api/access', accessRoutes);
 app.use('/api/audit', auditRoutes);
+app.use('/api/tokenpanel', tokenpanelRoutes);
 app.use('/admin/providers', adminProvidersRoutes);
 // OpenAI-compatible surface for external SDKs; authenticated by scoped
 // personal API keys (or a normal session token).
