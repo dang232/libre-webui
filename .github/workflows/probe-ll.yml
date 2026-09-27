@@ -1,0 +1,32 @@
+name: Probe LL runner
+
+# Temporary capability probe for PR #2 (self-hosted LL runner triage).
+# Deleted once docker/browser/k8s capabilities are known.
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: [self-hosted, Linux, X64] # fork/PR2: self-hosted LL runner; billing-blocked hosted
+    steps:
+      - name: Tool versions
+        run: |
+          node --version
+          npm --version
+          git --version
+
+      - name: Docker capability
+        continue-on-error: true
+        run: |
+          docker --version
+          docker info --format '{{.ServerVersion}}'
+          docker ps --format '{{.Names}}'
+
+      - name: Browser and k8s presence
+        continue-on-error: true
+        run: |
+          which google-chrome chromium kubectl kind helm || true
+          ls ~/.cache/ms-playwright || true

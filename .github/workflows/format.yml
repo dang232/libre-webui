@@ -10,7 +10,7 @@ on:
 
 jobs:
   format-and-lint:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64] # fork/PR2: self-hosted LL runner; billing-blocked hosted
 
     steps:
       - name: Checkout code
