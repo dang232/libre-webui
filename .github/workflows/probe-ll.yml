@@ -13,10 +13,18 @@ jobs:
     runs-on: [self-hosted, Linux, X64] # fork/PR2: self-hosted LL runner; billing-blocked hosted
     steps:
       - name: Tool versions
+        continue-on-error: true
         run: |
           node --version
           npm --version
           git --version
+          python3 --version
+
+      - name: Build toolchain and sudo
+        continue-on-error: true
+        run: |
+          which make g++ gcc
+          sudo -n true && echo SUDO_NOPASS_OK || echo NO_NOPASS_SUDO
 
       - name: Docker capability
         continue-on-error: true
