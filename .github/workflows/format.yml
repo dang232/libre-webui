@@ -11,6 +11,8 @@ on:
 jobs:
   format-and-lint:
     runs-on: [self-hosted, Linux, X64] # fork/PR2: self-hosted LL runner; billing-blocked hosted
+    env:
+      npm_config_ignore_scripts: 'true' # fork/PR2: LL has no compiler/sudo; lint needs no native builds
 
     steps:
       - name: Checkout code
@@ -21,10 +23,6 @@ jobs:
         with:
           node-version: '22.22'
           cache: 'npm'
-
-      - name: Install native build tools (self-hosted LL only)
-        if: runner.name == 'LL' # fork/PR2: LL lacks build-essential for the better-sqlite3 native build
-        run: sudo -n apt-get update && sudo -n apt-get install -y build-essential
 
       - name: Install root dependencies
         run: npm ci
