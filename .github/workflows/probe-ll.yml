@@ -23,7 +23,7 @@ jobs:
       - name: Build toolchain and sudo
         continue-on-error: true
         run: |
-          which make g++ gcc
+          which make g++ gcc || true
           sudo -n true && echo SUDO_NOPASS_OK || echo NO_NOPASS_SUDO
 
       - name: Docker capability
