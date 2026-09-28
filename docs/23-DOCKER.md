@@ -1,9 +1,9 @@
 ---
 sidebar_position: 23
 title: 'Docker'
-description: 'Deploy Libre WebUI with Docker and Docker Compose.'
+description: 'Deploy Alcore with Docker and Docker Compose.'
 slug: /DOCKER
-keywords: [libre webui docker, docker compose, container deployment]
+keywords: [Alcore docker, docker compose, container deployment]
 ---
 
 # Docker
@@ -19,13 +19,13 @@ Cloudflare Access boundary, host controls, backups, and container limits.
 
 Work is enabled in repository Compose files by default. The image ships the
 Docker CLI and Compose mounts `/var/run/docker.sock`, so Work task containers
-are **siblings** of the Libre WebUI container. They appear in `docker ps` on the
+are **siblings** of the Alcore container. They appear in `docker ps` on the
 host.
 
 A process with access to that socket has root-equivalent control of the Docker
 host. Enabling Work by default is a deliberate choice: Work is a core feature,
 and it cannot function without daemon access. The consequence is that **every
-Libre WebUI administrator is effectively a host administrator**. Plan for it:
+Alcore administrator is effectively a host administrator**. Plan for it:
 
 - Keep the stack on a host whose administrators you already trust.
 - Do not expose the published port to an untrusted network.
@@ -60,12 +60,12 @@ docker compose up -d --force-recreate libre-webui
 
 The Compose files map `host.docker.internal` through `host-gateway`. Never use
 `WORK_PREVIEW_BIND=0.0.0.0`; that would publish unauthenticated ephemeral task
-ports on every host interface instead of keeping them behind Libre WebUI's
+ports on every host interface instead of keeping them behind Alcore's
 signed proxy.
 
 ## Bundled Ollama
 
-Runs Libre WebUI and Ollama in one Compose stack:
+Runs Alcore and Ollama in one Compose stack:
 
 ```bash
 docker compose up -d
@@ -73,7 +73,7 @@ docker compose up -d
 
 Open [http://localhost:8080](http://localhost:8080).
 
-The WebUI port binds to host loopback by default. Set
+The Alcore port binds to host loopback by default. Set
 `WEBUI_BIND_ADDRESS=0.0.0.0` only when a trusted LAN or a host reverse proxy must
 reach it, and restrict the port with the host firewall.
 
@@ -113,7 +113,7 @@ OLLAMA_BASE_URL=http://192.168.1.10:11434 docker compose -f docker-compose.exter
 
 ## Socket-Isolated Work
 
-The standard Compose files mount the Docker socket into the Libre WebUI
+The standard Compose files mount the Docker socket into the Alcore
 container so Work can run task containers; that mount is root-equivalent
 control of the Docker host. To keep Work without giving the web application
 the socket, use the socket-proxy variant:
@@ -125,7 +125,7 @@ docker compose -f docker-compose.socket-proxy.yml up -d
 A socket proxy on an internal network holds `/var/run/docker.sock` and
 forwards only the API sections Work uses (containers, images, volumes,
 networks, exec, info). Swarm, secrets, configs, build, and system endpoints
-are denied at the proxy. Libre WebUI reaches it via
+are denied at the proxy. Alcore reaches it via
 `DOCKER_HOST=tcp://docker-socket-proxy:2375` — no socket mount, no
 `DOCKER_GID`, and the interactive terminal and system diagnostics work
 unchanged. See the Workspaces documentation for what this boundary does and
@@ -133,7 +133,7 @@ does not cover.
 
 ## Data Persistence
 
-Libre WebUI stores backend data in `/app/backend/data` inside the container. The Compose files mount that path as a named volume.
+Alcore stores backend data in `/app/backend/data` inside the container. The Compose files mount that path as a named volume.
 
 The image also uses that path by default when it is launched directly with
 `docker run`; its database preflight scratch stays separately under
@@ -161,7 +161,7 @@ Docker named volumes and are not included in the normal
 
 ## Public Access
 
-Repository Compose files bind the WebUI to loopback and set `CORS_ORIGIN`
+Repository Compose files bind Alcore to loopback and set `CORS_ORIGIN`
 directly. A value in
 your shell or `.env` file does not replace that literal. Edit the
 `libre-webui.environment` entry or save an explicit override as
@@ -181,7 +181,7 @@ Apply the override together with the selected repository Compose file:
 docker compose -f docker-compose.yml -f compose.origin.yml up -d
 ```
 
-Then put Libre WebUI behind HTTPS with a reverse proxy or platform load
+Then put Alcore behind HTTPS with a reverse proxy or platform load
 balancer. Set `WEBUI_BIND_ADDRESS` to the exact interface that proxy needs; do
 not publish the port on every interface unless the firewall requires it.
 

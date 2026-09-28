@@ -17,7 +17,7 @@ keywords:
 
 # Qwen3-TTS Integration
 
-Run Alibaba's Qwen3-TTS locally for high-quality, multilingual text-to-speech. This guide covers setting up the OpenAI-compatible TTS server included with Libre WebUI.
+Run Alibaba's Qwen3-TTS locally for high-quality, multilingual text-to-speech. This guide covers setting up the OpenAI-compatible TTS server included with Alcore.
 
 ## Overview
 
@@ -29,7 +29,7 @@ Qwen3-TTS is an advanced text-to-speech system featuring:
 - **Voice design** using natural language descriptions
 - **Instruction control** for emotion and prosody
 
-The included server wraps Qwen3-TTS in an OpenAI-compatible API, allowing Libre WebUI to use it through the standard plugin system.
+The included server wraps Qwen3-TTS in an OpenAI-compatible API, allowing Alcore to use it through the standard plugin system.
 
 ## Requirements
 
@@ -83,7 +83,7 @@ python server.py --model customvoice-0.6b
 
 The server runs at `http://localhost:8100` by default.
 
-### 3. Configure Libre WebUI
+### 3. Configure Alcore
 
 The plugin is pre-configured in `plugins/qwen-tts.json`. Enable it in **Settings → Plugins → Qwen3 TTS**.
 
@@ -92,7 +92,7 @@ The plugin is pre-configured in `plugins/qwen-tts.json`. Enable it in **Settings
 ```bash
 curl http://localhost:8100/v1/audio/speech \
   -H "Content-Type: application/json" \
-  -d '{"model": "qwen3-tts", "input": "Hello, welcome to Libre WebUI!", "voice": "Ryan"}' \
+  -d '{"model": "qwen3-tts", "input": "Hello, welcome to Alcore!", "voice": "Ryan"}' \
   --output speech.wav
 ```
 

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -118,7 +118,7 @@ export const drillIntervalHours = (): number | null => {
 export const drillsSupported = (): boolean => {
   const env = process.env;
   return !(
-    env.LIBRE_PLATFORM_MODE?.trim().toLowerCase() === 'team' ||
+    env.ALCORE_PLATFORM_MODE?.trim().toLowerCase() === 'team' ||
     env.DATABASE_BACKEND?.trim().toLowerCase() === 'postgres' ||
     env.BLOB_STORE_BACKEND?.trim().toLowerCase() === 's3' ||
     env.VECTOR_STORE_BACKEND?.trim().toLowerCase() === 'pgvector'

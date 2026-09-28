@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,7 +48,7 @@ test('a model pulled while the app is open becomes selectable without a reload',
 
   // Completing a pull announces the change; nothing else should be needed.
   await page.evaluate(() =>
-    window.dispatchEvent(new Event('libre:models-changed'))
+    window.dispatchEvent(new Event('alcore:models-changed'))
   );
 
   await expect(

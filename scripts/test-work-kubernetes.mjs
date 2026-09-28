@@ -63,13 +63,13 @@ test('sandbox Pods carry the full non-root, least-privilege policy', () => {
   });
 
   assert.equal(pod.metadata.name, task.containerName);
-  assert.equal(pod.metadata.labels['ai.libre-webui.managed'], 'true');
-  assert.equal(pod.metadata.labels['ai.libre-webui.task'], task.id);
-  assert.equal(pod.metadata.labels['ai.libre-webui.network'], 'true');
+  assert.equal(pod.metadata.labels['ai.alcore.managed'], 'true');
+  assert.equal(pod.metadata.labels['ai.alcore.task'], task.id);
+  assert.equal(pod.metadata.labels['ai.alcore.network'], 'true');
   // The policy fingerprint is a sha256 hex digest: valid as an annotation,
   // too long for a label value.
   assert.match(
-    pod.metadata.annotations['ai.libre-webui.policy'],
+    pod.metadata.annotations['ai.alcore.policy'],
     /^[a-f0-9]{64}$/
   );
 
@@ -121,7 +121,7 @@ test('host-folder workspaces are refused on the Kubernetes backend', () => {
 test('workspace claims are labeled for ownership and sized', () => {
   const claim = buildWorkspaceClaimManifest(task);
   assert.equal(claim.metadata.name, task.volumeName);
-  assert.equal(claim.metadata.labels['ai.libre-webui.task'], task.id);
+  assert.equal(claim.metadata.labels['ai.alcore.task'], task.id);
   assert.deepEqual(claim.spec.accessModes, ['ReadWriteOnce']);
   assert.equal(
     claim.spec.resources.requests.storage,

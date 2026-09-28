@@ -1,4 +1,4 @@
-# Libre WebUI Community & Ethical Charter
+# Alcore Community & Ethical Charter
 
 _Adopted June 2025 • Maintained by Kroonen AI, Inc._
 
@@ -6,7 +6,7 @@ _Adopted June 2025 • Maintained by Kroonen AI, Inc._
 
 ## 1 Mission
 
-Libre WebUI exists to provide a **free, privacy‑respecting, community‑driven interface** for local large‑language‑model workflows.  
+Alcore exists to provide a **free, privacy‑respecting, community‑driven interface** for local large‑language‑model workflows.  
 We pursue simplicity and user sovereignty above growth, hype, or outside investment.
 
 ## 2 Core Principles
@@ -24,7 +24,7 @@ We pursue simplicity and user sovereignty above growth, hype, or outside investm
 ## 3 Governance Model
 
 1. **Stewardship**  
-   Kroonen AI, Inc. maintains the Libre WebUI project and its public infrastructure under this charter.
+   Kroonen AI, Inc. maintains the Alcore project and its public infrastructure under this charter.
 2. **Technical Steering Committee (TSC)**  
    _Composition_: minimum 3, maximum 7 active contributors (rotating annually).  
    _Responsibilities_: roadmap approval, release signing, Code‑of‑Conduct enforcement.
@@ -32,7 +32,7 @@ We pursue simplicity and user sovereignty above growth, hype, or outside investm
    - Consensus‑seeking → majority vote if consensus fails within 7 days.
    - All votes happen in public GitHub issues.
 4. **Code of Conduct**  
-   Libre WebUI follows the [Contributor Covenant v2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/) with a dedicated response team.
+   Alcore follows the [Contributor Covenant v2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/) with a dedicated response team.
 
 ## 4 Contribution Guidelines (Summary)
 
@@ -42,7 +42,7 @@ We pursue simplicity and user sovereignty above growth, hype, or outside investm
 
 ## 5 Ethical Use & Limitations
 
-Libre WebUI is **tooling**, but we discourage—and will actively oppose—uses that facilitate:
+Alcore is **tooling**, but we discourage—and will actively oppose—uses that facilitate:
 
 - Human‑rights abuses
 - Mass surveillance
@@ -52,7 +52,7 @@ We reserve the right to refuse contributions or sponsorships tied to such activi
 
 ## 6 Enterprise Services
 
-Kroonen AI offers **commercial support and services** for organizations deploying Libre WebUI at scale. Enterprise offerings do not change the open source license—the core product remains Apache 2.0 for everyone.
+Kroonen AI offers **commercial support and services** for organizations deploying Alcore at scale. Enterprise offerings do not change the open source license—the core product remains Apache 2.0 for everyone.
 
 ### Available Services
 
@@ -67,12 +67,12 @@ Kroonen AI offers **commercial support and services** for organizations deployin
 
 ### Regulated Deployments
 
-Libre WebUI's local-first, zero-telemetry design can help organizations build deployments for regulated environments, but compliance depends on the full deployment, policies, controls, and audit process:
+Alcore's local-first, zero-telemetry design can help organizations build deployments for regulated environments, but compliance depends on the full deployment, policies, controls, and audit process:
 
 - Data can stay inside your infrastructure when using local models and self-hosted storage.
 - Remote providers are optional and should be reviewed under your own data-processing requirements.
 - Air-gapped and private-network deployments are supported by the self-hosted architecture.
-- Enterprise services can help document controls and prepare security evidence, but Libre WebUI itself is not a certification.
+- Enterprise services can help document controls and prepare security evidence, but Alcore itself is not a certification.
 
 ### Contact
 

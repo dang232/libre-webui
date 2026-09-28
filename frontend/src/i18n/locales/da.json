@@ -41,8 +41,8 @@
     "more": "Mere"
   },
   "brand": {
-    "name": "Libre WebUI",
-    "shortName": "Libre"
+    "name": "Alcore",
+    "shortName": "Alcore"
   },
   "appInitialization": {
     "ollamaUnavailable": "Ollama-tjenesten er ikke tilgængelig. Pluginmodeller kan stadig bruges.",
@@ -191,9 +191,9 @@
   },
   "setup": {
     "welcome": {
-      "title": "Velkommen til Libre WebUI",
+      "title": "Velkommen til Alcore",
       "subtitle": "Lad os komme i gang",
-      "description": "Opsæt din Libre WebUI-instans på få trin",
+      "description": "Opsæt din Alcore-instans på få trin",
       "createAdmin": "Opret administratorkonto",
       "features": {
         "secure": {
@@ -213,7 +213,7 @@
     "admin": {
       "title": "Opret administratorkonto",
       "subtitle": "Administrator-opsætning",
-      "description": "Opret den første administratorkonto til din Libre WebUI-instans",
+      "description": "Opret den første administratorkonto til din Alcore-instans",
       "usernamePlaceholder": "Indtast administratorbrugernavn",
       "passwordPlaceholder": "Indtast adgangskode (mindst 12 tegn)",
       "confirmPlaceholder": "Bekræft din adgangskode",
@@ -223,7 +223,7 @@
       "failed": "Kunne ikke oprette administratorkonto",
       "approvalUnexpected": "Den oprindelige administrator kunne ikke aktiveres. Prøv igen.",
       "fillAllFields": "Udfyld venligst alle felter",
-      "note": "Dette bliver den primære administratorkonto for din Libre WebUI-instans"
+      "note": "Dette bliver den primære administratorkonto for din Alcore-instans"
     },
     "encryptionKey": {
       "title": "Gem din krypteringsnøgle",
@@ -239,7 +239,7 @@
       "envNote": "Denne nøgle er også gemt i din backend/.env-fil som ENCRYPTION_KEY",
       "acknowledgment": "Jeg har gemt min krypteringsnøgle på et sikkert sted og forstår, at tab af den kan medføre datatab.",
       "confirmRequired": "Bekræft venligst, at du har gemt krypteringsnøglen",
-      "continue": "Fortsæt til Libre WebUI"
+      "continue": "Fortsæt til Alcore"
     },
     "connectModels": {
       "title": "Forbind dine modeller",
@@ -600,7 +600,8 @@
       "sessions": "Sessioner",
       "apiKeys": "API-nøgler",
       "notifications": "Notifikationer",
-      "ollamaDisabled": "Ollama er deaktiveret af en administrator"
+      "ollamaDisabled": "Ollama er deaktiveret af en administrator",
+      "apiPlatform": "API Platform"
     },
     "appearance": {
       "title": "Udseende",
@@ -1047,7 +1048,7 @@
       "toSkip": "springes over",
       "documents": "Dokumenter",
       "warnings": "Advarsler",
-      "refreshAfterImportFailed": "Data blev importeret, men nogle visninger kunne ikke opdateres. Genindlæs Libre WebUI for at se alle ændringer.",
+      "refreshAfterImportFailed": "Data blev importeret, men nogle visninger kunne ikke opdateres. Genindlæs Alcore for at se alle ændringer.",
       "exportSuccess": "Det flytbare dataarkiv blev eksporteret",
       "exportFailed": "Eksporten mislykkedes",
       "importSuccess": "Det flytbare dataarkiv blev importeret",
@@ -1056,7 +1057,7 @@
         "invalidJson": "Det flytbare arkiv indeholder ikke gyldig JSON.",
         "objectRequired": "Det flytbare arkiv skal indeholde et JSON-objekt.",
         "unsupportedVersion": "Version {{version}} af det flytbare arkiv understøttes ikke.",
-        "unrecognized": "Denne fil er ikke et flytbart Libre WebUI-arkiv."
+        "unrecognized": "Denne fil er ikke et flytbart Alcore-arkiv."
       },
       "errors": "Fejl",
       "archivedChats": {
@@ -1241,6 +1242,131 @@
       "emailMentionsHint": "Send mig en e-mail, når nogen nævner mig i en kanal.",
       "emailAutomations": "Automatiseringsresultater",
       "emailAutomationsHint": "Send mig en e-mail med resultatet af hver automatiseringskørsel, uanset om den lykkedes eller fejlede."
+    },
+    "apiPlatform": {
+      "title": "API Platform",
+      "description": "API keys, usage, billing and the playground live in the ALcore API Platform ({{host}}), opening in a new tab.",
+      "note": "Opening a section signs you into the portal automatically with a short-lived session.",
+      "keysTitle": "API keys",
+      "keysDescription": "Create, reveal and rotate your tp_live_* customer keys.",
+      "keysOpen": "Open Keys",
+      "usageTitle": "Usage & billing",
+      "usageDescription": "Request overview, daily usage, records, top-ups, orders and invoices.",
+      "usageOpen": "Open Usage",
+      "billingOpen": "Open Billing",
+      "playgroundTitle": "Playground",
+      "playgroundDescription": "Try models with a customer key over the OpenAI-compatible /v1 API.",
+      "playgroundOpen": "Open Playground",
+      "opening": "Opening…",
+      "bridgeFailed": "Couldn't open the API Platform. Check the connection and try again.",
+      "usageLiveTitle": "Usage on this account",
+      "usageLiveDescription": "Live totals from the API Platform — the same numbers as the portal.",
+      "usageRequests": "Requests",
+      "usageInputTokens": "Input tokens",
+      "usageOutputTokens": "Output tokens",
+      "usageTotalTokens": "Total tokens",
+      "usageSpend": "Spend",
+      "usageTotalsNote": "Totals equal the usage API for the same window; spend shows exact micros with the whole-unit equivalent below.",
+      "usageByModel": "By model",
+      "usageModel": "Model",
+      "usageRecent": "Recent requests",
+      "usageOccurredAt": "Occurred at",
+      "usageLoading": "Loading usage…",
+      "usageFailed": "Couldn't load usage. Check the connection and try again.",
+      "usageRetry": "Retry",
+      "usageEmpty": "No usage in this window.",
+      "accountTitle": "Account",
+      "accountDescription": "Subscription, budgets, spending limits and profile, synced with the API Platform through this workspace.",
+      "accountLoading": "Loading account…",
+      "accountLoadFailed": "Couldn't load account details. Check the connection and try again.",
+      "accountRetry": "Retry",
+      "subscriptionTitle": "Subscription",
+      "subscriptionActive": "Active subscription.",
+      "subscriptionNone": "No active subscription.",
+      "plansTitle": "Plan",
+      "billingPeriod": "Billing period",
+      "planSubscribe": "Subscribe",
+      "saving": "Saving…",
+      "budgetsTitle": "Budgets",
+      "budgetAmount": "Amount (micros)",
+      "budgetThresholds": "Alert thresholds (0–100, comma-separated)",
+      "budgetSave": "Save budget",
+      "limitsTitle": "Spending limits",
+      "limitsNone": "No spending cap set.",
+      "capAmount": "Max spend (micros)",
+      "capWindow": "Window (seconds)",
+      "capSave": "Save cap",
+      "capClear": "Clear cap",
+      "profileTitle": "Profile",
+      "profileName": "Name",
+      "profileEmail": "Email",
+      "profileSave": "Save profile",
+      "savedOk": "Saved.",
+      "saveFailed": "Couldn't save {{label}}: check the values and try again.",
+      "keysNativeTitle": "API keys in Libre",
+      "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
+      "keyNameLabel": "Key name",
+      "keyNamePlaceholder": "e.g. production-app",
+      "quotaMicrosLabel": "Quota (micros, optional)",
+      "quotaMicrosPlaceholder": "e.g. 5000000",
+      "keyCreate": "Create key",
+      "keyCreating": "Creating…",
+      "keyReveal": "Reveal",
+      "keyRotate": "Rotate",
+      "keyRotating": "Rotating…",
+      "keyRevoke": "Revoke",
+      "keyRevoked": "Revoked {{name}}.",
+      "keyCopy": "Copy",
+      "keyCopied": "Copied",
+      "keyDismiss": "Dismiss",
+      "secretOnceWarning": "Copy it now — this full secret is shown exactly once and never again.",
+      "secretForLabel": "Full secret for {{name}}",
+      "keysEmpty": "No API keys yet. Create your first key above.",
+      "keysLoadFailed": "Couldn't load API keys. Check the connection and try again.",
+      "keysRetry": "Retry",
+      "keysCount": "{{count}} keys",
+      "keyStatusActive": "active",
+      "keyStatusRevoked": "revoked",
+      "quotaLabel": "quota",
+      "actionFailed": "That action failed. Try again.",
+      "projectsNativeTitle": "Projects",
+      "projectsNativeDescription": "Projects in your organization with per-project key counts.",
+      "projectsEmpty": "No projects yet.",
+      "projectsLoadFailed": "Couldn't load projects. Check the connection and try again.",
+      "keyCountLabel": "{{count}} keys",
+      "platformDefaultTitle": "Default chat model",
+      "platformDefaultDescription": "New chats start on the ALcore API Platform automatically — no local model or key setup needed. Local Ollama stays available as an opt-in provider.",
+      "platformDefaultCurrent": "Chatting via the ALcore API Platform (default-chat).",
+      "platformDefaultUnavailable": "The API Platform model isn't ready for this account yet (an email address is required for automatic setup). You can still chat with a local or cloud model.",
+      "platformDefaultUse": "Use ALcore API Platform",
+      "platformDefaultUsing": "Switching…"
+    },
+    "billing": {
+      "historyTitle": "Billing history",
+      "historyDescription": "Balance movements settled server-side, newest first.",
+      "historyFailed": "Couldn't load billing history. Check the connection and try again.",
+      "historyEmpty": "No billing entries yet.",
+      "rechargeTitle": "Recharge",
+      "rechargeDescription": "Create a top-up intent, then pay with the QR code before it expires. Settlement happens server-side.",
+      "amountLabel": "Amount (major units)",
+      "amountInvalid": "Enter a positive amount with up to 6 decimals.",
+      "createIntent": "Create recharge intent",
+      "intentFailed": "Couldn't create the recharge intent. Try again.",
+      "intentExpired": "That QR code expired. Create a fresh intent.",
+      "qrExpiresIn": "QR code expires in {{countdown}}",
+      "qrExpired": "QR code expired — create a fresh intent.",
+      "qrNoExpiry": "This intent has no QR expiry.",
+      "qrOpenLink": "Open payment link",
+      "refreshIntent": "Refresh status",
+      "cancelIntent": "Cancel intent",
+      "redeemTitle": "Redeem",
+      "redeemDescription": "Redeem a voucher code. Crediting happens server-side.",
+      "redeemLabel": "Voucher code",
+      "redeemInvalid": "Enter a code between 4 and 64 characters.",
+      "redeemAction": "Redeem",
+      "redeemFailed": "That code is invalid or already redeemed.",
+      "redeemDone": "Redeemed.",
+      "redeemCredited": "Redeemed: {{amount}}"
     }
   },
   "models": {
@@ -1322,7 +1448,7 @@
       "saveFile": "Gem fil",
       "formatCode": "Formatér kode"
     },
-    "description": "Alle tastaturgenveje i Libre WebUI.",
+    "description": "Alle tastaturgenveje i Alcore.",
     "newChat": "Ny chat",
     "newWork": "Ny Work-session",
     "openPalette": "Åbn kommandopaletten"
@@ -1701,7 +1827,7 @@
   "userManager": {
     "title": "Brugeradministration",
     "subtitle": "Administrer brugerkonti og tilladelser",
-    "pageDescription": "Administrer brugerkonti, tilladelser og adgangskontrol for din Libre WebUI-instans.",
+    "pageDescription": "Administrer brugerkonti, tilladelser og adgangskontrol for din Alcore-instans.",
     "sections": {
       "users": "Brugere",
       "access": "Adgang og politikker",
@@ -1829,7 +1955,7 @@
     },
     "agentAccess": {
       "title": "Agenter",
-      "description": "Tilbyd sektionen Agenter (Libre Claw) til administratorer. Agent-CLI'er kører på værten som serverbrugeren, uden for Work-sandkassen.",
+      "description": "Tilbyd sektionen Agenter (Alcore Claw) til administratorer. Agent-CLI'er kører på værten som serverbrugeren, uden for Work-sandkassen.",
       "saved": "Agent-adgang opdateret",
       "saveFailed": "Kunne ikke opdatere agent-adgang",
       "lockedByEnv": "Fastlåst af miljøvariablen AGENT_CLI_MODELS_ENABLED."
@@ -2041,7 +2167,7 @@
       "title": "Ingen udbyderkald endnu",
       "description": "Kald vises her, når et aktiveret plugin håndterer anmodninger om chat, arbejde, embedding, billede, tale, lyd eller video."
     },
-    "privacyNote": "Forbrug måles på serveren ved den udgående plugin-grænse. Libre WebUI gemmer udbyder, model, timing, status og rapporterede tællere — aldrig prompts, svar, endepunkter, legitimationsoplysninger eller udbyderfejlmeddelelser. Token-totaler inkluderer kun kald, hvor udbyderen returnerede forbrugsmetadata.",
+    "privacyNote": "Forbrug måles på serveren ved den udgående plugin-grænse. Alcore gemmer udbyder, model, timing, status og rapporterede tællere — aldrig prompts, svar, endepunkter, legitimationsoplysninger eller udbyderfejlmeddelelser. Token-totaler inkluderer kun kald, hvor udbyderen returnerede forbrugsmetadata.",
     "heatmap": {
       "title": "Et års aktivitet",
       "description": "Daglige udbyderkald det seneste år, farvet efter dagens mest brugte model.",
@@ -2056,7 +2182,7 @@
   "systemPage": {
     "eyebrow": "Administration",
     "title": "System",
-    "description": "Overvåg maskinen og runtime, der hoster denne Libre WebUI-instans.",
+    "description": "Overvåg maskinen og runtime, der hoster denne Alcore-instans.",
     "updated": "Opdateret {{date}}",
     "refresh": "Opdater systeminformation",
     "loadFailed": "Systeminformation kunne ikke indlæses.",
@@ -2074,7 +2200,7 @@
     },
     "host": {
       "title": "Vært og runtime",
-      "description": "Operativsystem, processor og Libre WebUI-procesdetaljer.",
+      "description": "Operativsystem, processor og Alcore-procesdetaljer.",
       "container": "Container-runtime",
       "native": "Native runtime",
       "hostname": "Værtsnavn",
@@ -2082,7 +2208,7 @@
       "processor": "Processor",
       "logicalCpus": "logiske CPU'er",
       "loadAverage": "Belastningsgennemsnit · 1 / 5 / 15 min",
-      "libreVersion": "Libre WebUI",
+      "libreVersion": "Alcore",
       "nodeVersion": "Node.js",
       "process": "Proces",
       "workingDirectory": "Arbejdsmappe"
@@ -2134,7 +2260,7 @@
       "internal": "intern",
       "empty": "Ingen netværksgrænseflader er synlige for applikationsruntime."
     },
-    "securityNote": "Denne side er begrænset til administratorer. Serveren returnerer kun operationelle oversigter: den udsætter ikke miljøvariabler, legitimationsoplysninger, Docker-labels, monteringer, containerkommandoer eller inspektions-payloads. Når Libre WebUI kører i en container, kommer CPU- og hukommelsesdetaljer på værtsniveau fra Docker Engine, når dens lokale socket er tilgængelig; andre værdier beskriver applikationsruntime.",
+    "securityNote": "Denne side er begrænset til administratorer. Serveren returnerer kun operationelle oversigter: den udsætter ikke miljøvariabler, legitimationsoplysninger, Docker-labels, monteringer, containerkommandoer eller inspektions-payloads. Når Alcore kører i en container, kommer CPU- og hukommelsesdetaljer på værtsniveau fra Docker Engine, når dens lokale socket er tilgængelig; andre værdier beskriver applikationsruntime.",
     "work": {
       "title": "Work",
       "description": "Sandkasser på tværs af alle brugere",
@@ -2314,9 +2440,9 @@
     "referenceTranscript": "Nøjagtig transskription af referencen",
     "referenceTranscriptPlaceholder": "Indtast præcis det, der siges i referenceoptagelsen…",
     "referenceAudioTooLarge": "Referencelyden skal være {{max}} eller mindre.",
-    "cloneConsent": "Klon kun en stemme, når du har talerens tilladelse. Optagelsen sendes til den valgte udbyder til denne generering og gemmes ikke af Libre WebUI.",
+    "cloneConsent": "Klon kun en stemme, når du har talerens tilladelse. Optagelsen sendes til den valgte udbyder til denne generering og gemmes ikke af Alcore.",
     "saveVoiceProfile": "Gem som en genanvendelig stemme",
-    "saveVoiceProfileDescription": "Gem denne referenceoptagelse og transskription sikkert. Libre WebUI sender dem til den valgte udbyder for hver talebatch, der bruger stemmen.",
+    "saveVoiceProfileDescription": "Gem denne referenceoptagelse og transskription sikkert. Alcore sender dem til den valgte udbyder for hver talebatch, der bruger stemmen.",
     "voiceProfileName": "Navn på gemt stemme",
     "voiceProfileNamePlaceholder": "For eksempel Min stemme",
     "voiceStorageConsent": "Jeg bekræfter, at jeg har talerens tilladelse til at klone og gemme denne stemme. Referencen forbliver gemt, indtil jeg sletter den.",
@@ -2554,7 +2680,7 @@
     "subtitle": "Lokale agentkørsler, godkendelser, tidsplaner, hukommelse, værktøjer og brug.",
     "dashboard": "Dashboard",
     "connection": {
-      "disconnectedTitle": "Libre Claw-dæmonen er ikke forbundet",
+      "disconnectedTitle": "Alcore Claw-dæmonen er ikke forbundet",
       "disconnectedDescription": "Start det lokalt med <command>libre-claw start</command> eller indstil <env>LIBRE_CLAW_BASE_URL</env> i backend-miljøet."
     },
     "status": {
@@ -2573,7 +2699,7 @@
     },
     "startRun": {
       "title": "Start agentkørsel",
-      "placeholder": "Bed Libre Claw om at inspicere en repo, rette en fejl, køre en anmeldelse, planlægge en rapport...",
+      "placeholder": "Bed Alcore Claw om at inspicere en repo, rette en fejl, køre en anmeldelse, planlægge en rapport...",
       "chatRun": "Chat køre",
       "goalMode": "Måltilstand",
       "providerOverride": "Udbyder tilsidesættelse",
@@ -2584,14 +2710,14 @@
       "title": "Model Rute",
       "providerPlaceholder": "udbyder",
       "modelPlaceholder": "model",
-      "persistGlobal": "Fortsæt til Libre Claw global konfig",
+      "persistGlobal": "Fortsæt til Alcore Claw global konfig",
       "saveModel": "Gem model",
-      "theme": "Libre Claw-tema",
+      "theme": "Alcore Claw-tema",
       "saveTheme": "Gem tema"
     },
     "runs": {
       "title": "Kørsler",
-      "empty": "Ingen Libre Claw-kørsler endnu."
+      "empty": "Ingen Alcore Claw-kørsler endnu."
     },
     "timeline": {
       "title": "Kørselstidslinje",
@@ -2625,7 +2751,7 @@
       "schedulePlaceholder": "daily 09:00",
       "promptPlaceholder": "Automatiseringsprompt",
       "create": "Opret",
-      "empty": "Ingen planlagte Libre Claw automatiseringer.",
+      "empty": "Ingen planlagte Alcore Claw automatiseringer.",
       "runNow": "Kør nu",
       "pause": "Pause",
       "resume": "Genoptag",
@@ -2666,19 +2792,19 @@
       "unknownError": "Ukendt fejl"
     },
     "toasts": {
-      "loadStatusFailed": "Kunne ikke indlæse Libre Claw-status",
-      "enterTask": "Indtast en opgave til Libre Claw",
-      "runStarted": "Libre Claw-kørsel startet",
-      "startRunFailed": "Kunne ikke starte Libre Claw-kørsel",
+      "loadStatusFailed": "Kunne ikke indlæse Alcore Claw-status",
+      "enterTask": "Indtast en opgave til Alcore Claw",
+      "runStarted": "Alcore Claw-kørsel startet",
+      "startRunFailed": "Kunne ikke starte Alcore Claw-kørsel",
       "runCancelled": "Kørsel annulleret",
       "cancelRunFailed": "Kørslen kunne ikke annulleres",
       "approved": "Godkendt",
       "denied": "Afvist",
       "resolvePermissionFailed": "Kunne ikke løse tilladelsen",
       "providerModelRequired": "Udbyder og model er påkrævet",
-      "modelUpdated": "Libre Claw-model opdateret",
+      "modelUpdated": "Alcore Claw-model opdateret",
       "updateModelFailed": "Modellen kunne ikke opdateres",
-      "themeUpdated": "Libre Claw-tema opdateret",
+      "themeUpdated": "Alcore Claw-tema opdateret",
       "updateThemeFailed": "Temaet kunne ikke opdateres",
       "automationRequired": "Automatiseringsnavn, tidsplan og prompt er påkrævet",
       "automationCreated": "Automatisering oprettet",
@@ -3049,7 +3175,7 @@
     "title": "Nyheder",
     "releaseNotes": "Udgivelsesnoter",
     "cta": "Okay, lad os komme i gang",
-    "starAsk": "Glad for Libre WebUI? Giv en stjerne på GitHub"
+    "starAsk": "Glad for Alcore? Giv en stjerne på GitHub"
   },
   "notes": {
     "title": "Noter",
@@ -3502,7 +3628,7 @@
     "description": "Værktøjsservere, modellen kan kalde, og de godkendelser du har givet dem.",
     "approvalNotice": "Værktøjer, der ændrer data uden for chatten, beder altid om godkendelse, medmindre du har givet værktøjet en permanent godkendelse eller en godkendelse for chatten.",
     "registerServer": "Registrer server",
-    "registerHint": "Libre WebUI læser serveren én gang og fastholder de værktøjer, den udstiller. Opdater serveren senere for at hente ændringer.",
+    "registerHint": "Alcore læser serveren én gang og fastholder de værktøjer, den udstiller. Opdater serveren senere for at hente ændringer.",
     "editServer": "Rediger server",
     "empty": "Ingen værktøjsservere",
     "emptyHintAdmin": "Registrer en OpenAPI- eller MCP-server, så modellen har noget at kalde.",
@@ -3891,6 +4017,7 @@
     "local": {
       "title": "Lokal server",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "API-nøgle (valgfri)",
       "test": "Test forbindelse",
       "testing": "Tester…",

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -85,6 +85,10 @@ import {
   verifyPasskeyLogin,
 } from '../services/webauthnService.js';
 import { userModel } from '../models/userModel.js';
+import {
+  TokenpanelBridgeError,
+  exchangePortalToken,
+} from '../services/tokenpanelBridgeService.js';
 
 const router = express.Router();
 const logger = createLogger('auth-routes');
@@ -128,7 +132,13 @@ const loginRateLimiter = coordinatedRateLimit({
 const signupRateLimiter = coordinatedRateLimit({
   keyPrefix: 'security.signup',
   windowMs: 15 * 60 * 1000,
-  limit: 5,
+  // 10 registrations per IP per window (task 19 flowfix): signup has no
+  // credential to guess, so this bucket is anti-spam/anti-enumeration, not
+  // brute-force protection — login (5) and MFA (10) buckets are untouched.
+  // 10 still bounds farming (40/hr/IP) and 409-oracle enumeration while
+  // giving legit retries (weak-password 400s, name-taken 409s, turnstile
+  // retries) and Playwright-speed fresh-user setups room to complete.
+  limit: 10,
   message: 'Too many authentication attempts, please try again later',
 });
 
@@ -237,6 +247,82 @@ router.post(
       res.status(503).json({
         success: false,
         message: 'WebSocket authentication is temporarily unavailable',
+      });
+    }
+  }
+);
+
+// Bridge tickets get their own bucket: one mint per portal visit.
+const tokenpanelRateLimiter = rateLimit({
+  keyPrefix: 'auth-tokenpanel',
+  windowMs: 5 * 60 * 1000,
+  max: 30,
+  message: {
+    success: false,
+    message: 'Too many bridge requests, please try again later',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+/**
+ * Single-login bridge into the TokenPanel portal (plan §5).
+ * Mints a 120s viewer JWT for the caller's linked TokenPanel customer
+ * (resolved fail-closed server-side: exact identity or exact single email
+ * match, collision → 409, never first-row-wins). The browser receives the
+ * token only to place it in a one-time URL fragment the portal consumes and
+ * strips; the management key authorizing the mint never leaves the server.
+ * TODO(bridge-sunset,todo29): temporary bridge — remove with the Phase 8
+ * sunset. Grep marker: bridge-sunset.
+ */
+router.post(
+  '/tokenpanel/portal-token',
+  tokenpanelRateLimiter,
+  authenticate,
+  async (req: AuthenticatedRequest, res) => {
+    res.set('Cache-Control', 'no-store');
+    const userId = req.user?.userId;
+    if (!userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+    const idempotencyKey =
+      typeof req.headers['idempotency-key'] === 'string'
+        ? req.headers['idempotency-key']
+        : undefined;
+    try {
+      const grant = await exchangePortalToken(
+        userId,
+        idempotencyKey !== undefined ? { idempotencyKey } : undefined
+      );
+      void recordAuditEvent({
+        action: 'auth.tokenpanel-bridge',
+        result: 'success',
+        actorUserId: userId,
+        ipHash: hashClientIp(getClientIp(req)),
+        details: { linked: grant.linked, customerId: grant.customerId },
+      });
+      res.json({ success: true, data: grant });
+    } catch (error) {
+      const status =
+        error instanceof TokenpanelBridgeError ? error.status : 500;
+      if (status === 500) logger.error('TokenPanel bridge failed', error);
+      void recordAuditEvent({
+        action: 'auth.tokenpanel-bridge',
+        result: 'denied',
+        actorUserId: userId,
+        ipHash: hashClientIp(getClientIp(req)),
+        details: {
+          reason: error instanceof Error ? error.message : 'unknown',
+          status,
+        },
+      });
+      res.status(status).json({
+        success: false,
+        message:
+          error instanceof TokenpanelBridgeError
+            ? error.message
+            : 'TokenPanel bridge is temporarily unavailable',
       });
     }
   }

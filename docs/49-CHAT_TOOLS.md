@@ -9,7 +9,7 @@ keywords: [tools, tool calls, mcp, openapi, approvals, function calling]
 # Chat Tools
 
 Chat can let the model call tools. A turn with tools enabled runs a native
-multi-round loop: the model requests a tool, Libre WebUI executes it under
+multi-round loop: the model requests a tool, Alcore executes it under
 the invoking user's identity and permissions, the result goes back to the
 model, and the loop continues until the model answers — up to eight rounds
 per turn, with at most eight calls per round. Stop cancels the model call,
@@ -108,7 +108,7 @@ Settings → Tools, and never shared between accounts.
 ### Interactive OAuth (MCP)
 
 An MCP server can also sign each person in for themselves. Register it with
-the **Interactive OAuth** authentication mode and Libre WebUI reads the
+the **Interactive OAuth** authentication mode and Alcore reads the
 `WWW-Authenticate` challenge the server answers with, follows it to the
 protected-resource metadata, then to the authorization server's metadata,
 and registers a client dynamically (RFC 7591) when the authorization server

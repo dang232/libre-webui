@@ -1,5 +1,5 @@
 # Work through a filtered Docker API proxy — the preferred way to enable
-# Work on a private instance. Libre WebUI never sees the Docker socket and
+# Work on a private instance. Alcore never sees the Docker socket and
 # joins no socket-owning group; a proxy holds the socket on an internal
 # network and forwards only the API sections Work uses. Swarm, secrets,
 # configs, build, commit, and system endpoints are denied before they reach
@@ -9,7 +9,7 @@
 #
 #   docker compose -f docker-compose.yml -f docker-compose.work-proxy.yml up -d
 services:
-  libre-webui:
+  alcore:
     environment:
       DOCKER_HOST: tcp://docker-socket-proxy:2375
     networks:

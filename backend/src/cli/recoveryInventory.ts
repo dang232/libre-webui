@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,9 +25,9 @@ interface CliOptions {
   legacyPluginsDirectories: string[];
 }
 
-const usage = `Usage: libre-webui recovery-check [--json] [--data-dir PATH] [--database PATH] [--legacy-plugins-dir PATH]
+const usage = `Usage: alcore recovery-check [--json] [--data-dir PATH] [--database PATH] [--legacy-plugins-dir PATH]
 
-From a source checkout, use "npm run recovery:check --" instead of "libre-webui recovery-check".
+From a source checkout, use "npm run recovery:check --" instead of "alcore recovery-check".
 
 Collect a read-only recovery-readiness inventory. Exit status is 0 when no
 blockers are found, 1 when recovery blockers exist, and 2 for invalid usage or
@@ -69,7 +69,7 @@ const renderText = (
   inventory: Awaited<ReturnType<typeof recoveryInventoryService.collect>>
 ): string => {
   const lines = [
-    `Libre WebUI recovery inventory v${inventory.version}`,
+    `Alcore recovery inventory v${inventory.version}`,
     `Application: ${inventory.application.version}`,
     `Status: ${inventory.restoreReady ? 'READY' : 'BLOCKED'}`,
     `Database: ${inventory.database.quickCheck}; ${inventory.database.bytes} bytes; schema ${inventory.database.schema.fingerprint || 'unavailable'}`,

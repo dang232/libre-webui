@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -178,7 +178,7 @@ export const WORK_TOOL_SCHEMAS: Record<string, unknown>[] = [
   ),
   functionTool(
     'start_preview',
-    'Start the workspace web application on the managed preview port. When command is omitted, Libre WebUI detects a package.json dev script or a static index.html.',
+    'Start the workspace web application on the managed preview port. When command is omitted, Alcore detects a package.json dev script or a static index.html.',
     {
       command: stringProperty(
         `Optional custom server command. It must listen on 0.0.0.0:${workRuntimeService.previewPort}.`

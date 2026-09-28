@@ -8,9 +8,9 @@ keywords: [data portability, export, import, archive, backup]
 
 # Data portability
 
-Libre WebUI can export and import a versioned, per-user JSON archive from
+Alcore can export and import a versioned, per-user JSON archive from
 **Settings → Data Management**. The archive is intended for moving supported
-personal data between Libre WebUI installations or restoring that data into an
+personal data between Alcore installations or restoring that data into an
 account. It is not a complete server backup.
 
 ## Archive version 3
@@ -82,7 +82,7 @@ user's private chats and Notes.
 Before offering a download, export runs the same schema, field-size, ID, and
 archive-count checks used by import. It also verifies that the pretty-printed
 JSON downloaded by the web UI is no larger than the 50 MiB upload limit. Export
-returns a precise validation error instead of offering a file that Libre WebUI
+returns a precise validation error instead of offering a file that Alcore
 already knows it cannot restore.
 
 Current archive and account limits are:
@@ -121,11 +121,11 @@ Two conflict policies are available:
 - **Skip duplicates** keeps records with matching IDs and imports new records.
   Preferences are merged with the account's current preferences.
 - **Overwrite existing** replaces records with matching IDs. Preferences are
-  replaced over Libre WebUI defaults. Records absent from the archive are never
+  replaced over Alcore defaults. Records absent from the archive are never
   deleted.
 
 Both policies are idempotent for records with matching IDs. If an ID is already
-owned by another account on the target server, Libre WebUI deterministically
+owned by another account on the target server, Alcore deterministically
 remaps it and every included reference to it. It never overwrites or reads
 another user's resource. References to excluded or unavailable resources, such
 as a persona from another installation, remain a documented exception: the

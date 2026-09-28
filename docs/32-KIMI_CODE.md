@@ -1,14 +1,14 @@
 ---
 sidebar_position: 13
 title: 'Kimi Code'
-description: 'Use Moonshot AI Kimi K3 and Kimi Code models from Libre WebUI.'
+description: 'Use Moonshot AI Kimi K3 and Kimi Code models from Alcore.'
 slug: /KIMI_CODE
 keywords: [kimi, kimi k3, moonshot ai, coding, provider plugin]
 ---
 
 # Kimi Code
 
-Libre WebUI includes a bundled Kimi Code provider plugin for Moonshot AI's
+Alcore includes a bundled Kimi Code provider plugin for Moonshot AI's
 OpenAI-compatible coding API.
 
 ## Configure the Provider
@@ -35,11 +35,11 @@ model selector.
 | `kimi-for-coding-highspeed` | Kimi K2.7 Code HighSpeed | Allegretto and above; higher speed and greater quota use |
 
 Kimi documents K3 as supporting up to a one-million-token context window for
-eligible membership tiers. Libre WebUI leaves K3's reasoning effort unset so
+eligible membership tiers. Alcore leaves K3's reasoning effort unset so
 the Kimi API applies its documented default, currently `high`.
 
 Kimi Code models choose fixed sampling values for their active reasoning mode.
-Libre WebUI therefore does not send the global temperature, top-p, frequency
+Alcore therefore does not send the global temperature, top-p, frequency
 penalty, or presence penalty settings to this provider. This follows Kimi's
 recommendation and prevents invalid-parameter errors when its defaults change.
 

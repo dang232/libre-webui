@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -372,7 +372,7 @@ test('webhook targets are egress-guarded, signed, redacted, and retried', async 
     createHmac('sha256', 'webhook-shared-secret')
       .update(delivered.body)
       .digest('hex');
-  assert.equal(delivered.headers['x-libre-signature'], expected);
+  assert.equal(delivered.headers['x-alcore-signature'], expected);
   // Redacted: the notification body never leaves the instance.
   assert.ok(!delivered.body.includes('must never leave'));
   assert.ok(delivered.body.includes('Deploy finished'));

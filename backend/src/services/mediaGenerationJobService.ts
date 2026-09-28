@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -21,8 +21,8 @@ import {
 } from '../platform/jobs/domainJobContracts.js';
 import { getDurableJobRuntime } from '../platform/jobs/durableJobRuntime.js';
 
-const MEDIA_POST_SAVE_FAULT_MARKER = 'LIBRE_MEDIA_POST_SAVE_KILL';
-export const PREPARED_VIDEO_PROVIDER_JOB_ID = 'libre:prepared';
+const MEDIA_POST_SAVE_FAULT_MARKER = 'ALCORE_MEDIA_POST_SAVE_KILL';
+export const PREPARED_VIDEO_PROVIDER_JOB_ID = 'alcore:prepared';
 
 const delayAfterMediaSaveForRecoveryDrill = async (
   prompt: string,
@@ -30,14 +30,14 @@ const delayAfterMediaSaveForRecoveryDrill = async (
   signal?: AbortSignal
 ): Promise<void> => {
   if (
-    process.env.LIBRE_ENABLE_TEST_FAULT_INJECTION !== 'true' ||
+    process.env.ALCORE_ENABLE_TEST_FAULT_INJECTION !== 'true' ||
     attemptCount !== 1 ||
     !prompt.includes(MEDIA_POST_SAVE_FAULT_MARKER)
   ) {
     return;
   }
   const delayMs = Number.parseInt(
-    process.env.LIBRE_TEST_FAULT_DELAY_MS ?? '60000',
+    process.env.ALCORE_TEST_FAULT_DELAY_MS ?? '60000',
     10
   );
   if (!Number.isSafeInteger(delayMs) || delayMs < 1 || delayMs > 300_000) {

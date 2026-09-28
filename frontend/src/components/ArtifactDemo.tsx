@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,7 @@ const SAMPLE_ARTIFACTS: Artifact[] = [
     title: 'Interactive Button Demo',
     description: 'A simple HTML page with interactive elements',
     content: `<div style="text-align: center; padding: 20px;">
-  <h1 style="color: #333; font-family: Arial, sans-serif;">Welcome to Libre WebUI!</h1>
+  <h1 style="color: #333; font-family: Arial, sans-serif;">Welcome to Alcore!</h1>
   <p style="color: #666; font-size: 16px;">This is an interactive HTML artifact.</p>
   <button 
     onclick="this.style.backgroundColor = this.style.backgroundColor === 'lightgreen' ? '#007bff' : 'lightgreen'; this.textContent = this.textContent === 'Clicked!' ? 'Click me!' : 'Clicked!'"
@@ -240,7 +240,7 @@ export default function RevenueDashboard() {
     <animate attributeName="opacity" values="0.3;0.7;0.3" dur="2s" repeatCount="indefinite"/>
   </circle>
   <text x="100" y="110" text-anchor="middle" fill="#333" font-family="Arial, sans-serif" font-size="18" font-weight="bold">
-    Libre WebUI
+    Alcore
   </text>
 </svg>`,
     createdAt: Date.now(),
@@ -253,7 +253,7 @@ export default function RevenueDashboard() {
     description: 'Sample configuration JSON',
     content: `{
   "application": {
-    "name": "Libre WebUI",
+    "name": "Alcore",
     "version": "1.0.0",
     "description": "Privacy-first AI chat interface"
   },

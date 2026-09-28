@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -213,7 +213,7 @@ export async function fetchWebpageAsText(
         signal: controller.signal,
         dispatcher,
         headers: {
-          'User-Agent': 'Libre-WebUI/1.0 (+webpage attachment)',
+          'User-Agent': 'Alcore/1.0 (+webpage attachment)',
           Accept: 'text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.5',
         },
       });

@@ -166,7 +166,7 @@ test('Compose files expose only implemented signup behavior', () => {
 
 test('Compose files forward every operable platform selector', () => {
   const platformVariables = [
-    'LIBRE_PLATFORM_MODE',
+    'ALCORE_PLATFORM_MODE',
     'DATABASE_BACKEND',
     'DATABASE_URL',
     'BLOB_STORE_BACKEND',
@@ -209,7 +209,7 @@ test('Compose files forward every operable platform selector', () => {
     privateCompose,
     /PLATFORM_PREFLIGHT_TMP_DIR: \/app\/backend\/temp\/preflight/
   );
-  assert.match(privateCompose, /libre-webui-preflight:\/app\/backend\/temp/);
+  assert.match(privateCompose, /alcore-preflight:\/app\/backend\/temp/);
   assert.match(privateCompose, /WORK_PREVIEW_BIND: 172\.30\.0\.1/);
   assert.match(privateCompose, /WORK_DOCKER_PUBLISHED_HOST: 172\.30\.0\.1/);
   assert.doesNotMatch(
@@ -232,7 +232,7 @@ test('Compose routes Docker-published Work ports back to the backend', () => {
         { cwd: repoRoot, encoding: 'utf8' }
       )
     );
-    const app = rendered.services['libre-webui'];
+    const app = rendered.services['alcore'];
     assert.equal(app.environment.WORK_PREVIEW_BIND, '127.0.0.1');
     assert.equal(
       app.environment.WORK_DOCKER_PUBLISHED_HOST,
@@ -254,7 +254,7 @@ test('Compose routes Docker-published Work ports back to the backend', () => {
           },
         }
       )
-    ).services['libre-webui'];
+    ).services['alcore'];
     assert.equal(overridden.environment.WORK_PREVIEW_BIND, '172.31.0.1');
     assert.equal(
       overridden.environment.WORK_DOCKER_PUBLISHED_HOST,
@@ -404,7 +404,7 @@ test('team environment example renders the shipped PostgreSQL and Work profiles'
   );
   for (const name of ['libre-webui', 'durable-worker']) {
     const environment = rendered.services[name].environment;
-    assert.equal(environment.LIBRE_PLATFORM_MODE, 'team');
+    assert.equal(environment.ALCORE_PLATFORM_MODE, 'team');
     assert.equal(environment.DATABASE_BACKEND, 'postgres');
     assert.equal(environment.BLOB_STORE_BACKEND, 's3');
     assert.equal(environment.VECTOR_STORE_BACKEND, 'pgvector');
@@ -594,7 +594,7 @@ test('real-service CI uses the exact shipped team dependency image references', 
   )?.[1];
   const releaseMinio = releasePreflight.match(/^\s+(\S+) server \/data$/m)?.[1];
   const teamMinioClient = teamPlatformTest.match(
-    /^\s+'(quay\.io\/minio\/mc:[^']+)',$/m
+    /^\s+'(cgr\.dev\/chainguard\/minio-client@sha256:[a-f0-9]{64})',$/m
   )?.[1];
   const backupMinio = teamBackupTest.match(
     /const MINIO_IMAGE =\s*'([^']+)';/
@@ -602,17 +602,24 @@ test('real-service CI uses the exact shipped team dependency image references', 
 
   assert.equal(ciPostgres, composePostgres);
   assert.equal(ciRedis, composeRedis);
-  assert.match(composeMinio, /^quay\.io\/minio\/minio:RELEASE\.[\w-]+$/);
+  assert.match(
+    composeMinio,
+    /^cgr\.dev\/chainguard\/minio@sha256:[a-f0-9]{64}$/,
+    'team MinIO must be a digest-pinned image that still publishes'
+  );
   assert.equal(ciMinio, composeMinio);
   assert.equal(releasePostgres, composePostgres);
   assert.equal(releaseRedis, composeRedis);
   assert.equal(releaseMinio, composeMinio);
-  assert.match(composeMinioClient, /^quay\.io\/minio\/mc:RELEASE\.[\w-]+$/);
-  assert.equal(teamMinioClient, composeMinioClient);
   assert.match(
+    composeMinioClient,
+    /^cgr\.dev\/chainguard\/minio-client@sha256:[a-f0-9]{64}$/
+  );
+  assert.equal(teamMinioClient, composeMinioClient);
+  assert.equal(
     backupMinio,
-    /^quay\.io\/minio\/minio@sha256:[a-f0-9]{64}$/,
-    'backup fixture must use a digest-pinned MinIO image from Quay'
+    composeMinio,
+    'backup fixture must use the shipped MinIO image'
   );
   const testStorageKey = '91'.repeat(32);
   for (const workflow of [formatWorkflow, releasePreflight]) {
@@ -784,11 +791,11 @@ test('socket-proxy Compose variant keeps the Docker socket out of the app', () =
   );
 
   const services = compose.split(/^  (?=\S+:$)/m);
-  const app = services.find(block => block.startsWith('libre-webui:'));
+  const app = services.find(block => block.startsWith('alcore:'));
   const proxy = services.find(block =>
     block.startsWith('docker-socket-proxy:')
   );
-  assert.ok(app, 'variant must define the libre-webui service');
+  assert.ok(app, 'variant must define the alcore service');
   assert.ok(proxy, 'variant must define the docker-socket-proxy service');
 
   // The whole point: the app container gets a filtered tcp endpoint, never

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -193,7 +193,7 @@ router.get(
       ? `Work is safely retrying ${recoveryPendingCount} sandbox cleanup(s). New operations remain blocked until the configured runtime proves they are stopped.`
       : !runtimeAvailable
         ? workRuntimeService.runtimeUnavailableReason ||
-          `The ${workRuntimeService.runtimeKind} runtime is not available to the Libre WebUI backend.`
+          `The ${workRuntimeService.runtimeKind} runtime is not available to the Alcore backend.`
         : !providerAvailable
           ? 'No Ollama or configured plugin model provider is available.'
           : undefined;
@@ -1389,7 +1389,7 @@ router.post(
           requireBodyString(req.body?.message, 'message', 4_000),
           {
             name: user.username,
-            email: user.email || `${user.id}@users.noreply.libre-webui.local`,
+            email: user.email || `${user.id}@users.noreply.alcore.local`,
           }
         )
       );

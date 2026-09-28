@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -569,7 +569,7 @@ const legacyDocumentVectorCoverageBlocker = (
   return (
     `${documentIds.length} legacy document index(es) across ${affected.size} owner(s) lack fully authenticated modern vector coverage (${reasons}). ` +
     `Affected document IDs${documentIds.length > 8 ? ' (first 8)' : ''}: ${examples}. ` +
-    'Start this Libre WebUI release in solo/SQLite mode with the same DATA_DIR and ENCRYPTION_KEY used for migration, enable and select the desired embedding model, then use Settings -> Documents -> Regenerate embeddings for every affected owner. Rerun the migration dry-run afterward; current preferences do not prove which model created legacy inline vectors.'
+    'Start this Alcore release in solo/SQLite mode with the same DATA_DIR and ENCRYPTION_KEY used for migration, enable and select the desired embedding model, then use Settings -> Documents -> Regenerate embeddings for every affected owner. Rerun the migration dry-run afterward; current preferences do not prove which model created legacy inline vectors.'
   );
 };
 

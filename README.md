@@ -2,7 +2,7 @@
 
 <br>
 
-# Libre WebUI
+# Alcore
 
 ### The local-first AI workspace you control.
 
@@ -40,15 +40,15 @@ agentic tasks in isolated workspaces—all from a self-hosted interface.
 
 <br>
 
-<img src="https://raw.githubusercontent.com/libre-webui/libre-webui/main/screenshot.png" width="100%" alt="Libre WebUI self-hosted AI workspace">
+<img src="https://raw.githubusercontent.com/libre-webui/libre-webui/main/screenshot.png" width="100%" alt="Alcore self-hosted AI workspace">
 
 </div>
 
 ---
 
-## What is Libre WebUI?
+## What is Alcore?
 
-Libre WebUI is a self-hosted AI workspace for people who want control over
+Alcore is a self-hosted AI workspace for people who want control over
 their models, data, providers, and interface.
 
 Use local models through [Ollama](https://ollama.com), connect the providers you
@@ -56,15 +56,15 @@ choose, search your own documents, create interactive artifacts, and give
 model-driven tasks an isolated workspace with files, tools, a terminal, and a
 live preview.
 
-It runs on your machine, server, or cluster. Libre WebUI is not a hosted AI
+It runs on your machine, server, or cluster. Alcore is not a hosted AI
 service and does not require a cloud account for local inference.
 
-## Why Libre WebUI?
+## Why Alcore?
 
 - **Local-first:** Use Ollama and other local inference backends.
 - **Provider-flexible:** Connect cloud providers or OpenAI-compatible endpoints
   when you choose.
-- **Private by default:** Libre WebUI ships without application telemetry or
+- **Private by default:** Alcore ships without application telemetry or
   analytics.
 - **Built for work:** Turn conversations into documents, code, websites, SVG,
   JSON, and other artifacts.
@@ -104,7 +104,7 @@ Install Ollama, then pull a model:
 ollama pull gemma4:12b
 ```
 
-Libre WebUI can now use Ollama for local inference. No cloud account or API key
+Alcore can now use Ollama for local inference. No cloud account or API key
 is required.
 
 ### Start with Docker
@@ -153,7 +153,7 @@ persistent storage.
 
 ## Models and providers
 
-Ollama is the default local path, but Libre WebUI is designed to avoid provider
+Ollama is the default local path, but Alcore is designed to avoid provider
 lock-in.
 
 Supported integrations include:
@@ -244,14 +244,14 @@ agentic execution.
 
 The default Docker Compose setup mounts the Docker socket so Work can create
 task containers. This gives the application root-equivalent control of the host.
-Every Libre WebUI administrator should therefore be treated as a host
+Every Alcore administrator should therefore be treated as a host
 administrator when using that configuration.
 
 For stronger isolation, use:
 
 - The Docker socket proxy configuration
 - Kubernetes-based Work sandboxes
-- A separate host or cluster dedicated to Libre WebUI
+- A separate host or cluster dedicated to Alcore
 
 Read the complete
 [Work security documentation](https://docs.librewebui.org/WORKSPACES) before
@@ -259,14 +259,14 @@ enabling it for untrusted users.
 
 ## Privacy and security
 
-Libre WebUI ships without application telemetry or analytics.
+Alcore ships without application telemetry or analytics.
 
 When using a local provider such as Ollama, prompts and responses remain on the
 infrastructure where that provider runs. When using a remote provider, prompts,
 responses, documents, and tool results may be sent to that provider as part of
 the request.
 
-For multi-user deployments, Libre WebUI supports:
+For multi-user deployments, Alcore supports:
 
 - Local accounts, roles, and groups
 - Per-resource sharing with access grants
@@ -290,10 +290,10 @@ access-controlled storage, backups, and disk encryption where appropriate.
 
 ## Optional agent integrations
 
-Libre WebUI can expose installed Claude Code or Codex CLIs as chat models when
+Alcore can expose installed Claude Code or Codex CLIs as chat models when
 they are configured on the server.
 
-This uses the credentials available to the Libre WebUI server user. Treat this
+This uses the credentials available to the Alcore server user. Treat this
 as equivalent to granting the selected agent shell access on that system.
 
 Disable this feature with:
@@ -390,7 +390,7 @@ Report security vulnerabilities privately rather than through public issues.
 
 ## License and stewardship
 
-Libre WebUI is licensed under the
+Alcore is licensed under the
 [Apache License 2.0](https://github.com/libre-webui/libre-webui/blob/main/LICENSE).
 
 You may use, modify, redistribute, and fork the project under the terms of that
@@ -421,11 +421,11 @@ The project’s independence and community commitments are described in the
 ### Build with the models you choose. Keep control of the workspace around them.
 
 <a href="https://github.com/libre-webui/libre-webui">
-  <img src="https://img.shields.io/github/stars/libre-webui/libre-webui?style=for-the-badge&label=Star%20Libre%20WebUI&color=ff7b52" alt="Star Libre WebUI on GitHub">
+  <img src="https://img.shields.io/github/stars/libre-webui/libre-webui?style=for-the-badge&label=Star%20Libre%20WebUI&color=ff7b52" alt="Star Alcore on GitHub">
 </a>
 
 <br><br>
 
-**Apache 2.0** · Copyright © 2025–present Kroonen AI, Inc. and Libre WebUI contributors
+**Apache 2.0** · Copyright © 2025–present Kroonen AI, Inc. and Alcore contributors
 
 </div>

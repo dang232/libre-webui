@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -176,7 +176,7 @@ test('connection URLs never select an unavailable backend implicitly', () => {
 });
 
 test('team profile fails closed until every shared dependency is configured', () => {
-  const config = resolvePlatformRuntimeConfig({ LIBRE_PLATFORM_MODE: 'team' });
+  const config = resolvePlatformRuntimeConfig({ ALCORE_PLATFORM_MODE: 'team' });
   assert.throws(
     () => assertPlatformRuntimeConfig(config),
     error => {
@@ -193,7 +193,7 @@ test('team profile fails closed until every shared dependency is configured', ()
 
 test('a complete team configuration selects every shared adapter without exposing secrets', () => {
   const config = resolvePlatformRuntimeConfig({
-    LIBRE_PLATFORM_MODE: 'team',
+    ALCORE_PLATFORM_MODE: 'team',
     DATABASE_BACKEND: 'postgres',
     DATABASE_URL: 'postgresql://operator:secret@db.example.test/libre',
     BLOB_STORE_BACKEND: 's3',
@@ -216,7 +216,7 @@ test('a complete team configuration selects every shared adapter without exposin
 
 test('team profile rejects node-local durable chat provider credentials', () => {
   const complete = {
-    LIBRE_PLATFORM_MODE: 'team',
+    ALCORE_PLATFORM_MODE: 'team',
     DATABASE_BACKEND: 'postgres',
     DATABASE_URL: 'postgresql://operator:secret@db.example.test/libre',
     BLOB_STORE_BACKEND: 's3',
@@ -263,14 +263,14 @@ test('solo profile can opt into Redis without implying shared persistence', () =
 
 test('invalid selectors and URLs are reported together', () => {
   const config = resolvePlatformRuntimeConfig({
-    LIBRE_PLATFORM_MODE: 'cluster',
+    ALCORE_PLATFORM_MODE: 'cluster',
     DATABASE_BACKEND: 'mysql',
     COORDINATION_BACKEND: 'redis',
     REDIS_URL: 'https://redis.example.test',
     REDIS_CONNECT_TIMEOUT_MS: 'forever',
   });
   assert.ok(config.blockers.length >= 4);
-  assert.match(config.blockers.join('\n'), /LIBRE_PLATFORM_MODE/);
+  assert.match(config.blockers.join('\n'), /ALCORE_PLATFORM_MODE/);
   assert.match(config.blockers.join('\n'), /DATABASE_BACKEND/);
   assert.match(config.blockers.join('\n'), /REDIS_URL/);
   assert.match(config.blockers.join('\n'), /REDIS_CONNECT_TIMEOUT_MS/);

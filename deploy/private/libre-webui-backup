@@ -30,7 +30,7 @@ app_networks_file=''
 proxy_networks_file=''
 exec 9>"${backup_dir}/.backup.lock"
 if ! flock -n 9; then
-  echo 'Another Libre WebUI backup is already running.' >&2
+  echo 'Another Alcore backup is already running.' >&2
   rm -f "${container_env}"
   exit 1
 fi

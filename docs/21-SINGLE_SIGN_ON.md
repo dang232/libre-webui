@@ -5,7 +5,7 @@ description: 'Configure GitHub and Hugging Face OAuth or a generic OpenID Connec
 slug: /SINGLE_SIGN_ON
 keywords:
   [
-    libre webui sso,
+    Alcore sso,
     openid connect,
     oidc,
     github oauth,
@@ -18,7 +18,7 @@ keywords:
 
 # Single Sign-On
 
-Libre WebUI supports OAuth login with GitHub and Hugging Face, plus any OpenID Connect provider through the generic OIDC integration. OAuth users are still stored as local Libre WebUI users and receive the `user` role by default (OIDC can optionally map roles and groups from claims).
+Alcore supports OAuth login with GitHub and Hugging Face, plus any OpenID Connect provider through the generic OIDC integration. OAuth users are still stored as local Alcore users and receive the `user` role by default (OIDC can optionally map roles and groups from claims).
 
 ## GitHub OAuth
 
@@ -125,11 +125,11 @@ BASE_URL=https://your-domain.example
 CORS_ORIGIN=https://your-domain.example
 ```
 
-If callback URLs are not set explicitly, Libre WebUI builds defaults from `BASE_URL`.
+If callback URLs are not set explicitly, Alcore builds defaults from `BASE_URL`.
 
 ## Limits
 
-Libre WebUI does not currently expose SAML or SCIM provisioning. Domain allowlists and role/group mapping are available for the generic OIDC provider only; GitHub and Hugging Face users are always created with the `user` role and managed from the admin UI.
+Alcore does not currently expose SAML or SCIM provisioning. Domain allowlists and role/group mapping are available for the generic OIDC provider only; GitHub and Hugging Face users are always created with the `user` role and managed from the admin UI.
 
 ## Troubleshooting
 
@@ -139,7 +139,7 @@ Confirm the provider client ID and secret are set and the backend has restarted.
 
 **Provider rejects callback**
 
-The callback URL in the provider dashboard must exactly match the URL used by Libre WebUI.
+The callback URL in the provider dashboard must exactly match the URL used by Alcore.
 
 **User gets normal permissions**
 

@@ -1,9 +1,9 @@
-name: libre-webui-private
+name: alcore-private
 
 services:
-  libre-webui:
-    image: ${LIBRE_WEBUI_IMAGE:-ghcr.io/libre-webui/libre-webui:main}
-    container_name: libre-webui
+  alcore:
+    image: ${ALCORE_WEBUI_IMAGE:-ghcr.io/alcore/alcore:main}
+    container_name: alcore
     restart: unless-stopped
     stop_grace_period: 20s
     init: true
@@ -15,9 +15,9 @@ services:
       - ALL
     security_opt:
       - no-new-privileges:true
-    pids_limit: ${LIBRE_WEBUI_PIDS_LIMIT:-512}
-    mem_limit: ${LIBRE_WEBUI_MEMORY_LIMIT:-4g}
-    cpus: ${LIBRE_WEBUI_CPU_LIMIT:-4}
+    pids_limit: ${ALCORE_WEBUI_PIDS_LIMIT:-512}
+    mem_limit: ${ALCORE_WEBUI_MEMORY_LIMIT:-4g}
+    cpus: ${ALCORE_WEBUI_CPU_LIMIT:-4}
     environment:
       NODE_ENV: production
       BASE_URL: https://${PUBLIC_HOSTNAME:?set PUBLIC_HOSTNAME}
@@ -39,7 +39,7 @@ services:
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:?set ENCRYPTION_KEY}
       # The shared backends remain fail-closed. Redis coordination can be
       # exercised in solo mode by setting COORDINATION_BACKEND and REDIS_URL.
-      LIBRE_PLATFORM_MODE: ${LIBRE_PLATFORM_MODE:-solo}
+      ALCORE_PLATFORM_MODE: ${ALCORE_PLATFORM_MODE:-solo}
       DATABASE_BACKEND: ${DATABASE_BACKEND:-sqlite}
       DATABASE_URL: ${DATABASE_URL:-}
       BLOB_STORE_BACKEND: ${BLOB_STORE_BACKEND:-local}
@@ -48,7 +48,7 @@ services:
       VECTOR_STORE_BACKEND: ${VECTOR_STORE_BACKEND:-embedded}
       COORDINATION_BACKEND: ${COORDINATION_BACKEND:-local}
       REDIS_URL: ${REDIS_URL:-}
-      REDIS_KEY_PREFIX: ${REDIS_KEY_PREFIX:-libre}
+      REDIS_KEY_PREFIX: ${REDIS_KEY_PREFIX:-alcore}
       REDIS_CONNECT_TIMEOUT_MS: ${REDIS_CONNECT_TIMEOUT_MS:-5000}
       JOB_WORKER_MODE: ${JOB_WORKER_MODE:-embedded}
       STORAGE_ENCRYPTION_KEYS: ${STORAGE_ENCRYPTION_KEYS:-}
@@ -58,8 +58,8 @@ services:
       TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:?set TURNSTILE_SECRET_KEY}
       TURNSTILE_EXPECTED_HOSTNAME: ${TURNSTILE_EXPECTED_HOSTNAME:?set TURNSTILE_EXPECTED_HOSTNAME}
     volumes:
-      - libre-webui-data:/app/backend/data
-      - libre-webui-preflight:/app/backend/temp
+      - alcore-data:/app/backend/data
+      - alcore-preflight:/app/backend/temp
     expose:
       - '3001'
     networks:
@@ -89,7 +89,7 @@ services:
 
   ollama:
     image: ollama/ollama:latest
-    container_name: libre-webui-ollama
+    container_name: alcore-ollama
     restart: unless-stopped
     init: true
     security_opt:
@@ -121,7 +121,7 @@ services:
 
   searxng:
     image: searxng/searxng:latest
-    container_name: libre-webui-searxng
+    container_name: alcore-searxng
     restart: unless-stopped
     init: true
     # Upstream searxng-docker hardening: the entrypoint drops privileges
@@ -166,7 +166,7 @@ services:
 
   cloudflared:
     image: cloudflare/cloudflared:latest
-    container_name: libre-webui-cloudflared
+    container_name: alcore-cloudflared
     restart: unless-stopped
     init: true
     read_only: true
@@ -187,7 +187,7 @@ services:
     networks:
       - private
     depends_on:
-      libre-webui:
+      alcore:
         condition: service_healthy
     labels:
       com.centurylinklabs.watchtower.enable: 'false'
@@ -208,6 +208,6 @@ networks:
           gateway: 172.30.0.1
 
 volumes:
-  libre-webui-data:
-  libre-webui-preflight:
+  alcore-data:
+  alcore-preflight:
   ollama-data:

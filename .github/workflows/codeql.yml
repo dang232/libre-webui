@@ -20,6 +20,9 @@ permissions:
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
+    # CodeQL uploads require code scanning, which private repositories only
+    # have with GHAS. Public repositories (including upstream) run unchanged.
+    if: github.repository_visibility == 'public'
     runs-on: ubuntu-latest
     permissions:
       contents: read

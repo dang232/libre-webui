@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -27,6 +27,6 @@ export const POSTGRES_WORK_MESSAGE_CONTENT_MIGRATION: PostgresMigration = {
     .digest('hex'),
   sql,
   rollbackPlan:
-    'Stop every Libre replica and worker, restore the verified pre-upgrade PostgreSQL backup, and deploy the matching older release. An in-place downgrade requires strict JSON-string decoding of every work_messages.content row and is intentionally unsupported.',
+    'Stop every Alcore replica and worker, restore the verified pre-upgrade PostgreSQL backup, and deploy the matching older release. An in-place downgrade requires strict JSON-string decoding of every work_messages.content row and is intentionally unsupported.',
   minimumCompatibleVersion: 11,
 };

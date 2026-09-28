@@ -1,11 +1,11 @@
 ---
 sidebar_position: 7
 title: 'Troubleshooting'
-description: 'Common Libre WebUI issues and fixes.'
+description: 'Common Alcore issues and fixes.'
 slug: /TROUBLESHOOTING
 keywords:
   [
-    libre webui troubleshooting,
+    Alcore troubleshooting,
     ollama errors,
     docker errors,
     model pull,
@@ -40,7 +40,7 @@ ollama list
 
 In development, the frontend usually runs on `http://localhost:5173` and the backend on `http://localhost:3001`. The packaged `npx libre-webui` flow serves the app on `http://localhost:8080`.
 
-## Libre WebUI Does Not Start
+## Alcore Does Not Start
 
 **Check Node and dependencies**
 
@@ -143,7 +143,7 @@ but they still must first exchange their Authorization header for a short-
 lived, one-use ticket. Keep the backend behind TLS and the same network or
 reverse-proxy access controls used for the HTTP API.
 
-For a public hostname, allow that browser origin in the Libre WebUI service:
+For a public hostname, allow that browser origin in the Alcore service:
 
 ```yaml
 services:
@@ -154,7 +154,7 @@ services:
 ```
 
 The nginx and Caddy examples below assume the proxy runs on the Docker host,
-where the repository's Compose setup publishes Libre WebUI on port `8080`. If
+where the repository's Compose setup publishes Alcore on port `8080`. If
 the proxy joins the Compose network instead, use `libre-webui:3001` as the
 upstream address.
 
@@ -190,7 +190,7 @@ chat.example.com {
 ### Traefik
 
 Traefik also handles WebSocket upgrades by default. When its Docker provider
-shares Libre WebUI's network, only the normal router and service labels are
+shares Alcore's network, only the normal router and service labels are
 needed, for example:
 
 ```yaml
@@ -222,7 +222,7 @@ Backend `.env`:
 OLLAMA_BASE_URL=http://localhost:11434
 ```
 
-If Libre WebUI runs in Docker and Ollama runs on the host, use the external Ollama compose file or point `OLLAMA_BASE_URL` at the host address reachable from the container.
+If Alcore runs in Docker and Ollama runs on the host, use the external Ollama compose file or point `OLLAMA_BASE_URL` at the host address reachable from the container.
 
 ## Model Pull Problems
 
@@ -232,11 +232,11 @@ If Libre WebUI runs in Docker and Ollama runs on the host, use the external Olla
 ollama pull gemma4:12b
 ```
 
-If the terminal pull fails, the problem is outside Libre WebUI.
+If the terminal pull fails, the problem is outside Alcore.
 
 **Cloud models**
 
-Use the cloud filter in the Model Manager for Ollama Cloud models. Libre WebUI normalizes required cloud suffixes from that flow, so users should not need to manually add `:cloud` for supported cloud entries.
+Use the cloud filter in the Model Manager for Ollama Cloud models. Alcore normalizes required cloud suffixes from that flow, so users should not need to manually add `:cloud` for supported cloud entries.
 
 **User cannot pull models**
 
@@ -319,7 +319,7 @@ after finishing the provider settings update. Work intentionally stops before
 its next provider request so prior tool state cannot be replayed to a different
 mode, endpoint, or API-key authentication boundary.
 
-Requests originate from the backend, so `localhost` refers to the Libre WebUI
+Requests originate from the backend, so `localhost` refers to the Alcore
 container when the backend runs in a container, not automatically to the host
 machine. For a Compose or Kubernetes deployment, use the gateway's service DNS
 name, for example `http://ai-gateway:8080/v1`. Use
@@ -345,14 +345,14 @@ The following security and ownership rules also apply:
   self-hosted gateway on a trusted network because API keys, prompts, and
   responses are otherwise sent without transport encryption.
 - An empty override uses the endpoint bundled in the plugin definition. An
-  explicit malformed or unsafe override is rejected; Libre WebUI does not
+  explicit malformed or unsafe override is rejected; Alcore does not
   silently send that request to the bundled provider endpoint.
 - A deployment environment key is used only when an unshadowed bundled
   definition retains its trusted root endpoint, authentication fields,
   capability endpoints and selectors, and routing-variable defaults. Imported
   definitions, writable definitions that reuse a bundled ID, and
   administrator-saved custom routes require a credential saved by the same
-  account. Libre WebUI
+  account. Alcore
   intentionally reports the provider as unavailable and skips discovery if
   only the environment key exists.
 - Pre-upgrade custom definitions are quarantined because older releases did not
@@ -395,7 +395,7 @@ The following security and ownership rules also apply:
   for that plugin. The ignored legacy value is purged so it cannot become active
   after a later role change. Saving or resetting routing also clears that
   account's discovered models so a stale catalog cannot follow the old route.
-- Requests originate from the backend. When Libre WebUI runs in a container,
+- Requests originate from the backend. When Alcore runs in a container,
   `localhost` refers to that container, not automatically the host machine.
 - Provider requests do not follow redirects. Configure the final validated
   operation URL directly.
@@ -409,10 +409,10 @@ the raw model ID, so similarly named entries are independent choices.
 - If the selector says a provider is unavailable, reactivate or reinstall that
   exact plugin and confirm its model map still contains the saved model ID.
 - If the provider or model was intentionally removed, explicitly select a
-  replacement. Libre WebUI will not redirect an exact saved selection to a
+  replacement. Alcore will not redirect an exact saved selection to a
   same-named model from another provider.
 - Older sessions and preferences may have no provider metadata. Those records
-  continue to use legacy name-only routing because Libre WebUI cannot infer
+  continue to use legacy name-only routing because Alcore cannot infer
   which provider was originally intended. They appear as "provider not
   recorded" in model selectors. Reselect the desired Ollama or plugin entry to
   pin future requests to it.
@@ -427,7 +427,7 @@ the raw model ID, so similarly named entries are independent choices.
 Work requires a currently authenticated account with Work access — an
 administrator, or any active user once an administrator has opened Work to
 all users from Settings → User Management → Access & policies → Work access. Its container runtime
-must be available to the Libre WebUI backend:
+must be available to the Alcore backend:
 
 ```bash
 docker info
@@ -435,9 +435,9 @@ docker version
 ```
 
 For the default Docker backend, confirm Docker is running and that the
-operating-system user running Libre WebUI can invoke the configured
-`WORK_DOCKER_COMMAND`. Installing Libre WebUI with `npx` does not install
-Docker. If the runtime is missing, Libre WebUI keeps the rest of the
+operating-system user running Alcore can invoke the configured
+`WORK_DOCKER_COMMAND`. Installing Alcore with `npx` does not install
+Docker. If the runtime is missing, Alcore keeps the rest of the
 application available and does not fall back to executing model commands on
 the host.
 
@@ -452,7 +452,7 @@ these applies:
 | `The "docker" CLI is not installed…`           | A custom image without `docker-cli`. Use the official image, or point `WORK_DOCKER_COMMAND` at a CLI.                 |
 | `No Docker daemon is reachable…`               | The socket mount was removed, or the host daemon is stopped. Restore the mount in your Compose file and start Docker. |
 | `The Docker socket is mounted but…cannot open` | The socket's group differs from the container's. Set `DOCKER_GID` in `.env` (see below) and recreate the container.   |
-| Work screen/audio closes with WebSocket `1006` and logs `screen is unreachable` | The containerized backend is dialing its own loopback. On Docker Desktop use the shipped `WORK_DOCKER_PUBLISHED_HOST=host.docker.internal`; on native Docker Engine also set `WORK_PREVIEW_BIND` to the non-public Docker bridge gateway, then recreate Libre WebUI. |
+| Work screen/audio closes with WebSocket `1006` and logs `screen is unreachable` | The containerized backend is dialing its own loopback. On Docker Desktop use the shipped `WORK_DOCKER_PUBLISHED_HOST=host.docker.internal`; on native Docker Engine also set `WORK_PREVIEW_BIND` to the non-public Docker bridge gateway, then recreate Alcore. |
 
 Read the socket group through a container, because a macOS host reports a
 different value than the container sees:
@@ -477,12 +477,12 @@ whose reported capabilities include `tools`. For a plugin-backed model:
 - Confirm an API key is available for the current administrator.
 - Confirm the provider supports tool calls for that exact model.
 
-Libre WebUI does not silently route a failed Work run to a different provider.
+Alcore does not silently route a failed Work run to a different provider.
 
 ### A Work Request Returns HTTP 429
 
 The instance has reached a task or active-runtime admission limit. By default,
-Libre WebUI allows two active container-backed tasks across the instance and
+Alcore allows two active container-backed tasks across the instance and
 one per user. A running preview also occupies runtime capacity. Wait for the
 other operation to finish, stop an unused preview, or have the operator review
 the `WORK_MAX_ACTIVE_RUNTIMES_*` and `WORK_MAX_TASKS_*` settings.
@@ -491,7 +491,7 @@ the `WORK_MAX_ACTIVE_RUNTIMES_*` and `WORK_MAX_TASKS_*` settings.
 
 New Work tasks use Docker bridge networking so generated projects can download
 packages and start previews. Check Docker DNS, proxy configuration, registry
-availability, and the command output in **Activity**. Libre WebUI does not mount
+availability, and the command output in **Activity**. Alcore does not mount
 host SSH keys, cloud credentials, browser profiles, or the Docker socket into
 the task container.
 
@@ -509,8 +509,8 @@ the task container.
 - Stop an existing preview before starting another command that needs the
   container.
 
-Preview URLs use a dynamically assigned loopback port. The browser and Libre
-WebUI backend therefore need to run on the same machine. A browser connected to
+Preview URLs use a dynamically assigned loopback port. The browser and Alcore
+backend therefore need to run on the same machine. A browser connected to
 a remote backend cannot reach that backend's loopback preview, and an HTTPS page
 may block a plain-HTTP preview as mixed content.
 
@@ -527,7 +527,7 @@ substitute for saving to the persistent workspace.
 
 ### A Task or Preview Was Stopped
 
-Stopping a run, stopping a preview, or restarting Libre WebUI stops disposable
+Stopping a run, stopping a preview, or restarting Alcore stops disposable
 container processes but preserves the task's named workspace volume. Reopen the
 task and restart its preview. Deleting the task is different: after
 confirmation, it permanently removes the task and its workspace.
@@ -571,7 +571,7 @@ HUGGINGFACE_CALLBACK_URL=https://your-domain.example/api/auth/oauth/huggingface/
 
 ## Document Chat Problems
 
-Libre WebUI accepts PDF, Office (DOCX/PPTX/XLSX), Markdown, HTML, code, and CSV files up to 10 MB.
+Alcore accepts PDF, Office (DOCX/PPTX/XLSX), Markdown, HTML, code, and CSV files up to 10 MB.
 
 If search works but semantic retrieval does not:
 
@@ -595,7 +595,7 @@ If the artifact needs keyboard input:
 - Use the Open button to run it in its own browser tab.
 - Avoid relying on local files that were not included in the response.
 
-Libre WebUI can bundle common `index.html` + CSS + JavaScript code blocks, but self-contained HTML is still the most reliable output.
+Alcore can bundle common `index.html` + CSS + JavaScript code blocks, but self-contained HTML is still the most reliable output.
 
 ## Docker Problems
 
@@ -626,7 +626,7 @@ Restart the backend and create a fresh account.
 
 Open an issue with:
 
-- Libre WebUI version and commit
+- Alcore version and commit
 - Install method
 - Operating system
 - Node.js version

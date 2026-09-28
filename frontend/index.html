@@ -9,13 +9,13 @@
         try {
           const known = ['light', 'dark', 'amoled', 'celestial'];
           const savedState = JSON.parse(
-            localStorage.getItem('libre-webui-app-state') || 'null'
+            localStorage.getItem('alcore-app-state') || 'null'
           );
           // The administrator's instance default (cached from
           // /auth/system-info) applies until this browser or the signed-in
           // account picks a theme of its own.
           const instanceTheme = JSON.parse(
-            localStorage.getItem('libre-webui-instance-theme') || 'null'
+            localStorage.getItem('alcore-instance-theme') || 'null'
           );
           const savedMode = savedState?.state?.theme?.mode;
           const savedByUser = savedState?.state?.themeSource === 'user';
@@ -49,22 +49,22 @@
         document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
       })();
     </script>
-    <!-- The SVG mark carries its own prefers-color-scheme rule, so the favicon
-         inverts with the OS theme. The PNG stays for browsers that do not
-         support SVG favicons. -->
+    <!-- The SVG favicon is the fixed gold monogram on a dark rounded square,
+         identical in light and dark mode. The PNG stays for browsers that do
+         not support SVG favicons. -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-dark.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="theme-color" content="#0a0a0a" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Libre WebUI</title>
+    <title>Alcore</title>
     <meta
       name="description"
       content="A private, local-first AI workspace: chat, documents, artifacts, and sandboxed model-driven work. Local models through Ollama, or the providers you choose."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Libre WebUI" />
+    <meta property="og:title" content="Alcore" />
     <meta
       property="og:description"
       content="A private, local-first AI workspace: chat, documents, artifacts, and sandboxed model-driven work. Local models through Ollama, or the providers you choose."
@@ -75,11 +75,11 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Libre WebUI icon over a retro-futuristic cityscape"
+      content="Alcore icon over a retro-futuristic cityscape"
     />
-    <meta property="og:site_name" content="Libre WebUI" />
+    <meta property="og:site_name" content="Alcore" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Libre WebUI" />
+    <meta name="twitter:title" content="Alcore" />
     <meta
       name="twitter:description"
       content="A private, local-first AI workspace: chat, documents, artifacts, and sandboxed model-driven work. Local models through Ollama, or the providers you choose."
@@ -87,7 +87,7 @@
     <meta name="twitter:image" content="https://librewebui.org/og-image.jpg" />
     <meta
       name="twitter:image:alt"
-      content="Libre WebUI icon over a retro-futuristic cityscape"
+      content="Alcore icon over a retro-futuristic cityscape"
     />
   </head>
   <body>

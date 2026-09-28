@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -149,7 +149,7 @@ test('web search queries the configured instance and bounds results', async () =
     assert.equal(await isWebSearchAvailable(), true);
 
     // The admin ceiling caps any requested count.
-    const capped = await webSearch('libre webui', 5);
+    const capped = await webSearch('Alcore', 5);
     assert.equal(capped.length, 1);
 
     await setWebSearchConfig({
@@ -158,7 +158,7 @@ test('web search queries the configured instance and bounds results', async () =
       maxResults: 6,
       safeSearch: true,
     });
-    const results = await webSearch('libre webui', 5);
+    const results = await webSearch('Alcore', 5);
     // The javascript: result is discarded; text is bounded.
     assert.deepEqual(
       results.map(result => result.url),

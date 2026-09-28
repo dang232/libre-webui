@@ -8,7 +8,7 @@ keywords: [speech to text, transcription, microphone, openai, hugging face]
 
 # Speech to Text
 
-Libre WebUI can transcribe microphone recordings through an active plugin that
+Alcore can transcribe microphone recordings through an active plugin that
 declares a speech-to-text capability. When the browser exposes its speech
 recognition service, Chat selects that service by default; its implementation
 and data handling are controlled by the browser vendor and are not necessarily
@@ -27,7 +27,7 @@ shows the selected provider and transfer notice before recording. Press the
 button again to stop recording; while transcription is running, the same button
 cancels the provider request. Libre inserts the returned transcript into the
 composer. The recording is held in memory for the request and is not saved by
-Libre WebUI. Navigating to another chat cancels pending microphone permission,
+Alcore. Navigating to another chat cancels pending microphone permission,
 recording, and transcription work.
 
 ## Provider contract
@@ -49,7 +49,7 @@ authorization header or audio recording cannot be forwarded to a different
 host. Provider authentication failures are surfaced as an upstream failure,
 not as an expired Libre session.
 
-Use HTTPS for the Libre WebUI origin and remote providers. Browsers do not expose
+Use HTTPS for the Alcore origin and remote providers. Browsers do not expose
 microphone capture to an insecure remote origin, and Libre does not advertise
 either speech path unless the browser exposes its secure-origin media APIs. The
 provider may retain or process recordings under its own terms, so review that

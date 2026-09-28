@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -2145,7 +2145,7 @@ const withSourceSnapshot = async <T>(
       )
     ) {
       throw new Error(
-        'SQLite migration source changed while it was being snapshotted; stop Libre and every worker before retrying'
+        'SQLite migration source changed while it was being snapshotted; stop Alcore and every worker before retrying'
       );
     }
     database = new Database(snapshotPath, { fileMustExist: true });
@@ -2180,7 +2180,7 @@ const analyzeSource = async (
     compatibility.currentVersion !== compatibility.targetVersion
   ) {
     throw new Error(
-      'SQLite source must be started and fully migrated by this Libre release before PostgreSQL import'
+      'SQLite source must be started and fully migrated by this Alcore release before PostgreSQL import'
     );
   }
   // Application timestamps/counters are safe JS integers, but reading them as
@@ -2297,7 +2297,7 @@ const inspectTarget = async (
   const ledgerExists = Boolean(tables.rows[0]?.ledger);
   const importsExist = Boolean(tables.rows[0]?.imports);
   const present = await targetTablesPresent(database);
-  // Before Libre has initialized the schema, *any* base table is structural
+  // Before Alcore has initialized the schema, *any* base table is structural
   // drift that the migration coordinator would reject. Once the exact ledger
   // exists, the application/control tables themselves are expected and
   // emptiness means they contain no imported domain rows and no unknown table.

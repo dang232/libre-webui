@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -72,9 +72,24 @@ try {
   logger.warn('Could not read version from package.json, using default');
 }
 
-// Generate or use JWT secret - never use hardcoded secrets in production
+// Generate or use JWT secret - never use hardcoded secrets in production.
+//
+// Fail-fast mirror of AlRepo apps/api config/runtime.ts parseJwtSecret: a
+// missing JWT_SECRET in production must refuse to boot instead of falling
+// back to an ephemeral random secret (which silently invalidates every
+// session on restart). Rotation note: JWT_SECRET also derives provider-
+// credential encryption, so rotating it requires re-encrypting provider
+// secrets and invalidating existing sessions; the deployment owner executes
+// live rotations (see .omo/research/jwt-rotation.md). Never log the secret
+// value itself - only the variable name.
+const rawJwtSecret = process.env.JWT_SECRET;
+if (process.env.NODE_ENV === 'production' && !rawJwtSecret?.trim()) {
+  throw new Error(
+    'Missing required JWT_SECRET in production: set JWT_SECRET to a stable random value (32+ characters) and restart. Refusing to boot with an ephemeral session secret.'
+  );
+}
 export const JWT_SECRET =
-  process.env.JWT_SECRET ||
+  rawJwtSecret ||
   (() => {
     const generatedSecret = randomBytes(64).toString('hex');
     logger.warn(
@@ -202,6 +217,12 @@ export class AuthService {
       metadata,
       Date.now() + jwtLifetimeMs()
     );
+    // Auto base-usage provisioning: fire-and-forget and never-throwing, so
+    // auth stays independent of TokenPanel availability. Dynamic import
+    // avoids a provisioning dependency cycle in this auth-critical module.
+    void import('./apiPlatformProvisionService.js')
+      .then(module => module.ensureApiPlatformProvision(user.id))
+      .catch(() => undefined);
     return this.generateToken(user, session.id);
   }
 

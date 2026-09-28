@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -271,14 +271,14 @@ const delayRecoveryDrillFault = async (
   context: DurableJobExecutionContext
 ): Promise<void> => {
   if (
-    process.env.LIBRE_ENABLE_TEST_FAULT_INJECTION !== 'true' ||
+    process.env.ALCORE_ENABLE_TEST_FAULT_INJECTION !== 'true' ||
     context.attemptCount !== 1 ||
     !value.includes(marker)
   ) {
     return;
   }
   const delayMs = Number.parseInt(
-    process.env.LIBRE_TEST_FAULT_DELAY_MS ?? '60000',
+    process.env.ALCORE_TEST_FAULT_DELAY_MS ?? '60000',
     10
   );
   if (!Number.isSafeInteger(delayMs) || delayMs < 1 || delayMs > 300_000) {
@@ -506,7 +506,7 @@ const submitVideo: DurableJobHandler = async context => {
     );
   }
   let providerJobId = job.providerJobId;
-  if (providerJobId === 'libre:prepared') {
+  if (providerJobId === 'alcore:prepared') {
     await context.assertSideEffectAllowed();
     try {
       const submitted = await pluginService.submitVideoGenRequest(
@@ -517,7 +517,7 @@ const submitVideo: DurableJobHandler = async context => {
           userId: context.actorUserId,
           ...job.options,
           idempotencyKey: job.id,
-          requireIdempotency: process.env.LIBRE_PLATFORM_MODE === 'team',
+          requireIdempotency: process.env.ALCORE_PLATFORM_MODE === 'team',
           signal: context.signal,
         }
       );
@@ -525,7 +525,7 @@ const submitVideo: DurableJobHandler = async context => {
       // Test-only exact fault window: provider accepted the stable idempotency
       // key, but the reconciled handle has not committed yet.
       await delayRecoveryDrillFault(
-        'LIBRE_VIDEO_POST_SUBMIT_KILL',
+        'ALCORE_VIDEO_POST_SUBMIT_KILL',
         job.prompt,
         context
       );

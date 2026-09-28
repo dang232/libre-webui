@@ -1,17 +1,17 @@
 ---
 sidebar_position: 36
 title: 'Private Remote Deployment'
-description: 'Harden a single-server Libre WebUI deployment behind Cloudflare Access and Tunnel.'
+description: 'Harden a single-server Alcore deployment behind Cloudflare Access and Tunnel.'
 slug: /PRIVATE_REMOTE_DEPLOYMENT
 keywords:
-  [libre webui private deployment, cloudflare tunnel, production hardening]
+  [Alcore private deployment, cloudflare tunnel, production hardening]
 ---
 
 # Private Remote Deployment
 
-This pattern runs Libre WebUI, Ollama, and Cloudflare Tunnel on one Docker host
+This pattern runs Alcore, Ollama, and Cloudflare Tunnel on one Docker host
 without publishing the application or Ollama ports. Cloudflare Access is the
-outer identity boundary; Libre WebUI authentication remains the inner boundary.
+outer identity boundary; Alcore authentication remains the inner boundary.
 Work and Watchtower are separate, root-equivalent opt-ins.
 
 This template is the single-replica `solo` topology: SQLite, local encrypted
@@ -36,7 +36,7 @@ the client default.
 
 - Cloudflare Access protects the entire hostname, including `/api/*` and
   WebSocket upgrades. Do not add public bypass paths.
-- Libre WebUI requires a current account for application APIs. Model lifecycle
+- Alcore requires a current account for application APIs. Model lifecycle
   and Work operations require the current database role to be administrator.
 - The application, Ollama, SearXNG, and cloudflared only use a private Compose
   network. The host publishes no application ports.
@@ -287,7 +287,7 @@ require their own coordinated snapshots and retention policy.
 
 ## Updates
 
-Libre WebUI is stateful even when its image tag is mutable. The base Compose
+Alcore is stateful even when its image tag is mutable. The base Compose
 file permanently labels the application as excluded from Watchtower. Upgrade
 it only as a coordinated operator action:
 
@@ -331,7 +331,7 @@ docker compose \
 
 Watchtower checks Ollama and SearXNG every 30 minutes. Ollama model data remains
 in its named volume, and SearXNG configuration remains in its bind mount. It
-does not update Libre WebUI, cloudflared, the Work socket proxy, or Work
+does not update Alcore, cloudflared, the Work socket proxy, or Work
 sandboxes. A client deployment follows `main`; an experimental instance may
 select `:dev`, but the application still requires the same backup-gated manual
 upgrade. Never attach this private solo stack to team persistence services;

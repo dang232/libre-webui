@@ -370,7 +370,7 @@ test('healthy inventory is complete, versioned, and secret-safe', async t => {
     inspectWorkResources: presentInspector,
     now: new Date('2026-08-13T12:00:00.000Z'),
   });
-  assert.equal(inventory.format, 'libre-webui-recovery-inventory');
+  assert.equal(inventory.format, 'alcore-recovery-inventory');
   assert.equal(inventory.version, 1);
   assert.equal(inventory.readOnly, true);
   assert.equal(inventory.restoreReady, true, inventory.blockers.join('\n'));

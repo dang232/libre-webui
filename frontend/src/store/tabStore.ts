@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -158,7 +158,7 @@ export const useTabStore = create<TabState>()(
       reset: () => set({ tabs: [HOME_TAB], activeTabId: HOME_TAB.id }),
     }),
     {
-      name: 'libre-webui-tabs',
+      name: 'alcore-tabs',
       merge: (persisted, current) => {
         const incoming = (persisted ?? {}) as Partial<TabState>;
         const tabs = Array.isArray(incoming.tabs)

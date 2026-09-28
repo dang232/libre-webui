@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,7 @@ const logger = createLogger('utils:plugin-upload');
 
 export const pluginUploadTempDirectory = path.resolve(
   process.env.PLUGIN_UPLOAD_TEMP_DIR?.trim() ||
-    path.join(os.tmpdir(), 'libre-webui-plugin-uploads')
+    path.join(os.tmpdir(), 'alcore-plugin-uploads')
 );
 
 export interface MulterRequest extends Request {

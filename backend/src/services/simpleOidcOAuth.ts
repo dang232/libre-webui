@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,7 @@
  * with issuer, audience, expiry, and nonce checks — no unverified decode.
  *
  * Identity is linked through the `oauth_identities` table on the stable
- * `sub` claim, so a renamed IdP account keeps its Libre account. An email
+ * `sub` claim, so a renamed IdP account keeps its Alcore account. An email
  * already used by an unlinked local account is rejected rather than
  * silently merged. Optional policies: allowed email domains, admin-role
  * mapping from a group claim, and per-login group membership sync.
@@ -39,7 +39,7 @@
  *   OIDC_GROUP_CLAIM      — claim holding group names (default 'groups')
  *   OIDC_ADMIN_GROUPS     — comma list; when set, the admin role is granted
  *                           and removed based on claim membership
- *   OIDC_SYNC_GROUPS      — 'true' reconciles Libre group memberships with
+ *   OIDC_SYNC_GROUPS      — 'true' reconciles Alcore group memberships with
  *                           the group claim on every login
  */
 
@@ -406,7 +406,7 @@ export class OidcOAuthService {
   }
 
   /**
-   * Resolve the verified claims to a Libre account: linked identity first,
+   * Resolve the verified claims to a Alcore account: linked identity first,
    * then policy-checked account creation. Never links by bare email.
    */
   async processClaims(claims: OidcClaims): Promise<UserPublic> {

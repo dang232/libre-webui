@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -68,7 +68,7 @@ function sendWebSocketMessage(
 
 export function sendConnected(ws: WebSocketLike): boolean {
   return sendWebSocketMessage(ws, 'connected', {
-    message: 'Connected to Libre WebUI',
+    message: 'Connected to Alcore',
   });
 }
 

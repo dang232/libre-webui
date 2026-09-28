@@ -1,0 +1,47 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-vps-main
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # This job only shells over SSH; it needs no GITHUB_TOKEN scopes.
+    permissions: {}
+
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          script: |
+            set -e
+            cd "${{ secrets.VPS_PROJECT_DIR }}"
+            git fetch origin main
+            git reset --hard origin/main
+            docker compose pull || true
+            docker compose up -d --build
+            docker image prune -f
+            docker compose ps
+            PORT=$(grep -E '^WEBUI_PORT=' .env | cut -d= -f2 || true)
+            PORT=${PORT:-8080}
+            for attempt in $(seq 1 36); do
+              if curl --fail --max-time 10 "http://localhost:${PORT}/" > /dev/null 2>&1; then
+                echo "Healthy on port ${PORT}."
+                break
+              fi
+              if [ "$attempt" -eq 36 ]; then
+                docker compose logs --tail=100 alcore
+                exit 1
+              fi
+              sleep 5
+            done

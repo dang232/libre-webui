@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -312,7 +312,7 @@ function KnowledgeCollectionsSection() {
     try {
       const response = await documentsApi.deleteDocument(documentId);
       if (!response.success) throw new Error(response.error);
-      window.dispatchEvent(new Event('libre:documents-updated'));
+      window.dispatchEvent(new Event('alcore:documents-updated'));
       await reload();
     } catch {
       toast.error(t('settings.documents.library.deleteFailed'));

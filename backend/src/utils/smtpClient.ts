@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -406,7 +406,7 @@ const authMechanisms = (connection: Connection): string[] => {
 
 const sanitizeClientName = (value: string): string => {
   const cleaned = value.replace(/[^A-Za-z0-9.-]/g, '').slice(0, 253);
-  return cleaned || 'libre-webui';
+  return cleaned || 'alcore';
 };
 
 const openSocket = (

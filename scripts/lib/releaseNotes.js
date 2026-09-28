@@ -113,7 +113,7 @@ async function generateAIReleaseNotes(version, evidence, options = {}) {
           {
             role: 'system',
             content:
-              'You write factual release notes for Libre WebUI. Use only the provided git evidence. Do not invent features, dates, fixes, or breaking changes.',
+              'You write factual release notes for Alcore. Use only the provided git evidence. Do not invent features, dates, fixes, or breaking changes.',
           },
           {
             role: 'user',
@@ -148,7 +148,7 @@ async function generateAIReleaseNotes(version, evidence, options = {}) {
 }
 
 function buildAIPrompt(version, evidenceText, baselineNotes) {
-  return `Create the changelog body for Libre WebUI ${version}.
+  return `Create the changelog body for Alcore ${version}.
 
 Return raw Markdown only. Do not include the "## [${version}]" heading because the release script adds it.
 
@@ -388,18 +388,18 @@ function inferOverview(version, evidence, sections) {
   ].join('\n');
 
   if (/libre[\s-]?claw|openclaw/i.test(text)) {
-    return `Libre WebUI ${version} is the agent integration release. It replaces the previous OpenClaw bridge with a first-class Libre Claw control surface, giving admins a local agent dashboard for durable runs, approvals, automations, usage, and daemon configuration.`;
+    return `Alcore ${version} is the agent integration release. It replaces the previous OpenClaw bridge with a first-class Libre Claw control surface, giving admins a local agent dashboard for durable runs, approvals, automations, usage, and daemon configuration.`;
   }
 
   if (sections.security.length > 0 && sections.features.length === 0) {
-    return `Libre WebUI ${version} is a maintenance and security release. It focuses on dependency refreshes, safer runtime behavior, and release polish grounded in the current code changes.`;
+    return `Alcore ${version} is a maintenance and security release. It focuses on dependency refreshes, safer runtime behavior, and release polish grounded in the current code changes.`;
   }
 
   if (sections.features.length > 0) {
-    return `Libre WebUI ${version} adds new user-facing capabilities while tightening the supporting backend and frontend paths. The release notes below are generated from the commit history, changed files, and existing unreleased notes.`;
+    return `Alcore ${version} adds new user-facing capabilities while tightening the supporting backend and frontend paths. The release notes below are generated from the commit history, changed files, and existing unreleased notes.`;
   }
 
-  return `Libre WebUI ${version} is a focused maintenance release generated from the real git history since the previous tag. It groups the shipped fixes, improvements, documentation, and dependency work into release-ready notes.`;
+  return `Alcore ${version} is a focused maintenance release generated from the real git history since the previous tag. It groups the shipped fixes, improvements, documentation, and dependency work into release-ready notes.`;
 }
 
 function renderReleaseNotes(overview, sections) {

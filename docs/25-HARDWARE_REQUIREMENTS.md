@@ -1,7 +1,7 @@
 ---
 sidebar_position: 25
 title: 'Hardware Requirements'
-description: 'Hardware guidance for Libre WebUI, local Ollama models, and container-backed Work tasks.'
+description: 'Hardware guidance for Alcore, local Ollama models, and container-backed Work tasks.'
 slug: /HARDWARE_REQUIREMENTS
 keywords:
   [
@@ -15,7 +15,7 @@ keywords:
 
 # Hardware Requirements
 
-Libre WebUI's normal Chat interface is lightweight. Most resource demand comes
+Alcore's normal Chat interface is lightweight. Most resource demand comes
 from local Ollama models; container-backed Work tasks add a separate CPU, memory,
 process, image, and project-storage budget.
 
@@ -73,7 +73,7 @@ AMD and Intel support depends on Ollama and driver support for your platform. CP
 
 ## Work Runtime Capacity
 
-Work adds container resources beyond the WebUI and model process. Each active
+Work adds container resources beyond Alcore and model process. Each active
 task container defaults to:
 
 - 2 GB of memory;
@@ -82,7 +82,7 @@ task container defaults to:
 
 The backend allows two active container-backed tasks across the instance and one
 per administrator by default. These are limits, not reservations, but operators
-should budget for the WebUI backend, browser, Docker, Ollama, and task container
+should budget for the Alcore backend, browser, Docker, Ollama, and task container
 at the same time. On Apple Silicon, they all ultimately compete for the same
 unified-memory pool.
 
@@ -94,7 +94,7 @@ Every Work task also owns a Docker named volume for generated files and local
 dependencies. Volumes do not currently have per-task disk quotas, so package
 installs or generated projects can exhaust Docker storage. Monitor the Docker
 data root, set host-level limits where available, and back up task volumes
-separately from the Libre WebUI database.
+separately from the Alcore database.
 
 Tune the `WORK_MEMORY_LIMIT`, `WORK_CPU_LIMIT`, `WORK_PIDS_LIMIT`, and
 `WORK_MAX_ACTIVE_RUNTIMES_*` settings only after measuring the backend host. See

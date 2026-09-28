@@ -1,4 +1,4 @@
-# Libre WebUI Cask Formula
+# Alcore Cask Formula
 # Generated from the release template in the main repo.
 #
 # Installation:
@@ -14,7 +14,7 @@ cask "libre-webui-desktop" do
 
   url "https://github.com/libre-webui/libre-webui/releases/download/v#{version}/Libre-WebUI-Desktop-#{version}-mac-arm64.dmg",
       verified: "github.com/libre-webui/libre-webui/"
-  name "Libre WebUI Desktop"
+  name "Alcore Desktop"
   desc "Open, self-hosted workspace for creating with AI"
   homepage "https://librewebui.org/"
 
@@ -26,12 +26,12 @@ cask "libre-webui-desktop" do
   depends_on arch: :arm64
   depends_on macos: :monterey
 
-  app "Libre WebUI Desktop.app"
+  app "Alcore Desktop.app"
 
   zap trash: [
     "~/.libre-webui",
-    "~/Library/Application Support/Libre WebUI Desktop",
-    "~/Library/Application Support/Libre WebUI Frontend",
+    "~/Library/Application Support/Alcore Desktop",
+    "~/Library/Application Support/Alcore Frontend",
     "~/Library/Application Support/libre-webui",
     "~/Library/Caches/com.librewebui.app",
     "~/Library/Caches/libre-webui",
@@ -40,7 +40,7 @@ cask "libre-webui-desktop" do
   ]
 
   caveats <<~EOS
-    Libre WebUI Desktop connects to a Libre WebUI backend on port 3001.
+    Alcore Desktop connects to a Alcore backend on port 3001.
     Install and start the backend with:
       brew install --formula libre-webui
       libre-webui --port 3001

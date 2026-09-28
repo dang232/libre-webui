@@ -1,6 +1,6 @@
-# Contributing to Libre WebUI
+# Contributing to Alcore
 
-Thanks for wanting to help. Libre WebUI is Apache 2.0 with **no CLA** — your
+Thanks for wanting to help. Alcore is Apache 2.0 with **no CLA** — your
 contribution stays under the same license everyone else gets.
 
 ## Quick start

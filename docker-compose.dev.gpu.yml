@@ -1,6 +1,6 @@
 services:
-  libre-webui:
-    image: librewebui/libre-webui:dev
+  alcore:
+    image: alcore/alcore:dev
     ports:
       - '${WEBUI_BIND_ADDRESS:-127.0.0.1}:${WEBUI_PORT:-8080}:3001'
     extra_hosts:
@@ -25,7 +25,7 @@ services:
       - ENCRYPTION_KEY=${ENCRYPTION_KEY:-}
       # Platform foundation selectors. Shared backends remain fail-closed;
       # Redis coordination is usable in solo mode with an external REDIS_URL.
-      - LIBRE_PLATFORM_MODE=${LIBRE_PLATFORM_MODE:-solo}
+      - ALCORE_PLATFORM_MODE=${ALCORE_PLATFORM_MODE:-solo}
       - DATABASE_BACKEND=${DATABASE_BACKEND:-sqlite}
       - DATABASE_URL=${DATABASE_URL:-}
       - BLOB_STORE_BACKEND=${BLOB_STORE_BACKEND:-local}

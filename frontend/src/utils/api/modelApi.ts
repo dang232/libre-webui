@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -103,7 +103,7 @@ const streamWithAuthentication = (
  * app can catch up. Without it a freshly pulled model stays invisible to the
  * chat model picker until the whole application is reloaded.
  */
-export const MODELS_CHANGED_EVENT = 'libre:models-changed';
+export const MODELS_CHANGED_EVENT = 'alcore:models-changed';
 
 const notifyModelsChanged = (): void => {
   window.dispatchEvent(new Event(MODELS_CHANGED_EVENT));

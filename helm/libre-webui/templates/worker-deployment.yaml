@@ -1,4 +1,4 @@
-{{- if eq .Values.env.LIBRE_PLATFORM_MODE "team" }}
+{{- if eq .Values.env.ALCORE_PLATFORM_MODE "team" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -53,7 +53,7 @@ spec:
               value: /tmp/libre-data
             - name: PLATFORM_PREFLIGHT_TMP_DIR
               value: /tmp/libre-preflight
-            - name: LIBRE_PLATFORM_MODE
+            - name: ALCORE_PLATFORM_MODE
               value: team
             - name: DATABASE_BACKEND
               value: postgres

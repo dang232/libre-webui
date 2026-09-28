@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +15,13 @@
  * limitations under the License.
  */
 
-const CURRENT_FORMAT = 'libre-webui-user-data';
-const LEGACY_FORMAT = 'libre-webui-export';
+const CURRENT_FORMAT = 'alcore-user-data';
+const LEGACY_FORMAT = 'alcore-export';
+// Old format IDs remain importable so pre-rename exports still migrate.
+const COMPATIBLE_LEGACY_FORMATS = new Set([
+  'libre-webui-user-data',
+  'libre-webui-export',
+]);
 const CURRENT_VERSION = 3;
 const MIGRATABLE_VERSIONS = new Set([2, CURRENT_VERSION]);
 
@@ -94,8 +99,9 @@ export function parsePortableArchiveJson(
     return archive;
   }
   if (archive.format === LEGACY_FORMAT) return archive;
+  if (COMPATIBLE_LEGACY_FORMATS.has(archive.format as string)) return archive;
   throw new PortableArchiveParseError(
     'unrecognized',
-    'This file is not a Libre WebUI portable archive.'
+    'This file is not an Alcore portable archive.'
   );
 }

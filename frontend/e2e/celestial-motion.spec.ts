@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +38,7 @@ async function openNightSky(page: Page, thunder = false) {
   if (thunder) {
     await page.addInitScript(() => {
       localStorage.setItem(
-        'libre-webui-celestial',
+        'alcore-celestial',
         JSON.stringify({
           location: { latitude: 0, longitude: 0 },
           weatherEnabled: true,

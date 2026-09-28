@@ -1,10 +1,10 @@
 ---
 sidebar_position: 2
 title: 'Quick Start'
-description: 'Get Libre WebUI running with Ollama or provider plugins'
+description: 'Get Alcore running with Ollama or provider plugins'
 slug: /QUICK_START
 keywords:
-  [libre webui, quick start, installation, setup, ollama, hardware requirements]
+  [Alcore, quick start, installation, setup, ollama, hardware requirements]
 ---
 
 # Quick Start
@@ -19,16 +19,16 @@ keywords:
 | GPU         | Optional | 8 GB+ VRAM for fast local inference |
 | Docker      | Optional | Required for Work tasks             |
 
-Libre WebUI works with CPU-only Ollama, but smaller models are a better fit on CPU. For cloud provider plugins, you only need the relevant API key.
+Alcore works with CPU-only Ollama, but smaller models are a better fit on CPU. For cloud provider plugins, you only need the relevant API key.
 
 Chat, documents, artifacts, and provider-backed features do not require Docker.
-Work does: Docker must be installed on the machine running the Libre WebUI
+Work does: Docker must be installed on the machine running the Alcore
 backend, and the backend process must be allowed to invoke it. The
 `npx libre-webui` command does not install Docker. If Docker is unavailable, the
-rest of Libre WebUI continues to run while Work reports **Runtime unavailable**;
+rest of Alcore continues to run while Work reports **Runtime unavailable**;
 model commands are never run directly on the host as a fallback.
 
-## Start Libre WebUI
+## Start Alcore
 
 ```bash
 npx libre-webui@latest
@@ -43,7 +43,7 @@ absolute `DATA_DIR` to choose another location; relative values are resolved
 from the directory where you run `npx`.
 
 If you already run Ollama, `ollama launch libre-webui` installs the package,
-lets you pick a model, and starts Libre WebUI pointed at it. The same knobs
+lets you pick a model, and starts Alcore pointed at it. The same knobs
 are plain flags: `--model llama3.2` chooses the model new accounts start on,
 `--ollama-url http://host:11434` points at another Ollama, and `--no-open`
 skips opening the browser.
@@ -56,7 +56,7 @@ Install [Ollama](https://ollama.com), then pull a small general model:
 ollama pull gemma4:12b
 ```
 
-Other strong choices are `gemma4:26b` (MoE), `gemma4:31b` (dense), and `qwen3.8:27b`. Use the Model Manager in Libre WebUI to browse installed models, search the live Ollama Library, and pull models without leaving the app.
+Other strong choices are `gemma4:26b` (MoE), `gemma4:31b` (dense), and `qwen3.8:27b`. Use the Model Manager in Alcore to browse installed models, search the live Ollama Library, and pull models without leaving the app.
 
 :::tip Embeddings for documents
 For semantic document search, also install an embedding model:
@@ -90,7 +90,7 @@ Provider model lists are refreshed by the app when supported. You do not need to
 Work gives each task a persistent conversation and a separate container-backed
 filesystem. It is available to authenticated administrators.
 
-1. Install and start Docker on the machine running the Libre WebUI backend.
+1. Install and start Docker on the machine running the Alcore backend.
 2. Start a task from the **Work** button in the sidebar header, the tab bar's
    `+` menu, the Home page, or `Cmd/Ctrl + Shift + U`.
 3. Choose a model that supports tool calling.
@@ -103,8 +103,8 @@ files later. Stopping a run or preview preserves the workspace. Deleting the
 task permanently deletes its workspace.
 
 Work can use an installed Ollama model, an Ollama Cloud model, or a configured
-chat or completion-provider plugin. When you select a remote provider, Libre
-WebUI shows a disclosure before the run: the provider receives the
+chat or completion-provider plugin. When you select a remote provider, Alcore
+shows a disclosure before the run: the provider receives the
 conversation, tool definitions, and any tool results requested by the model.
 An autonomous run can make multiple paid provider calls.
 

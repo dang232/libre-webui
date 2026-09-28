@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1536,7 +1536,7 @@ test('team worker refuses missing deployment keys before creating local state', 
         ...process.env,
         DATA_DIR: dataDirectory,
         PLATFORM_PREFLIGHT_TMP_DIR: path.join(root, 'preflight'),
-        LIBRE_PLATFORM_MODE: 'team',
+        ALCORE_PLATFORM_MODE: 'team',
         DATABASE_BACKEND: 'postgres',
         DATABASE_URL: 'postgresql://worker.invalid/libre',
         DATABASE_SSL_MODE: 'disable',

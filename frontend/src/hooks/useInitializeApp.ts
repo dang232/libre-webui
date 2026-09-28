@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,7 +57,7 @@ export const useInitializeApp = () => {
     const initialize = async () => {
       initializing.current = true;
       try {
-        logger.debug('Initializing Libre WebUI...');
+        logger.debug('Initializing Alcore...');
 
         // Initialize authentication first
         await UserService.initializeAuth();
@@ -76,28 +76,38 @@ export const useInitializeApp = () => {
 
         // Ollama and configured plugins are independent model providers. An
         // unavailable Ollama daemon must not prevent the rest of the app (or
-        // plugin-backed Work models) from initializing.
+        // plugin-backed Work models) from initializing. The outage toast is
+        // deferred until the model list is known: Ollama is opt-in, so the
+        // toast only fires when no plugin/agent provider is available either.
+        let ollamaHealthFailed = false;
         try {
           const healthResponse = await ollamaApi.checkHealth();
-          if (!healthResponse.success && !isDemoMode()) {
-            toast.error(t('appInitialization.ollamaUnavailable'));
+          if (!healthResponse.success) {
+            ollamaHealthFailed = true;
           }
         } catch (healthError) {
           logger.warn(
             'Ollama health check failed; continuing provider initialization:',
             healthError
           );
-          if (!isDemoMode()) {
-            toast.error(t('appInitialization.ollamaUnavailable'));
-          }
+          ollamaHealthFailed = true;
         }
 
         // Load preferences first, then models, sessions, and plugins
         await Promise.all([loadAppPreferences(), loadChatPreferences()]);
         await Promise.all([loadModels(), loadSessions(), loadPlugins()]);
 
+        if (ollamaHealthFailed && !isDemoMode()) {
+          const hasIndependentProvider = useChatStore
+            .getState()
+            .models.some(model => model.isPlugin || model.isAgent);
+          if (!hasIndependentProvider) {
+            toast.error(t('appInitialization.ollamaUnavailable'));
+          }
+        }
+
         initialized.current = true;
-        logger.debug('Libre WebUI initialized successfully');
+        logger.debug('Alcore initialized successfully');
       } catch (_error) {
         if (!isDemoMode()) {
           logger.error('Failed to initialize app:', _error);

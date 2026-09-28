@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -65,6 +65,13 @@ export const useAuthStore = create<AuthState>()(
 
         // Save token to localStorage
         localStorage.setItem('auth-token', token);
+        // Fresh session gets a fresh single-fire invalidation latch so a
+        // later 401 still emits AUTH_INVALIDATED_EVENT exactly once.
+        import('@/utils/api/sessionInvalid').then(
+          ({ resetSessionInvalidated }) => {
+            resetSessionInvalidated();
+          }
+        );
 
         // Clear chat store state when a new user logs in
         const chatStore = useChatStore.getState();

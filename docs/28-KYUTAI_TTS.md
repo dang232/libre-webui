@@ -17,7 +17,7 @@ keywords:
 
 # Kyutai TTS Integration
 
-Run Kyutai's TTS models locally for high-quality text-to-speech. This guide covers both Pocket TTS (CPU) and TTS 1.6B (GPU) with OpenAI-compatible servers included in Libre WebUI.
+Run Kyutai's TTS models locally for high-quality text-to-speech. This guide covers both Pocket TTS (CPU) and TTS 1.6B (GPU) with OpenAI-compatible servers included in Alcore.
 
 ## Overview
 
@@ -66,7 +66,7 @@ Server runs at `http://localhost:8200`.
 ```bash
 curl http://localhost:8200/v1/audio/speech \
   -H "Content-Type: application/json" \
-  -d '{"model": "kyutai-tts", "input": "Hello, welcome to Libre WebUI!", "voice": "alba"}' \
+  -d '{"model": "kyutai-tts", "input": "Hello, welcome to Alcore!", "voice": "alba"}' \
   --output speech.wav
 ```
 

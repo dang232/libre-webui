@@ -41,8 +41,8 @@
     "more": "多"
   },
   "brand": {
-    "name": "Libre WebUI",
-    "shortName": "Libre"
+    "name": "Alcore",
+    "shortName": "Alcore"
   },
   "appInitialization": {
     "ollamaUnavailable": "Ollama サービスを利用できません。プラグインモデルは引き続き使用できる場合があります。",
@@ -191,9 +191,9 @@
   },
   "setup": {
     "welcome": {
-      "title": "Libre WebUIへようこそ",
+      "title": "Alcoreへようこそ",
       "subtitle": "始めましょう",
-      "description": "数ステップでLibre WebUIインスタンスをセットアップ",
+      "description": "数ステップでAlcoreインスタンスをセットアップ",
       "createAdmin": "管理者アカウントを作成",
       "features": {
         "secure": {
@@ -213,7 +213,7 @@
     "admin": {
       "title": "管理者アカウントを作成",
       "subtitle": "管理者セットアップ",
-      "description": "Libre WebUIインスタンスの最初の管理者アカウントを作成します",
+      "description": "Alcoreインスタンスの最初の管理者アカウントを作成します",
       "usernamePlaceholder": "管理者ユーザー名を入力",
       "passwordPlaceholder": "パスワードを入力（12文字以上）",
       "confirmPlaceholder": "パスワードを確認",
@@ -223,7 +223,7 @@
       "failed": "管理者アカウントの作成に失敗しました",
       "approvalUnexpected": "初期管理者を有効化できませんでした。もう一度お試しください。",
       "fillAllFields": "すべてのフィールドを入力してください",
-      "note": "これはLibre WebUIインスタンスの主要な管理者アカウントになります"
+      "note": "これはAlcoreインスタンスの主要な管理者アカウントになります"
     },
     "encryptionKey": {
       "title": "暗号化キーを保存",
@@ -239,7 +239,7 @@
       "envNote": "このキーはbackend/.envファイルにENCRYPTION_KEYとして保存されています",
       "acknowledgment": "暗号化キーを安全な場所に保存しました。紛失するとデータ損失の可能性があることを理解しています。",
       "confirmRequired": "暗号化キーを保存したことを確認してください",
-      "continue": "Libre WebUIを開始"
+      "continue": "Alcoreを開始"
     },
     "connectModels": {
       "title": "モデルを接続",
@@ -600,7 +600,8 @@
       "sessions": "セッション",
       "apiKeys": "APIキー",
       "notifications": "通知",
-      "ollamaDisabled": "Ollama は管理者によって無効化されています"
+      "ollamaDisabled": "Ollama は管理者によって無効化されています",
+      "apiPlatform": "API Platform"
     },
     "appearance": {
       "title": "外観",
@@ -1047,7 +1048,7 @@
       "toSkip": "スキップ予定",
       "documents": "ドキュメント",
       "warnings": "警告",
-      "refreshAfterImportFailed": "データはインポートされましたが、一部の画面を更新できませんでした。すべての変更を表示するには Libre WebUI を再読み込みしてください。",
+      "refreshAfterImportFailed": "データはインポートされましたが、一部の画面を更新できませんでした。すべての変更を表示するには Alcore を再読み込みしてください。",
       "exportSuccess": "ポータブルデータアーカイブをエクスポートしました",
       "exportFailed": "エクスポートに失敗しました",
       "importSuccess": "ポータブルデータアーカイブをインポートしました",
@@ -1056,7 +1057,7 @@
         "invalidJson": "ポータブルアーカイブは有効な JSON ではありません。",
         "objectRequired": "ポータブルアーカイブには JSON オブジェクトが必要です。",
         "unsupportedVersion": "ポータブルアーカイブのバージョン {{version}} はサポートされていません。",
-        "unrecognized": "このファイルは Libre WebUI のポータブルアーカイブではありません。"
+        "unrecognized": "このファイルは Alcore のポータブルアーカイブではありません。"
       },
       "errors": "エラー",
       "archivedChats": {
@@ -1241,6 +1242,131 @@
       "emailMentionsHint": "チャンネルで自分がメンションされたらメールで知らせます。",
       "emailAutomations": "自動化の実行結果",
       "emailAutomationsHint": "自動化が実行されるたびに、成功・失敗を問わず結果をメールで知らせます。"
+    },
+    "apiPlatform": {
+      "title": "API Platform",
+      "description": "API keys, usage, billing and the playground live in the ALcore API Platform ({{host}}), opening in a new tab.",
+      "note": "Opening a section signs you into the portal automatically with a short-lived session.",
+      "keysTitle": "API keys",
+      "keysDescription": "Create, reveal and rotate your tp_live_* customer keys.",
+      "keysOpen": "Open Keys",
+      "usageTitle": "Usage & billing",
+      "usageDescription": "Request overview, daily usage, records, top-ups, orders and invoices.",
+      "usageOpen": "Open Usage",
+      "billingOpen": "Open Billing",
+      "playgroundTitle": "Playground",
+      "playgroundDescription": "Try models with a customer key over the OpenAI-compatible /v1 API.",
+      "playgroundOpen": "Open Playground",
+      "opening": "Opening…",
+      "bridgeFailed": "Couldn't open the API Platform. Check the connection and try again.",
+      "usageLiveTitle": "Usage on this account",
+      "usageLiveDescription": "Live totals from the API Platform — the same numbers as the portal.",
+      "usageRequests": "Requests",
+      "usageInputTokens": "Input tokens",
+      "usageOutputTokens": "Output tokens",
+      "usageTotalTokens": "Total tokens",
+      "usageSpend": "Spend",
+      "usageTotalsNote": "Totals equal the usage API for the same window; spend shows exact micros with the whole-unit equivalent below.",
+      "usageByModel": "By model",
+      "usageModel": "Model",
+      "usageRecent": "Recent requests",
+      "usageOccurredAt": "Occurred at",
+      "usageLoading": "Loading usage…",
+      "usageFailed": "Couldn't load usage. Check the connection and try again.",
+      "usageRetry": "Retry",
+      "usageEmpty": "No usage in this window.",
+      "accountTitle": "Account",
+      "accountDescription": "Subscription, budgets, spending limits and profile, synced with the API Platform through this workspace.",
+      "accountLoading": "Loading account…",
+      "accountLoadFailed": "Couldn't load account details. Check the connection and try again.",
+      "accountRetry": "Retry",
+      "subscriptionTitle": "Subscription",
+      "subscriptionActive": "Active subscription.",
+      "subscriptionNone": "No active subscription.",
+      "plansTitle": "Plan",
+      "billingPeriod": "Billing period",
+      "planSubscribe": "Subscribe",
+      "saving": "Saving…",
+      "budgetsTitle": "Budgets",
+      "budgetAmount": "Amount (micros)",
+      "budgetThresholds": "Alert thresholds (0–100, comma-separated)",
+      "budgetSave": "Save budget",
+      "limitsTitle": "Spending limits",
+      "limitsNone": "No spending cap set.",
+      "capAmount": "Max spend (micros)",
+      "capWindow": "Window (seconds)",
+      "capSave": "Save cap",
+      "capClear": "Clear cap",
+      "profileTitle": "Profile",
+      "profileName": "Name",
+      "profileEmail": "Email",
+      "profileSave": "Save profile",
+      "savedOk": "Saved.",
+      "saveFailed": "Couldn't save {{label}}: check the values and try again.",
+      "keysNativeTitle": "API keys in Libre",
+      "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
+      "keyNameLabel": "Key name",
+      "keyNamePlaceholder": "e.g. production-app",
+      "quotaMicrosLabel": "Quota (micros, optional)",
+      "quotaMicrosPlaceholder": "e.g. 5000000",
+      "keyCreate": "Create key",
+      "keyCreating": "Creating…",
+      "keyReveal": "Reveal",
+      "keyRotate": "Rotate",
+      "keyRotating": "Rotating…",
+      "keyRevoke": "Revoke",
+      "keyRevoked": "Revoked {{name}}.",
+      "keyCopy": "Copy",
+      "keyCopied": "Copied",
+      "keyDismiss": "Dismiss",
+      "secretOnceWarning": "Copy it now — this full secret is shown exactly once and never again.",
+      "secretForLabel": "Full secret for {{name}}",
+      "keysEmpty": "No API keys yet. Create your first key above.",
+      "keysLoadFailed": "Couldn't load API keys. Check the connection and try again.",
+      "keysRetry": "Retry",
+      "keysCount": "{{count}} keys",
+      "keyStatusActive": "active",
+      "keyStatusRevoked": "revoked",
+      "quotaLabel": "quota",
+      "actionFailed": "That action failed. Try again.",
+      "projectsNativeTitle": "Projects",
+      "projectsNativeDescription": "Projects in your organization with per-project key counts.",
+      "projectsEmpty": "No projects yet.",
+      "projectsLoadFailed": "Couldn't load projects. Check the connection and try again.",
+      "keyCountLabel": "{{count}} keys",
+      "platformDefaultTitle": "Default chat model",
+      "platformDefaultDescription": "New chats start on the ALcore API Platform automatically — no local model or key setup needed. Local Ollama stays available as an opt-in provider.",
+      "platformDefaultCurrent": "Chatting via the ALcore API Platform (default-chat).",
+      "platformDefaultUnavailable": "The API Platform model isn't ready for this account yet (an email address is required for automatic setup). You can still chat with a local or cloud model.",
+      "platformDefaultUse": "Use ALcore API Platform",
+      "platformDefaultUsing": "Switching…"
+    },
+    "billing": {
+      "historyTitle": "Billing history",
+      "historyDescription": "Balance movements settled server-side, newest first.",
+      "historyFailed": "Couldn't load billing history. Check the connection and try again.",
+      "historyEmpty": "No billing entries yet.",
+      "rechargeTitle": "Recharge",
+      "rechargeDescription": "Create a top-up intent, then pay with the QR code before it expires. Settlement happens server-side.",
+      "amountLabel": "Amount (major units)",
+      "amountInvalid": "Enter a positive amount with up to 6 decimals.",
+      "createIntent": "Create recharge intent",
+      "intentFailed": "Couldn't create the recharge intent. Try again.",
+      "intentExpired": "That QR code expired. Create a fresh intent.",
+      "qrExpiresIn": "QR code expires in {{countdown}}",
+      "qrExpired": "QR code expired — create a fresh intent.",
+      "qrNoExpiry": "This intent has no QR expiry.",
+      "qrOpenLink": "Open payment link",
+      "refreshIntent": "Refresh status",
+      "cancelIntent": "Cancel intent",
+      "redeemTitle": "Redeem",
+      "redeemDescription": "Redeem a voucher code. Crediting happens server-side.",
+      "redeemLabel": "Voucher code",
+      "redeemInvalid": "Enter a code between 4 and 64 characters.",
+      "redeemAction": "Redeem",
+      "redeemFailed": "That code is invalid or already redeemed.",
+      "redeemDone": "Redeemed.",
+      "redeemCredited": "Redeemed: {{amount}}"
     }
   },
   "models": {
@@ -1322,7 +1448,7 @@
       "saveFile": "ファイルを保存",
       "formatCode": "コードを整形"
     },
-    "description": "Libre WebUI で使えるすべてのキーボードショートカット。",
+    "description": "Alcore で使えるすべてのキーボードショートカット。",
     "newChat": "新しいチャット",
     "newWork": "新しい Work セッション",
     "openPalette": "コマンドパレットを開く"
@@ -1701,7 +1827,7 @@
   "userManager": {
     "title": "ユーザー管理",
     "subtitle": "ユーザーアカウントと権限を管理",
-    "pageDescription": "Libre WebUIインスタンスのユーザーアカウント、権限、アクセス制御を管理します。",
+    "pageDescription": "Alcoreインスタンスのユーザーアカウント、権限、アクセス制御を管理します。",
     "sections": {
       "users": "ユーザー",
       "access": "アクセスとポリシー",
@@ -1829,7 +1955,7 @@
     },
     "agentAccess": {
       "title": "エージェント",
-      "description": "管理者向けにエージェントセクション（Libre Claw）を提供します。エージェント CLI は Work サンドボックスの外で、サーバーユーザーとしてホスト上で実行されます。",
+      "description": "管理者向けにエージェントセクション（Alcore Claw）を提供します。エージェント CLI は Work サンドボックスの外で、サーバーユーザーとしてホスト上で実行されます。",
       "saved": "エージェントへのアクセスを更新しました",
       "saveFailed": "エージェントへのアクセスを更新できませんでした",
       "lockedByEnv": "環境変数 AGENT_CLI_MODELS_ENABLED によって固定されています。"
@@ -2041,7 +2167,7 @@
       "title": "プロバイダ呼び出しはまだありません",
       "description": "有効なプラグインがチャット、Work、埋め込み、画像、音声、サウンド、または動画のリクエストを処理すると、呼び出しがここに表示されます。"
     },
-    "privacyNote": "使用量はサーバー上の送信プラグイン境界で計測されます。Libre WebUIはプロバイダ、モデル、タイミング、ステータス、および報告されたカウンターを保存しますが、プロンプト、レスポンス、エンドポイント、資格情報、またはプロバイダのエラー本文は保存しません。トークン合計には、プロバイダが使用量メタデータを返した呼び出しのみが含まれます。",
+    "privacyNote": "使用量はサーバー上の送信プラグイン境界で計測されます。Alcoreはプロバイダ、モデル、タイミング、ステータス、および報告されたカウンターを保存しますが、プロンプト、レスポンス、エンドポイント、資格情報、またはプロバイダのエラー本文は保存しません。トークン合計には、プロバイダが使用量メタデータを返した呼び出しのみが含まれます。",
     "heatmap": {
       "title": "1年間のアクティビティ",
       "description": "過去1年間の日次プロバイダー呼び出し。各日の最も使用されたモデルごとに色分けされています。",
@@ -2056,7 +2182,7 @@
   "systemPage": {
     "eyebrow": "管理",
     "title": "システム",
-    "description": "この Libre WebUI インスタンスをホストしているマシンとランタイムを監視します。",
+    "description": "この Alcore インスタンスをホストしているマシンとランタイムを監視します。",
     "updated": "更新日時: {{date}}",
     "refresh": "システム情報を更新",
     "loadFailed": "システム情報を読み込めませんでした。",
@@ -2074,7 +2200,7 @@
     },
     "host": {
       "title": "ホストとランタイム",
-      "description": "オペレーティングシステム、プロセッサ、および Libre WebUI プロセスの詳細。",
+      "description": "オペレーティングシステム、プロセッサ、および Alcore プロセスの詳細。",
       "container": "コンテナランタイム",
       "native": "ネイティブランタイム",
       "hostname": "ホスト名",
@@ -2082,7 +2208,7 @@
       "processor": "プロセッサー",
       "logicalCpus": "論理 CPU",
       "loadAverage": "負荷平均 · 1 / 5 / 15 分",
-      "libreVersion": "Libre WebUI",
+      "libreVersion": "Alcore",
       "nodeVersion": "Node.js",
       "process": "プロセス",
       "workingDirectory": "作業ディレクトリ"
@@ -2134,7 +2260,7 @@
       "internal": "内部",
       "empty": "アプリケーションランタイムに表示されるネットワークインターフェースはありません。"
     },
-    "securityNote": "このページは管理者に限定されています。サーバーは運用上の要約のみを返します。環境変数、認証情報、Dockerラベル、マウント、コンテナコマンド、またはinspectペイロードは公開されません。Libre WebUIがコンテナ内で実行されている場合、ローカルソケットが利用可能であれば、ホストレベルのCPUおよびメモリの詳細はDocker Engineから取得されます。その他の値はアプリケーションランタイムを示します。",
+    "securityNote": "このページは管理者に限定されています。サーバーは運用上の要約のみを返します。環境変数、認証情報、Dockerラベル、マウント、コンテナコマンド、またはinspectペイロードは公開されません。Alcoreがコンテナ内で実行されている場合、ローカルソケットが利用可能であれば、ホストレベルのCPUおよびメモリの詳細はDocker Engineから取得されます。その他の値はアプリケーションランタイムを示します。",
     "work": {
       "title": "Work",
       "description": "全ユーザーのサンドボックス",
@@ -2314,9 +2440,9 @@
     "referenceTranscript": "参照録音の正確な文字起こし",
     "referenceTranscriptPlaceholder": "参照録音で話されている内容を正確に入力してください…",
     "referenceAudioTooLarge": "参照オーディオは{{max}}以下にしてください。",
-    "cloneConsent": "話者の許可を得ている場合にのみ声をクローンしてください。この生成のために録音が選択したプロバイダーへ送信されますが、Libre WebUIには保存されません。",
+    "cloneConsent": "話者の許可を得ている場合にのみ声をクローンしてください。この生成のために録音が選択したプロバイダーへ送信されますが、Alcoreには保存されません。",
     "saveVoiceProfile": "再利用可能な声として保存",
-    "saveVoiceProfileDescription": "この参照録音と文字起こしを安全に保存します。この声を使用する音声バッチごとに、Libre WebUI が選択したプロバイダーへ両方を送信します。",
+    "saveVoiceProfileDescription": "この参照録音と文字起こしを安全に保存します。この声を使用する音声バッチごとに、Alcore が選択したプロバイダーへ両方を送信します。",
     "voiceProfileName": "保存する声の名前",
     "voiceProfileNamePlaceholder": "例：自分の声",
     "voiceStorageConsent": "この声のクローンと保存について話者の許可を得ていることを確認します。参照データは削除するまで保存されます。",
@@ -2554,7 +2680,7 @@
     "subtitle": "ローカル エージェントの実行、承認、スケジュール、メモリ、ツール、および使用状況。",
     "dashboard": "ダッシュボード",
     "connection": {
-      "disconnectedTitle": "Libre Claw デーモンが接続されていません",
+      "disconnectedTitle": "Alcore Claw デーモンが接続されていません",
       "disconnectedDescription": "<command>libre-claw start</command> を使用してローカルで開始するか、バックエンド環境で <env>LIBRE_CLAW_BASE_URL</env> を設定します。"
     },
     "status": {
@@ -2573,7 +2699,7 @@
     },
     "startRun": {
       "title": "エージェント実行を開始",
-      "placeholder": "Libre Claw にリポジトリの検査、バグの修正、レビューの実行、レポートのスケジュールを依頼してください...",
+      "placeholder": "Alcore Claw にリポジトリの検査、バグの修正、レビューの実行、レポートのスケジュールを依頼してください...",
       "chatRun": "チャットラン",
       "goalMode": "ゴールモード",
       "providerOverride": "プロバイダーのオーバーライド",
@@ -2584,14 +2710,14 @@
       "title": "モデルルート",
       "providerPlaceholder": "プロバイダー",
       "modelPlaceholder": "モデル",
-      "persistGlobal": "Libre Claw グローバル構成を保持する",
+      "persistGlobal": "Alcore Claw グローバル構成を保持する",
       "saveModel": "モデルの保存",
-      "theme": "Libre Claw テーマ",
+      "theme": "Alcore Claw テーマ",
       "saveTheme": "テーマの保存"
     },
     "runs": {
       "title": "実行",
-      "empty": "Libre Claw の実行はまだありません。"
+      "empty": "Alcore Claw の実行はまだありません。"
     },
     "timeline": {
       "title": "実行タイムライン",
@@ -2625,7 +2751,7 @@
       "schedulePlaceholder": "daily 09:00",
       "promptPlaceholder": "自動化プロンプト",
       "create": "作成",
-      "empty": "スケジュールされたLibre Claw 自動化はありません。",
+      "empty": "スケジュールされたAlcore Claw 自動化はありません。",
       "runNow": "今すぐ実行",
       "pause": "一時停止",
       "resume": "再開",
@@ -2666,19 +2792,19 @@
       "unknownError": "不明なエラー"
     },
     "toasts": {
-      "loadStatusFailed": "Libre Claw ステータスをロードできませんでした",
-      "enterTask": "Libre Claw のタスクを入力してください",
-      "runStarted": "Libre Claw の実行を開始しました",
-      "startRunFailed": "Libre Claw の実行を開始できませんでした",
+      "loadStatusFailed": "Alcore Claw ステータスをロードできませんでした",
+      "enterTask": "Alcore Claw のタスクを入力してください",
+      "runStarted": "Alcore Claw の実行を開始しました",
+      "startRunFailed": "Alcore Claw の実行を開始できませんでした",
       "runCancelled": "実行をキャンセルしました",
       "cancelRunFailed": "実行をキャンセルできませんでした",
       "approved": "承認済み",
       "denied": "拒否されました",
       "resolvePermissionFailed": "権限を解決できませんでした",
       "providerModelRequired": "プロバイダーとモデルは必須です",
-      "modelUpdated": "Libre Claw モデルが更新されました",
+      "modelUpdated": "Alcore Claw モデルが更新されました",
       "updateModelFailed": "モデルを更新できませんでした",
-      "themeUpdated": "Libre Claw テーマを更新しました",
+      "themeUpdated": "Alcore Claw テーマを更新しました",
       "updateThemeFailed": "テーマを更新できませんでした",
       "automationRequired": "オートメーション名、スケジュール、プロンプトは必須です",
       "automationCreated": "自動化が作成されました",
@@ -3049,7 +3175,7 @@
     "title": "新機能",
     "releaseNotes": "リリースノート",
     "cta": "さあ、始めましょう",
-    "starAsk": "Libre WebUI を気に入りましたか？GitHub でスターをお願いします"
+    "starAsk": "Alcore を気に入りましたか？GitHub でスターをお願いします"
   },
   "notes": {
     "title": "ノート",
@@ -3502,7 +3628,7 @@
     "description": "モデルが呼び出せるツールサーバーと、あなたが与えた承認です。",
     "approvalNotice": "チャットの外のデータを変えるツールは、そのツールに常時承認またはチャット単位の承認を与えていない限り、毎回承認を求めます。",
     "registerServer": "サーバーを登録",
-    "registerHint": "Libre WebUI はサーバーを一度読み取り、公開されているツールを固定します。変更を取り込むには、あとでサーバーを更新してください。",
+    "registerHint": "Alcore はサーバーを一度読み取り、公開されているツールを固定します。変更を取り込むには、あとでサーバーを更新してください。",
     "editServer": "サーバーを編集",
     "empty": "ツールサーバーがありません",
     "emptyHintAdmin": "OpenAPI か MCP のサーバーを登録して、モデルに呼び出せるものを用意しましょう。",
@@ -3891,6 +4017,7 @@
     "local": {
       "title": "ローカルサーバー",
       "subtitle": "llama.cpp、vLLM、llama-swap、LM Studio、mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "APIキー（任意）",
       "test": "接続をテスト",
       "testing": "テスト中…",

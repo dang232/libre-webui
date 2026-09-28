@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -144,7 +144,7 @@ function ChatAvatar({ role, user, persona, modelAvatar }: ChatAvatarProps) {
     return (
       <div
         role='img'
-        aria-label='Libre WebUI'
+        aria-label='Alcore'
         data-testid='chat-assistant-avatar'
         className='mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/[0.07] bg-white text-gray-900 shadow-sm dark:border-white/[0.09] dark:bg-dark-200 dark:text-dark-950'
       >

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,7 +51,7 @@ export const WORK_RUNTIME_DEFAULTS = {
   // (websockify → PulseAudio monitor capture). Published alongside the
   // screen port for GUI policies.
   audioPort: 6081,
-  networkName: 'libre-webui-work',
+  networkName: 'alcore-work',
   // Previews and screens nobody touches stop after half an hour; 0 turns
   // the sweep off so they stay up until stopped explicitly.
   idleTimeoutMs: 30 * 60_000,
@@ -96,7 +96,7 @@ export const workRuntimeConfig = {
   // private to the Docker host, which is correct when the browser runs there.
   previewBind:
     process.env.WORK_PREVIEW_BIND || WORK_RUNTIME_DEFAULTS.previewBind,
-  // Publishing and dialing are distinct when Libre WebUI itself runs in a
+  // Publishing and dialing are distinct when Alcore itself runs in a
   // container: 127.0.0.1 binds safely on the Docker host, while the backend
   // reaches that host through a runtime-specific name such as
   // host.docker.internal.

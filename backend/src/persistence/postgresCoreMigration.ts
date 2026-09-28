@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -179,6 +179,6 @@ export const POSTGRES_CORE_MIGRATION: PostgresMigration = Object.freeze({
     .digest('hex'),
   sql: POSTGRES_CORE_PERSISTENCE_SQL,
   rollbackPlan:
-    'Stop Libre, export and verify the PostgreSQL database, then downgrade the application before dropping only empty core tables in reverse foreign-key order. In-place destructive rollback is unsupported.',
+    'Stop Alcore, export and verify the PostgreSQL database, then downgrade the application before dropping only empty core tables in reverse foreign-key order. In-place destructive rollback is unsupported.',
   minimumCompatibleVersion: 1,
 });

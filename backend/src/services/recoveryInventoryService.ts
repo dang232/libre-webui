@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -144,13 +144,13 @@ export interface EncryptionKeyInventory {
 }
 
 export interface RecoveryInventory {
-  format: 'libre-webui-recovery-inventory';
+  format: 'alcore-recovery-inventory';
   version: 1;
   generatedAt: string;
   readOnly: true;
   restoreReady: boolean;
   application: {
-    name: 'libre-webui';
+    name: 'alcore';
     version: string;
     nodeVersion: string;
     platform: string;
@@ -837,7 +837,7 @@ const defaultWorkResourceInspector: WorkResourceInspector = async input => {
         'volume',
         'ls',
         '--filter',
-        'label=ai.libre-webui.managed=true',
+        'label=ai.alcore.managed=true',
         '--format',
         '{{.Name}}',
       ],
@@ -860,7 +860,7 @@ const defaultWorkResourceInspector: WorkResourceInspector = async input => {
           'volume',
           'inspect',
           '--format',
-          '{{.Name}}\t{{index .Labels "ai.libre-webui.managed"}}\t{{index .Labels "ai.libre-webui.task"}}',
+          '{{.Name}}\t{{index .Labels "ai.alcore.managed"}}\t{{index .Labels "ai.alcore.task"}}',
           ...candidates.map(resource => resource.name),
         ],
         { timeout: 10_000, maxBuffer: 2 * 1024 * 1024 }
@@ -1256,7 +1256,7 @@ export class RecoveryInventoryService {
     const blockers: string[] = [];
     const warnings: string[] = [];
     const exclusions: string[] = [
-      'External model files and provider-managed data are not stored in the Libre WebUI data directory.',
+      'External model files and provider-managed data are not stored in the Alcore data directory.',
       'Secret values are excluded; only configuration presence and the encryption-key fingerprint are reported.',
     ];
     if (!options.dataDir && !options.databasePath) {
@@ -1891,12 +1891,12 @@ export class RecoveryInventoryService {
     );
     if (hostWorkspaces.length > 0) {
       exclusions.push(
-        `${hostWorkspaces.length} host-bound Work workspace${hostWorkspaces.length === 1 ? ' is' : 's are'} outside the Libre WebUI data directory and require a separate backup.`
+        `${hostWorkspaces.length} host-bound Work workspace${hostWorkspaces.length === 1 ? ' is' : 's are'} outside the Alcore data directory and require a separate backup.`
       );
     }
     if (externalWorkTasks.length > 0) {
       exclusions.push(
-        `${externalWorkTasks.length} Work ${runtimeBackend === 'kubernetes' ? 'PVC' : 'Docker volume'} workspace${externalWorkTasks.length === 1 ? ' is' : 's are'} outside the Libre WebUI data directory and require a coordinated snapshot.`
+        `${externalWorkTasks.length} Work ${runtimeBackend === 'kubernetes' ? 'PVC' : 'Docker volume'} workspace${externalWorkTasks.length === 1 ? ' is' : 's are'} outside the Alcore data directory and require a coordinated snapshot.`
       );
     }
 
@@ -1963,7 +1963,7 @@ export class RecoveryInventoryService {
       }
       if (!includedInDataDirectory && inspection.definitions > 0) {
         exclusions.push(
-          `${source.kind === 'legacy' ? 'A legacy' : 'The configured'} custom plugin directory is outside the Libre WebUI data directory and requires a separate backup.`
+          `${source.kind === 'legacy' ? 'A legacy' : 'The configured'} custom plugin directory is outside the Alcore data directory and requires a separate backup.`
         );
         blockers.push(
           `${inspection.definitions} custom plugin definition${inspection.definitions === 1 ? ' is' : 's are'} outside the configured data directory; coordinate a separate plugin snapshot before backup.`
@@ -2018,13 +2018,13 @@ export class RecoveryInventoryService {
     }
 
     const inventory: RecoveryInventory = {
-      format: 'libre-webui-recovery-inventory',
+      format: 'alcore-recovery-inventory',
       version: 1,
       generatedAt: now.toISOString(),
       readOnly: true,
       restoreReady: false,
       application: {
-        name: 'libre-webui',
+        name: 'alcore',
         version: loadAppPackage(import.meta.url).version || '0.0.0',
         nodeVersion: process.version,
         platform: `${process.platform}/${process.arch}`,

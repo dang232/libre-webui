@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,8 @@ Object.defineProperty(globalThis, 'window', {
   },
 });
 
-const { resolveApiBaseUrl } = await import('./config');
+const { resolveApiBaseUrl, resolveAuthBaseUrl, resolveTokenPanelBaseUrl } =
+  await import('./config');
 
 test('uses the browser origin for development API proxying', () => {
   assert.equal(
@@ -53,5 +54,28 @@ test('preserves explicit API and Electron overrides', () => {
   assert.equal(
     resolveApiBaseUrl({ protocol: 'file:', origin: 'null' }),
     'http://localhost:3001/api'
+  );
+});
+
+test('auth base falls back to production and honors overrides', () => {
+  assert.equal(resolveAuthBaseUrl({}), 'https://auth.alcore.io.vn');
+  assert.equal(
+    resolveAuthBaseUrl({ authUrl: 'http://localhost:8082/' }),
+    'http://localhost:8082'
+  );
+  assert.equal(
+    resolveAuthBaseUrl({ authUrl: '   ' }),
+    'https://auth.alcore.io.vn'
+  );
+});
+test('tokenpanel base falls back to production and honors overrides', () => {
+  assert.equal(resolveTokenPanelBaseUrl({}), 'https://alcore.io.vn');
+  assert.equal(
+    resolveTokenPanelBaseUrl({ tokenpanelUrl: 'http://localhost:3000/' }),
+    'http://localhost:3000'
+  );
+  assert.equal(
+    resolveTokenPanelBaseUrl({ tokenpanelUrl: '   ' }),
+    'https://alcore.io.vn'
   );
 });

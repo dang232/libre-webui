@@ -1,16 +1,16 @@
 ---
 sidebar_position: 1
 title: 'Authentication & Security'
-description: 'Authentication, first-user setup, OAuth, roles, Turnstile, and session security in Libre WebUI.'
+description: 'Authentication, first-user setup, OAuth, roles, Turnstile, and session security in Alcore.'
 slug: /AUTHENTICATION
 keywords:
-  [libre webui authentication, user management, jwt security, oauth, turnstile]
+  [Alcore authentication, user management, jwt security, oauth, turnstile]
 image: /img/social/12.png
 ---
 
 # Authentication & Security
 
-Libre WebUI uses local user accounts with JWT sessions. A fresh installation
+Alcore uses local user accounts with JWT sessions. A fresh installation
 always permits one local administrator bootstrap. Public registration for every
 later local or OAuth account is closed by default.
 
@@ -22,7 +22,7 @@ in the current browser and applies to sign-up as well.
 
 When the database has no users:
 
-1. Libre WebUI shows the first-time setup flow.
+1. Alcore shows the first-time setup flow.
 2. The user creates the first local account.
 3. The account is assigned the `admin` role.
 4. Every later public registration stays closed unless explicitly enabled.
@@ -149,7 +149,7 @@ policies**; the setting
 persists across restarts and takes effect immediately, including for open
 terminal sessions. Host-folder workspaces remain admin-only in every mode
 because they bind-mount server paths. Treat everyone granted Work access as
-a trusted runtime operator, not only as a WebUI user.
+a trusted runtime operator, not only as an Alcore user.
 
 Admin authorization is checked against the current database role rather than
 only the role cached in an existing JWT. Demoting an administrator therefore
@@ -159,7 +159,7 @@ and named volumes. If Docker cleanup fails, access remains revoked, the role
 change reports the cleanup failure, and the operator must restore Docker access
 and retry cleanup.
 
-Deleting a user is destructive for that user's Work data. Libre WebUI first
+Deleting a user is destructive for that user's Work data. Alcore first
 stops their managed containers and removes their Work volumes, then deletes the
 account and database records. If Docker cannot prove that cleanup succeeded,
 the account deletion fails so an administrator can correct the runtime problem
@@ -269,6 +269,18 @@ rate-limited per token across replicas. Admin-scoped tokens can be minted
 only by administrators and still require the account to hold the admin role
 when used. A `chat`-scoped token is also the key for the OpenAI-compatible
 [public `/v1` API](./53-PUBLIC_API.md).
+
+## TokenPanel Bridge
+
+Settings → API Platform mints a 120s portal token for the TokenPanel
+customer portal without a second password prompt. The backend exchanges the
+caller's Libre session server-side: first-login link creates the TokenPanel
+customer by verified email (a server-generated password nobody can type),
+returning customers reuse the existing link, and the 120s viewer JWT is
+handed to the portal in a one-time URL fragment the portal consumes and
+strips. The management key authorizing the mint (`TOKENPANEL_MGMT_KEY`,
+`customers:read`+`customers:write`) never leaves the server, and every
+exchange is recorded in the security audit log.
 
 ## Cloudflare Turnstile
 

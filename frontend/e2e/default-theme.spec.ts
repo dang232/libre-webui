@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -76,7 +76,7 @@ test('administrators set the instance default theme from the Users page', async 
   await expect
     .poll(() =>
       page.evaluate(() => {
-        const value = localStorage.getItem('libre-webui-instance-theme');
+        const value = localStorage.getItem('alcore-instance-theme');
         return value ? JSON.parse(value).mode : undefined;
       })
     )

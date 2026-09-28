@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +43,7 @@ test('the app page links a complete web app manifest', async ({ page }) => {
     return { status: response.status, body: await response.json() };
   });
   expect(manifest.status).toBe(200);
-  expect(manifest.body.name).toBe('Libre WebUI');
+  expect(manifest.body.name).toBe('Alcore');
   expect(manifest.body.display).toBe('standalone');
   expect(manifest.body.start_url).toBe('/');
   const sizes = manifest.body.icons.map(
@@ -75,7 +75,7 @@ test('the service worker script is served at the root scope', async ({
   // The worker handles push display and the offline shell.
   expect(worker.body).toContain("addEventListener('push'");
   expect(worker.body).toContain("addEventListener('notificationclick'");
-  expect(worker.body).toContain('libre-webui-shell');
+  expect(worker.body).toContain('alcore-shell');
   // Dev never registers the worker; production registration is guarded in
   // main.tsx and cannot be exercised against the dev server.
   expect(worker.registrations).toBe(0);

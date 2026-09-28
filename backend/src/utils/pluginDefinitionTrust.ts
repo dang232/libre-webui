@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,7 @@ import { Plugin } from '../types/index.js';
 export const BUNDLED_PLUGIN_DEFINITION_FINGERPRINTS: Readonly<
   Record<string, string>
 > = Object.freeze({
+  alcore: 'f6552cffe57ca9dd67e82f44f0dea83343bd301ac2ff5ab81a497bbde2a170db',
   anthropic: '4ba7c2344e8404ed78f6d6f622f24307fcc8f5451047d45ee427bb0ab4d1aecf',
   'codex-oauth':
     '7337c3dcfb5bc29d6dbd9f4ab2da2fc9a72b859d690ccd207ee0ebeb1e8f38cb',

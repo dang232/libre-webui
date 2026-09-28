@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 title: 'SQLite Storage'
-description: 'How Libre WebUI stores application data with SQLite.'
+description: 'How Alcore stores application data with SQLite.'
 slug: /SQLITE_MIGRATION
 keywords: [sqlite, database, storage, migration, data directory]
 image: /img/social/10.png
@@ -9,7 +9,7 @@ image: /img/social/10.png
 
 # SQLite Storage
 
-Libre WebUI stores application data in SQLite by default. The storage layer keeps chats, messages, users, preferences, documents, document chunks, personas, plugin credentials, memories, and related metadata in one local database.
+Alcore stores application data in SQLite by default. The storage layer keeps chats, messages, users, preferences, documents, document chunks, personas, plugin credentials, memories, and related metadata in one local database.
 
 ## Database Location
 
@@ -60,7 +60,7 @@ filesystem.
 
 This means a database backup by itself is not a complete Work backup. Back up
 the corresponding Docker volumes using your Docker host's volume-backup process.
-Libre WebUI labels managed Work volumes with
+Alcore labels managed Work volumes with
 `ai.libre-webui.managed=true` and the owning task ID.
 
 Deleting a Work task permanently removes its SQLite records and managed named
@@ -69,7 +69,7 @@ delete its files.
 
 ## JSON Compatibility
 
-Older Libre WebUI installs used JSON files for some data. Current builds use SQLite as the primary storage path and keep storage access behind service/model layers so the rest of the app does not need to know the persistence format.
+Older Alcore installs used JSON files for some data. Current builds use SQLite as the primary storage path and keep storage access behind service/model layers so the rest of the app does not need to know the persistence format.
 
 If you are upgrading an old install, back up the whole data directory before starting the newer backend.
 
@@ -103,7 +103,7 @@ backup from the same point in time.
 Stop the backend, replace the data directory with your backup, then restart. Keep the same `ENCRYPTION_KEY`; encrypted values cannot be decrypted with a different key.
 
 For Work, restore the named volumes under the exact names recorded in the
-restored database before starting the backend. Libre WebUI can recreate a task
+restored database before starting the backend. Alcore can recreate a task
 container, but it cannot reconstruct missing workspace files from the
 conversation history.
 

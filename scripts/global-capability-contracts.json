@@ -395,6 +395,14 @@
         {
           "file": "docs/02-WORKING_WITH_MODELS.md",
           "patterns": ["## Model Manager"]
+        },
+        {
+          "file": "docs/35-PROVIDER_CONNECTIONS.md",
+          "patterns": [
+            "Verify the Gateway Before Activating It",
+            "does not follow redirects for",
+            "Detect, Validate, and Sync Provider Models"
+          ]
         }
       ],
       "focusedTests": [
@@ -403,6 +411,45 @@
           "runner": "test:e2e",
           "name": "cloud library pulls append the Ollama cloud suffix automatically",
           "behaviorPatterns": ["/api/ollama/pull/stream", "gpt-oss:cloud"]
+        },
+        {
+          "file": "scripts/test-provider-detection-admin.mjs",
+          "runner": "test:package",
+          "name": "admin provider routes reject callers without administrator rights",
+          "behaviorPatterns": [
+            "No authorization token provided",
+            "Admin access required"
+          ]
+        },
+        {
+          "file": "scripts/test-provider-detection-admin.mjs",
+          "runner": "test:package",
+          "name": "admin provider detect ranks known endpoints without live secrets",
+          "behaviorPatterns": ["providerId, 'openai'", "method, 'explicit'"]
+        },
+        {
+          "file": "scripts/test-provider-detection-admin.mjs",
+          "runner": "test:package",
+          "name": "admin provider validate refuses unsafe targets and redacts secrets",
+          "behaviorPatterns": ["private_network_blocked", "abcdef123456"]
+        },
+        {
+          "file": "scripts/test-provider-detection-admin.mjs",
+          "runner": "test:package",
+          "name": "admin provider validation throttles repeated callers",
+          "behaviorPatterns": ["status, 429", "Retry-After"]
+        },
+        {
+          "file": "scripts/test-provider-detection-models.mjs",
+          "runner": "test:package",
+          "name": "admin providers list reports derived health without secrets",
+          "behaviorPatterns": ["Admin access required", "healthDetails"]
+        },
+        {
+          "file": "scripts/test-provider-detection-models.mjs",
+          "runner": "test:package",
+          "name": "admin provider sync reuses discovery and marks disappeared models",
+          "behaviorPatterns": ["unavailableMarked", "'unchanged'"]
         }
       ],
       "backendRoutes": [
@@ -699,6 +746,36 @@
           "mount": "/api/plugins",
           "method": "POST",
           "path": "/probe-endpoint"
+        },
+        {
+          "file": "backend/src/routes/adminProviders.ts",
+          "mount": "/admin/providers",
+          "method": "POST",
+          "path": "/detect"
+        },
+        {
+          "file": "backend/src/routes/adminProviders.ts",
+          "mount": "/admin/providers",
+          "method": "POST",
+          "path": "/validate"
+        },
+        {
+          "file": "backend/src/routes/adminProviders.ts",
+          "mount": "/admin/providers",
+          "method": "GET",
+          "path": "/"
+        },
+        {
+          "file": "backend/src/routes/adminProviders.ts",
+          "mount": "/admin/providers",
+          "method": "GET",
+          "path": "/:id/models"
+        },
+        {
+          "file": "backend/src/routes/adminProviders.ts",
+          "mount": "/admin/providers",
+          "method": "POST",
+          "path": "/:id/sync-models"
         },
         {
           "file": "backend/src/routes/ollama.ts",
@@ -1680,7 +1757,7 @@
           "file": "scripts/test-notifications.mjs",
           "runner": "test:package",
           "name": "webhook targets are egress-guarded, signed, redacted, and retried",
-          "behaviorPatterns": ["x-libre-signature", "must never leave"]
+          "behaviorPatterns": ["x-alcore-signature", "must never leave"]
         },
         {
           "file": "scripts/test-web-push.mjs",
@@ -2108,10 +2185,7 @@
           "file": "scripts/test-tool-oauth.mjs",
           "runner": "test:package",
           "name": "the callback exchanges the code and stores an encrypted envelope",
-          "behaviorPatterns": [
-            "mcpOAuth=connected",
-            "status\\.connected, true"
-          ]
+          "behaviorPatterns": ["mcpOAuth=connected", "status\\.connected, true"]
         }
       ],
       "backendRoutes": [
@@ -3387,6 +3461,13 @@
             "recovery codes are stored only as keyed one-way",
             "Challenges are one-use and expire after five minutes"
           ]
+        },
+        {
+          "file": "docs/12-AUTHENTICATION.md",
+          "patterns": [
+            "Settings → API Platform mints a 120s portal token",
+            "first-login link creates the TokenPanel"
+          ]
         }
       ],
       "focusedTests": [
@@ -3443,6 +3524,15 @@
           "runner": "test:e2e",
           "name": "the signup password field grades strength live against the real policy",
           "behaviorPatterns": ["password-strength-label", "At least one number"]
+        },
+        {
+          "file": "scripts/test-tokenpanel-bridge.mjs",
+          "runner": "test:package",
+          "name": "bridge resolves through bridge-resolve with identity + idempotency key",
+          "behaviorPatterns": [
+            "exchangePortalToken",
+            "Idempotency-Key"
+          ]
         }
       ],
       "backendRoutes": [
@@ -3685,6 +3775,168 @@
           "mount": "/api/auth",
           "method": "POST",
           "path": "/passkeys/login"
+        },
+        {
+          "file": "backend/src/routes/auth.ts",
+          "mount": "/api/auth",
+          "method": "POST",
+          "path": "/tokenpanel/portal-token"
+        },
+        {
+          "file": "backend/src/routes/tokenpanel.ts",
+          "mount": "/api/tokenpanel",
+          "method": "DELETE",
+          "path": "/keys/:id"
+        },
+        {
+          "file": "backend/src/routes/tokenpanel.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/keys"
+        },
+        {
+          "file": "backend/src/routes/tokenpanel.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/projects"
+        },
+        {
+          "file": "backend/src/routes/tokenpanel.ts",
+          "mount": "/api/tokenpanel",
+          "method": "PATCH",
+          "path": "/keys/:id"
+        },
+        {
+          "file": "backend/src/routes/tokenpanel.ts",
+          "mount": "/api/tokenpanel",
+          "method": "POST",
+          "path": "/keys"
+        },
+        {
+          "file": "backend/src/routes/tokenpanel.ts",
+          "mount": "/api/tokenpanel",
+          "method": "POST",
+          "path": "/keys/:id/reveal"
+        },
+        {
+          "file": "backend/src/routes/tokenpanel.ts",
+          "mount": "/api/tokenpanel",
+          "method": "POST",
+          "path": "/keys/:id/rotate"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/account/budgets"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/account/limits"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/account/plans"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/account/profile"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/account/subscription"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "PATCH",
+          "path": "/account/budgets/:id"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "PATCH",
+          "path": "/account/limits"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "PATCH",
+          "path": "/account/profile"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "POST",
+          "path": "/account/subscriptions"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelBilling.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/billing/history"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelBilling.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/billing/invoices"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelBilling.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/billing/topup-intents"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelBilling.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/billing/topup-intents/:id"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelBilling.ts",
+          "mount": "/api/tokenpanel",
+          "method": "POST",
+          "path": "/billing/redeem"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelBilling.ts",
+          "mount": "/api/tokenpanel",
+          "method": "POST",
+          "path": "/billing/topup-intents"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelBilling.ts",
+          "mount": "/api/tokenpanel",
+          "method": "POST",
+          "path": "/billing/topup-intents/:id/cancel"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelUsage.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/usage/daily"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelUsage.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/usage/records"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelUsage.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/usage/summary"
         }
       ],
       "contractSurfaces": {
@@ -4018,7 +4270,7 @@
         {
           "file": "docs/09-RAG_FEATURE.md",
           "patterns": [
-            "Document Chat lets Libre WebUI search uploaded documents",
+            "Document Chat lets Alcore search uploaded documents",
             "POST /api/documents/search"
           ]
         },
@@ -4825,163 +5077,163 @@
           "file": "frontend/e2e/sidebar-create-actions.spec.ts",
           "runner": "test:e2e",
           "name": "Work and Agents are hidden and route-protected for non-admin users",
-          "behaviorPatterns": ["/api/libre-claw", "libreClawRequests"]
+          "behaviorPatterns": ["/api/alcore-claw", "libreClawRequests"]
         }
       ],
       "backendRoutes": [
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/access"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "PUT",
           "path": "/access"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/status"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/health"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/dashboard"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/config/model"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "PATCH",
           "path": "/config/model"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/config/fallback"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "PATCH",
           "path": "/config/fallback"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "PATCH",
           "path": "/config/theme"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/runs"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/runs"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/runs/:runId"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/runs/:runId/events"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/runs/:runId/cancel"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/runs/:runId/permissions/:toolCallId"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/usage"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/automations"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/automations"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/automations/:automationId"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "PATCH",
           "path": "/automations/:automationId"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "PUT",
           "path": "/automations/:automationId"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/automations/:automationId/pause"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/automations/:automationId/resume"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/automations/:automationId/run"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/libre-claw",
+          "mount": "/api/alcore-claw",
           "method": "DELETE",
           "path": "/automations/:automationId"
         }
@@ -4990,10 +5242,10 @@
         "schemas": {
           "evidence": [
             {
-              "file": "backend/src/services/libreClawService.ts",
+              "file": "backend/src/services/alcoreClawService.ts",
               "patterns": [
-                "export interface LibreClawRun",
-                "export interface LibreClawAutomation"
+                "export interface AlcoreClawRun",
+                "export interface AlcoreClawAutomation"
               ]
             }
           ]
@@ -5004,8 +5256,8 @@
         "defaults": {
           "evidence": [
             {
-              "file": "backend/src/services/libreClawService.ts",
-              "patterns": ["DEFAULT_BASE_URL", "LIBRE_CLAW_TIMEOUT_MS"]
+              "file": "backend/src/services/alcoreClawService.ts",
+              "patterns": ["DEFAULT_BASE_URL", "ALCORE_CLAW_TIMEOUT_MS"]
             }
           ]
         }
@@ -5252,7 +5504,7 @@
               "file": "backend/src/platform/recovery/backupArchive.ts",
               "patterns": [
                 "export interface BackupArchiveManifest",
-                "format: 'libre-webui-integrated-backup'"
+                "format: 'alcore-integrated-backup'"
               ]
             }
           ]

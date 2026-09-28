@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -50,6 +50,15 @@ normalizeOllamaRuntimeEnvironment(getOllamaRuntimeConfig());
 const platformConfig = assertPlatformRuntimeConfig(
   resolvePlatformRuntimeConfig()
 );
+// Fail fast when JWT_SECRET is missing in production (mirrors AlRepo
+// parseJwtSecret): an ephemeral random secret would silently invalidate all
+// sessions on restart. Checked here before data-directory and persistence
+// preflight so the process exits before listening or touching state.
+if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET?.trim()) {
+  throw new Error(
+    'Missing required JWT_SECRET in production: set JWT_SECRET to a stable random value (32+ characters) and restart. Refusing to boot with an ephemeral session secret.'
+  );
+}
 // Preserve the raw relative-path provenance until compatibility checks have
 // run. Source launches historically resolved relative paths from backend/;
 // packaged launchers resolve caller-relative paths once and pass absolutes.
@@ -119,7 +128,8 @@ try {
         readSQLitePreflightIdentity(databasePath),
         marker
       );
-    const skipScanByEnv = process.env.LIBRE_SKIP_STARTUP_INTEGRITY_SCAN === '1';
+    const skipScanByEnv =
+      process.env.ALCORE_SKIP_STARTUP_INTEGRITY_SCAN === '1';
     if (!verifiedBefore) {
       legacyEncryptionKey = Buffer.from(encryptionKeyHex, 'hex');
       try {
@@ -158,7 +168,7 @@ try {
       }
       if (skipScanByEnv) {
         startupLogger.warn(
-          'LIBRE_SKIP_STARTUP_INTEGRITY_SCAN=1: skipping legacy ciphertext verification.'
+          'ALCORE_SKIP_STARTUP_INTEGRITY_SCAN=1: skipping legacy ciphertext verification.'
         );
       }
     }
@@ -195,7 +205,7 @@ if (platformConfig.mode === 'team') {
 const { initializeSelectedWorkPersistence } =
   await import('./platform/workPersistence/index.js');
 initializeSelectedWorkPersistence(platformConfig.database.backend);
-process.env.LIBRE_PROCESS_ROLE =
+process.env.ALCORE_PROCESS_ROLE =
   platformConfig.jobs.workerMode === 'external'
     ? 'app-external'
     : 'app-embedded';

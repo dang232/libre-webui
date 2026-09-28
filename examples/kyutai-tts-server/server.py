@@ -3,7 +3,7 @@
 Kyutai TTS OpenAI-Compatible API Server
 
 This server provides an OpenAI-compatible TTS endpoint for Kyutai Pocket TTS.
-It allows Libre WebUI to use Kyutai TTS through the standard plugin system.
+It allows Alcore to use Kyutai TTS through the standard plugin system.
 
 Requirements:
     pip install pocket-tts fastapi uvicorn python-multipart

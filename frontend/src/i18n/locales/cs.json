@@ -41,8 +41,8 @@
     "more": "Více"
   },
   "brand": {
-    "name": "Libre WebUI",
-    "shortName": "Libre"
+    "name": "Alcore",
+    "shortName": "Alcore"
   },
   "appInitialization": {
     "ollamaUnavailable": "Služba Ollama není dostupná. Modely pluginů lze stále používat.",
@@ -191,9 +191,9 @@
   },
   "setup": {
     "welcome": {
-      "title": "Vítejte v Libre WebUI",
+      "title": "Vítejte v Alcore",
       "subtitle": "Začněme",
-      "description": "Nastavte Libre WebUI v několika jednoduchých krocích",
+      "description": "Nastavte Alcore v několika jednoduchých krocích",
       "createAdmin": "Vytvořit účet správce",
       "features": {
         "secure": {
@@ -213,7 +213,7 @@
     "admin": {
       "title": "Vytvořit účet správce",
       "subtitle": "Nastavení správce",
-      "description": "Vytvořte první účet správce pro vaši instanci Libre WebUI",
+      "description": "Vytvořte první účet správce pro vaši instanci Alcore",
       "usernamePlaceholder": "Zadejte jméno správce",
       "passwordPlaceholder": "Zadejte heslo (alespoň 12 znaků)",
       "confirmPlaceholder": "Potvrďte heslo",
@@ -223,7 +223,7 @@
       "failed": "Nepodařilo se vytvořit účet správce",
       "approvalUnexpected": "Počátečního správce nebylo možné aktivovat. Zkuste to znovu.",
       "fillAllFields": "Vyplňte všechna pole",
-      "note": "Toto bude hlavní účet správce pro vaši instanci Libre WebUI"
+      "note": "Toto bude hlavní účet správce pro vaši instanci Alcore"
     },
     "encryptionKey": {
       "title": "Uložte šifrovací klíč",
@@ -239,7 +239,7 @@
       "envNote": "Tento klíč je také uložen v souboru backend/.env jako ENCRYPTION_KEY",
       "acknowledgment": "Uložil jsem šifrovací klíč na bezpečné místo a chápu, že jeho ztráta může vést ke ztrátě dat.",
       "confirmRequired": "Potvrďte, že jste uložili šifrovací klíč",
-      "continue": "Pokračovat do Libre WebUI"
+      "continue": "Pokračovat do Alcore"
     },
     "connectModels": {
       "title": "Připojte své modely",
@@ -600,7 +600,8 @@
       "sessions": "Relace",
       "apiKeys": "API klíče",
       "notifications": "Oznámení",
-      "ollamaDisabled": "Ollama je zakázána správcem"
+      "ollamaDisabled": "Ollama je zakázána správcem",
+      "apiPlatform": "API Platform"
     },
     "appearance": {
       "title": "Vzhled",
@@ -1047,7 +1048,7 @@
       "toSkip": "k přeskočení",
       "documents": "Dokumenty",
       "warnings": "Varování",
-      "refreshAfterImportFailed": "Data byla importována, ale některá zobrazení se nepodařilo obnovit. Načtěte Libre WebUI znovu, aby se zobrazily všechny změny.",
+      "refreshAfterImportFailed": "Data byla importována, ale některá zobrazení se nepodařilo obnovit. Načtěte Alcore znovu, aby se zobrazily všechny změny.",
       "exportSuccess": "Přenositelný datový archiv byl exportován",
       "exportFailed": "Export se nezdařil",
       "importSuccess": "Přenositelný datový archiv byl importován",
@@ -1056,7 +1057,7 @@
         "invalidJson": "Přenositelný archiv neobsahuje platný JSON.",
         "objectRequired": "Přenositelný archiv musí obsahovat objekt JSON.",
         "unsupportedVersion": "Nepodporovaná verze přenositelného archivu {{version}}.",
-        "unrecognized": "Tento soubor není přenositelným archivem Libre WebUI."
+        "unrecognized": "Tento soubor není přenositelným archivem Alcore."
       },
       "errors": "Chyby",
       "archivedChats": {
@@ -1241,6 +1242,131 @@
       "emailMentionsHint": "Pošlete mi e-mail, když mě někdo zmíní v kanálu.",
       "emailAutomations": "Výsledky automatizací",
       "emailAutomationsHint": "Pošlete mi e-mail s výsledkem každého běhu automatizace, ať už proběhl úspěšně, nebo selhal."
+    },
+    "apiPlatform": {
+      "title": "API Platform",
+      "description": "API keys, usage, billing and the playground live in the ALcore API Platform ({{host}}), opening in a new tab.",
+      "note": "Opening a section signs you into the portal automatically with a short-lived session.",
+      "keysTitle": "API keys",
+      "keysDescription": "Create, reveal and rotate your tp_live_* customer keys.",
+      "keysOpen": "Open Keys",
+      "usageTitle": "Usage & billing",
+      "usageDescription": "Request overview, daily usage, records, top-ups, orders and invoices.",
+      "usageOpen": "Open Usage",
+      "billingOpen": "Open Billing",
+      "playgroundTitle": "Playground",
+      "playgroundDescription": "Try models with a customer key over the OpenAI-compatible /v1 API.",
+      "playgroundOpen": "Open Playground",
+      "opening": "Opening…",
+      "bridgeFailed": "Couldn't open the API Platform. Check the connection and try again.",
+      "usageLiveTitle": "Usage on this account",
+      "usageLiveDescription": "Live totals from the API Platform — the same numbers as the portal.",
+      "usageRequests": "Requests",
+      "usageInputTokens": "Input tokens",
+      "usageOutputTokens": "Output tokens",
+      "usageTotalTokens": "Total tokens",
+      "usageSpend": "Spend",
+      "usageTotalsNote": "Totals equal the usage API for the same window; spend shows exact micros with the whole-unit equivalent below.",
+      "usageByModel": "By model",
+      "usageModel": "Model",
+      "usageRecent": "Recent requests",
+      "usageOccurredAt": "Occurred at",
+      "usageLoading": "Loading usage…",
+      "usageFailed": "Couldn't load usage. Check the connection and try again.",
+      "usageRetry": "Retry",
+      "usageEmpty": "No usage in this window.",
+      "accountTitle": "Account",
+      "accountDescription": "Subscription, budgets, spending limits and profile, synced with the API Platform through this workspace.",
+      "accountLoading": "Loading account…",
+      "accountLoadFailed": "Couldn't load account details. Check the connection and try again.",
+      "accountRetry": "Retry",
+      "subscriptionTitle": "Subscription",
+      "subscriptionActive": "Active subscription.",
+      "subscriptionNone": "No active subscription.",
+      "plansTitle": "Plan",
+      "billingPeriod": "Billing period",
+      "planSubscribe": "Subscribe",
+      "saving": "Saving…",
+      "budgetsTitle": "Budgets",
+      "budgetAmount": "Amount (micros)",
+      "budgetThresholds": "Alert thresholds (0–100, comma-separated)",
+      "budgetSave": "Save budget",
+      "limitsTitle": "Spending limits",
+      "limitsNone": "No spending cap set.",
+      "capAmount": "Max spend (micros)",
+      "capWindow": "Window (seconds)",
+      "capSave": "Save cap",
+      "capClear": "Clear cap",
+      "profileTitle": "Profile",
+      "profileName": "Name",
+      "profileEmail": "Email",
+      "profileSave": "Save profile",
+      "savedOk": "Saved.",
+      "saveFailed": "Couldn't save {{label}}: check the values and try again.",
+      "keysNativeTitle": "API keys in Libre",
+      "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
+      "keyNameLabel": "Key name",
+      "keyNamePlaceholder": "e.g. production-app",
+      "quotaMicrosLabel": "Quota (micros, optional)",
+      "quotaMicrosPlaceholder": "e.g. 5000000",
+      "keyCreate": "Create key",
+      "keyCreating": "Creating…",
+      "keyReveal": "Reveal",
+      "keyRotate": "Rotate",
+      "keyRotating": "Rotating…",
+      "keyRevoke": "Revoke",
+      "keyRevoked": "Revoked {{name}}.",
+      "keyCopy": "Copy",
+      "keyCopied": "Copied",
+      "keyDismiss": "Dismiss",
+      "secretOnceWarning": "Copy it now — this full secret is shown exactly once and never again.",
+      "secretForLabel": "Full secret for {{name}}",
+      "keysEmpty": "No API keys yet. Create your first key above.",
+      "keysLoadFailed": "Couldn't load API keys. Check the connection and try again.",
+      "keysRetry": "Retry",
+      "keysCount": "{{count}} keys",
+      "keyStatusActive": "active",
+      "keyStatusRevoked": "revoked",
+      "quotaLabel": "quota",
+      "actionFailed": "That action failed. Try again.",
+      "projectsNativeTitle": "Projects",
+      "projectsNativeDescription": "Projects in your organization with per-project key counts.",
+      "projectsEmpty": "No projects yet.",
+      "projectsLoadFailed": "Couldn't load projects. Check the connection and try again.",
+      "keyCountLabel": "{{count}} keys",
+      "platformDefaultTitle": "Default chat model",
+      "platformDefaultDescription": "New chats start on the ALcore API Platform automatically — no local model or key setup needed. Local Ollama stays available as an opt-in provider.",
+      "platformDefaultCurrent": "Chatting via the ALcore API Platform (default-chat).",
+      "platformDefaultUnavailable": "The API Platform model isn't ready for this account yet (an email address is required for automatic setup). You can still chat with a local or cloud model.",
+      "platformDefaultUse": "Use ALcore API Platform",
+      "platformDefaultUsing": "Switching…"
+    },
+    "billing": {
+      "historyTitle": "Billing history",
+      "historyDescription": "Balance movements settled server-side, newest first.",
+      "historyFailed": "Couldn't load billing history. Check the connection and try again.",
+      "historyEmpty": "No billing entries yet.",
+      "rechargeTitle": "Recharge",
+      "rechargeDescription": "Create a top-up intent, then pay with the QR code before it expires. Settlement happens server-side.",
+      "amountLabel": "Amount (major units)",
+      "amountInvalid": "Enter a positive amount with up to 6 decimals.",
+      "createIntent": "Create recharge intent",
+      "intentFailed": "Couldn't create the recharge intent. Try again.",
+      "intentExpired": "That QR code expired. Create a fresh intent.",
+      "qrExpiresIn": "QR code expires in {{countdown}}",
+      "qrExpired": "QR code expired — create a fresh intent.",
+      "qrNoExpiry": "This intent has no QR expiry.",
+      "qrOpenLink": "Open payment link",
+      "refreshIntent": "Refresh status",
+      "cancelIntent": "Cancel intent",
+      "redeemTitle": "Redeem",
+      "redeemDescription": "Redeem a voucher code. Crediting happens server-side.",
+      "redeemLabel": "Voucher code",
+      "redeemInvalid": "Enter a code between 4 and 64 characters.",
+      "redeemAction": "Redeem",
+      "redeemFailed": "That code is invalid or already redeemed.",
+      "redeemDone": "Redeemed.",
+      "redeemCredited": "Redeemed: {{amount}}"
     }
   },
   "models": {
@@ -1322,7 +1448,7 @@
       "saveFile": "Uložit soubor",
       "formatCode": "Formátovat kód"
     },
-    "description": "Všechny klávesové zkratky dostupné v Libre WebUI.",
+    "description": "Všechny klávesové zkratky dostupné v Alcore.",
     "newChat": "Nový chat",
     "newWork": "Nová relace Work",
     "openPalette": "Otevřít příkazovou paletu"
@@ -1701,7 +1827,7 @@
   "userManager": {
     "title": "Správa uživatelů",
     "subtitle": "Spravujte uživatelské účty a oprávnění",
-    "pageDescription": "Spravujte uživatelské účty, oprávnění a řízení přístupu pro vaši instanci Libre WebUI.",
+    "pageDescription": "Spravujte uživatelské účty, oprávnění a řízení přístupu pro vaši instanci Alcore.",
     "sections": {
       "users": "Uživatelé",
       "access": "Přístup a zásady",
@@ -1829,7 +1955,7 @@
     },
     "agentAccess": {
       "title": "Agenti",
-      "description": "Zpřístupnit administrátorům sekci Agenti (Libre Claw). Agentní CLI běží na hostiteli pod uživatelem serveru, mimo sandbox Work.",
+      "description": "Zpřístupnit administrátorům sekci Agenti (Alcore Claw). Agentní CLI běží na hostiteli pod uživatelem serveru, mimo sandbox Work.",
       "saved": "Přístup k agentům byl aktualizován",
       "saveFailed": "Přístup k agentům se nepodařilo aktualizovat",
       "lockedByEnv": "Určeno proměnnou prostředí AGENT_CLI_MODELS_ENABLED."
@@ -2041,7 +2167,7 @@
       "title": "Zatím žádná volání poskytovatelů",
       "description": "Volání se zde zobrazí, jakmile povolený zásuvný modul zpracuje požadavky na chat, práci, embedding, obrázek, řeč, zvuk nebo video."
     },
-    "privacyNote": "Využití se měří na serveru na hranici odchozího zásuvného modulu. Libre WebUI ukládá poskytovatele, model, časování, stav a nahlášené čítače — nikdy výzvy, odpovědi, endpointy, přihlašovací údaje ani těla chyb poskytovatele. Součty tokenů zahrnují pouze volání, kde poskytovatel vrátil metadata o využití.",
+    "privacyNote": "Využití se měří na serveru na hranici odchozího zásuvného modulu. Alcore ukládá poskytovatele, model, časování, stav a nahlášené čítače — nikdy výzvy, odpovědi, endpointy, přihlašovací údaje ani těla chyb poskytovatele. Součty tokenů zahrnují pouze volání, kde poskytovatel vrátil metadata o využití.",
     "heatmap": {
       "title": "Rok aktivity",
       "description": "Denní volání poskytovatelů za poslední rok, obarvená podle nejpoužívanějšího modelu daného dne.",
@@ -2056,7 +2182,7 @@
   "systemPage": {
     "eyebrow": "Správa",
     "title": "Systém",
-    "description": "Monitorujte stroj a běhové prostředí hostující tuto instanci Libre WebUI.",
+    "description": "Monitorujte stroj a běhové prostředí hostující tuto instanci Alcore.",
     "updated": "Aktualizováno {{date}}",
     "refresh": "Obnovit systémové informace",
     "loadFailed": "Systémové informace nelze načíst.",
@@ -2074,7 +2200,7 @@
     },
     "host": {
       "title": "Hostitel a běhové prostředí",
-      "description": "Operační systém, procesor a detaily procesu Libre WebUI.",
+      "description": "Operační systém, procesor a detaily procesu Alcore.",
       "container": "Kontejnerové běhové prostředí",
       "native": "Nativní běhové prostředí",
       "hostname": "Název hostitele",
@@ -2082,7 +2208,7 @@
       "processor": "Procesor",
       "logicalCpus": "logických CPU",
       "loadAverage": "Průměrné zatížení · 1 / 5 / 15 min",
-      "libreVersion": "Libre WebUI",
+      "libreVersion": "Alcore",
       "nodeVersion": "Node.js",
       "process": "Proces",
       "workingDirectory": "Pracovní adresář"
@@ -2134,7 +2260,7 @@
       "internal": "interní",
       "empty": "Běhovému prostředí aplikace nejsou viditelná žádná síťová rozhraní."
     },
-    "securityNote": "Tato stránka je přístupná pouze správcům. Server vrací pouze provozní shrnutí: neodhaluje proměnné prostředí, přihlašovací údaje, Docker štítky, připojené svazky, příkazy kontejnerů ani inspect payloady. Když běží Libre WebUI v kontejneru, detaily o CPU a paměti hostitele pocházejí z Docker Engine, pokud je dostupný lokální socket; ostatní hodnoty popisují běhové prostředí aplikace.",
+    "securityNote": "Tato stránka je přístupná pouze správcům. Server vrací pouze provozní shrnutí: neodhaluje proměnné prostředí, přihlašovací údaje, Docker štítky, připojené svazky, příkazy kontejnerů ani inspect payloady. Když běží Alcore v kontejneru, detaily o CPU a paměti hostitele pocházejí z Docker Engine, pokud je dostupný lokální socket; ostatní hodnoty popisují běhové prostředí aplikace.",
     "work": {
       "title": "Work",
       "description": "Sandboxy napříč všemi uživateli",
@@ -2314,9 +2440,9 @@
     "referenceTranscript": "Přesný přepis referenční nahrávky",
     "referenceTranscriptPlaceholder": "Zadejte přesně to, co zazní v referenční nahrávce…",
     "referenceAudioTooLarge": "Referenční zvuk musí mít velikost nejvýše {{max}}.",
-    "cloneConsent": "Klonujte hlas pouze se souhlasem mluvčího. Nahrávka se pro toto generování odešle vybranému poskytovateli a Libre WebUI ji neukládá.",
+    "cloneConsent": "Klonujte hlas pouze se souhlasem mluvčího. Nahrávka se pro toto generování odešle vybranému poskytovateli a Alcore ji neukládá.",
     "saveVoiceProfile": "Uložit jako opakovaně použitelný hlas",
-    "saveVoiceProfileDescription": "Bezpečně uložte tuto referenční nahrávku a přepis. Libre WebUI je odešle vybranému poskytovateli s každou dávkou řeči, která tento hlas používá.",
+    "saveVoiceProfileDescription": "Bezpečně uložte tuto referenční nahrávku a přepis. Alcore je odešle vybranému poskytovateli s každou dávkou řeči, která tento hlas používá.",
     "voiceProfileName": "Název uloženého hlasu",
     "voiceProfileNamePlaceholder": "Například Můj hlas",
     "voiceStorageConsent": "Potvrzuji, že mám svolení mluvčího tento hlas klonovat a uložit. Reference zůstane uložená, dokud ji neodstraním.",
@@ -2554,7 +2680,7 @@
     "subtitle": "Spuštění místního agenta, schvalování, plány, paměť, nástroje a využití.",
     "dashboard": "Řídicí panel",
     "connection": {
-      "disconnectedTitle": "Démon Libre Claw není připojen",
+      "disconnectedTitle": "Démon Alcore Claw není připojen",
       "disconnectedDescription": "Spusťte jej lokálně pomocí <command>libre-claw start</command> nebo nastavte <env>LIBRE_CLAW_BASE_URL</env> v prostředí backendu."
     },
     "status": {
@@ -2573,7 +2699,7 @@
     },
     "startRun": {
       "title": "Spustit úlohu agenta",
-      "placeholder": "Požádejte Libre Claw o kontrolu repo, opravu chyby, spuštění kontroly, naplánování hlášení...",
+      "placeholder": "Požádejte Alcore Claw o kontrolu repo, opravu chyby, spuštění kontroly, naplánování hlášení...",
       "chatRun": "Spustit chat",
       "goalMode": "Cílový režim",
       "providerOverride": "Přepsání poskytovatele",
@@ -2584,14 +2710,14 @@
       "title": "Modelová cesta",
       "providerPlaceholder": "poskytovatel",
       "modelPlaceholder": "model",
-      "persistGlobal": "Trvejte na Libre Claw globální konfiguraci",
+      "persistGlobal": "Trvejte na Alcore Claw globální konfiguraci",
       "saveModel": "Uložit model",
-      "theme": "Motiv Libre Claw",
+      "theme": "Motiv Alcore Claw",
       "saveTheme": "Uložit motiv"
     },
     "runs": {
       "title": "Úlohy",
-      "empty": "Zatím žádné úlohy Libre Claw."
+      "empty": "Zatím žádné úlohy Alcore Claw."
     },
     "timeline": {
       "title": "Časová osa úlohy",
@@ -2625,7 +2751,7 @@
       "schedulePlaceholder": "daily 09:00",
       "promptPlaceholder": "Výzva k automatizaci",
       "create": "Vytvořit",
-      "empty": "Žádná naplánovaná automatizace Libre Claw.",
+      "empty": "Žádná naplánovaná automatizace Alcore Claw.",
       "runNow": "Spustit nyní",
       "pause": "Pauza",
       "resume": "Pokračovat",
@@ -2666,19 +2792,19 @@
       "unknownError": "Neznámá chyba"
     },
     "toasts": {
-      "loadStatusFailed": "Stav Libre Claw nelze načíst",
-      "enterTask": "Zadejte úkol pro Libre Claw",
-      "runStarted": "Úloha Libre Claw spuštěna",
-      "startRunFailed": "Úlohu Libre Claw se nepodařilo spustit",
+      "loadStatusFailed": "Stav Alcore Claw nelze načíst",
+      "enterTask": "Zadejte úkol pro Alcore Claw",
+      "runStarted": "Úloha Alcore Claw spuštěna",
+      "startRunFailed": "Úlohu Alcore Claw se nepodařilo spustit",
       "runCancelled": "Úloha zrušena",
       "cancelRunFailed": "Úlohu se nepodařilo zrušit",
       "approved": "Schváleno",
       "denied": "Zamítnuto",
       "resolvePermissionFailed": "Oprávnění se nepodařilo vyřešit",
       "providerModelRequired": "Poskytovatel a model jsou vyžadovány",
-      "modelUpdated": "Model Libre Claw aktualizován",
+      "modelUpdated": "Model Alcore Claw aktualizován",
       "updateModelFailed": "Model nelze aktualizovat",
-      "themeUpdated": "Motiv Libre Claw aktualizován",
+      "themeUpdated": "Motiv Alcore Claw aktualizován",
       "updateThemeFailed": "Motiv nelze aktualizovat",
       "automationRequired": "Je vyžadován název automatizace, plán a výzva",
       "automationCreated": "Automatizace vytvořena",
@@ -3049,7 +3175,7 @@
     "title": "Co je nového",
     "releaseNotes": "Poznámky k vydání",
     "cta": "Dobře, jdeme na to",
-    "starAsk": "Líbí se vám Libre WebUI? Dejte hvězdičku na GitHubu"
+    "starAsk": "Líbí se vám Alcore? Dejte hvězdičku na GitHubu"
   },
   "notes": {
     "title": "Poznámky",
@@ -3502,7 +3628,7 @@
     "description": "Nástrojové servery, které model může volat, a schválení, která jste jim udělili.",
     "approvalNotice": "Nástroje, které mění data mimo chat, si vždy říkají o schválení, pokud jste danému nástroji neudělili trvalé schválení nebo schválení pro tento chat.",
     "registerServer": "Zaregistrovat server",
-    "registerHint": "Libre WebUI si server jednou přečte a připne nástroje, které nabízí. Později server obnovte, aby se změny promítly.",
+    "registerHint": "Alcore si server jednou přečte a připne nástroje, které nabízí. Později server obnovte, aby se změny promítly.",
     "editServer": "Upravit server",
     "empty": "Žádné nástrojové servery",
     "emptyHintAdmin": "Zaregistrujte server OpenAPI nebo MCP, aby měl model co volat.",
@@ -3891,6 +4017,7 @@
     "local": {
       "title": "Lokální server",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "API klíč (volitelné)",
       "test": "Otestovat připojení",
       "testing": "Testování…",

@@ -1,6 +1,9 @@
 services:
-  libre-webui:
-    image: librewebui/libre-webui:latest
+  alcore:
+    image: alcore/alcore:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - '${WEBUI_BIND_ADDRESS:-127.0.0.1}:${WEBUI_PORT:-8080}:3001'
     extra_hosts:
@@ -15,7 +18,7 @@ services:
       - PORT=3001
       - OLLAMA_BASE_URL=http://ollama:11434
       # For network access, add your IP/hostname to CORS_ORIGIN:
-      - CORS_ORIGIN=http://localhost:8080
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:8080}
       - ENABLE_SIGNUP=${ENABLE_SIGNUP:-false}
       # JWT_SECRET: Generate with 'openssl rand -hex 64' and set via .env file or environment
       - JWT_SECRET=${JWT_SECRET:-}
@@ -25,14 +28,14 @@ services:
       - ENCRYPTION_KEY=${ENCRYPTION_KEY:-}
       # Platform foundation selectors. Shared backends remain fail-closed;
       # Redis coordination is usable in solo mode with an external REDIS_URL.
-      - LIBRE_PLATFORM_MODE=${LIBRE_PLATFORM_MODE:-solo}
+      - ALCORE_PLATFORM_MODE=${ALCORE_PLATFORM_MODE:-solo}
       - DATABASE_BACKEND=${DATABASE_BACKEND:-sqlite}
       - DATABASE_URL=${DATABASE_URL:-}
       - BLOB_STORE_BACKEND=${BLOB_STORE_BACKEND:-local}
       - VECTOR_STORE_BACKEND=${VECTOR_STORE_BACKEND:-embedded}
       - COORDINATION_BACKEND=${COORDINATION_BACKEND:-local}
       - REDIS_URL=${REDIS_URL:-}
-      - REDIS_KEY_PREFIX=${REDIS_KEY_PREFIX:-libre}
+      - REDIS_KEY_PREFIX=${REDIS_KEY_PREFIX:-alcore}
       - REDIS_CONNECT_TIMEOUT_MS=${REDIS_CONNECT_TIMEOUT_MS:-5000}
       - JOB_WORKER_MODE=${JOB_WORKER_MODE:-embedded}
       - STORAGE_ENCRYPTION_KEYS=${STORAGE_ENCRYPTION_KEYS:-}
@@ -54,8 +57,8 @@ services:
       - HUGGINGFACE_CALLBACK_URL=${HUGGINGFACE_CALLBACK_URL:-http://localhost:8080/api/auth/oauth/huggingface/callback}
       - SESSION_SECRET=${SESSION_SECRET:-}
     volumes:
-      - libre_webui_data:/app/backend/data
-      - libre_webui_temp:/app/backend/temp
+      - alcore_data:/app/backend/data
+      - alcore_temp:/app/backend/temp
       # Work runs isolated task containers on this host's Docker daemon.
       # Removing this mount disables Work; it does not otherwise affect the app.
       - ${DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
@@ -69,7 +72,7 @@ services:
       - ollama
     restart: unless-stopped
     networks:
-      - libre-webui-network
+      - alcore-network
 
   ollama:
     image: ollama/ollama:latest
@@ -77,7 +80,7 @@ services:
       - ollama_data:/root/.ollama
     restart: unless-stopped
     networks:
-      - libre-webui-network
+      - alcore-network
     # Uncomment the following lines if you have GPU support
     # deploy:
     #   resources:
@@ -88,10 +91,10 @@ services:
     #           capabilities: [gpu]
 
 volumes:
-  libre_webui_data:
-  libre_webui_temp:
+  alcore_data:
+  alcore_temp:
   ollama_data:
 
 networks:
-  libre-webui-network:
+  alcore-network:
     driver: bridge

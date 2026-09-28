@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -291,7 +291,7 @@ export async function collectDockerDiagnostics(
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === 'EACCES') {
         return unavailable(
-          'The Docker socket is mounted but the Libre WebUI process cannot read it.',
+          'The Docker socket is mounted but the Alcore process cannot read it.',
           true
         );
       }
@@ -323,7 +323,7 @@ export async function collectDockerDiagnostics(
     const code = (error as NodeJS.ErrnoException).code;
     const reason =
       code === 'EACCES'
-        ? 'The Docker socket is mounted but the Libre WebUI process cannot read it.'
+        ? 'The Docker socket is mounted but the Alcore process cannot read it.'
         : code === 'ETIMEDOUT'
           ? 'The Docker daemon did not answer the diagnostics request in time.'
           : endpoint.kind === 'unix'

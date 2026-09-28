@@ -1,14 +1,14 @@
 ---
 sidebar_position: 5
 title: 'Keyboard Shortcuts'
-description: 'Keyboard shortcuts available in Libre WebUI.'
+description: 'Keyboard shortcuts available in Alcore.'
 slug: /KEYBOARD_SHORTCUTS
-keywords: [libre webui shortcuts, keyboard shortcuts, productivity]
+keywords: [Alcore shortcuts, keyboard shortcuts, productivity]
 ---
 
 # Keyboard Shortcuts
 
-Libre WebUI includes app-level shortcuts for navigation and message composition.
+Alcore includes app-level shortcuts for navigation and message composition.
 
 ## Global Shortcuts
 

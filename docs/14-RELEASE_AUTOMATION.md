@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 title: 'Release Automation'
-description: 'Release Libre WebUI with evidence-based changelogs, gated checks, immutable tags, and GitHub-to-Forgejo mirroring.'
+description: 'Release Alcore with evidence-based changelogs, gated checks, immutable tags, and GitHub-to-Forgejo mirroring.'
 slug: /RELEASE_AUTOMATION
 keywords:
   [
@@ -17,7 +17,7 @@ image: /img/social/14.png
 
 # Release Automation
 
-Libre WebUI releases are created from the repository root with the release
+Alcore releases are created from the repository root with the release
 script. The script reads real git history since the previous version tag,
 updates package versions, writes the changelog, runs release checks, commits the
 release, and creates the version tag. GitHub is the build and binary publication

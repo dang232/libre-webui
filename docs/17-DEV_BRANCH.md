@@ -1,7 +1,7 @@
 ---
 sidebar_position: 17
 title: 'Development Branch Guide'
-description: 'Use the experimental dev branch to test latest features and help improve Libre WebUI. Learn how to report bugs and contribute.'
+description: 'Use the experimental dev branch to test latest features and help improve Alcore. Learn how to report bugs and contribute.'
 slug: /DEV_BRANCH
 keywords:
   [
@@ -21,7 +21,7 @@ image: /img/social/17.png
 Want to try the latest features before they're officially released? The `dev` branch contains cutting-edge improvements and experimental features that will eventually make it to the main release.
 
 :::warning Experimental Software
-The `dev` branch is **experimental** and may contain bugs, incomplete features, or breaking changes. Use it only if you're comfortable with potential instability and want to help improve Libre WebUI.
+The `dev` branch is **experimental** and may contain bugs, incomplete features, or breaking changes. Use it only if you're comfortable with potential instability and want to help improve Alcore.
 :::
 
 ## 🎯 What is the Dev Branch?
@@ -92,7 +92,7 @@ pending retries. Authentication failures stop automatic reconnection.
 
 1. Start Docker and confirm `docker info` succeeds as the same user running the
    backend.
-2. Start Libre WebUI from source with `npm run dev`.
+2. Start Alcore from source with `npm run dev`.
 3. Sign in as an administrator.
 4. Select **Work** and use a tool-capable Ollama, Ollama Cloud, or configured
    plugin-backed model.
@@ -279,10 +279,10 @@ docker compose -f docker-compose.external-ollama.yml up -d
 
 - **GitHub Discussions**: [Share ideas and ask questions](https://github.com/libre-webui/libre-webui/discussions)
 - **Issues**: [Report bugs and request features](https://github.com/libre-webui/libre-webui/issues)
-- **Contributors**: [See who's helping build Libre WebUI](https://github.com/libre-webui/libre-webui/blob/main/CONTRIBUTORS.md)
+- **Contributors**: [See who's helping build Alcore](https://github.com/libre-webui/libre-webui/blob/main/CONTRIBUTORS.md)
 
 ---
 
-**Ready to help shape the future of Libre WebUI?** 🚀
+**Ready to help shape the future of Alcore?** 🚀
 
 Your testing, feedback, and contributions on the dev branch directly improve the experience for all users. Thank you for being part of our development community!

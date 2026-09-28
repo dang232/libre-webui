@@ -1,16 +1,16 @@
 ---
 sidebar_position: 1
 title: 'Document Chat (RAG)'
-description: 'Upload PDF, Office, Markdown, HTML, code, and CSV files, search them, and include relevant context in Libre WebUI chats.'
+description: 'Upload PDF, Office, Markdown, HTML, code, and CSV files, search them, and include relevant context in Alcore chats.'
 slug: /RAG_FEATURE
 keywords:
-  [libre webui rag, document chat, pdf chat, semantic search, vector embeddings]
+  [Alcore rag, document chat, pdf chat, semantic search, vector embeddings]
 image: /img/social/09.png
 ---
 
 # Document Chat
 
-Document Chat lets Libre WebUI search uploaded documents and pass relevant excerpts into chat context.
+Document Chat lets Alcore search uploaded documents and pass relevant excerpts into chat context.
 
 ## Supported Files
 
@@ -47,7 +47,7 @@ Files are processed by the backend and stored with the rest of the application d
 
 ## Search Modes
 
-Libre WebUI supports two retrieval modes:
+Alcore supports two retrieval modes:
 
 | Mode            | When used                      | Notes                                                                       |
 | --------------- | ------------------------------ | --------------------------------------------------------------------------- |
@@ -111,7 +111,7 @@ to retrieval and the Sources rail explains why.
 1. Upload a supported file from the document controls.
 2. Wait for processing to finish.
 3. Ask a question in chat.
-4. Libre WebUI retrieves relevant chunks for that session and includes them as context.
+4. Alcore retrieves relevant chunks for that session and includes them as context.
 
 Example prompts:
 

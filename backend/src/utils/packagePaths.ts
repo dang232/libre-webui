@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const APP_PACKAGE_NAME = 'libre-webui';
+const APP_PACKAGE_NAME = 'alcore';
 const DEFAULT_VERSION = '0.0.0';
 
 export interface AppPackageMetadata {

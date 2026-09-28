@@ -9,14 +9,14 @@ app_version="$(awk '/^appVersion:/ { print $2; exit }' "$chart_dir/Chart.yaml" |
 configured_digest="$(awk '/^  digest:/ { print $2; exit }' "$chart_dir/values.yaml" | tr -d "\"'")"
 
 if [[ -n "$configured_digest" ]]; then
-  default_image="librewebui/libre-webui@$configured_digest"
+  default_image="alcore/alcore@$configured_digest"
 else
-  default_image="librewebui/libre-webui:$app_version"
+  default_image="alcore/alcore:$app_version"
 fi
 
 render_libre_image() {
   helm template libre-webui "$chart_dir" "$@" |
-    awk '$1 == "image:" && $2 ~ /librewebui\/libre-webui/ { gsub(/"/, "", $2); print $2; exit }'
+    awk '$1 == "image:" && $2 ~ /alcore\/alcore/ { gsub(/"/, "", $2); print $2; exit }'
 }
 
 render_ollama_image() {
@@ -43,17 +43,17 @@ assert_image \
 assert_image \
   "explicit tag override" \
   "$(render_libre_image --set-string image.tag=custom)" \
-  "librewebui/libre-webui:custom"
+  "alcore/alcore:custom"
 
 assert_image \
   "explicit digest override" \
   "$(render_libre_image --set-string image.tag= --set-string image.digest="$override_digest")" \
-  "librewebui/libre-webui@$override_digest"
+  "alcore/alcore@$override_digest"
 
 assert_image \
   "appVersion fallback" \
   "$(render_libre_image --set-string image.tag= --set-string image.digest=)" \
-  "librewebui/libre-webui:$app_version"
+  "alcore/alcore:$app_version"
 
 assert_image \
   "bundled Ollama default" \

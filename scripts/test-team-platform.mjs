@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -106,7 +106,7 @@ test(
           `${project}_default`,
           '--env',
           'MC_HOST_local=http://libreteam:libre-team-minio-password@minio:9000',
-          'quay.io/minio/mc:RELEASE.2025-07-21T05-28-08Z',
+          'cgr.dev/chainguard/minio-client@sha256:f0dd93b48af1f8a641edcd3c64661c8dbe05189bd2ef2f8cea216eb18af10bf8',
           'stat',
           `local/libre-blobs/${objectKey}`,
         ],
@@ -954,7 +954,7 @@ test(
         model: 'libre-video-model',
         pluginId: 'libre-team-video-fixture',
         prompt:
-          'LIBRE_VIDEO_POST_SUBMIT_KILL LIBRE_MEDIA_POST_SAVE_KILL durable video',
+          'ALCORE_VIDEO_POST_SUBMIT_KILL ALCORE_MEDIA_POST_SAVE_KILL durable video',
       },
     });
     const videoSubmitJob = await waitFor(
@@ -985,7 +985,7 @@ test(
       sql(
         `SELECT provider_job_id FROM platform_media_generation_jobs WHERE id = '${video.data.id}'`
       ),
-      'libre:prepared',
+      'alcore:prepared',
       'provider acceptance must precede the reconciled SQL commit in this fault window'
     );
     killAndRestartWorker();

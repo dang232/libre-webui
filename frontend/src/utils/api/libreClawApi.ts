@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -95,28 +95,28 @@ export const libreClawApi = {
     if (isDemoMode()) {
       return createDemoResponse({ enabled: false, lockedByEnv: false });
     }
-    return api.get('/libre-claw/access').then(res => res.data);
+    return api.get('/alcore-claw/access').then(res => res.data);
   },
 
   setAccess: (enabled: boolean): Promise<ApiResponse<AgentAccess>> => {
     if (isDemoMode()) {
       return createDemoResponse({ enabled, lockedByEnv: false });
     }
-    return api.put('/libre-claw/access', { enabled }).then(res => res.data);
+    return api.put('/alcore-claw/access', { enabled }).then(res => res.data);
   },
 
   status: (): Promise<ApiResponse<LibreClawStatus>> => {
     if (isDemoMode()) {
       return createDemoResponse(demoStatus);
     }
-    return api.get('/libre-claw/status').then(res => res.data);
+    return api.get('/alcore-claw/status').then(res => res.data);
   },
 
   dashboard: (): Promise<ApiResponse<{ url: string }>> => {
     if (isDemoMode()) {
       return createDemoResponse({ url: demoStatus.dashboardUrl });
     }
-    return api.get('/libre-claw/dashboard').then(res => res.data);
+    return api.get('/alcore-claw/dashboard').then(res => res.data);
   },
 
   currentModel: (): Promise<ApiResponse<Record<string, unknown>>> => {
@@ -126,7 +126,7 @@ export const libreClawApi = {
         model: 'openrouter/auto',
       });
     }
-    return api.get('/libre-claw/config/model').then(res => res.data);
+    return api.get('/alcore-claw/config/model').then(res => res.data);
   },
 
   updateModel: (
@@ -142,7 +142,7 @@ export const libreClawApi = {
       });
     }
     return api
-      .patch('/libre-claw/config/model', {
+      .patch('/alcore-claw/config/model', {
         provider,
         model,
         persist_global: persistGlobal,
@@ -154,7 +154,7 @@ export const libreClawApi = {
     if (isDemoMode()) {
       return createDemoResponse({ enabled: false, routes: [] });
     }
-    return api.get('/libre-claw/config/fallback').then(res => res.data);
+    return api.get('/alcore-claw/config/fallback').then(res => res.data);
   },
 
   updateFallback: (
@@ -164,7 +164,7 @@ export const libreClawApi = {
       return createDemoResponse(payload);
     }
     return api
-      .patch('/libre-claw/config/fallback', payload)
+      .patch('/alcore-claw/config/fallback', payload)
       .then(res => res.data);
   },
 
@@ -180,7 +180,7 @@ export const libreClawApi = {
       });
     }
     return api
-      .patch('/libre-claw/config/theme', {
+      .patch('/alcore-claw/config/theme', {
         theme,
         persist_global: persistGlobal,
       })
@@ -197,7 +197,7 @@ export const libreClawApi = {
       return createDemoResponse({ summary: {}, records: [], text: '' });
     }
     return api
-      .get(`/libre-claw/usage?${params.toString()}`)
+      .get(`/alcore-claw/usage?${params.toString()}`)
       .then(res => res.data);
   },
 
@@ -205,7 +205,7 @@ export const libreClawApi = {
     if (isDemoMode()) {
       return createDemoResponse({ runs: [] });
     }
-    return api.get(`/libre-claw/runs?limit=${limit}`).then(res => res.data);
+    return api.get(`/alcore-claw/runs?limit=${limit}`).then(res => res.data);
   },
 
   startRun: (
@@ -227,7 +227,7 @@ export const libreClawApi = {
         },
       });
     }
-    return api.post('/libre-claw/runs', payload).then(res => res.data);
+    return api.post('/alcore-claw/runs', payload).then(res => res.data);
   },
 
   getRun: (runId: string): Promise<ApiResponse<Record<string, unknown>>> => {
@@ -235,7 +235,7 @@ export const libreClawApi = {
       return createDemoResponse({ run_id: runId });
     }
     return api
-      .get(`/libre-claw/runs/${encodeURIComponent(runId)}`)
+      .get(`/alcore-claw/runs/${encodeURIComponent(runId)}`)
       .then(res => res.data);
   },
 
@@ -248,7 +248,7 @@ export const libreClawApi = {
     }
     return api
       .get(
-        `/libre-claw/runs/${encodeURIComponent(runId)}/events?after=${after}`
+        `/alcore-claw/runs/${encodeURIComponent(runId)}/events?after=${after}`
       )
       .then(res => res.data);
   },
@@ -258,7 +258,7 @@ export const libreClawApi = {
       return createDemoResponse({ run_id: runId, cancelled: true });
     }
     return api
-      .post(`/libre-claw/runs/${encodeURIComponent(runId)}/cancel`)
+      .post(`/alcore-claw/runs/${encodeURIComponent(runId)}/cancel`)
       .then(res => res.data);
   },
 
@@ -276,7 +276,7 @@ export const libreClawApi = {
     }
     return api
       .post(
-        `/libre-claw/runs/${encodeURIComponent(runId)}/permissions/${encodeURIComponent(toolCallId)}`,
+        `/alcore-claw/runs/${encodeURIComponent(runId)}/permissions/${encodeURIComponent(toolCallId)}`,
         { resolution }
       )
       .then(res => res.data);
@@ -289,7 +289,7 @@ export const libreClawApi = {
       return createDemoResponse({ automations: [] });
     }
     return api
-      .get(`/libre-claw/automations?limit=${limit}`)
+      .get(`/alcore-claw/automations?limit=${limit}`)
       .then(res => res.data);
   },
 
@@ -302,7 +302,7 @@ export const libreClawApi = {
         automation_id: `demo-${Date.now()}`,
       });
     }
-    return api.post('/libre-claw/automations', payload).then(res => res.data);
+    return api.post('/alcore-claw/automations', payload).then(res => res.data);
   },
 
   updateAutomation: (
@@ -314,7 +314,7 @@ export const libreClawApi = {
     }
     return api
       .patch(
-        `/libre-claw/automations/${encodeURIComponent(automationId)}`,
+        `/alcore-claw/automations/${encodeURIComponent(automationId)}`,
         payload
       )
       .then(res => res.data);
@@ -330,7 +330,9 @@ export const libreClawApi = {
       });
     }
     return api
-      .post(`/libre-claw/automations/${encodeURIComponent(automationId)}/pause`)
+      .post(
+        `/alcore-claw/automations/${encodeURIComponent(automationId)}/pause`
+      )
       .then(res => res.data);
   },
 
@@ -345,7 +347,7 @@ export const libreClawApi = {
     }
     return api
       .post(
-        `/libre-claw/automations/${encodeURIComponent(automationId)}/resume`
+        `/alcore-claw/automations/${encodeURIComponent(automationId)}/resume`
       )
       .then(res => res.data);
   },
@@ -357,7 +359,7 @@ export const libreClawApi = {
       return createDemoResponse({ automation_id: automationId, run: true });
     }
     return api
-      .post(`/libre-claw/automations/${encodeURIComponent(automationId)}/run`)
+      .post(`/alcore-claw/automations/${encodeURIComponent(automationId)}/run`)
       .then(res => res.data);
   },
 
@@ -368,7 +370,7 @@ export const libreClawApi = {
       return createDemoResponse({ automation_id: automationId, deleted: true });
     }
     return api
-      .delete(`/libre-claw/automations/${encodeURIComponent(automationId)}`)
+      .delete(`/alcore-claw/automations/${encodeURIComponent(automationId)}`)
       .then(res => res.data);
   },
 };

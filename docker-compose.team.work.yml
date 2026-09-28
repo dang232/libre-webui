@@ -1,6 +1,6 @@
 # Production opt-in for Docker-backed Work in the bundled team profile.
 #
-# Libre WebUI and its external worker receive only a private TCP endpoint. The
+# Alcore and its external worker receive only a private TCP endpoint. The
 # socket stays in this dedicated proxy, which exposes the smallest Docker API
 # sections used by the Work runtime: transport negotiation, info, images,
 # containers, exec, volumes, and networks, with POST enabled for lifecycle

@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,7 +40,7 @@ const dataDir = await mkdtemp(path.join(os.tmpdir(), 'libre-drill-test-'));
 process.env.DATA_DIR = dataDir;
 process.env.ENCRYPTION_KEY = 'c4'.repeat(32);
 process.env.JWT_SECRET = 'recovery-drill-test-secret-that-is-long';
-process.env.LIBRE_PLATFORM_MODE = 'solo';
+process.env.ALCORE_PLATFORM_MODE = 'solo';
 process.env.DATABASE_BACKEND = 'sqlite';
 process.env.BLOB_STORE_BACKEND = 'local';
 process.env.VECTOR_STORE_BACKEND = 'embedded';

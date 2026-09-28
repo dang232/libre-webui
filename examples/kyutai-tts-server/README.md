@@ -1,4 +1,4 @@
-# Kyutai TTS Integration for Libre WebUI
+# Kyutai TTS Integration for Alcore
 
 OpenAI-compatible API server for Kyutai Pocket TTS.
 

@@ -41,8 +41,8 @@
     "more": "Lebih"
   },
   "brand": {
-    "name": "Libre WebUI",
-    "shortName": "Libre"
+    "name": "Alcore",
+    "shortName": "Alcore"
   },
   "appInitialization": {
     "ollamaUnavailable": "Perkhidmatan Ollama tidak tersedia. Model pemalam masih boleh digunakan.",
@@ -191,9 +191,9 @@
   },
   "setup": {
     "welcome": {
-      "title": "Selamat Datang ke Libre WebUI",
+      "title": "Selamat Datang ke Alcore",
       "subtitle": "Mari Mulakan",
-      "description": "Sediakan Libre WebUI anda dalam beberapa langkah mudah",
+      "description": "Sediakan Alcore anda dalam beberapa langkah mudah",
       "createAdmin": "Cipta Akaun Pentadbir",
       "features": {
         "secure": {
@@ -213,7 +213,7 @@
     "admin": {
       "title": "Cipta Akaun Pentadbir",
       "subtitle": "Persediaan Pentadbir",
-      "description": "Cipta akaun pentadbir pertama untuk Libre WebUI anda",
+      "description": "Cipta akaun pentadbir pertama untuk Alcore anda",
       "usernamePlaceholder": "Masukkan nama pengguna pentadbir",
       "passwordPlaceholder": "Masukkan kata laluan (sekurang-kurangnya 12 aksara)",
       "confirmPlaceholder": "Sahkan kata laluan anda",
@@ -223,7 +223,7 @@
       "failed": "Gagal mencipta akaun pentadbir",
       "approvalUnexpected": "Pentadbir awal tidak dapat diaktifkan. Sila cuba lagi.",
       "fillAllFields": "Sila isi semua ruangan",
-      "note": "Ini akan menjadi akaun pentadbir utama untuk Libre WebUI anda"
+      "note": "Ini akan menjadi akaun pentadbir utama untuk Alcore anda"
     },
     "encryptionKey": {
       "title": "Simpan Kunci Penyulitan Anda",
@@ -239,7 +239,7 @@
       "envNote": "Kunci ini juga disimpan dalam fail backend/.env anda sebagai ENCRYPTION_KEY",
       "acknowledgment": "Saya telah menyimpan kunci penyulitan saya di lokasi yang selamat dan memahami bahawa kehilangannya boleh menyebabkan kehilangan data.",
       "confirmRequired": "Sila sahkan bahawa anda telah menyimpan kunci penyulitan",
-      "continue": "Teruskan ke Libre WebUI"
+      "continue": "Teruskan ke Alcore"
     },
     "connectModels": {
       "title": "Sambungkan model anda",
@@ -600,7 +600,8 @@
       "sessions": "Sesi",
       "apiKeys": "Kunci API",
       "notifications": "Pemberitahuan",
-      "ollamaDisabled": "Ollama dilumpuhkan oleh pentadbir"
+      "ollamaDisabled": "Ollama dilumpuhkan oleh pentadbir",
+      "apiPlatform": "API Platform"
     },
     "appearance": {
       "title": "Penampilan",
@@ -1047,7 +1048,7 @@
       "toSkip": "untuk dilangkau",
       "documents": "Dokumen",
       "warnings": "Amaran",
-      "refreshAfterImportFailed": "Data telah diimport, tetapi sesetengah paparan tidak dapat disegar semula. Muat semula Libre WebUI untuk melihat semua perubahan.",
+      "refreshAfterImportFailed": "Data telah diimport, tetapi sesetengah paparan tidak dapat disegar semula. Muat semula Alcore untuk melihat semua perubahan.",
       "exportSuccess": "Arkib data mudah alih berjaya dieksport",
       "exportFailed": "Eksport gagal",
       "importSuccess": "Arkib data mudah alih berjaya diimport",
@@ -1056,7 +1057,7 @@
         "invalidJson": "Arkib mudah alih bukan JSON yang sah.",
         "objectRequired": "Arkib mudah alih mesti mengandungi objek JSON.",
         "unsupportedVersion": "Versi arkib mudah alih {{version}} tidak disokong.",
-        "unrecognized": "Fail ini bukan arkib mudah alih Libre WebUI."
+        "unrecognized": "Fail ini bukan arkib mudah alih Alcore."
       },
       "errors": "Ralat",
       "archivedChats": {
@@ -1241,6 +1242,131 @@
       "emailMentionsHint": "Hantar e-mel kepada saya apabila seseorang menyebut saya dalam saluran.",
       "emailAutomations": "Keputusan automasi",
       "emailAutomationsHint": "Hantar e-mel kepada saya keputusan setiap larian automasi, sama ada berjaya atau gagal."
+    },
+    "apiPlatform": {
+      "title": "API Platform",
+      "description": "API keys, usage, billing and the playground live in the ALcore API Platform ({{host}}), opening in a new tab.",
+      "note": "Opening a section signs you into the portal automatically with a short-lived session.",
+      "keysTitle": "API keys",
+      "keysDescription": "Create, reveal and rotate your tp_live_* customer keys.",
+      "keysOpen": "Open Keys",
+      "usageTitle": "Usage & billing",
+      "usageDescription": "Request overview, daily usage, records, top-ups, orders and invoices.",
+      "usageOpen": "Open Usage",
+      "billingOpen": "Open Billing",
+      "playgroundTitle": "Playground",
+      "playgroundDescription": "Try models with a customer key over the OpenAI-compatible /v1 API.",
+      "playgroundOpen": "Open Playground",
+      "opening": "Opening…",
+      "bridgeFailed": "Couldn't open the API Platform. Check the connection and try again.",
+      "usageLiveTitle": "Usage on this account",
+      "usageLiveDescription": "Live totals from the API Platform — the same numbers as the portal.",
+      "usageRequests": "Requests",
+      "usageInputTokens": "Input tokens",
+      "usageOutputTokens": "Output tokens",
+      "usageTotalTokens": "Total tokens",
+      "usageSpend": "Spend",
+      "usageTotalsNote": "Totals equal the usage API for the same window; spend shows exact micros with the whole-unit equivalent below.",
+      "usageByModel": "By model",
+      "usageModel": "Model",
+      "usageRecent": "Recent requests",
+      "usageOccurredAt": "Occurred at",
+      "usageLoading": "Loading usage…",
+      "usageFailed": "Couldn't load usage. Check the connection and try again.",
+      "usageRetry": "Retry",
+      "usageEmpty": "No usage in this window.",
+      "accountTitle": "Account",
+      "accountDescription": "Subscription, budgets, spending limits and profile, synced with the API Platform through this workspace.",
+      "accountLoading": "Loading account…",
+      "accountLoadFailed": "Couldn't load account details. Check the connection and try again.",
+      "accountRetry": "Retry",
+      "subscriptionTitle": "Subscription",
+      "subscriptionActive": "Active subscription.",
+      "subscriptionNone": "No active subscription.",
+      "plansTitle": "Plan",
+      "billingPeriod": "Billing period",
+      "planSubscribe": "Subscribe",
+      "saving": "Saving…",
+      "budgetsTitle": "Budgets",
+      "budgetAmount": "Amount (micros)",
+      "budgetThresholds": "Alert thresholds (0–100, comma-separated)",
+      "budgetSave": "Save budget",
+      "limitsTitle": "Spending limits",
+      "limitsNone": "No spending cap set.",
+      "capAmount": "Max spend (micros)",
+      "capWindow": "Window (seconds)",
+      "capSave": "Save cap",
+      "capClear": "Clear cap",
+      "profileTitle": "Profile",
+      "profileName": "Name",
+      "profileEmail": "Email",
+      "profileSave": "Save profile",
+      "savedOk": "Saved.",
+      "saveFailed": "Couldn't save {{label}}: check the values and try again.",
+      "keysNativeTitle": "API keys in Libre",
+      "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
+      "keyNameLabel": "Key name",
+      "keyNamePlaceholder": "e.g. production-app",
+      "quotaMicrosLabel": "Quota (micros, optional)",
+      "quotaMicrosPlaceholder": "e.g. 5000000",
+      "keyCreate": "Create key",
+      "keyCreating": "Creating…",
+      "keyReveal": "Reveal",
+      "keyRotate": "Rotate",
+      "keyRotating": "Rotating…",
+      "keyRevoke": "Revoke",
+      "keyRevoked": "Revoked {{name}}.",
+      "keyCopy": "Copy",
+      "keyCopied": "Copied",
+      "keyDismiss": "Dismiss",
+      "secretOnceWarning": "Copy it now — this full secret is shown exactly once and never again.",
+      "secretForLabel": "Full secret for {{name}}",
+      "keysEmpty": "No API keys yet. Create your first key above.",
+      "keysLoadFailed": "Couldn't load API keys. Check the connection and try again.",
+      "keysRetry": "Retry",
+      "keysCount": "{{count}} keys",
+      "keyStatusActive": "active",
+      "keyStatusRevoked": "revoked",
+      "quotaLabel": "quota",
+      "actionFailed": "That action failed. Try again.",
+      "projectsNativeTitle": "Projects",
+      "projectsNativeDescription": "Projects in your organization with per-project key counts.",
+      "projectsEmpty": "No projects yet.",
+      "projectsLoadFailed": "Couldn't load projects. Check the connection and try again.",
+      "keyCountLabel": "{{count}} keys",
+      "platformDefaultTitle": "Default chat model",
+      "platformDefaultDescription": "New chats start on the ALcore API Platform automatically — no local model or key setup needed. Local Ollama stays available as an opt-in provider.",
+      "platformDefaultCurrent": "Chatting via the ALcore API Platform (default-chat).",
+      "platformDefaultUnavailable": "The API Platform model isn't ready for this account yet (an email address is required for automatic setup). You can still chat with a local or cloud model.",
+      "platformDefaultUse": "Use ALcore API Platform",
+      "platformDefaultUsing": "Switching…"
+    },
+    "billing": {
+      "historyTitle": "Billing history",
+      "historyDescription": "Balance movements settled server-side, newest first.",
+      "historyFailed": "Couldn't load billing history. Check the connection and try again.",
+      "historyEmpty": "No billing entries yet.",
+      "rechargeTitle": "Recharge",
+      "rechargeDescription": "Create a top-up intent, then pay with the QR code before it expires. Settlement happens server-side.",
+      "amountLabel": "Amount (major units)",
+      "amountInvalid": "Enter a positive amount with up to 6 decimals.",
+      "createIntent": "Create recharge intent",
+      "intentFailed": "Couldn't create the recharge intent. Try again.",
+      "intentExpired": "That QR code expired. Create a fresh intent.",
+      "qrExpiresIn": "QR code expires in {{countdown}}",
+      "qrExpired": "QR code expired — create a fresh intent.",
+      "qrNoExpiry": "This intent has no QR expiry.",
+      "qrOpenLink": "Open payment link",
+      "refreshIntent": "Refresh status",
+      "cancelIntent": "Cancel intent",
+      "redeemTitle": "Redeem",
+      "redeemDescription": "Redeem a voucher code. Crediting happens server-side.",
+      "redeemLabel": "Voucher code",
+      "redeemInvalid": "Enter a code between 4 and 64 characters.",
+      "redeemAction": "Redeem",
+      "redeemFailed": "That code is invalid or already redeemed.",
+      "redeemDone": "Redeemed.",
+      "redeemCredited": "Redeemed: {{amount}}"
     }
   },
   "models": {
@@ -1322,7 +1448,7 @@
       "saveFile": "Simpan fail",
       "formatCode": "Formatkan kod"
     },
-    "description": "Semua pintasan papan kekunci yang ada dalam Libre WebUI.",
+    "description": "Semua pintasan papan kekunci yang ada dalam Alcore.",
     "newChat": "Sembang baharu",
     "newWork": "Sesi Work baharu",
     "openPalette": "Buka palet arahan"
@@ -1701,7 +1827,7 @@
   "userManager": {
     "title": "Pengurusan Pengguna",
     "subtitle": "Urus akaun pengguna dan kebenaran",
-    "pageDescription": "Urus akaun pengguna, kebenaran dan kawalan akses untuk contoh Libre WebUI anda.",
+    "pageDescription": "Urus akaun pengguna, kebenaran dan kawalan akses untuk contoh Alcore anda.",
     "sections": {
       "users": "Pengguna",
       "access": "Akses dan dasar",
@@ -1829,7 +1955,7 @@
     },
     "agentAccess": {
       "title": "Ejen",
-      "description": "Tawarkan bahagian Ejen (Libre Claw) kepada pentadbir. CLI ejen berjalan pada hos sebagai pengguna pelayan, di luar kotak pasir Work.",
+      "description": "Tawarkan bahagian Ejen (Alcore Claw) kepada pentadbir. CLI ejen berjalan pada hos sebagai pengguna pelayan, di luar kotak pasir Work.",
       "saved": "Akses ejen dikemas kini",
       "saveFailed": "Tidak dapat mengemas kini akses ejen",
       "lockedByEnv": "Ditetapkan oleh pemboleh ubah persekitaran AGENT_CLI_MODELS_ENABLED."
@@ -2041,7 +2167,7 @@
       "title": "Tiada panggilan pembekal lagi",
       "description": "Panggilan akan dipaparkan di sini selepas pemalam yang didayakan mengendalikan permintaan sembang, Work, pembenaman, imej, pertuturan, bunyi, atau video."
     },
-    "privacyNote": "Penggunaan diukur pada pelayan di sempadan pemalam keluar. Libre WebUI menyimpan pembekal, model, masa, status, dan pembilang dilaporkan—tidak pernah gesaan, respons, titik akhir, kelayakan, atau badan ralat pembekal. Jumlah token hanya termasuk panggilan di mana pembekal memulangkan metadata penggunaan.",
+    "privacyNote": "Penggunaan diukur pada pelayan di sempadan pemalam keluar. Alcore menyimpan pembekal, model, masa, status, dan pembilang dilaporkan—tidak pernah gesaan, respons, titik akhir, kelayakan, atau badan ralat pembekal. Jumlah token hanya termasuk panggilan di mana pembekal memulangkan metadata penggunaan.",
     "heatmap": {
       "title": "Setahun aktiviti",
       "description": "Panggilan penyedia harian sepanjang tahun lalu, diwarnakan mengikut model paling banyak digunakan setiap hari.",
@@ -2056,7 +2182,7 @@
   "systemPage": {
     "eyebrow": "Pentadbiran",
     "title": "Sistem",
-    "description": "Pantau mesin dan masa jalan yang menempatkan kejadian Libre WebUI ini.",
+    "description": "Pantau mesin dan masa jalan yang menempatkan kejadian Alcore ini.",
     "updated": "Dikemas kini {{date}}",
     "refresh": "Muat semula maklumat sistem",
     "loadFailed": "Maklumat sistem tidak dapat dimuatkan.",
@@ -2074,7 +2200,7 @@
     },
     "host": {
       "title": "Hos & masa jalan",
-      "description": "Butiran sistem pengendalian, pemproses, dan proses Libre WebUI.",
+      "description": "Butiran sistem pengendalian, pemproses, dan proses Alcore.",
       "container": "Masa jalan kontena",
       "native": "Runtime asli",
       "hostname": "Nama hos",
@@ -2082,7 +2208,7 @@
       "processor": "Pemproses",
       "logicalCpus": "CPU logikal",
       "loadAverage": "Purata beban · 1 / 5 / 15 min",
-      "libreVersion": "Libre WebUI",
+      "libreVersion": "Alcore",
       "nodeVersion": "Node.js",
       "process": "Proses",
       "workingDirectory": "Direktori kerja"
@@ -2134,7 +2260,7 @@
       "internal": "dalaman",
       "empty": "Tiada antara muka rangkaian yang boleh dilihat oleh masa jalan aplikasi."
     },
-    "securityNote": "Halaman ini terhad kepada pentadbir. Pelayan hanya memulangkan ringkasan operasi: ia tidak mendedahkan pembolehubah persekitaran, kelayakan, label Docker, lekap, arahan kontena atau muatan pemeriksaan. Apabila Libre WebUI berjalan dalam kontena, butiran CPU dan ingatan peringkat hos datang dari Docker Engine apabila soket tempatannya tersedia; nilai lain menerangkan masa jalan aplikasi.",
+    "securityNote": "Halaman ini terhad kepada pentadbir. Pelayan hanya memulangkan ringkasan operasi: ia tidak mendedahkan pembolehubah persekitaran, kelayakan, label Docker, lekap, arahan kontena atau muatan pemeriksaan. Apabila Alcore berjalan dalam kontena, butiran CPU dan ingatan peringkat hos datang dari Docker Engine apabila soket tempatannya tersedia; nilai lain menerangkan masa jalan aplikasi.",
     "work": {
       "title": "Work",
       "description": "Kotak pasir semua pengguna",
@@ -2314,9 +2440,9 @@
     "referenceTranscript": "Transkrip rujukan yang tepat",
     "referenceTranscriptPlaceholder": "Masukkan dengan tepat perkara yang dituturkan dalam rakaman rujukan…",
     "referenceAudioTooLarge": "Audio rujukan mestilah {{max}} atau lebih kecil.",
-    "cloneConsent": "Klon suara hanya apabila anda mendapat kebenaran penutur. Rakaman dihantar kepada penyedia yang dipilih untuk penjanaan ini dan tidak disimpan oleh Libre WebUI.",
+    "cloneConsent": "Klon suara hanya apabila anda mendapat kebenaran penutur. Rakaman dihantar kepada penyedia yang dipilih untuk penjanaan ini dan tidak disimpan oleh Alcore.",
     "saveVoiceProfile": "Simpan sebagai suara yang boleh digunakan semula",
-    "saveVoiceProfileDescription": "Simpan rakaman rujukan dan transkrip ini dengan selamat. Libre WebUI menghantar kedua-duanya kepada penyedia yang dipilih untuk setiap kelompok Pertuturan yang menggunakan suara ini.",
+    "saveVoiceProfileDescription": "Simpan rakaman rujukan dan transkrip ini dengan selamat. Alcore menghantar kedua-duanya kepada penyedia yang dipilih untuk setiap kelompok Pertuturan yang menggunakan suara ini.",
     "voiceProfileName": "Nama suara tersimpan",
     "voiceProfileNamePlaceholder": "Contohnya, Suara saya",
     "voiceStorageConsent": "Saya mengesahkan bahawa saya mendapat kebenaran penutur untuk mengklon dan menyimpan suara ini. Rujukan akan kekal tersimpan sehingga saya memadamkannya.",
@@ -2554,7 +2680,7 @@
     "subtitle": "Ejen tempatan menjalankan, kelulusan, jadual, ingatan, alatan dan penggunaan.",
     "dashboard": "Papan pemuka",
     "connection": {
-      "disconnectedTitle": "Daemon Libre Claw tidak disambungkan",
+      "disconnectedTitle": "Daemon Alcore Claw tidak disambungkan",
       "disconnectedDescription": "Mulakannya secara setempat dengan <command>libre-claw start</command> atau tetapkan <env>LIBRE_CLAW_BASE_URL</env> dalam persekitaran bahagian belakang."
     },
     "status": {
@@ -2573,7 +2699,7 @@
     },
     "startRun": {
       "title": "Mulakan tugas ejen",
-      "placeholder": "Minta Libre Claw untuk memeriksa repo, membetulkan pepijat, menjalankan semakan, menjadualkan laporan...",
+      "placeholder": "Minta Alcore Claw untuk memeriksa repo, membetulkan pepijat, menjalankan semakan, menjadualkan laporan...",
       "chatRun": "Larian sembang",
       "goalMode": "Mod matlamat",
       "providerOverride": "Pembatalan pembekal",
@@ -2584,14 +2710,14 @@
       "title": "Laluan Model",
       "providerPlaceholder": "pembekal",
       "modelPlaceholder": "model",
-      "persistGlobal": "Berterusan untuk Libre Claw konfigurasi global",
+      "persistGlobal": "Berterusan untuk Alcore Claw konfigurasi global",
       "saveModel": "Simpan model",
-      "theme": "Tema Libre Claw",
+      "theme": "Tema Alcore Claw",
       "saveTheme": "Simpan tema"
     },
     "runs": {
       "title": "Tugas",
-      "empty": "Belum ada tugas Libre Claw."
+      "empty": "Belum ada tugas Alcore Claw."
     },
     "timeline": {
       "title": "Garis masa tugas",
@@ -2625,7 +2751,7 @@
       "schedulePlaceholder": "daily 09:00",
       "promptPlaceholder": "Gesaan automasi",
       "create": "Buat",
-      "empty": "Tiada automasi Libre Claw yang dijadualkan.",
+      "empty": "Tiada automasi Alcore Claw yang dijadualkan.",
       "runNow": "Jalankan sekarang",
       "pause": "jeda",
       "resume": "Sambung",
@@ -2666,19 +2792,19 @@
       "unknownError": "Ralat tidak diketahui"
     },
     "toasts": {
-      "loadStatusFailed": "Tidak dapat memuatkan status Libre Claw",
-      "enterTask": "Masukkan tugasan untuk Libre Claw",
-      "runStarted": "Tugas Libre Claw dimulakan",
-      "startRunFailed": "Tidak dapat memulakan tugas Libre Claw",
+      "loadStatusFailed": "Tidak dapat memuatkan status Alcore Claw",
+      "enterTask": "Masukkan tugasan untuk Alcore Claw",
+      "runStarted": "Tugas Alcore Claw dimulakan",
+      "startRunFailed": "Tidak dapat memulakan tugas Alcore Claw",
       "runCancelled": "Tugas dibatalkan",
       "cancelRunFailed": "Tidak dapat membatalkan tugas",
       "approved": "Diluluskan",
       "denied": "dinafikan",
       "resolvePermissionFailed": "Tidak dapat menyelesaikan kebenaran",
       "providerModelRequired": "Pembekal dan model diperlukan",
-      "modelUpdated": "Model Libre Claw dikemas kini",
+      "modelUpdated": "Model Alcore Claw dikemas kini",
       "updateModelFailed": "Tidak dapat mengemas kini model",
-      "themeUpdated": "Tema Libre Claw dikemas kini",
+      "themeUpdated": "Tema Alcore Claw dikemas kini",
       "updateThemeFailed": "Tidak dapat mengemas kini tema",
       "automationRequired": "Nama automasi, jadual dan segera diperlukan",
       "automationCreated": "Automasi dibuat",
@@ -3049,7 +3175,7 @@
     "title": "Apa yang baharu",
     "releaseNotes": "Nota keluaran",
     "cta": "Okay, mari mula",
-    "starAsk": "Suka Libre WebUI? Beri bintang di GitHub"
+    "starAsk": "Suka Alcore? Beri bintang di GitHub"
   },
   "notes": {
     "title": "Nota",
@@ -3502,7 +3628,7 @@
     "description": "Pelayan alat yang boleh dipanggil model, dan kelulusan yang anda berikan kepadanya.",
     "approvalNotice": "Alat yang mengubah data di luar sembang sentiasa meminta kelulusan, melainkan anda telah memberi alat itu kelulusan kekal atau kelulusan untuk sembang ini.",
     "registerServer": "Daftar pelayan",
-    "registerHint": "Libre WebUI membaca pelayan sekali dan menyemat alat yang didedahkannya. Segarkan pelayan kemudian untuk menangkap perubahan.",
+    "registerHint": "Alcore membaca pelayan sekali dan menyemat alat yang didedahkannya. Segarkan pelayan kemudian untuk menangkap perubahan.",
     "editServer": "Edit pelayan",
     "empty": "Tiada pelayan alat",
     "emptyHintAdmin": "Daftarkan pelayan OpenAPI atau MCP supaya model ada sesuatu untuk dipanggil.",
@@ -3891,6 +4017,7 @@
     "local": {
       "title": "Pelayan tempatan",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "Kunci API (pilihan)",
       "test": "Uji sambungan",
       "testing": "Menguji…",

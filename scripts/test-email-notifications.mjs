@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,7 @@ process.env.JWT_SECRET = 'email-test-secret-that-is-long-enough';
 process.env.ENCRYPTION_KEY ||= '7'.repeat(64);
 // Environment defaults the administrator can override from the UI.
 process.env.SMTP_HOST = 'env.mail.test';
-process.env.SMTP_FROM = 'Libre WebUI <env@example.test>';
+process.env.SMTP_FROM = 'Alcore <env@example.test>';
 process.env.SMTP_SECURITY = 'none';
 process.env.BASE_URL = 'https://chat.example.test';
 delete process.env.SMTP_USER;
@@ -219,7 +219,7 @@ test('email settings resolve from the environment, override from the UI, and nev
   const initial = await emailService.getSettings();
   assert.equal(initial.host, 'env.mail.test');
   assert.equal(initial.sources.host, 'env');
-  assert.equal(initial.from, 'Libre WebUI <env@example.test>');
+  assert.equal(initial.from, 'Alcore <env@example.test>');
   assert.equal(initial.security, 'none');
   assert.equal(initial.port, 587);
   assert.equal(initial.configured, true);
@@ -337,10 +337,10 @@ test('the settings routes hide server details from users and reject their writes
     assert.equal(smtp.messages.length, 1);
     assert.match(
       smtp.messages[0],
-      /^From: "Libre WebUI" <env@example\.test>\r\n/
+      /^From: "Alcore" <env@example\.test>\r\n/
     );
     assert.match(smtp.messages[0], /\r\nTo: admin@example\.test\r\n/);
-    assert.match(smtp.messages[0], /\r\nSubject: Libre WebUI test message\r\n/);
+    assert.match(smtp.messages[0], /\r\nSubject: Alcore test message\r\n/);
 
     const probeOnly = await call('POST', '/api/email/test', tokens.admin, {
       to: '',

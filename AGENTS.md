@@ -2,7 +2,7 @@
 
 ## Project overview
 
-Libre WebUI is a self-hosted, local-first AI workspace. The product must remain
+Alcore is a self-hosted, local-first AI workspace. The product must remain
 provider-flexible, private by default, and free of application telemetry. Remote
 providers and outbound integrations are opt-in; do not turn a local workflow
 into an implicit network dependency.
@@ -109,7 +109,7 @@ changes, also run `helm lint helm/libre-webui` and
   target. Do not reformat unrelated code.
 - Backend relative ESM imports use `.js` suffixes in TypeScript source. Frontend
   code may use the `@/` alias for `frontend/src`.
-- Preserve the Libre WebUI license header on TypeScript and JavaScript files.
+- Preserve the Alcore license header on TypeScript and JavaScript files.
   `npm run format` also adds missing source headers; review its complete diff.
 - Comments should explain intent, invariants, or non-obvious tradeoffs, not
   restate the code.

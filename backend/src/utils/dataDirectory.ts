@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -333,7 +333,7 @@ export const assertExistingStateHasLegacyEncryptionKey = (
 
 /**
  * Refuse to hide data written by the historical cwd-dependent backend script.
- * Operators must deliberately set DATA_DIR or migrate while Libre is stopped.
+ * Operators must deliberately set DATA_DIR or migrate while Alcore is stopped.
  */
 export const assertNoLegacyDataDirectoryConflict = (
   env: NodeJS.ProcessEnv = process.env,
@@ -372,7 +372,7 @@ export const assertNoLegacyDataDirectoryConflict = (
         hasKeyDependentApplicationState(historicalDirectory)
       ) {
         throw new Error(
-          `Legacy data exists at ${historicalDirectory}, where the relative DATA_DIR=${configuredDataDirectory} resolved from a historical process working directory. Libre now resolves it to ${selectedDataDirectory}. Stop Libre and use an absolute DATA_DIR or migrate the full data directory deliberately; startup will not choose or copy between them.`
+          `Legacy data exists at ${historicalDirectory}, where the relative DATA_DIR=${configuredDataDirectory} resolved from a historical process working directory. Alcore now resolves it to ${selectedDataDirectory}. Stop Alcore and use an absolute DATA_DIR or migrate the full data directory deliberately; startup will not choose or copy between them.`
         );
       }
     }
@@ -396,6 +396,6 @@ export const assertNoLegacyDataDirectoryConflict = (
   const legacyDatabase = path.join(legacyDataDirectory, 'data.sqlite');
   const canonicalDatabase = path.join(selectedDataDirectory, 'data.sqlite');
   throw new Error(
-    `Legacy data exists at ${legacyDatabase}. Libre is configured to use ${canonicalDatabase}. Stop Libre and either set DATA_DIR=${legacyDataDirectory} temporarily or migrate the full data directory deliberately; startup will not choose or copy between them.`
+    `Legacy data exists at ${legacyDatabase}. Alcore is configured to use ${canonicalDatabase}. Stop Alcore and either set DATA_DIR=${legacyDataDirectory} temporarily or migrate the full data directory deliberately; startup will not choose or copy between them.`
   );
 };

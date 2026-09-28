@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -26,18 +26,18 @@ type Parsed = {
 };
 
 const usage = `Usage:
-  libre-webui backup keygen --directory PATH
-  libre-webui backup create --output FILE --encryption-key FILE --signing-private-key FILE --offline [--data-dir PATH]
-  libre-webui backup create-team --output FILE --encryption-key FILE --signing-private-key FILE --offline
-  libre-webui backup inspect --archive FILE
-  libre-webui backup verify --archive FILE --signing-public-key FILE [--encryption-key FILE]
-  libre-webui backup restore-preflight --archive FILE --target PATH --signing-public-key FILE --encryption-key FILE
-  libre-webui backup restore-apply --archive FILE --target PATH --signing-public-key FILE --encryption-key FILE
-  libre-webui backup restore-team-preflight --archive FILE --signing-public-key FILE --encryption-key FILE
-  libre-webui backup restore-team-apply --archive FILE --signing-public-key FILE --encryption-key FILE --configuration-output PATH
-  libre-webui backup restore-verify --target PATH
+  alcore backup keygen --directory PATH
+  alcore backup create --output FILE --encryption-key FILE --signing-private-key FILE --offline [--data-dir PATH]
+  alcore backup create-team --output FILE --encryption-key FILE --signing-private-key FILE --offline
+  alcore backup inspect --archive FILE
+  alcore backup verify --archive FILE --signing-public-key FILE [--encryption-key FILE]
+  alcore backup restore-preflight --archive FILE --target PATH --signing-public-key FILE --encryption-key FILE
+  alcore backup restore-apply --archive FILE --target PATH --signing-public-key FILE --encryption-key FILE
+  alcore backup restore-team-preflight --archive FILE --signing-public-key FILE --encryption-key FILE
+  alcore backup restore-team-apply --archive FILE --signing-public-key FILE --encryption-key FILE --configuration-output PATH
+  alcore backup restore-verify --target PATH
 
-From a source checkout, replace "libre-webui backup" with "npm run recovery:backup --".
+From a source checkout, replace "alcore backup" with "npm run recovery:backup --".
 
 All JSON output is metadata-only. Secrets and user content are never printed.`;
 

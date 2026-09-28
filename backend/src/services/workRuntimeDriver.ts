@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -198,9 +198,9 @@ export class DockerWorkRuntimeDriver implements WorkRuntimeDriver {
         'volume',
         'create',
         '--label',
-        'ai.libre-webui.managed=true',
+        'ai.alcore.managed=true',
         '--label',
-        `ai.libre-webui.task=${task.id}`,
+        `ai.alcore.task=${task.id}`,
         task.volumeName,
       ],
       { abortSignal: signal }
@@ -395,9 +395,9 @@ export class DockerWorkRuntimeDriver implements WorkRuntimeDriver {
         '--all',
         '--no-trunc',
         '--filter',
-        'label=ai.libre-webui.managed=true',
+        'label=ai.alcore.managed=true',
         '--format',
-        '{{.Names}}\t{{.State}}\t{{.Label "ai.libre-webui.task"}}',
+        '{{.Names}}\t{{.State}}\t{{.Label "ai.alcore.task"}}',
       ],
       { timeoutMs: 15_000 }
     );
@@ -598,7 +598,7 @@ export class DockerWorkRuntimeDriver implements WorkRuntimeDriver {
         'network',
         'inspect',
         '--format',
-        '{{index .Labels "ai.libre-webui.managed"}} {{index .Options "com.docker.network.bridge.enable_icc"}}',
+        '{{index .Labels "ai.alcore.managed"}} {{index .Options "com.docker.network.bridge.enable_icc"}}',
         config.networkName,
       ],
       { acceptFailure: true }
@@ -607,7 +607,7 @@ export class DockerWorkRuntimeDriver implements WorkRuntimeDriver {
       const [managed, icc] = inspect.stdout.trim().split(' ');
       if (managed !== 'true' || icc !== 'false') {
         throw new WorkRuntimeError(
-          `Docker network "${config.networkName}" exists but is not the managed Work sandbox network (label ai.libre-webui.managed=true with inter-container communication disabled). Remove it or point WORK_NETWORK_NAME at an unused name.`,
+          `Docker network "${config.networkName}" exists but is not the managed Work sandbox network (label ai.alcore.managed=true with inter-container communication disabled). Remove it or point WORK_NETWORK_NAME at an unused name.`,
           503,
           'WORK_NETWORK_CONFLICT'
         );
@@ -619,7 +619,7 @@ export class DockerWorkRuntimeDriver implements WorkRuntimeDriver {
         'network',
         'create',
         '--label',
-        'ai.libre-webui.managed=true',
+        'ai.alcore.managed=true',
         '--opt',
         'com.docker.network.bridge.enable_icc=false',
         config.networkName,
@@ -716,7 +716,7 @@ export class DockerWorkRuntimeDriver implements WorkRuntimeDriver {
     const result = await this.docker([
       'inspect',
       '--format',
-      '{{ index .Config.Labels "ai.libre-webui.task" }}',
+      '{{ index .Config.Labels "ai.alcore.task" }}',
       task.containerName,
     ]);
     if (result.stdout.trim() !== task.id) {
@@ -787,9 +787,9 @@ export class DockerWorkRuntimeDriver implements WorkRuntimeDriver {
             audioBindings[0]?.HostIp === config.previewBind))
       : Object.keys(portBindings).length === 0;
     return (
-      labels['ai.libre-webui.managed'] === 'true' &&
-      labels['ai.libre-webui.task'] === task.id &&
-      labels['ai.libre-webui.policy'] === computePolicyFingerprint(policy) &&
+      labels['ai.alcore.managed'] === 'true' &&
+      labels['ai.alcore.task'] === task.id &&
+      labels['ai.alcore.policy'] === computePolicyFingerprint(policy) &&
       containerConfig.Image === policy.image &&
       containerConfig.User === '1000:1000' &&
       containerConfig.WorkingDir === '/workspace' &&
@@ -817,7 +817,7 @@ export class DockerWorkRuntimeDriver implements WorkRuntimeDriver {
       'volume',
       'inspect',
       '--format',
-      '{{ index .Labels "ai.libre-webui.task" }}',
+      '{{ index .Labels "ai.alcore.task" }}',
       task.volumeName,
     ]);
     if (result.stdout.trim() !== task.id) {
@@ -929,7 +929,7 @@ export function formatPreviewHost(host: string): string {
 
 /**
  * Turn a failed `docker info` into the change an operator has to make. These
- * are the three ways a containerized Libre WebUI fails to reach the daemon:
+ * are the three ways a containerized Alcore fails to reach the daemon:
  * the image has no CLI, the bind-mounted socket is owned by a group the
  * backend user is not in, or no daemon is listening.
  */
@@ -940,17 +940,17 @@ export function describeDockerUnavailable(
   const message = error instanceof Error ? error.message : String(error);
 
   if (/ENOENT/.test(message)) {
-    return `The "${dockerCommand}" CLI is not installed in the Libre WebUI runtime. Run an image that ships the Docker CLI and mount the host Docker socket, or point WORK_DOCKER_COMMAND at the CLI path.`;
+    return `The "${dockerCommand}" CLI is not installed in the Alcore runtime. Run an image that ships the Docker CLI and mount the host Docker socket, or point WORK_DOCKER_COMMAND at the CLI path.`;
   }
   if (/EACCES/.test(message) || /permission denied/i.test(message)) {
-    return 'The Docker socket is mounted but the Libre WebUI user cannot open it. Add the backend user to the group that owns /var/run/docker.sock (Compose: group_add with the socket GID).';
+    return 'The Docker socket is mounted but the Alcore user cannot open it. Add the backend user to the group that owns /var/run/docker.sock (Compose: group_add with the socket GID).';
   }
   if (
     /cannot connect to the docker daemon/i.test(message) ||
     /is the docker daemon running/i.test(message) ||
     /no such file or directory/i.test(message)
   ) {
-    return 'No Docker daemon is reachable. Start Docker, mount the host socket into the Libre WebUI container with -v /var/run/docker.sock:/var/run/docker.sock, or point DOCKER_HOST at a reachable Docker API endpoint such as a socket proxy.';
+    return 'No Docker daemon is reachable. Start Docker, mount the host socket into the Alcore container with -v /var/run/docker.sock:/var/run/docker.sock, or point DOCKER_HOST at a reachable Docker API endpoint such as a socket proxy.';
   }
 
   return message;
@@ -967,11 +967,11 @@ export function buildWorkContainerRunArgs(
     task.containerName,
     '--init',
     '--label',
-    'ai.libre-webui.managed=true',
+    'ai.alcore.managed=true',
     '--label',
-    `ai.libre-webui.task=${task.id}`,
+    `ai.alcore.task=${task.id}`,
     '--label',
-    `ai.libre-webui.policy=${computePolicyFingerprint(policy)}`,
+    `ai.alcore.policy=${computePolicyFingerprint(policy)}`,
     '--user',
     '1000:1000',
     '--workdir',

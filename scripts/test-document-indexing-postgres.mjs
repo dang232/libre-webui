@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -55,7 +55,7 @@ test(
         'DATA_DIR',
         'ENCRYPTION_KEY',
         'JOB_WORKER_MODE',
-        'LIBRE_PLATFORM_MODE',
+        'ALCORE_PLATFORM_MODE',
         'POSTGRES_APPLICATION_NAME',
         'S3_BUCKET',
         'S3_REGION',
@@ -85,7 +85,7 @@ test(
       DATA_DIR: temporaryRoot,
       ENCRYPTION_KEY: '7'.repeat(64),
       JOB_WORKER_MODE: 'embedded',
-      LIBRE_PLATFORM_MODE: 'solo',
+      ALCORE_PLATFORM_MODE: 'solo',
       POSTGRES_APPLICATION_NAME: 'libre-document-indexing-test',
       S3_BUCKET: 'document-indexing-test',
       S3_REGION: 'us-east-1',

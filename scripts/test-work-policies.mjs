@@ -302,7 +302,7 @@ test('container args and Pod manifests are built from the resolved policy', () =
   assert.equal(optionValue(args, '--pids-limit'), '512');
   assert.ok(args.includes(policy.image));
   assert.ok(
-    args.includes(`ai.libre-webui.policy=${computePolicyFingerprint(policy)}`)
+    args.includes(`ai.alcore.policy=${computePolicyFingerprint(policy)}`)
   );
   assert.ok(!args.includes(runtimePolicyFingerprint));
 
@@ -311,7 +311,7 @@ test('container args and Pod manifests are built from the resolved policy', () =
   assert.equal(pod.spec.containers[0].resources.limits.memory, '8Gi');
   assert.equal(pod.spec.containers[0].resources.limits.cpu, '4');
   assert.equal(
-    pod.metadata.annotations['ai.libre-webui.policy'],
+    pod.metadata.annotations['ai.alcore.policy'],
     computePolicyFingerprint(policy)
   );
 

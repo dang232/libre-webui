@@ -119,8 +119,8 @@ test('the idle sweep defaults to thirty minutes and is off while recovering', as
 });
 
 test('an external-worker HTTP replica never owns the global idle sweep', async () => {
-  const previousRole = process.env.LIBRE_PROCESS_ROLE;
-  process.env.LIBRE_PROCESS_ROLE = 'app-external';
+  const previousRole = process.env.ALCORE_PROCESS_ROLE;
+  process.env.ALCORE_PROCESS_ROLE = 'app-external';
   const service = new WorkRuntimeService();
   let listed = 0;
   service.driver.listManaged = async () => {
@@ -140,8 +140,8 @@ test('an external-worker HTTP replica never owns the global idle sweep', async (
     );
   } finally {
     service.beginShutdown();
-    if (previousRole === undefined) delete process.env.LIBRE_PROCESS_ROLE;
-    else process.env.LIBRE_PROCESS_ROLE = previousRole;
+    if (previousRole === undefined) delete process.env.ALCORE_PROCESS_ROLE;
+    else process.env.ALCORE_PROCESS_ROLE = previousRole;
   }
 });
 

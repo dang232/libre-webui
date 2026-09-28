@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  */
 
 /**
- * Whether the Agents section (Libre Claw and agent CLI models) is offered.
+ * Whether the Agents section (Alcore Claw and agent CLI models) is offered.
  * Agent CLIs run on the host as the server user — outside the Work sandbox —
  * so the feature ships disabled and an administrator must opt in. The
  * decision is a persisted system setting read on every check, mirroring the

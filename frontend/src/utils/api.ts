@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -137,6 +137,18 @@ export type {
 export { preferencesApi } from './api/preferencesApi';
 export { systemApi } from './api/systemApi';
 export type { SystemDiagnostics } from './api/systemApi';
+export { tokenpanelApi } from './api/tokenpanelApi';
+export type { PortalTokenGrant } from './api/tokenpanelApi';
+export { tokenpanelAccountApi } from './api/tokenpanelAccountApi';
+export type {
+  AccountBudget,
+  AccountLimit,
+  AccountProfile,
+  AccountSpendingCap,
+  AccountSubscription,
+  BillingPeriod,
+  SubscribeResult,
+} from './api/tokenpanelAccountApi';
 export { workApi } from './api/workApi';
 export { ttsApi } from './api/ttsApi';
 export { sttApi } from './api/sttApi';

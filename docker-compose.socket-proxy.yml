@@ -1,4 +1,4 @@
-# Socket-isolated deployment: Libre WebUI never sees the Docker socket.
+# Socket-isolated deployment: Alcore never sees the Docker socket.
 #
 # A socket proxy holds /var/run/docker.sock and forwards only the API
 # sections Work needs (containers, images, volumes, networks, exec, info).
@@ -11,8 +11,8 @@
 #
 #   docker compose -f docker-compose.socket-proxy.yml up -d
 services:
-  libre-webui:
-    image: librewebui/libre-webui:latest
+  alcore:
+    image: alcore/alcore:latest
     ports:
       - '${WEBUI_BIND_ADDRESS:-127.0.0.1}:${WEBUI_PORT:-8080}:3001'
     extra_hosts:
@@ -41,7 +41,7 @@ services:
       - ENCRYPTION_KEY=${ENCRYPTION_KEY:-}
       # Platform foundation selectors. Shared backends remain fail-closed;
       # Redis coordination is usable in solo mode with an external REDIS_URL.
-      - LIBRE_PLATFORM_MODE=${LIBRE_PLATFORM_MODE:-solo}
+      - ALCORE_PLATFORM_MODE=${ALCORE_PLATFORM_MODE:-solo}
       - DATABASE_BACKEND=${DATABASE_BACKEND:-sqlite}
       - DATABASE_URL=${DATABASE_URL:-}
       - BLOB_STORE_BACKEND=${BLOB_STORE_BACKEND:-local}

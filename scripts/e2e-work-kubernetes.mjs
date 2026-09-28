@@ -27,7 +27,7 @@ if (!saKubeconfig) {
 }
 const adminKubeconfig =
   process.env.ADMIN_KUBECONFIG || path.join(os.homedir(), '.kube', 'config');
-const namespace = process.env.WORK_K8S_NAMESPACE || 'libre-webui-work';
+const namespace = process.env.WORK_K8S_NAMESPACE || 'alcore-work';
 const releaseName = process.env.RELEASE_NAME || 'lw-ci';
 const releaseNamespace = process.env.RELEASE_NAMESPACE || 'default';
 
@@ -183,7 +183,7 @@ try {
   const fetched = await probe(
     'lw-e2e-backend-probe',
     releaseNamespace,
-    `app.kubernetes.io/name=libre-webui,app.kubernetes.io/instance=${releaseName}`,
+    `app.kubernetes.io/name=alcore,app.kubernetes.io/instance=${releaseName}`,
     `http://${endpoint.host}:${endpoint.port}/`
   );
   if (!fetched.includes('preview-e2e')) fail(`backend fetch: ${fetched}`);

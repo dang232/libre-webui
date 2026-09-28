@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -700,7 +700,7 @@ export function MediaGenerationPanel({
                           <span className='mt-0.5 block text-xs font-normal text-gray-500 dark:text-dark-500'>
                             {t('mediaGeneration.saveVoiceProfileDescription', {
                               defaultValue:
-                                'Store this reference recording and transcript securely. Libre WebUI sends them to the selected provider for every Speech batch that uses this voice.',
+                                'Store this reference recording and transcript securely. Alcore sends them to the selected provider for every Speech batch that uses this voice.',
                             })}
                           </span>
                         </span>

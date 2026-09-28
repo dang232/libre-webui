@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,7 +41,7 @@ async function prepareLocationForm(page: Page, language = 'en') {
     ({ location, locale }) => {
       localStorage.setItem('i18nextLng', locale);
       localStorage.setItem(
-        'libre-webui-celestial',
+        'alcore-celestial',
         JSON.stringify({ location, weatherEnabled: false })
       );
       Object.defineProperty(navigator, 'geolocation', {
@@ -63,7 +63,7 @@ async function prepareLocationForm(page: Page, language = 'en') {
 
 const storedPreferences = (page: Page) =>
   page.evaluate(() =>
-    JSON.parse(localStorage.getItem('libre-webui-celestial') || '{}')
+    JSON.parse(localStorage.getItem('alcore-celestial') || '{}')
   );
 
 test('invalid coordinate drafts preserve the saved location and weather preference', async ({

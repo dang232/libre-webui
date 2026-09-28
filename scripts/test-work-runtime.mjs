@@ -222,7 +222,7 @@ test('Work runtime defaults pin the image and bound resource use', () => {
     screenPort: 6080,
     // Work Computer audio bridge (websockify → PulseAudio monitor).
     audioPort: 6081,
-    networkName: 'libre-webui-work',
+    networkName: 'alcore-work',
     // Idle-stop is opt-in: 0 keeps previews running until stopped.
     idleTimeoutMs: 30 * 60_000,
   });
@@ -426,9 +426,9 @@ test('the policy match demands exactly the ports the policy publishes', async ()
   const inspectFixture = (policy, portBindings, networkMode) => ({
     Config: {
       Labels: {
-        'ai.libre-webui.managed': 'true',
-        'ai.libre-webui.task': baseTask.id,
-        'ai.libre-webui.policy': computePolicyFingerprint(policy),
+        'ai.alcore.managed': 'true',
+        'ai.alcore.task': baseTask.id,
+        'ai.alcore.policy': computePolicyFingerprint(policy),
       },
       Image: policy.image,
       User: '1000:1000',
@@ -445,7 +445,7 @@ test('the policy match demands exactly the ports the policy publishes', async ()
       Memory: 2147483648,
       MemorySwap: 2147483648,
       NanoCpus: 2000000000,
-      NetworkMode: networkMode ?? 'libre-webui-work',
+      NetworkMode: networkMode ?? 'alcore-work',
       PortBindings: portBindings,
     },
     Mounts: [
@@ -774,11 +774,11 @@ test('network-disabled containers use a non-root, least-privilege policy', () =>
   assert.equal(optionValue(args, '--cap-drop'), 'ALL');
   assert.equal(optionValue(args, '--security-opt'), 'no-new-privileges');
   const labels = optionValues(args, '--label');
-  assert.ok(labels.includes('ai.libre-webui.managed=true'));
-  assert.ok(labels.includes(`ai.libre-webui.task=${task.id}`));
+  assert.ok(labels.includes('ai.alcore.managed=true'));
+  assert.ok(labels.includes(`ai.alcore.task=${task.id}`));
   assert.match(
-    labels.find(label => label.startsWith('ai.libre-webui.policy=')) || '',
-    /^ai\.libre-webui\.policy=[a-f0-9]{64}$/
+    labels.find(label => label.startsWith('ai.alcore.policy=')) || '',
+    /^ai\.alcore\.policy=[a-f0-9]{64}$/
   );
   assert.match(optionValue(args, '--tmpfs'), /^\/tmp:rw,/);
   assert.match(optionValue(args, '--tmpfs'), /(?:^|,)nosuid(?:,|$)/);

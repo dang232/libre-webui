@@ -41,8 +41,8 @@
     "more": "Nhiều"
   },
   "brand": {
-    "name": "Libre WebUI",
-    "shortName": "Libre"
+    "name": "Alcore",
+    "shortName": "Alcore"
   },
   "appInitialization": {
     "ollamaUnavailable": "Dịch vụ Ollama không khả dụng. Vẫn có thể sử dụng các mô hình plugin.",
@@ -191,9 +191,9 @@
   },
   "setup": {
     "welcome": {
-      "title": "Chào mừng đến với Libre WebUI",
+      "title": "Chào mừng đến với Alcore",
       "subtitle": "Hãy bắt đầu",
-      "description": "Thiết lập phiên bản Libre WebUI của bạn chỉ trong vài bước",
+      "description": "Thiết lập phiên bản Alcore của bạn chỉ trong vài bước",
       "createAdmin": "Tạo tài khoản quản trị",
       "features": {
         "secure": {
@@ -213,7 +213,7 @@
     "admin": {
       "title": "Tạo tài khoản quản trị",
       "subtitle": "Thiết lập quản trị viên",
-      "description": "Tạo tài khoản quản trị đầu tiên cho phiên bản Libre WebUI của bạn",
+      "description": "Tạo tài khoản quản trị đầu tiên cho phiên bản Alcore của bạn",
       "usernamePlaceholder": "Nhập tên người dùng quản trị",
       "passwordPlaceholder": "Nhập mật khẩu (ít nhất 12 ký tự)",
       "confirmPlaceholder": "Xác nhận mật khẩu của bạn",
@@ -223,7 +223,7 @@
       "failed": "Không thể tạo tài khoản quản trị",
       "approvalUnexpected": "Không thể kích hoạt quản trị viên ban đầu. Vui lòng thử lại.",
       "fillAllFields": "Vui lòng điền tất cả các trường",
-      "note": "Đây sẽ là tài khoản quản trị chính cho phiên bản Libre WebUI của bạn"
+      "note": "Đây sẽ là tài khoản quản trị chính cho phiên bản Alcore của bạn"
     },
     "encryptionKey": {
       "title": "Lưu khóa mã hóa của bạn",
@@ -239,7 +239,7 @@
       "envNote": "Khóa này cũng được lưu trong tệp backend/.env của bạn dưới dạng ENCRYPTION_KEY",
       "acknowledgment": "Tôi đã lưu khóa mã hóa của tôi ở nơi an toàn và hiểu rằng việc mất nó có thể dẫn đến mất dữ liệu.",
       "confirmRequired": "Vui lòng xác nhận rằng bạn đã lưu khóa mã hóa",
-      "continue": "Tiếp tục đến Libre WebUI"
+      "continue": "Tiếp tục đến Alcore"
     },
     "connectModels": {
       "title": "Kết nối mô hình của bạn",
@@ -600,7 +600,8 @@
       "sessions": "Phiên đăng nhập",
       "apiKeys": "Khóa API",
       "notifications": "Thông báo",
-      "ollamaDisabled": "Ollama đã bị quản trị viên vô hiệu hóa"
+      "ollamaDisabled": "Ollama đã bị quản trị viên vô hiệu hóa",
+      "apiPlatform": "API Platform"
     },
     "appearance": {
       "title": "Giao diện",
@@ -1047,7 +1048,7 @@
       "toSkip": "sẽ bỏ qua",
       "documents": "Tài liệu",
       "warnings": "Cảnh báo",
-      "refreshAfterImportFailed": "Dữ liệu đã được nhập, nhưng không thể làm mới một số chế độ xem. Hãy tải lại Libre WebUI để xem mọi thay đổi.",
+      "refreshAfterImportFailed": "Dữ liệu đã được nhập, nhưng không thể làm mới một số chế độ xem. Hãy tải lại Alcore để xem mọi thay đổi.",
       "exportSuccess": "Đã xuất tệp lưu trữ dữ liệu di động",
       "exportFailed": "Xuất thất bại",
       "importSuccess": "Đã nhập tệp lưu trữ dữ liệu di động",
@@ -1056,7 +1057,7 @@
         "invalidJson": "Tệp lưu trữ di động không phải là JSON hợp lệ.",
         "objectRequired": "Tệp lưu trữ di động phải chứa một đối tượng JSON.",
         "unsupportedVersion": "Không hỗ trợ phiên bản {{version}} của tệp lưu trữ di động.",
-        "unrecognized": "Tệp này không phải là tệp lưu trữ di động của Libre WebUI."
+        "unrecognized": "Tệp này không phải là tệp lưu trữ di động của Alcore."
       },
       "errors": "Lỗi",
       "archivedChats": {
@@ -1241,6 +1242,131 @@
       "emailMentionsHint": "Gửi email cho tôi khi có người nhắc đến tôi trong một kênh.",
       "emailAutomations": "Kết quả tự động hóa",
       "emailAutomationsHint": "Gửi email cho tôi kết quả của mỗi lần chạy tự động hóa, dù thành công hay thất bại."
+    },
+    "apiPlatform": {
+      "title": "API Platform",
+      "description": "API keys, usage, billing and the playground live in the ALcore API Platform ({{host}}), opening in a new tab.",
+      "note": "Opening a section signs you into the portal automatically with a short-lived session.",
+      "keysTitle": "API keys",
+      "keysDescription": "Create, reveal and rotate your tp_live_* customer keys.",
+      "keysOpen": "Open Keys",
+      "usageTitle": "Usage & billing",
+      "usageDescription": "Request overview, daily usage, records, top-ups, orders and invoices.",
+      "usageOpen": "Open Usage",
+      "billingOpen": "Open Billing",
+      "playgroundTitle": "Playground",
+      "playgroundDescription": "Try models with a customer key over the OpenAI-compatible /v1 API.",
+      "playgroundOpen": "Open Playground",
+      "opening": "Opening…",
+      "bridgeFailed": "Couldn't open the API Platform. Check the connection and try again.",
+      "usageLiveTitle": "Usage on this account",
+      "usageLiveDescription": "Live totals from the API Platform — the same numbers as the portal.",
+      "usageRequests": "Requests",
+      "usageInputTokens": "Input tokens",
+      "usageOutputTokens": "Output tokens",
+      "usageTotalTokens": "Total tokens",
+      "usageSpend": "Spend",
+      "usageTotalsNote": "Totals equal the usage API for the same window; spend shows exact micros with the whole-unit equivalent below.",
+      "usageByModel": "By model",
+      "usageModel": "Model",
+      "usageRecent": "Recent requests",
+      "usageOccurredAt": "Occurred at",
+      "usageLoading": "Loading usage…",
+      "usageFailed": "Couldn't load usage. Check the connection and try again.",
+      "usageRetry": "Retry",
+      "usageEmpty": "No usage in this window.",
+      "accountTitle": "Account",
+      "accountDescription": "Subscription, budgets, spending limits and profile, synced with the API Platform through this workspace.",
+      "accountLoading": "Loading account…",
+      "accountLoadFailed": "Couldn't load account details. Check the connection and try again.",
+      "accountRetry": "Retry",
+      "subscriptionTitle": "Subscription",
+      "subscriptionActive": "Active subscription.",
+      "subscriptionNone": "No active subscription.",
+      "plansTitle": "Plan",
+      "billingPeriod": "Billing period",
+      "planSubscribe": "Subscribe",
+      "saving": "Saving…",
+      "budgetsTitle": "Budgets",
+      "budgetAmount": "Amount (micros)",
+      "budgetThresholds": "Alert thresholds (0–100, comma-separated)",
+      "budgetSave": "Save budget",
+      "limitsTitle": "Spending limits",
+      "limitsNone": "No spending cap set.",
+      "capAmount": "Max spend (micros)",
+      "capWindow": "Window (seconds)",
+      "capSave": "Save cap",
+      "capClear": "Clear cap",
+      "profileTitle": "Profile",
+      "profileName": "Name",
+      "profileEmail": "Email",
+      "profileSave": "Save profile",
+      "savedOk": "Saved.",
+      "saveFailed": "Couldn't save {{label}}: check the values and try again.",
+      "keysNativeTitle": "API keys in Libre",
+      "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
+      "keyNameLabel": "Key name",
+      "keyNamePlaceholder": "e.g. production-app",
+      "quotaMicrosLabel": "Quota (micros, optional)",
+      "quotaMicrosPlaceholder": "e.g. 5000000",
+      "keyCreate": "Create key",
+      "keyCreating": "Creating…",
+      "keyReveal": "Reveal",
+      "keyRotate": "Rotate",
+      "keyRotating": "Rotating…",
+      "keyRevoke": "Revoke",
+      "keyRevoked": "Revoked {{name}}.",
+      "keyCopy": "Copy",
+      "keyCopied": "Copied",
+      "keyDismiss": "Dismiss",
+      "secretOnceWarning": "Copy it now — this full secret is shown exactly once and never again.",
+      "secretForLabel": "Full secret for {{name}}",
+      "keysEmpty": "No API keys yet. Create your first key above.",
+      "keysLoadFailed": "Couldn't load API keys. Check the connection and try again.",
+      "keysRetry": "Retry",
+      "keysCount": "{{count}} keys",
+      "keyStatusActive": "active",
+      "keyStatusRevoked": "revoked",
+      "quotaLabel": "quota",
+      "actionFailed": "That action failed. Try again.",
+      "projectsNativeTitle": "Projects",
+      "projectsNativeDescription": "Projects in your organization with per-project key counts.",
+      "projectsEmpty": "No projects yet.",
+      "projectsLoadFailed": "Couldn't load projects. Check the connection and try again.",
+      "keyCountLabel": "{{count}} keys",
+      "platformDefaultTitle": "Default chat model",
+      "platformDefaultDescription": "New chats start on the ALcore API Platform automatically — no local model or key setup needed. Local Ollama stays available as an opt-in provider.",
+      "platformDefaultCurrent": "Chatting via the ALcore API Platform (default-chat).",
+      "platformDefaultUnavailable": "The API Platform model isn't ready for this account yet (an email address is required for automatic setup). You can still chat with a local or cloud model.",
+      "platformDefaultUse": "Use ALcore API Platform",
+      "platformDefaultUsing": "Switching…"
+    },
+    "billing": {
+      "historyTitle": "Billing history",
+      "historyDescription": "Balance movements settled server-side, newest first.",
+      "historyFailed": "Couldn't load billing history. Check the connection and try again.",
+      "historyEmpty": "No billing entries yet.",
+      "rechargeTitle": "Recharge",
+      "rechargeDescription": "Create a top-up intent, then pay with the QR code before it expires. Settlement happens server-side.",
+      "amountLabel": "Amount (major units)",
+      "amountInvalid": "Enter a positive amount with up to 6 decimals.",
+      "createIntent": "Create recharge intent",
+      "intentFailed": "Couldn't create the recharge intent. Try again.",
+      "intentExpired": "That QR code expired. Create a fresh intent.",
+      "qrExpiresIn": "QR code expires in {{countdown}}",
+      "qrExpired": "QR code expired — create a fresh intent.",
+      "qrNoExpiry": "This intent has no QR expiry.",
+      "qrOpenLink": "Open payment link",
+      "refreshIntent": "Refresh status",
+      "cancelIntent": "Cancel intent",
+      "redeemTitle": "Redeem",
+      "redeemDescription": "Redeem a voucher code. Crediting happens server-side.",
+      "redeemLabel": "Voucher code",
+      "redeemInvalid": "Enter a code between 4 and 64 characters.",
+      "redeemAction": "Redeem",
+      "redeemFailed": "That code is invalid or already redeemed.",
+      "redeemDone": "Redeemed.",
+      "redeemCredited": "Redeemed: {{amount}}"
     }
   },
   "models": {
@@ -1322,7 +1448,7 @@
       "saveFile": "Lưu tệp",
       "formatCode": "Định dạng mã"
     },
-    "description": "Tất cả phím tắt có trong Libre WebUI.",
+    "description": "Tất cả phím tắt có trong Alcore.",
     "newChat": "Trò chuyện mới",
     "newWork": "Phiên Work mới",
     "openPalette": "Mở bảng lệnh"
@@ -1701,7 +1827,7 @@
   "userManager": {
     "title": "Quản lý người dùng",
     "subtitle": "Quản lý tài khoản và quyền hạn người dùng",
-    "pageDescription": "Quản lý tài khoản người dùng, quyền và kiểm soát truy cập cho phiên bản Libre WebUI của bạn.",
+    "pageDescription": "Quản lý tài khoản người dùng, quyền và kiểm soát truy cập cho phiên bản Alcore của bạn.",
     "sections": {
       "users": "Người dùng",
       "access": "Quyền truy cập và chính sách",
@@ -1829,7 +1955,7 @@
     },
     "agentAccess": {
       "title": "Tác nhân",
-      "description": "Cung cấp mục Tác nhân (Libre Claw) cho quản trị viên. CLI tác nhân chạy trên máy chủ với tư cách người dùng máy chủ, bên ngoài sandbox Work.",
+      "description": "Cung cấp mục Tác nhân (Alcore Claw) cho quản trị viên. CLI tác nhân chạy trên máy chủ với tư cách người dùng máy chủ, bên ngoài sandbox Work.",
       "saved": "Đã cập nhật quyền truy cập tác nhân",
       "saveFailed": "Không thể cập nhật quyền truy cập tác nhân",
       "lockedByEnv": "Bị khóa bởi biến môi trường AGENT_CLI_MODELS_ENABLED."
@@ -2041,7 +2167,7 @@
       "title": "Chưa có lệnh gọi nhà cung cấp",
       "description": "Các lệnh gọi sẽ hiển thị tại đây sau khi một plugin đã bật xử lý yêu cầu trò chuyện, Work, nhúng, hình ảnh, giọng nói, âm thanh hoặc video."
     },
-    "privacyNote": "Mức sử dụng được đo trên máy chủ tại ranh giới plugin gửi đi. Libre WebUI lưu trữ nhà cung cấp, mô hình, thời gian, trạng thái và bộ đếm đã báo cáo—không bao gồm lời nhắc, phản hồi, điểm cuối, thông tin xác thực hoặc nội dung lỗi của nhà cung cấp. Tổng token chỉ bao gồm các lệnh gọi mà nhà cung cấp trả về siêu dữ liệu sử dụng.",
+    "privacyNote": "Mức sử dụng được đo trên máy chủ tại ranh giới plugin gửi đi. Alcore lưu trữ nhà cung cấp, mô hình, thời gian, trạng thái và bộ đếm đã báo cáo—không bao gồm lời nhắc, phản hồi, điểm cuối, thông tin xác thực hoặc nội dung lỗi của nhà cung cấp. Tổng token chỉ bao gồm các lệnh gọi mà nhà cung cấp trả về siêu dữ liệu sử dụng.",
     "heatmap": {
       "title": "Một năm hoạt động",
       "description": "Lượt gọi nhà cung cấp hằng ngày trong năm qua, tô màu theo mô hình được dùng nhiều nhất mỗi ngày.",
@@ -2056,7 +2182,7 @@
   "systemPage": {
     "eyebrow": "Quản trị",
     "title": "Hệ thống",
-    "description": "Giám sát máy và môi trường chạy lưu trữ phiên bản Libre WebUI này.",
+    "description": "Giám sát máy và môi trường chạy lưu trữ phiên bản Alcore này.",
     "updated": "Đã cập nhật {{date}}",
     "refresh": "Làm mới thông tin hệ thống",
     "loadFailed": "Không thể tải thông tin hệ thống.",
@@ -2074,7 +2200,7 @@
     },
     "host": {
       "title": "Máy chủ & môi trường chạy",
-      "description": "Hệ điều hành, bộ xử lý và chi tiết tiến trình Libre WebUI.",
+      "description": "Hệ điều hành, bộ xử lý và chi tiết tiến trình Alcore.",
       "container": "Môi trường chạy container",
       "native": "Runtime gốc",
       "hostname": "Tên máy chủ",
@@ -2082,7 +2208,7 @@
       "processor": "Bộ xử lý",
       "logicalCpus": "CPU logic",
       "loadAverage": "Tải trung bình · 1 / 5 / 15 phút",
-      "libreVersion": "Libre WebUI",
+      "libreVersion": "Alcore",
       "nodeVersion": "Node.js",
       "process": "Tiến trình",
       "workingDirectory": "Thư mục làm việc"
@@ -2134,7 +2260,7 @@
       "internal": "nội bộ",
       "empty": "Không có giao diện mạng nào hiển thị với thời gian chạy của ứng dụng."
     },
-    "securityNote": "Trang này chỉ dành cho quản trị viên. Máy chủ chỉ trả về tóm tắt hoạt động: nó không tiết lộ biến môi trường, thông tin xác thực, nhãn Docker, điểm gắn kết, lệnh container hoặc payload kiểm tra. Khi Libre WebUI chạy trong container, chi tiết CPU và bộ nhớ cấp máy chủ đến từ Docker Engine khi socket cục bộ của nó khả dụng; các giá trị khác mô tả thời gian chạy của ứng dụng.",
+    "securityNote": "Trang này chỉ dành cho quản trị viên. Máy chủ chỉ trả về tóm tắt hoạt động: nó không tiết lộ biến môi trường, thông tin xác thực, nhãn Docker, điểm gắn kết, lệnh container hoặc payload kiểm tra. Khi Alcore chạy trong container, chi tiết CPU và bộ nhớ cấp máy chủ đến từ Docker Engine khi socket cục bộ của nó khả dụng; các giá trị khác mô tả thời gian chạy của ứng dụng.",
     "work": {
       "title": "Work",
       "description": "Sandbox của mọi người dùng",
@@ -2314,9 +2440,9 @@
     "referenceTranscript": "Bản chép lời tham chiếu chính xác",
     "referenceTranscriptPlaceholder": "Nhập chính xác nội dung được nói trong bản ghi tham chiếu…",
     "referenceAudioTooLarge": "Âm thanh tham chiếu phải có dung lượng {{max}} trở xuống.",
-    "cloneConsent": "Chỉ sao chép giọng khi bạn có sự cho phép của người nói. Bản ghi được gửi đến nhà cung cấp đã chọn cho lần tạo này và Libre WebUI không lưu bản ghi.",
+    "cloneConsent": "Chỉ sao chép giọng khi bạn có sự cho phép của người nói. Bản ghi được gửi đến nhà cung cấp đã chọn cho lần tạo này và Alcore không lưu bản ghi.",
     "saveVoiceProfile": "Lưu làm giọng có thể tái sử dụng",
-    "saveVoiceProfileDescription": "Lưu an toàn bản ghi tham chiếu và bản chép lời này. Libre WebUI gửi chúng đến nhà cung cấp đã chọn cho mỗi lô Giọng nói sử dụng giọng này.",
+    "saveVoiceProfileDescription": "Lưu an toàn bản ghi tham chiếu và bản chép lời này. Alcore gửi chúng đến nhà cung cấp đã chọn cho mỗi lô Giọng nói sử dụng giọng này.",
     "voiceProfileName": "Tên giọng đã lưu",
     "voiceProfileNamePlaceholder": "Ví dụ: Giọng của tôi",
     "voiceStorageConsent": "Tôi xác nhận đã được người nói cho phép sao chép và lưu giọng này. Bản tham chiếu sẽ được lưu cho đến khi tôi xóa.",
@@ -2554,7 +2680,7 @@
     "subtitle": "Tác nhân cục bộ chạy, phê duyệt, lịch trình, bộ nhớ, công cụ và cách sử dụng.",
     "dashboard": "Bảng điều khiển",
     "connection": {
-      "disconnectedTitle": "Daemon Libre Claw chưa được kết nối",
+      "disconnectedTitle": "Daemon Alcore Claw chưa được kết nối",
       "disconnectedDescription": "Bắt đầu cục bộ với <command>libre-claw start</command> hoặc đặt <env>LIBRE_CLAW_BASE_URL</env> trong môi trường phụ trợ."
     },
     "status": {
@@ -2573,7 +2699,7 @@
     },
     "startRun": {
       "title": "Bắt đầu phiên chạy tác tử",
-      "placeholder": "Yêu cầu Libre Claw kiểm tra kho lưu trữ, sửa lỗi, chạy đánh giá, lên lịch báo cáo...",
+      "placeholder": "Yêu cầu Alcore Claw kiểm tra kho lưu trữ, sửa lỗi, chạy đánh giá, lên lịch báo cáo...",
       "chatRun": "Chạy trò chuyện",
       "goalMode": "Chế độ mục tiêu",
       "providerOverride": "Ghi đè nhà cung cấp",
@@ -2584,14 +2710,14 @@
       "title": "Tuyến đường mẫu",
       "providerPlaceholder": "nhà cung cấp",
       "modelPlaceholder": "người mẫu",
-      "persistGlobal": "Kiên trì với cấu hình chung Libre Claw",
+      "persistGlobal": "Kiên trì với cấu hình chung Alcore Claw",
       "saveModel": "Lưu mô hình",
-      "theme": "Chủ đề Libre Claw",
+      "theme": "Chủ đề Alcore Claw",
       "saveTheme": "Lưu chủ đề"
     },
     "runs": {
       "title": "Phiên chạy",
-      "empty": "Chưa có phiên chạy Libre Claw nào."
+      "empty": "Chưa có phiên chạy Alcore Claw nào."
     },
     "timeline": {
       "title": "Dòng thời gian phiên chạy",
@@ -2625,7 +2751,7 @@
       "schedulePlaceholder": "daily 09:00",
       "promptPlaceholder": "Lời nhắc tự động hóa",
       "create": "Tạo",
-      "empty": "Không có tự động hóa Libre Claw theo lịch trình.",
+      "empty": "Không có tự động hóa Alcore Claw theo lịch trình.",
       "runNow": "Chạy ngay",
       "pause": "Tạm dừng",
       "resume": "Tiếp tục",
@@ -2666,19 +2792,19 @@
       "unknownError": "Lỗi không xác định"
     },
     "toasts": {
-      "loadStatusFailed": "Không thể tải trạng thái Libre Claw",
-      "enterTask": "Nhập nhiệm vụ cho Libre Claw",
-      "runStarted": "Phiên chạy Libre Claw đã bắt đầu",
-      "startRunFailed": "Không thể bắt đầu phiên chạy Libre Claw",
+      "loadStatusFailed": "Không thể tải trạng thái Alcore Claw",
+      "enterTask": "Nhập nhiệm vụ cho Alcore Claw",
+      "runStarted": "Phiên chạy Alcore Claw đã bắt đầu",
+      "startRunFailed": "Không thể bắt đầu phiên chạy Alcore Claw",
       "runCancelled": "Phiên chạy đã bị hủy",
       "cancelRunFailed": "Không thể hủy phiên chạy",
       "approved": "Đã được phê duyệt",
       "denied": "Bị từ chối",
       "resolvePermissionFailed": "Không thể giải quyết quyền",
       "providerModelRequired": "Nhà cung cấp và mô hình là bắt buộc",
-      "modelUpdated": "Đã cập nhật mô hình Libre Claw",
+      "modelUpdated": "Đã cập nhật mô hình Alcore Claw",
       "updateModelFailed": "Không thể cập nhật mô hình",
-      "themeUpdated": "Đã cập nhật chủ đề Libre Claw",
+      "themeUpdated": "Đã cập nhật chủ đề Alcore Claw",
       "updateThemeFailed": "Không thể cập nhật chủ đề",
       "automationRequired": "Bắt buộc phải có tên, lịch trình và lời nhắc tự động hóa",
       "automationCreated": "Đã tạo tự động hóa",
@@ -3049,7 +3175,7 @@
     "title": "Có gì mới",
     "releaseNotes": "Ghi chú phát hành",
     "cta": "Được rồi, bắt đầu thôi",
-    "starAsk": "Thích Libre WebUI? Hãy để lại một ngôi sao trên GitHub"
+    "starAsk": "Thích Alcore? Hãy để lại một ngôi sao trên GitHub"
   },
   "notes": {
     "title": "Ghi chú",
@@ -3502,7 +3628,7 @@
     "description": "Các máy chủ công cụ mà mô hình có thể gọi, và những phê duyệt bạn đã cấp cho chúng.",
     "approvalNotice": "Các công cụ làm thay đổi dữ liệu bên ngoài cuộc trò chuyện luôn hỏi phê duyệt, trừ khi bạn đã cấp cho công cụ đó phê duyệt vĩnh viễn hoặc phê duyệt cho cuộc trò chuyện.",
     "registerServer": "Đăng ký máy chủ",
-    "registerHint": "Libre WebUI đọc máy chủ một lần và ghim lại các công cụ mà nó cung cấp. Làm mới máy chủ sau này để cập nhật thay đổi.",
+    "registerHint": "Alcore đọc máy chủ một lần và ghim lại các công cụ mà nó cung cấp. Làm mới máy chủ sau này để cập nhật thay đổi.",
     "editServer": "Sửa máy chủ",
     "empty": "Không có máy chủ công cụ",
     "emptyHintAdmin": "Đăng ký một máy chủ OpenAPI hoặc MCP để mô hình có thứ để gọi.",
@@ -3891,6 +4017,7 @@
     "local": {
       "title": "Máy chủ cục bộ",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "nameLabel": "Provider name",
       "keyPlaceholder": "Khóa API (tùy chọn)",
       "test": "Kiểm tra kết nối",
       "testing": "Đang kiểm tra…",

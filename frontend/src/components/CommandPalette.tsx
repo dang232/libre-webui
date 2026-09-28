@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -190,10 +190,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       setOpen(true);
     };
     document.addEventListener('keydown', onKeyDown, true);
-    window.addEventListener('libre:open-palette', onOpenEvent);
+    window.addEventListener('alcore:open-palette', onOpenEvent);
     return () => {
       document.removeEventListener('keydown', onKeyDown, true);
-      window.removeEventListener('libre:open-palette', onOpenEvent);
+      window.removeEventListener('alcore:open-palette', onOpenEvent);
     };
   }, []);
 

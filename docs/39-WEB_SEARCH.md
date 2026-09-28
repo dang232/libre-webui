@@ -17,14 +17,14 @@ keywords:
 
 # Web Search
 
-Libre WebUI can search the web and hand the results to your models without
-requiring a Libre WebUI vendor account or a commercial search API integration.
+Alcore can search the web and hand the results to your models without
+requiring a Alcore vendor account or a commercial search API integration.
 Search runs through a [SearXNG](https://docs.searxng.org/) instance chosen by
 the administrator. SearXNG then sends queries to the public search engines it
 aggregates; those engines can observe the request from the SearXNG deployment
 and apply their own logging, retention, and network policies.
 
-Like every dual-use capability in Libre WebUI, it ships **off**. An
+Like every dual-use capability in Alcore, it ships **off**. An
 administrator turns it on once; until then no search UI exists anywhere.
 
 ## How it works
@@ -102,9 +102,9 @@ survives restarts and takes effect immediately without redeploying.
 ## Privacy and scope
 
 - Searches run **server-side**. Browsers never contact SearXNG directly.
-  Libre WebUI itself needs no search-provider account, although a custom
+  Alcore itself needs no search-provider account, although a custom
   SearXNG deployment may configure engines with their own credentials.
-- Search terms leave the Libre WebUI process for SearXNG and then the selected
+- Search terms leave the Alcore process for SearXNG and then the selected
   upstream engines. Self-hosting the gateway controls that hop; it does not
   make public web search local or anonymous by itself.
 - Result text is bounded before it reaches model context (500 characters per

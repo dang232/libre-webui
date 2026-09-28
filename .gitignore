@@ -100,3 +100,4 @@ frontend/public/artifact-runtime/
 # The iOS and desktop apps live in their own repositories; nothing app-shell
 # related belongs here.
 /ios/
+/.omo

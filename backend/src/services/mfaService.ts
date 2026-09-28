@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -172,7 +172,7 @@ export const beginTotpEnrollment = async (
   });
   return {
     secret,
-    otpauthUrl: buildOtpauthUrl(secret, accountName, 'Libre WebUI'),
+    otpauthUrl: buildOtpauthUrl(secret, accountName, 'Alcore'),
   };
 };
 

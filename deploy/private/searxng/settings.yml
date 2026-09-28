@@ -1,7 +1,7 @@
-# Minimal SearXNG settings for the private Libre WebUI stack.
+# Minimal SearXNG settings for the private Alcore stack.
 #
 # The secret key comes from the SEARXNG_SECRET environment variable set in
-# docker-compose.yml. The json format is what Libre WebUI's web search
+# docker-compose.yml. The json format is what Alcore's web search
 # consumes; the limiter is off because the instance is only reachable from
 # the stack's internal network (it is never published).
 use_default_settings: true

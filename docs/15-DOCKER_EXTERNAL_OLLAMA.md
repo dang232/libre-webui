@@ -1,9 +1,9 @@
 ---
 sidebar_position: 1
 title: 'Docker with External Ollama'
-description: 'Run Libre WebUI in Docker while connecting to an existing Ollama instance.'
+description: 'Run Alcore in Docker while connecting to an existing Ollama instance.'
 slug: /DOCKER_EXTERNAL_OLLAMA
-keywords: [libre webui docker, docker external ollama, docker compose, ollama]
+keywords: [Alcore docker, docker external ollama, docker compose, ollama]
 image: /img/social/15.png
 ---
 
@@ -14,8 +14,8 @@ Use this setup when Ollama already runs on your host, another server, or a Tails
 ## Work Availability
 
 This Compose setup changes where Ollama runs; Work remains enabled through the
-mounted host Docker socket. It grants Libre WebUI root-equivalent control of the
-Docker host, so use it only where Libre WebUI administrators are also trusted
+mounted host Docker socket. It grants Alcore root-equivalent control of the
+Docker host, so use it only where Alcore administrators are also trusted
 host administrators. On Linux, set `DOCKER_GID` in `.env` to the group owning
 the socket. Remove the mount if Work is not wanted. See
 [Work: Isolated Workspaces](./WORKSPACES).
@@ -34,7 +34,7 @@ Pull a model if the instance is new:
 ollama pull gemma4:12b
 ```
 
-## Start Libre WebUI
+## Start Alcore
 
 From the repository root:
 
@@ -63,7 +63,7 @@ extra_hosts:
 
 ## Data Persistence
 
-The compose file stores Libre WebUI data in Docker volumes:
+The compose file stores Alcore data in Docker volumes:
 
 - `libre_webui_data`
 - `libre_webui_temp`
@@ -116,7 +116,7 @@ docker compose -f docker-compose.external-ollama.yml up -d
 
 ## Troubleshooting
 
-**Libre WebUI cannot reach Ollama**
+**Alcore cannot reach Ollama**
 
 ```bash
 docker compose -f docker-compose.external-ollama.yml exec libre-webui \

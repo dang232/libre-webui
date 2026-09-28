@@ -1,5 +1,5 @@
 /*
- * Libre WebUI
+ * Alcore
  * Copyright (C) 2025 Kroonen AI, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,7 +54,7 @@ const RESIZER_TRACK_PX = 9;
 const KEYBOARD_STEP_PERCENT = 2;
 const KEYBOARD_COARSE_STEP_PERCENT = 10;
 
-export const WORK_SPLIT_STORAGE_PREFIX = 'libre-webui-work-split:';
+export const WORK_SPLIT_STORAGE_PREFIX = 'alcore-work-split:';
 
 const clamp = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, value));

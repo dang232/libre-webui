@@ -16,7 +16,7 @@ keywords:
 
 # LongCat AudioDiT Integration
 
-Libre WebUI bundles a JSON plugin and a local HTTP adapter for the official
+Alcore bundles a JSON plugin and a local HTTP adapter for the official
 `meituan-longcat/LongCat-AudioDiT-1B` and
 `meituan-longcat/LongCat-AudioDiT-3.5B` checkpoints. The upstream project
 provides a Python API rather than an HTTP server, so the adapter in
@@ -24,7 +24,7 @@ provides a Python API rather than an HTTP server, so the adapter in
 multipart voice-cloning endpoints.
 
 AudioDiT returns complete 24 kHz mono WAV files rather than a streaming audio
-response. Libre WebUI therefore splits longer replies at sentence and phrase
+response. Alcore therefore splits longer replies at sentence and phrase
 boundaries, generates a bounded set of batches ahead, and schedules decoded
 audio in order for continuous playback.
 
@@ -56,7 +56,7 @@ python examples/longcat-audiodit-server/server.py \
 
 The server binds to `127.0.0.1:8300` by default. It is intentionally
 authentication-free for local use, so do not expose it directly to an
-untrusted network. Use an authenticated HTTPS gateway when Libre WebUI and the
+untrusted network. Use an authenticated HTTPS gateway when Alcore and the
 adapter are on different hosts: reusable voices send the decrypted reference
 recording to that endpoint for every Speech batch. A CUDA Docker example and
 health check are documented in `examples/longcat-audiodit-server/README.md`.
@@ -77,7 +77,7 @@ adapter did not load.
 Use **Settings → Text-to-Speech** to select LongCat for chat playback. Natural
 batched playback is enabled by default. The shared 140-character provider cap
 keeps dense Chinese text inside the 1B checkpoint's shorter duration window;
-Libre WebUI automatically creates multiple batches for longer responses.
+Alcore automatically creates multiple batches for longer responses.
 
 ## Voice cloning
 
@@ -90,7 +90,7 @@ Cloning can remain a one-time generation, or you can select **Save as a reusable
 voice**, give the voice a private name, and explicitly confirm that the speaker
 consented to storage. Saved voices become selectable for the same LongCat model
 under **Settings → Text-to-Speech**. Chat read-aloud and autoplay then reuse
-that voice across Libre WebUI's sentence-aware batches.
+that voice across Alcore's sentence-aware batches.
 
 The reference consumes part of AudioDiT's duration window. If the requested
 speech would not fit in the remaining time, the adapter returns a clear client
@@ -98,9 +98,9 @@ error instead of silently clipping the audio; shorten the reference or the
 generated passage and try again.
 
 Only clone a voice with the speaker's explicit permission. For a one-time
-generation, Libre WebUI keeps the reference in memory and the adapter removes
+generation, Alcore keeps the reference in memory and the adapter removes
 its temporary decoding file after the request. When you explicitly save a
-reusable voice, Libre WebUI stores the original reference audio and exact
+reusable voice, Alcore stores the original reference audio and exact
 transcript in a user-scoped, AES-GCM-encrypted profile. It never substitutes
 the generated imitation as the canonical reference. AudioDiT does not expose a
 portable speaker embedding, so the original pair is decrypted and sent to the
@@ -120,7 +120,7 @@ publish preset named voices, so ordinary synthesis uses the model default.
 ## Inference controls
 
 The plugin exposes bounded advanced variables for ODE steps, guidance
-strength, CFG/APG guidance method, and seed. Libre WebUI forwards only those
+strength, CFG/APG guidance method, and seed. Alcore forwards only those
 manifest-declared controls to both the speech and cloning endpoints. The
 defaults match the upstream inference example and are a good starting point.
 
