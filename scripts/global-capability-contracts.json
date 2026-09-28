@@ -3528,10 +3528,10 @@
         {
           "file": "scripts/test-tokenpanel-bridge.mjs",
           "runner": "test:package",
-          "name": "tokenpanel bridge exchanges a Libre session for a portal token",
+          "name": "bridge resolves through bridge-resolve with identity + idempotency key",
           "behaviorPatterns": [
-            "first-login link creates the TokenPanel customer",
-            "existing link never re-registers"
+            "exchangePortalToken",
+            "Idempotency-Key"
           ]
         }
       ],
@@ -3781,6 +3781,162 @@
           "mount": "/api/auth",
           "method": "POST",
           "path": "/tokenpanel/portal-token"
+        },
+        {
+          "file": "backend/src/routes/tokenpanel.ts",
+          "mount": "/api/tokenpanel",
+          "method": "DELETE",
+          "path": "/keys/:id"
+        },
+        {
+          "file": "backend/src/routes/tokenpanel.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/keys"
+        },
+        {
+          "file": "backend/src/routes/tokenpanel.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/projects"
+        },
+        {
+          "file": "backend/src/routes/tokenpanel.ts",
+          "mount": "/api/tokenpanel",
+          "method": "PATCH",
+          "path": "/keys/:id"
+        },
+        {
+          "file": "backend/src/routes/tokenpanel.ts",
+          "mount": "/api/tokenpanel",
+          "method": "POST",
+          "path": "/keys"
+        },
+        {
+          "file": "backend/src/routes/tokenpanel.ts",
+          "mount": "/api/tokenpanel",
+          "method": "POST",
+          "path": "/keys/:id/reveal"
+        },
+        {
+          "file": "backend/src/routes/tokenpanel.ts",
+          "mount": "/api/tokenpanel",
+          "method": "POST",
+          "path": "/keys/:id/rotate"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/account/budgets"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/account/limits"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/account/plans"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/account/profile"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/account/subscription"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "PATCH",
+          "path": "/account/budgets/:id"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "PATCH",
+          "path": "/account/limits"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "PATCH",
+          "path": "/account/profile"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelAccount.ts",
+          "mount": "/api/tokenpanel",
+          "method": "POST",
+          "path": "/account/subscriptions"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelBilling.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/billing/history"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelBilling.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/billing/invoices"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelBilling.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/billing/topup-intents"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelBilling.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/billing/topup-intents/:id"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelBilling.ts",
+          "mount": "/api/tokenpanel",
+          "method": "POST",
+          "path": "/billing/redeem"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelBilling.ts",
+          "mount": "/api/tokenpanel",
+          "method": "POST",
+          "path": "/billing/topup-intents"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelBilling.ts",
+          "mount": "/api/tokenpanel",
+          "method": "POST",
+          "path": "/billing/topup-intents/:id/cancel"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelUsage.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/usage/daily"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelUsage.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/usage/records"
+        },
+        {
+          "file": "backend/src/routes/tokenpanelUsage.ts",
+          "mount": "/api/tokenpanel",
+          "method": "GET",
+          "path": "/usage/summary"
         }
       ],
       "contractSurfaces": {
