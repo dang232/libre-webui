@@ -1019,7 +1019,7 @@ before the new runtime configuration takes effect.
 
 On the Docker backend, networked tasks attach to a dedicated managed bridge
 network
-(`libre-webui-work` by default, `WORK_NETWORK_NAME`) created with
+(`alcore-work` by default, `WORK_NETWORK_NAME`) created with
 inter-container communication disabled
 (`com.docker.network.bridge.enable_icc=false`). Two consequences follow:
 
@@ -1173,7 +1173,7 @@ Docker host. Inspect the actual managed bridge and subnet rather than assuming
 an address:
 
 ```bash
-docker network inspect libre-webui-work \
+docker network inspect alcore-work \
   --format 'id={{.Id}} subnets={{range .IPAM.Config}}{{.Subnet}} {{end}}'
 ss -lntup
 ```
@@ -1181,7 +1181,7 @@ ss -lntup
 Use the host's persistent firewall manager to reject traffic arriving from
 that bridge to host management services, especially SSH, the Docker API,
 databases, and monitoring/admin ports. Test the rule from a disposable
-container attached to `libre-webui-work`, test allowed package downloads, then
+container attached to `alcore-work`, test allowed package downloads, then
 make the rule persistent. Docker's `DOCKER-USER` chain controls forwarded
 traffic; traffic whose destination is the Docker host itself may need an
 `INPUT`/input-hook rule on the bridge interface as well.
@@ -1371,13 +1371,13 @@ Work reads these variables in the backend process:
 | `WORK_MAX_ACTIVE_RUNTIMES_PER_USER`   | `2`                                                                                           | Concurrent container-backed tasks per administrator        |
 | `WORK_MAX_TASKS_GLOBAL`               | `500`                                                                                         | Persisted Work task limit per Alcore instance         |
 | `WORK_MAX_TASKS_PER_USER`             | `100`                                                                                         | Persisted Work task limit per administrator                |
-| `WORK_NETWORK_NAME`                   | `libre-webui-work`                                                                            | Managed sandbox bridge network for networked tasks         |
+| `WORK_NETWORK_NAME`                   | `alcore-work`                                                                            | Managed sandbox bridge network for networked tasks         |
 | `WORK_RUNTIME_DNS`                    | unset                                                                                         | Comma-separated resolver IPs forced onto networked tasks   |
 | `WORK_DOCKER_SOCKET`                  | `DOCKER_HOST` if `unix://` or `tcp://`, else `/var/run/docker.sock`                           | Docker Engine endpoint used for interactive terminals      |
 | `WORK_TERMINAL_MAX_SESSIONS_PER_TASK` | `2`                                                                                           | Simultaneous interactive terminals per task                |
 | `WORK_TERMINAL_IDLE_TIMEOUT_MS`       | `900000`                                                                                      | Idle timeout before a terminal session closes              |
 | `WORK_RUNTIME_IDLE_TIMEOUT_MS`        | `1800000` (30 min)                                                                            | Stop a sandbox after this much inactivity (previews too)   |
-| `WORK_K8S_NAMESPACE`                  | `libre-webui-work`                                                                            | Kubernetes sandbox Pod/PVC namespace                       |
+| `WORK_K8S_NAMESPACE`                  | `alcore-work`                                                                            | Kubernetes sandbox Pod/PVC namespace                       |
 | `WORK_K8S_STORAGE_CLASS`              | cluster default                                                                               | StorageClass for Kubernetes workspace PVCs                 |
 | `WORK_K8S_WORKSPACE_SIZE`             | `5Gi`                                                                                         | Default per-task Kubernetes PVC size                       |
 | `WORK_K8S_POD_READY_TIMEOUT_MS`       | `900000`                                                                                      | Maximum wait for a sandbox Pod to become ready             |

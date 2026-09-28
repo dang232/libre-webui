@@ -27,7 +27,7 @@ if (!saKubeconfig) {
 }
 const adminKubeconfig =
   process.env.ADMIN_KUBECONFIG || path.join(os.homedir(), '.kube', 'config');
-const namespace = process.env.WORK_K8S_NAMESPACE || 'libre-webui-work';
+const namespace = process.env.WORK_K8S_NAMESPACE || 'alcore-work';
 const releaseName = process.env.RELEASE_NAME || 'lw-ci';
 const releaseNamespace = process.env.RELEASE_NAMESPACE || 'default';
 
