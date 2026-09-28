@@ -57,7 +57,7 @@ jobs:
       # LL has no docker for anchore's container action, so the CycloneDX
       # npm plugin reads the lockfile directly; runs on either runner.
       - name: Generate CycloneDX source SBOM
-        run: npx --yes @cyclonedx/cyclonedx-npm --package-lock-only --output-format JSON --output-file security-artifacts/libre-webui-source.cdx.json
+        run: npx --yes @cyclonedx/cyclonedx-npm --package-lock-only --ignore-npm-errors --output-format JSON --output-file security-artifacts/libre-webui-source.cdx.json
 
       - name: Upload source SBOM artifact
         uses: actions/upload-artifact@v7
