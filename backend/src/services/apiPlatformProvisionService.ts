@@ -197,11 +197,11 @@ const provision = async (
   }
   const created = asRecord(upstream.body);
   const secret = created.key;
-  const apiKey = asRecord(created.apiKey);
   if (typeof secret !== 'string' || secret === '') {
+    // The mint response can carry credential material, so log only the
+    // outcome and never a key-derived value.
     logger.warn('API Platform key mint returned no usable secret', {
       userId,
-      keyId: typeof apiKey._id === 'string' ? apiKey._id : 'unknown',
     });
     return { provisioned: false, reason: 'key-malformed' };
   }
@@ -229,7 +229,6 @@ const provision = async (
   await ensurePlatformDefault(userId);
   logger.info('API Platform base usage provisioned', {
     userId,
-    keyId: typeof apiKey._id === 'string' ? apiKey._id : 'unknown',
     active,
   });
   return {
