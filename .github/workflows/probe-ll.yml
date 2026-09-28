@@ -1,0 +1,79 @@
+name: Probe LL runner
+
+# Temporary capability probe for PR #2 (self-hosted LL runner triage).
+# Deleted once docker/browser/k8s/prebuild capabilities are known.
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: [self-hosted, Linux, X64] # fork/PR2: self-hosted LL runner; billing-blocked hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22.22'
+
+      - name: Runtimes
+        continue-on-error: true
+        run: |
+          node --version || true
+          npm --version || true
+          git --version || true
+          python3 --version || true
+          python3 -m pip --version || true
+
+      - name: Build toolchain and sudo
+        continue-on-error: true
+        run: |
+          which make g++ gcc || true
+          sudo -n true && echo SUDO_NOPASS_OK || echo NO_NOPASS_SUDO
+
+      - name: Machine capacity
+        continue-on-error: true
+        run: |
+          nproc || true
+          free -h || true
+          df -h /home/dangq || true
+
+      - name: Docker capability
+        continue-on-error: true
+        run: |
+          docker --version || true
+          docker info --format '{{.ServerVersion}}' || true
+
+      - name: K8s tooling presence
+        continue-on-error: true
+        run: |
+          which kubectl kind helm || true
+
+      - name: Playwright and system libs
+        continue-on-error: true
+        run: |
+          cd frontend && npx --no-install playwright --version || true
+          for lib in libnss3 libatk-1.0 libatk-bridge-2.0 libcups libdrm libxkbcommon libgbm libpango-1.0 libgtk-3; do
+            ldconfig -p 2>/dev/null | grep -q "$lib" && echo "HAVE $lib" || echo "MISS $lib"
+          done
+          ls ~/.cache/ms-playwright || true
+
+      # Empirical: does better-sqlite3 ship a linux-x64 prebuild for the CI
+      # node line, or does LL (no make/g++) have to compile it?
+      - name: better-sqlite3 prebuild check
+        continue-on-error: true
+        run: |
+          rm -rf /tmp/bs3probe && mkdir -p /tmp/bs3probe
+          npm install --prefix /tmp/bs3probe --no-save better-sqlite3@13.0.3 2>&1 | tail -5 || true
+          node -e "const db=require('/tmp/bs3probe/node_modules/better-sqlite3')(':memory:');db.exec('CREATE TABLE t(a)');console.log('BS3_PREBUILD_OK')" || echo BS3_PREBUILD_MISS
+
+      # Empirical: is sast runnable via user-space pip (no sudo, no docker)?
+      - name: semgrep via pip check
+        continue-on-error: true
+        run: |
+          python3 -m pip install --user --quiet semgrep 2>&1 | tail -3 || true
+          ~/.local/bin/semgrep --version || semgrep --version || echo SEMGREP_MISS
