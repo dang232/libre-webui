@@ -12,6 +12,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # This job only shells over SSH; it needs no GITHUB_TOKEN scopes.
+    permissions: {}
 
     steps:
       - name: Deploy over SSH
