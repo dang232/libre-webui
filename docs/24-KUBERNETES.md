@@ -22,7 +22,7 @@ helm install libre-webui ./helm/libre-webui --set work.enabled=true
 This switches the backend to `WORK_RUNTIME_BACKEND=kubernetes` and creates:
 
 - a dedicated sandbox namespace (`work.namespace`, default
-  `libre-webui-work`) holding one Pod per running sandbox and one
+  `alcore-work`) holding one Pod per running sandbox and one
   PersistentVolumeClaim per task workspace (`work.workspaceSize`, default
   `5Gi` — a real per-task disk quota; a named Work policy can set a
   different size for the tasks created under it);

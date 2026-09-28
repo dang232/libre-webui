@@ -50,6 +50,15 @@ normalizeOllamaRuntimeEnvironment(getOllamaRuntimeConfig());
 const platformConfig = assertPlatformRuntimeConfig(
   resolvePlatformRuntimeConfig()
 );
+// Fail fast when JWT_SECRET is missing in production (mirrors AlRepo
+// parseJwtSecret): an ephemeral random secret would silently invalidate all
+// sessions on restart. Checked here before data-directory and persistence
+// preflight so the process exits before listening or touching state.
+if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET?.trim()) {
+  throw new Error(
+    'Missing required JWT_SECRET in production: set JWT_SECRET to a stable random value (32+ characters) and restart. Refusing to boot with an ephemeral session secret.'
+  );
+}
 // Preserve the raw relative-path provenance until compatibility checks have
 // run. Source launches historically resolved relative paths from backend/;
 // packaged launchers resolve caller-relative paths once and pass absolutes.

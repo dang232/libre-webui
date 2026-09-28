@@ -456,9 +456,10 @@ export async function detectCredential(
         reason: `reachable_but_${validation.reason ?? 'unauthorized'}`,
       });
     }
+    // The enclosing branch already establishes that a key was supplied;
+    // its length is key-derived metadata and stays out of the logs.
     logger.debug(
-      'Provider detection probed a candidate endpoint (key length %d): %s',
-      input.apiKey.length,
+      'Provider detection probed a candidate endpoint: %s',
       validation.status
     );
   }

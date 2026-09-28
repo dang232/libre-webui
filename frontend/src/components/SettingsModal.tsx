@@ -45,6 +45,7 @@ import {
   BookText,
   GraduationCap,
   Wrench,
+  ExternalLink,
 } from 'lucide-react';
 // Administration lives in its own chunk; most sessions never open it.
 const UserManagementPanel = React.lazy(
@@ -65,6 +66,7 @@ import { SettingsSearchTab } from '@/components/settings/SettingsSearchTab';
 import { SettingsSessionsTab } from '@/components/settings/SettingsSessionsTab';
 import { SettingsNotificationsTab } from '@/components/settings/SettingsNotificationsTab';
 import { SettingsApiKeysTab } from '@/components/settings/SettingsApiKeysTab';
+import { SettingsApiPlatformTab } from '@/components/settings/SettingsApiPlatformTab';
 import { useAuthStore } from '@/store/authStore';
 import { SettingsTtsTab } from '@/components/settings/SettingsTtsTab';
 import { SettingsPromptsTab } from '@/components/settings/SettingsPromptsTab';
@@ -1710,6 +1712,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     shortcuts: 'keyboard keys hotkeys shortcut command palette',
     sessions: 'sessions devices sign out logout revoke security login',
     'api-keys': 'api key token scope secret bearer security integration',
+    'api-platform':
+      'api platform keys billing usage tokenpanel portal playground recharge',
     'model-manager':
       `models download pull update bulk refresh delete ollama library huggingface bulk operations update all models ${t(
         'settings.model.bulkOperations'
@@ -1751,6 +1755,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           id: 'api-keys',
           label: t('settings.tabs.apiKeys', 'API keys'),
           icon: KeyRound,
+        },
+        {
+          id: 'api-platform',
+          label: t('settings.tabs.apiPlatform', 'API Platform'),
+          icon: ExternalLink,
         },
         {
           id: 'shortcuts',
@@ -2037,6 +2046,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
       case 'api-keys':
         return <SettingsApiKeysTab />;
+
+      case 'api-platform':
+        return <SettingsApiPlatformTab />;
 
       case 'plugins':
         return (

@@ -58,6 +58,64 @@ export const getApiBaseUrl = (): string => {
 export const API_BASE_URL = getApiBaseUrl();
 export const isVerboseDebugEnabled = isDebugLoggingEnabled();
 
+export const DEFAULT_TOKENPANEL_BASE_URL = 'https://alcore.io.vn';
+
+export interface TokenPanelUrlEnvironment {
+  tokenpanelUrl?: string;
+}
+
+export function resolveTokenPanelBaseUrl(
+  environment: TokenPanelUrlEnvironment
+): string {
+  const override = environment.tokenpanelUrl?.trim().replace(/\/+$/, '');
+  return override || DEFAULT_TOKENPANEL_BASE_URL;
+}
+
+export const getTokenPanelBaseUrl = (): string => {
+  return resolveTokenPanelBaseUrl({
+    tokenpanelUrl: import.meta.env?.VITE_TOKENPANEL_URL,
+  });
+};
+
+/**
+ * TokenPanel base URL constant - use this instead of hardcoding the
+ * production origin, so local/staging runs can point elsewhere.
+ */
+export const TOKENPANEL_BASE_URL = getTokenPanelBaseUrl();
+
+/** Auth Repo C origin (todo 8 identity service; CORS triangle member). */
+export const DEFAULT_AUTH_BASE_URL = 'https://auth.alcore.io.vn';
+
+export interface AuthUrlEnvironment {
+  authUrl?: string;
+}
+
+export function resolveAuthBaseUrl(environment: AuthUrlEnvironment): string {
+  const override = environment.authUrl?.trim().replace(/\/+$/, '');
+  return override || DEFAULT_AUTH_BASE_URL;
+}
+
+export const getAuthBaseUrl = (): string => {
+  return resolveAuthBaseUrl({
+    authUrl: import.meta.env?.VITE_AUTH_URL,
+  });
+};
+
+/**
+ * Auth base URL constant — same override pattern as TOKENPANEL_BASE_URL so
+ * local/staging runs can point elsewhere.
+ */
+export const AUTH_BASE_URL = getAuthBaseUrl();
+
+/** Portal deep-link carrying a one-time SSO token in the URL fragment. */
+export function portalSectionUrl(
+  baseUrl: string,
+  path: string,
+  token: string
+): string {
+  return `${baseUrl.replace(/\/+$/, '')}/portal${path}?from=web#sso=${token}`;
+}
+
 /**
  * Log configuration information for debugging
  */

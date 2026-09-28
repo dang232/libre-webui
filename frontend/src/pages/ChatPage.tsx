@@ -1148,11 +1148,23 @@ export const ChatPage: React.FC = () => {
               persona={currentPersona}
               onClear={() => {
                 if (!currentSession) return;
+                // Personas can back onto local or provider models; resolve
+                // the backing model's own selection instead of pinning Ollama.
+                const backing = models.find(
+                  model => model.name === currentPersona.model
+                );
+                const selection = backing
+                  ? chatModelSelectionFromModel(backing)
+                  : {
+                      model: currentPersona.model,
+                      providerType: null,
+                      providerId: null,
+                    };
                 void chatApi
                   .updateSession(currentSession.id, {
-                    model: currentPersona.model,
-                    providerType: 'ollama',
-                    providerId: null,
+                    model: selection.model,
+                    providerType: selection.providerType,
+                    providerId: selection.providerId,
                     personaId: null,
                   })
                   .then(response => {

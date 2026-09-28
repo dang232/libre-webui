@@ -158,7 +158,13 @@ export function createLogger(scope: string): Logger {
       writeStructuredLine(level, scope, args);
       return;
     }
-    write(prefix, ...args);
+    // The text sink bypasses the structured redaction above, so scrub
+    // credential-shaped fields here too. Error instances pass through
+    // untouched to preserve their stacks.
+    write(
+      prefix,
+      ...args.map(arg => (arg instanceof Error ? arg : redactLogFields(arg)))
+    );
   };
 
   return {

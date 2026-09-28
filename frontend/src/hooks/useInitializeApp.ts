@@ -76,25 +76,35 @@ export const useInitializeApp = () => {
 
         // Ollama and configured plugins are independent model providers. An
         // unavailable Ollama daemon must not prevent the rest of the app (or
-        // plugin-backed Work models) from initializing.
+        // plugin-backed Work models) from initializing. The outage toast is
+        // deferred until the model list is known: Ollama is opt-in, so the
+        // toast only fires when no plugin/agent provider is available either.
+        let ollamaHealthFailed = false;
         try {
           const healthResponse = await ollamaApi.checkHealth();
-          if (!healthResponse.success && !isDemoMode()) {
-            toast.error(t('appInitialization.ollamaUnavailable'));
+          if (!healthResponse.success) {
+            ollamaHealthFailed = true;
           }
         } catch (healthError) {
           logger.warn(
             'Ollama health check failed; continuing provider initialization:',
             healthError
           );
-          if (!isDemoMode()) {
-            toast.error(t('appInitialization.ollamaUnavailable'));
-          }
+          ollamaHealthFailed = true;
         }
 
         // Load preferences first, then models, sessions, and plugins
         await Promise.all([loadAppPreferences(), loadChatPreferences()]);
         await Promise.all([loadModels(), loadSessions(), loadPlugins()]);
+
+        if (ollamaHealthFailed && !isDemoMode()) {
+          const hasIndependentProvider = useChatStore
+            .getState()
+            .models.some(model => model.isPlugin || model.isAgent);
+          if (!hasIndependentProvider) {
+            toast.error(t('appInitialization.ollamaUnavailable'));
+          }
+        }
 
         initialized.current = true;
         logger.debug('Alcore initialized successfully');

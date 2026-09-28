@@ -10,7 +10,9 @@ on:
 
 jobs:
   format-and-lint:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64] # fork/PR2: self-hosted LL runner; billing-blocked hosted
+    env:
+      npm_config_ignore_scripts: 'true' # fork/PR2: LL has no compiler/sudo; lint needs no native builds
 
     steps:
       - name: Checkout code
@@ -87,11 +89,13 @@ jobs:
 
       - name: Start MinIO storage fixture
         run: |
+          # Chainguard mirror of MinIO, digest-pinned like upstream: the
+          # quay.io and Docker Hub references no longer pull anonymously.
           docker run --detach --name libre-ci-minio \
             --publish 9000:9000 \
             --env MINIO_ROOT_USER=libreminio \
             --env MINIO_ROOT_PASSWORD=libre-ci-minio-password \
-            quay.io/minio/minio:RELEASE.2025-07-23T15-54-02Z server /data
+            cgr.dev/chainguard/minio@sha256:bd014394a80898e68c149f2311fdf8d5a2c2f3bb2c33b9327ae6d02b4b065ae1 server /data
           for attempt in $(seq 1 30); do
             if curl --fail --silent http://127.0.0.1:9000/minio/health/live >/dev/null; then
               exit 0
