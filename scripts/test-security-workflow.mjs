@@ -39,9 +39,16 @@ test('security workflow covers dependency, SAST, secret, SBOM, and image gates',
   const container = getJob('container-scan');
 
   assert.match(dependency, /npm audit --audit-level=moderate --json/);
-  assert.match(dependency, /uses: anchore\/sbom-action@v0/);
-  assert.match(dependency, /format: cyclonedx-json/);
-  assert.match(sast, /image: semgrep\/semgrep@sha256:[a-f0-9]{64}/);
+  // LL has no docker for anchore's container action, so the source SBOM
+  // comes from the CycloneDX npm plugin reading the lockfile directly; the
+  // report is uploaded as an artifact and the enforce step fails on findings.
+  assert.match(dependency, /Generate CycloneDX source SBOM/);
+  assert.match(dependency, /@cyclonedx\/cyclonedx-npm --package-lock-only/);
+  assert.match(dependency, /name: libre-webui-source-sbom\.cdx\.json/);
+  assert.match(dependency, /Enforce dependency audit/);
+  // The SAST job likewise avoids the semgrep container image: a user-space
+  // pip install scans with the OWASP ruleset at ERROR severity.
+  assert.match(sast, /run: pip install semgrep/);
   assert.match(sast, /semgrep scan/);
   assert.match(sast, /--config p\/owasp-top-ten/);
   assert.match(sast, /--severity ERROR/);
