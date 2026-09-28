@@ -12,6 +12,8 @@ jobs:
   dependency-and-sbom:
     name: Dependency audit and source SBOM
     runs-on: [self-hosted, Linux, X64] # fork/PR2: self-hosted LL runner; billing-blocked hosted
+    env:
+      npm_config_ignore_scripts: 'true' # fork/PR2: audit+SBOM read the lockfile only; LL has no compiler for native rebuilds
     permissions:
       contents: read
       security-events: read
