@@ -11,7 +11,7 @@ on:
 jobs:
   dependency-and-sbom:
     name: Dependency audit and source SBOM
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64] # fork/PR2: self-hosted LL runner; billing-blocked hosted
     permissions:
       contents: read
       security-events: read
@@ -52,15 +52,18 @@ jobs:
             console.log(v ? `npm audit findings (moderate+): ${findings}` : "npm audit produced no verdict");
           '
 
+      # LL has no docker for anchore's container action, so the CycloneDX
+      # npm plugin reads the lockfile directly; runs on either runner.
       - name: Generate CycloneDX source SBOM
-        uses: anchore/sbom-action@v0
+        run: npx --yes @cyclonedx/cyclonedx-npm --package-lock-only --output-format JSON --output-file security-artifacts/libre-webui-source.cdx.json
+
+      - name: Upload source SBOM artifact
+        uses: actions/upload-artifact@v7
         with:
-          path: .
-          format: cyclonedx-json
-          output-file: security-artifacts/libre-webui-source.cdx.json
-          artifact-name: libre-webui-source-sbom.cdx.json
-          upload-artifact-retention: 30
-          upload-release-assets: false
+          name: libre-webui-source-sbom.cdx.json
+          path: security-artifacts/libre-webui-source.cdx.json
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Retain dependency audit report
         if: always()
@@ -98,9 +101,7 @@ jobs:
 
   sast:
     name: Semgrep OWASP SAST
-    runs-on: ubuntu-latest
-    container:
-      image: semgrep/semgrep@sha256:65dcd4408adda7c183a6b4550cb1e9b19f7f627a6fbb7e0559bd466bedc44d7b
+    runs-on: [self-hosted, Linux, X64] # fork/PR2: LL has no docker for the semgrep image; user-space pip install runs on either runner
     permissions:
       contents: read
       security-events: write
@@ -108,6 +109,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Semgrep
+        run: pip install semgrep
 
       - name: Create report directory
         run: mkdir -p security-artifacts
