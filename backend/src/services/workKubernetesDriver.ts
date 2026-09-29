@@ -16,6 +16,7 @@
  */
 
 import { Duplex, PassThrough, Readable, Writable } from 'node:stream';
+import type { V1Pod } from '@kubernetes/client-node/dist/gen/models/V1Pod.js';
 import type { WorkTaskRecord } from '../types/work.js';
 import { createLogger } from '../utils/logger.js';
 import type {
@@ -88,27 +89,6 @@ type KubernetesMetadata = {
   annotations?: Record<string, string>;
   labels?: Record<string, string>;
   name?: string;
-};
-
-type KubernetesPod = {
-  metadata?: KubernetesMetadata;
-  spec?: {
-    containers?: Record<string, unknown>[];
-    restartPolicy?: string;
-    automountServiceAccountToken?: boolean;
-    enableServiceLinks?: boolean;
-    securityContext?: Record<string, unknown>;
-    volumes?: Record<string, unknown>[];
-    dnsPolicy?: string;
-    dnsConfig?: { nameservers?: string[] };
-  };
-  status?: {
-    containerStatuses?: {
-      state?: { waiting?: { message?: string; reason?: string } };
-    }[];
-    phase?: string;
-    podIP?: string;
-  };
 };
 
 type KubernetesPersistentVolumeClaim = {
@@ -378,7 +358,7 @@ export class KubernetesWorkRuntimeDriver implements WorkRuntimeDriver {
       namespace: this.namespace,
       labelSelector: `${MANAGED_LABEL}=true`,
     });
-    return (pods.items ?? []).map((pod: KubernetesPod) => ({
+    return (pods.items ?? []).map((pod: V1Pod) => ({
       name: pod.metadata?.name ?? '',
       taskId: pod.metadata?.labels?.[TASK_LABEL] ?? '',
       running: mapPodPhase(pod.status?.phase) === 'running',
@@ -722,7 +702,7 @@ export function buildWorkspaceClaimManifest(
 export function buildWorkPodManifest(
   task: WorkTaskRecord,
   policy: ResolvedWorkRuntimePolicy = defaultRuntimePolicy
-): KubernetesPod {
+): V1Pod {
   assertNoHostWorkspace(task);
   return {
     metadata: {
