@@ -56,6 +56,11 @@ services:
       - HUGGINGFACE_CLIENT_SECRET=${HUGGINGFACE_CLIENT_SECRET:-}
       - HUGGINGFACE_CALLBACK_URL=${HUGGINGFACE_CALLBACK_URL:-http://localhost:8080/api/auth/oauth/huggingface/callback}
       - SESSION_SECRET=${SESSION_SECRET:-}
+      # Unified Auth (shared Auth service). Fail-closed when unset.
+      # AUTH_ISSUER must exactly match the Auth service issuer (scheme included).
+      - AUTH_BASE_URL=${AUTH_BASE_URL:-https://auth.alcore.io.vn}
+      - AUTH_ISSUER=${AUTH_ISSUER:-https://auth.alcore.io.vn}
+      - AUTH_JWT_SECRET=${AUTH_JWT_SECRET:-}
     volumes:
       - alcore_data:/app/backend/data
       - alcore_temp:/app/backend/temp
