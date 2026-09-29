@@ -3546,6 +3546,24 @@
           "file": "backend/src/routes/auth.ts",
           "mount": "/api/auth",
           "method": "POST",
+          "path": "/canonical-password"
+        },
+        {
+          "file": "backend/src/routes/auth.ts",
+          "mount": "/api/auth",
+          "method": "POST",
+          "path": "/canonical-signup"
+        },
+        {
+          "file": "backend/src/routes/auth.ts",
+          "mount": "/api/auth",
+          "method": "POST",
+          "path": "/canonical-exchange"
+        },
+        {
+          "file": "backend/src/routes/auth.ts",
+          "mount": "/api/auth",
+          "method": "POST",
           "path": "/login"
         },
         {
@@ -3613,6 +3631,12 @@
           "mount": "/api/auth",
           "method": "GET",
           "path": "/oauth/huggingface/status"
+        },
+        {
+          "file": "backend/src/routes/auth.ts",
+          "mount": "/api/auth",
+          "method": "POST",
+          "path": "/oauth/alcore-google"
         },
         {
           "file": "backend/src/routes/auth.ts",
