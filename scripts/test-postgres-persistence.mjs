@@ -454,7 +454,7 @@ test(
         initializePostgresPersistence(config, codec),
       ]);
       assert.equal(first.schemaCompatibility.status, 'compatible');
-      assert.equal(second.schemaCompatibility.currentVersion, 29);
+      assert.equal(second.schemaCompatibility.currentVersion, 30);
       assert.equal((await first.health()).ready, true);
 
       const assertStructuralDamage = async (mutation, expected) => {

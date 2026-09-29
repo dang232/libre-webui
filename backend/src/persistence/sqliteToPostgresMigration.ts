@@ -316,6 +316,7 @@ const TABLE_MAPPINGS: readonly TableMapping[] = Object.freeze([
       'email',
       'email_lookup',
       'password_hash',
+      'canonical_user_id',
       'role',
       'account_status',
       'approved_at',
@@ -326,6 +327,13 @@ const TABLE_MAPPINGS: readonly TableMapping[] = Object.freeze([
     ],
     ['id'],
     { integers: timestamps }
+  ),
+  table(
+    'canonical_identity_conflicts',
+    'canonical_identity_conflicts',
+    ['canonical_user_id', 'queued_at'],
+    ['canonical_user_id'],
+    { integers: ['queued_at'] }
   ),
   table(
     'personas',
