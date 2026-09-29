@@ -36,6 +36,7 @@ import { createLogger } from '../utils/logger.js';
 import { validatePasswordStrength } from '../utils/hash.js';
 import { getPersistence } from '../persistence/index.js';
 import { encryptionService } from './encryptionService.js';
+import type { ProductAssertion } from './canonicalAuthService.js';
 
 const logger = createLogger('services:auth-service');
 
@@ -224,6 +225,26 @@ export class AuthService {
       .then(module => module.ensureApiPlatformProvision(user.id))
       .catch(() => undefined);
     return this.generateToken(user, session.id);
+  }
+
+  async loginWithCanonicalUser(
+    assertion: ProductAssertion,
+    metadata: SessionMetadata
+  ): Promise<AuthResult | null> {
+    return this.loginWithCanonicalId(assertion.sub, metadata);
+  }
+
+  async loginWithCanonicalId(
+    canonicalUserId: string,
+    metadata: SessionMetadata
+  ): Promise<AuthResult | null> {
+    const user = await userModel.getOrCreateCanonicalUser(canonicalUserId);
+    if (user.status !== 'active') return { status: 'pending', user };
+    return {
+      status: 'authenticated',
+      user,
+      token: await this.issueSession(user, metadata),
+    };
   }
 
   /**

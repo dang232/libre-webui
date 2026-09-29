@@ -259,6 +259,31 @@ enabling it for untrusted users.
 
 ## Privacy and security
 
+### Canonical Auth exchange (backend support; UI handoff pending)
+
+Libre has a backend endpoint for exchanging an Auth one-use code at
+`POST /api/auth/canonical-exchange`. It consumes the code server-to-server at
+Auth `/oidc/exchange/token`, verifies the HS256 signature and configured
+issuer, `aud=libre`, future expiry, and `intent=product_exchange`, then issues
+a locally revocable Libre session JWT. Set `AUTH_BASE_URL`, `AUTH_ISSUER`
+(the exact Auth `iss` value), and `AUTH_JWT_SECRET` (the same signing secret
+as Auth) in the Libre backend. Codes are single-use and expire after 60
+seconds. Libre stores the Auth `sub` in the nullable, uniquely indexed
+`users.canonical_user_id`; local ids and existing local passwords remain
+unchanged. Profiles are never merged by email.
+
+The existing Libre login UI is not wired to this endpoint yet, and the Auth
+exchange initiation requires an already-authenticated Auth session. A browser
+session handoff must be added before this is a user-facing login flow.
+
+Backend verification: obtain an authenticated Auth session, POST
+`{"audience":"libre","intent":"product_exchange"}` to Auth
+`/oidc/exchange`, then POST `{"code":"<code>"}` to Libre
+`/api/auth/canonical-exchange`. Configure `AUTH_JWT_SECRET` with the Auth
+signing key and `AUTH_ISSUER` with its exact configured issuer (default
+`auth.alcore.io.vn`). Replaying the code must return 401; the successful
+response contains a Libre token, not the Auth product assertion.
+
 Alcore ships without application telemetry or analytics.
 
 When using a local provider such as Ollama, prompts and responses remain on the

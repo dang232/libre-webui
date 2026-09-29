@@ -136,6 +136,22 @@ export const authApi = {
     return api.post('/auth/login', credentials).then(res => res.data);
   },
 
+  canonicalLogin: (
+    email: string,
+    password: string
+  ): Promise<ApiResponse<LoginResponse>> =>
+    api
+      .post('/auth/canonical-password', { email, password })
+      .then(res => res.data),
+
+  canonicalSignup: (
+    email: string,
+    password: string
+  ): Promise<ApiResponse<LoginResponse>> =>
+    api
+      .post('/auth/canonical-signup', { email, password })
+      .then(res => res.data),
+
   signup: (credentials: {
     username: string;
     password: string;

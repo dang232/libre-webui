@@ -114,6 +114,69 @@ export class UserModel {
     );
   }
 
+  async getOrCreateCanonicalUser(canonicalUserId: string): Promise<UserPublic> {
+    const identity = this.persistenceProvider().repositories.identity;
+    if (await identity.canonicalIdentityCollision(canonicalUserId)) {
+      await identity.queueCanonicalIdentityConflict(canonicalUserId);
+      throw new Error('Canonical identity username collision requires review');
+    }
+    const existing = await identity.findByCanonicalUserId(canonicalUserId);
+    if (existing) return this.toPublic(existing);
+
+    const username = `auth_${Buffer.from(canonicalUserId, 'utf8').toString('hex').slice(0, 48)}`;
+    const usernameOwner = await identity.findByUsername(username);
+    if (usernameOwner && usernameOwner.canonical_user_id !== canonicalUserId) {
+      await identity.queueCanonicalIdentityConflict(canonicalUserId);
+      throw new Error('Canonical identity username collision requires review');
+    }
+    const now = Date.now();
+    const user: User = {
+      id: randomUUID(),
+      username,
+      email: null,
+      password_hash: await bcrypt.hash(randomUUID(), 12),
+      role: 'user',
+      account_status: 'active',
+      approved_at: now,
+      approved_by: null,
+      avatar: null,
+      canonical_user_id: canonicalUserId,
+      created_at: now,
+      updated_at: now,
+    };
+    try {
+      const created = await identity.createCanonicalUser(user);
+      return this.toPublic(created);
+    } catch (error) {
+      const [concurrent, usernameOwner] = await Promise.all([
+        identity.findByCanonicalUserId(canonicalUserId),
+        identity.findByUsername(username),
+      ]);
+      if (concurrent) return this.toPublic(concurrent);
+      if (
+        usernameOwner &&
+        usernameOwner.canonical_user_id !== canonicalUserId
+      ) {
+        await identity.queueCanonicalIdentityConflict(canonicalUserId);
+        throw new Error(
+          'Canonical identity username collision requires review'
+        );
+      }
+      throw error;
+    }
+  }
+
+  async isCanonicalUserMappingUnambiguous(
+    canonicalUserId: string,
+    userId: string
+  ): Promise<boolean> {
+    const identity = this.persistenceProvider().repositories.identity;
+    return (
+      !(await identity.canonicalIdentityCollision(canonicalUserId)) &&
+      (await identity.findByCanonicalUserId(canonicalUserId))?.id === userId
+    );
+  }
+
   /**
    * Atomically decide whether a public registration is the bootstrap
    * administrator or a pending user. Password hashing happens before the unit
@@ -196,6 +259,7 @@ export class UserModel {
       approved_at: approvedAt,
       approved_by: null,
       avatar: userData.avatar || null,
+      canonical_user_id: null,
       created_at: now,
       updated_at: now,
     };

@@ -70,6 +70,7 @@ export interface IdentityUserRecord {
   approved_at: number | null;
   approved_by: string | null;
   avatar: string | null;
+  canonical_user_id: string | null;
   created_at: number;
   updated_at: number;
 }
@@ -95,6 +96,10 @@ export interface PendingApprovalRecord {
 
 export interface IdentityRepository {
   list(): Promise<IdentityPublicUserRecord[]>;
+  findByCanonicalUserId(id: string): Promise<IdentityUserRecord | null>;
+  createCanonicalUser(user: IdentityUserRecord): Promise<IdentityUserRecord>;
+  canonicalIdentityCollision(id: string): Promise<boolean>;
+  queueCanonicalIdentityConflict(id: string): Promise<void>;
   findPublicById(id: string): Promise<IdentityPublicUserRecord | null>;
   findAccountStatusById(id: string): Promise<IdentityAccountStatus | null>;
   findByUsername(username: string): Promise<IdentityUserRecord | null>;
@@ -117,6 +122,10 @@ export interface IdentityRepository {
 
 export interface IdentitySyncRepository {
   list(): IdentityPublicUserRecord[];
+  findByCanonicalUserId(id: string): IdentityUserRecord | null;
+  createCanonicalUser(user: IdentityUserRecord): IdentityUserRecord;
+  canonicalIdentityCollision(id: string): boolean;
+  queueCanonicalIdentityConflict(id: string): void;
   findPublicById(id: string): IdentityPublicUserRecord | null;
   findAccountStatusById(id: string): IdentityAccountStatus | null;
   findByUsername(username: string): IdentityUserRecord | null;

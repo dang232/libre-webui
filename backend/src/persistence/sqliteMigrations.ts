@@ -4543,6 +4543,24 @@ const MIGRATIONS: readonly SQLiteMigration[] = [
       }
     },
   },
+  {
+    version: 31,
+    name: 'canonical-auth-identity',
+    checksum:
+      '71afc7d24fa960eb174c2f5cfd948bb545cd6de2b44b53933a671d8fbc8d79b4',
+    apply(database) {
+      addColumnIfMissing(database, 'users', 'canonical_user_id', 'TEXT');
+      database.exec(
+        `CREATE UNIQUE INDEX IF NOT EXISTS idx_users_canonical_user_id
+           ON users(canonical_user_id)
+           WHERE canonical_user_id IS NOT NULL`
+      );
+      database.exec(`CREATE TABLE IF NOT EXISTS canonical_identity_conflicts (
+        canonical_user_id TEXT PRIMARY KEY,
+        queued_at INTEGER NOT NULL
+      )`);
+    },
+  },
 ];
 
 /**

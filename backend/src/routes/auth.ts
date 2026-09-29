@@ -89,6 +89,13 @@ import {
   TokenpanelBridgeError,
   exchangePortalToken,
 } from '../services/tokenpanelBridgeService.js';
+import {
+  alcoreCustomerAuthEnabled,
+  authenticateCanonicalPassword,
+  consumeLibreExchangeCode,
+  forwardAlcoreGoogle,
+  forwardAlcorePassword,
+} from '../services/canonicalAuthService.js';
 
 const router = express.Router();
 const logger = createLogger('auth-routes');
@@ -175,6 +182,173 @@ const generalAuthRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+router.post('/canonical-password', loginRateLimiter, async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const body = req.body ?? {};
+  let email = body.email;
+  let password = body.password;
+  try {
+    if (
+      typeof email !== 'string' ||
+      typeof password !== 'string' ||
+      !email.trim() ||
+      !password
+    ) {
+      res
+        .status(400)
+        .json({ success: false, message: 'Email and password are required' });
+      return;
+    }
+    if (!process.env.AUTH_JWT_SECRET?.trim()) {
+      res.status(503).json({
+        success: false,
+        message: 'Canonical authentication is not configured',
+      });
+      return;
+    }
+    const credentials = { email: email.trim(), password, signup: false };
+    password = '';
+    const code = await authenticateCanonicalPassword(credentials);
+    if (!code) {
+      res.status(401).json({
+        success: false,
+        message: 'Invalid credentials or canonical authentication unavailable',
+      });
+      return;
+    }
+    req.body = { code };
+    await handleCanonicalExchange(req, res);
+  } catch (error) {
+    logger.error(
+      'Canonical password authentication failed',
+      error instanceof Error ? error.message : 'unknown'
+    );
+    res.status(502).json({
+      success: false,
+      message: 'Authentication service is temporarily unavailable',
+    });
+  } finally {
+    password = '';
+    if (typeof body === 'object') body.password = '';
+    if (typeof req.body === 'object' && req.body !== null)
+      req.body.password = '';
+  }
+});
+
+router.post('/canonical-signup', signupRateLimiter, async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const body = req.body ?? {};
+  let email = body.email;
+  let password = body.password;
+  try {
+    if (
+      typeof email !== 'string' ||
+      typeof password !== 'string' ||
+      !email.trim() ||
+      !password
+    ) {
+      res
+        .status(400)
+        .json({ success: false, message: 'Email and password are required' });
+      return;
+    }
+    if (!process.env.AUTH_JWT_SECRET?.trim()) {
+      res.status(503).json({
+        success: false,
+        message: 'Canonical authentication is not configured',
+      });
+      return;
+    }
+    const credentials = { email: email.trim(), password, signup: true };
+    password = '';
+    const code = await authenticateCanonicalPassword(credentials);
+    if (!code) {
+      res.status(409).json({
+        success: false,
+        message: 'Canonical account could not be created',
+      });
+      return;
+    }
+    req.body = { code };
+    await handleCanonicalExchange(req, res);
+  } catch (error) {
+    logger.error(
+      'Canonical signup failed',
+      error instanceof Error ? error.message : 'unknown'
+    );
+    res.status(502).json({
+      success: false,
+      message: 'Authentication service is temporarily unavailable',
+    });
+  } finally {
+    password = '';
+    if (typeof body === 'object') body.password = '';
+    if (typeof req.body === 'object' && req.body !== null)
+      req.body.password = '';
+  }
+});
+
+const handleCanonicalExchange = async (
+  req: express.Request,
+  res: express.Response
+): Promise<void> => {
+  res.set('Cache-Control', 'no-store');
+  const code = req.body?.code;
+  if (typeof code !== 'string' || code.length === 0 || code.length > 512) {
+    res
+      .status(400)
+      .json({ success: false, message: 'A valid exchange code is required' });
+    return;
+  }
+  if (!process.env.AUTH_JWT_SECRET?.trim()) {
+    res.status(503).json({
+      success: false,
+      message: 'Canonical authentication is not configured',
+    });
+    return;
+  }
+  try {
+    const assertion = await consumeLibreExchangeCode(code);
+    if (!assertion) {
+      res
+        .status(401)
+        .json({ success: false, message: 'Invalid or expired exchange code' });
+      return;
+    }
+    const result = await authService.loginWithCanonicalUser(assertion, {
+      kind: 'product:libre',
+      ip: getClientIp(req),
+      userAgent: req.headers['user-agent'],
+    });
+    if (!result || result.status !== 'authenticated') {
+      res
+        .status(403)
+        .json({ success: false, message: 'Account is not active' });
+      return;
+    }
+    res.json({
+      success: true,
+      data: {
+        user: result.user,
+        token: result.token,
+        systemInfo: await authService.getSystemInfo(),
+      },
+    });
+  } catch (error) {
+    logger.error('Canonical authentication exchange failed', error);
+    res.status(502).json({
+      success: false,
+      message: 'Authentication service is temporarily unavailable',
+    });
+  }
+};
+
+router.post(
+  '/canonical-exchange',
+  generalAuthRateLimiter,
+  handleCanonicalExchange
+);
 
 // WebSocket tickets get their own bucket: every chat reconnect consumes one,
 // and a reconnect storm competing with sign-in traffic must not lock either
@@ -332,8 +506,9 @@ router.post(
  * Login endpoint
  */
 router.post('/login', loginRateLimiter, async (req, res) => {
+  let password: unknown = req.body?.password;
   try {
-    const { username, password, turnstileToken } = req.body;
+    const { username, turnstileToken } = req.body;
 
     if (!username || !password) {
       res.status(400).json({
@@ -357,6 +532,57 @@ router.post('/login', loginRateLimiter, async (req, res) => {
       return;
     }
 
+    if (
+      typeof username === 'string' &&
+      typeof password === 'string' &&
+      username.includes('@') &&
+      alcoreCustomerAuthEnabled()
+    ) {
+      const customer = await forwardAlcorePassword({
+        email: username.trim(),
+        password,
+        signup: false,
+      });
+      password = '';
+      req.body.password = '';
+      if (!customer) {
+        res
+          .status(401)
+          .json({ success: false, message: 'Invalid credentials' });
+        return;
+      }
+      const result = await authService.loginWithCanonicalId(
+        customer.canonicalUserId,
+        {
+          kind: 'alcore:customer-password',
+          ip: getClientIp(req),
+          userAgent: req.headers['user-agent'],
+        }
+      );
+      if (!result || result.status !== 'authenticated') {
+        res
+          .status(403)
+          .json({ success: false, message: 'This account is not active' });
+        return;
+      }
+      res.json({
+        success: true,
+        data: {
+          user: result.user,
+          token: result.token,
+          systemInfo: await authService.getSystemInfo(),
+        },
+      });
+      return;
+    }
+
+    if (typeof username !== 'string' || typeof password !== 'string') {
+      res.status(400).json({
+        success: false,
+        message: 'Username and password are required',
+      });
+      return;
+    }
     const result = await authService.login(username, password, {
       kind: 'password',
       ip: getClientIp(req),
@@ -421,6 +647,68 @@ router.post('/login', loginRateLimiter, async (req, res) => {
       success: false,
       message: 'Internal server error',
     });
+  } finally {
+    password = '';
+    if (typeof req.body === 'object' && req.body !== null)
+      req.body.password = '';
+  }
+});
+
+router.post('/oauth/alcore-google', loginRateLimiter, async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const body = req.body ?? {};
+  const idToken = body.idToken;
+  try {
+    if (typeof idToken !== 'string' || !idToken || idToken.length > 8192) {
+      res.status(400).json({
+        success: false,
+        message: 'A valid Google ID token is required',
+      });
+      return;
+    }
+    const customer = await forwardAlcoreGoogle(
+      idToken,
+      typeof body.displayName === 'string' ? body.displayName : undefined
+    );
+    if (!customer) {
+      res.status(401).json({ success: false, message: 'Invalid credentials' });
+      return;
+    }
+    const result = await authService.loginWithCanonicalId(
+      customer.canonicalUserId,
+      {
+        kind: 'alcore:customer-google',
+        ip: getClientIp(req),
+        userAgent: req.headers['user-agent'],
+      }
+    );
+    if (!result || result.status !== 'authenticated') {
+      res
+        .status(403)
+        .json({ success: false, message: 'This account is not active' });
+      return;
+    }
+    res.json({
+      success: true,
+      data: {
+        user: result.user,
+        token: result.token,
+        systemInfo: await authService.getSystemInfo(),
+      },
+    });
+  } catch (error) {
+    logger.error(
+      'Alcore Google authentication failed',
+      error instanceof Error ? error.message : 'unknown'
+    );
+    res.status(502).json({
+      success: false,
+      message: 'Authentication service is temporarily unavailable',
+    });
+  } finally {
+    body.idToken = '';
+    if (typeof req.body === 'object' && req.body !== null)
+      req.body.idToken = '';
   }
 });
 
@@ -1226,21 +1514,25 @@ router.get(
  * Signup endpoint
  */
 router.post('/signup', signupRateLimiter, async (req, res) => {
+  let signupPassword: unknown = req.body?.password;
   try {
-    if (!(await authService.canCreateLocalAccount())) {
-      res.status(403).json({
-        success: false,
-        message: 'Registration is disabled',
-      });
-      return;
-    }
-
     const { username, password, email, turnstileToken } = req.body;
 
     if (!username || !password) {
       res.status(400).json({
         success: false,
         message: 'Username and password are required',
+      });
+      return;
+    }
+
+    if (
+      !alcoreCustomerAuthEnabled() &&
+      !(await authService.canCreateLocalAccount())
+    ) {
+      res.status(403).json({
+        success: false,
+        message: 'Registration is disabled',
       });
       return;
     }
@@ -1275,6 +1567,49 @@ router.post('/signup', signupRateLimiter, async (req, res) => {
       res.status(400).json({
         success: false,
         message: 'Verification failed. Please try again.',
+      });
+      return;
+    }
+
+    if (
+      typeof email === 'string' &&
+      typeof signupPassword === 'string' &&
+      alcoreCustomerAuthEnabled()
+    ) {
+      const customer = await forwardAlcorePassword({
+        email: email.trim(),
+        password: signupPassword,
+        signup: true,
+      });
+      signupPassword = '';
+      req.body.password = '';
+      if (!customer) {
+        res
+          .status(409)
+          .json({ success: false, message: 'Account could not be created' });
+        return;
+      }
+      const result = await authService.loginWithCanonicalId(
+        customer.canonicalUserId,
+        {
+          kind: 'alcore:customer-signup',
+          ip: getClientIp(req),
+          userAgent: req.headers['user-agent'],
+        }
+      );
+      if (!result || result.status !== 'authenticated') {
+        res
+          .status(403)
+          .json({ success: false, message: 'This account is not active' });
+        return;
+      }
+      res.json({
+        success: true,
+        data: {
+          user: result.user,
+          token: result.token,
+          systemInfo: await authService.getSystemInfo(),
+        },
       });
       return;
     }
@@ -1329,6 +1664,10 @@ router.post('/signup', signupRateLimiter, async (req, res) => {
       success: false,
       message: 'Internal server error',
     });
+  } finally {
+    signupPassword = '';
+    if (typeof req.body === 'object' && req.body !== null)
+      req.body.password = '';
   }
 });
 

@@ -56,6 +56,7 @@ type StoredIdentityRecord = QueryResultRow & {
   approved_at: string | number | null;
   approved_by: string | null;
   avatar: string | null;
+  canonical_user_id: string | null;
   created_at: string | number;
   updated_at: string | number;
 };
@@ -134,6 +135,7 @@ const decodeUser = (
         : safeInteger(row.approved_at, 'approved_at'),
     approved_by: row.approved_by,
     avatar: row.avatar,
+    canonical_user_id: row.canonical_user_id,
     created_at: safeInteger(row.created_at, 'created_at'),
     updated_at: safeInteger(row.updated_at, 'updated_at'),
   };
@@ -155,7 +157,7 @@ class PostgresIdentityRepository implements IdentityRepository {
   async list(): Promise<IdentityPublicUserRecord[]> {
     const result = await this.executor.query<StoredIdentityRecord>(
       `SELECT id, username, email, role, account_status, approved_at,
-              approved_by, avatar, created_at, updated_at
+              approved_by, avatar, canonical_user_id, created_at, updated_at
          FROM users
         WHERE id <> 'default'
         ORDER BY created_at DESC`
@@ -165,10 +167,62 @@ class PostgresIdentityRepository implements IdentityRepository {
     ) as IdentityPublicUserRecord[];
   }
 
+  async findByCanonicalUserId(id: string): Promise<IdentityUserRecord | null> {
+    const result = await this.executor.query<StoredIdentityRecord>(
+      `SELECT id, username, email, password_hash, role, account_status,
+              approved_at, approved_by, avatar, canonical_user_id, created_at, updated_at
+         FROM users WHERE canonical_user_id = $1`,
+      [id]
+    );
+    const row = result.rows[0];
+    return row
+      ? (decodeUser(this.emailCodec, row, true) as IdentityUserRecord)
+      : null;
+  }
+
+  async createCanonicalUser(
+    user: IdentityUserRecord
+  ): Promise<IdentityUserRecord> {
+    try {
+      await this.insert(user);
+    } catch (error) {
+      if (
+        typeof error !== 'object' ||
+        error === null ||
+        !('code' in error) ||
+        error.code !== '23505'
+      )
+        throw error;
+      const canonicalUserId = user.canonical_user_id;
+      if (canonicalUserId === null) throw error;
+      const raced = await this.findByCanonicalUserId(canonicalUserId);
+      if (!raced) throw error;
+      return raced;
+    }
+    return user;
+  }
+
+  async canonicalIdentityCollision(id: string): Promise<boolean> {
+    const username = `auth_${Buffer.from(id, 'utf8').toString('hex').slice(0, 48)}`;
+    const result = await this.executor.query(
+      `SELECT 1 FROM users WHERE canonical_user_id IS NULL AND username = $1`,
+      [username]
+    );
+    return result.rowCount === 1;
+  }
+
+  async queueCanonicalIdentityConflict(id: string): Promise<void> {
+    await this.executor.query(
+      `INSERT INTO canonical_identity_conflicts (canonical_user_id, queued_at)
+       VALUES ($1, $2) ON CONFLICT (canonical_user_id) DO NOTHING`,
+      [id, Date.now()]
+    );
+  }
+
   async findPublicById(id: string): Promise<IdentityPublicUserRecord | null> {
     const result = await this.executor.query<StoredIdentityRecord>(
       `SELECT id, username, email, role, account_status, approved_at,
-              approved_by, avatar, created_at, updated_at
+              approved_by, avatar, canonical_user_id, created_at, updated_at
          FROM users WHERE id = $1`,
       [id]
     );
@@ -193,7 +247,7 @@ class PostgresIdentityRepository implements IdentityRepository {
   async findByUsername(username: string): Promise<IdentityUserRecord | null> {
     const result = await this.executor.query<StoredIdentityRecord>(
       `SELECT id, username, email, password_hash, role, account_status,
-              approved_at, approved_by, avatar, created_at, updated_at
+              approved_at, approved_by, avatar, canonical_user_id, created_at, updated_at
          FROM users WHERE username = $1`,
       [username]
     );
@@ -210,9 +264,9 @@ class PostgresIdentityRepository implements IdentityRepository {
     await this.executor.query(
       `INSERT INTO users
          (id, username, email, email_lookup, password_hash, role,
-          account_status, approved_at, approved_by, avatar, created_at,
-          updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+          account_status, approved_at, approved_by, avatar, canonical_user_id,
+          created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
       [
         user.id,
         user.username,
@@ -224,6 +278,7 @@ class PostgresIdentityRepository implements IdentityRepository {
         user.approved_at,
         user.approved_by,
         user.avatar,
+        user.canonical_user_id ?? null,
         user.created_at,
         user.updated_at,
       ]
