@@ -98,6 +98,7 @@ import {
   forwardAlcoreGoogle,
   forwardAlcorePassword,
 } from '../services/canonicalAuthService.js';
+import type { ProductAssertion } from '../services/canonicalAuthService.js';
 
 const router = express.Router();
 const logger = createLogger('auth-routes');
@@ -211,16 +212,18 @@ router.post('/canonical-password', loginRateLimiter, async (req, res) => {
     }
     const credentials = { email: email.trim(), password, signup: false };
     password = '';
-    const code = await authenticateCanonicalPassword(credentials);
-    if (!code) {
+    // authenticateCanonicalPassword already consumed the one-use code and
+    // verified the assertion, so the session is completed from the assertion.
+    // Re-entering the code exchange here would hand it a non-string body.
+    const assertion = await authenticateCanonicalPassword(credentials);
+    if (!assertion) {
       res.status(401).json({
         success: false,
         message: 'Invalid credentials or canonical authentication unavailable',
       });
       return;
     }
-    req.body = { code };
-    await handleCanonicalExchange(req, res);
+    await respondWithCanonicalSession(assertion, req, res);
   } catch (error) {
     logger.error(
       'Canonical password authentication failed',
@@ -313,16 +316,15 @@ router.post('/canonical-signup', signupRateLimiter, async (req, res) => {
     }
     const credentials = { email: email.trim(), password, signup: true };
     password = '';
-    const code = await authenticateCanonicalPassword(credentials);
-    if (!code) {
+    const assertion = await authenticateCanonicalPassword(credentials);
+    if (!assertion) {
       res.status(409).json({
         success: false,
         message: 'Canonical account could not be created',
       });
       return;
     }
-    req.body = { code };
-    await handleCanonicalExchange(req, res);
+    await respondWithCanonicalSession(assertion, req, res);
   } catch (error) {
     logger.error(
       'Canonical signup failed',
@@ -339,6 +341,33 @@ router.post('/canonical-signup', signupRateLimiter, async (req, res) => {
       req.body.password = '';
   }
 });
+
+// Completes sign-in from an already verified product assertion. Both the
+// direct password path and the code exchange end here so a session is only
+// ever issued for an assertion this service verified itself.
+const respondWithCanonicalSession = async (
+  assertion: ProductAssertion,
+  req: express.Request,
+  res: express.Response
+): Promise<void> => {
+  const result = await authService.loginWithCanonicalUser(assertion, {
+    kind: 'product:libre',
+    ip: getClientIp(req),
+    userAgent: req.headers['user-agent'],
+  });
+  if (!result || result.status !== 'authenticated') {
+    res.status(403).json({ success: false, message: 'Account is not active' });
+    return;
+  }
+  res.json({
+    success: true,
+    data: {
+      user: result.user,
+      token: result.token,
+      systemInfo: await authService.getSystemInfo(),
+    },
+  });
+};
 
 const handleCanonicalExchange = async (
   req: express.Request,
@@ -367,25 +396,7 @@ const handleCanonicalExchange = async (
         .json({ success: false, message: 'Invalid or expired exchange code' });
       return;
     }
-    const result = await authService.loginWithCanonicalUser(assertion, {
-      kind: 'product:libre',
-      ip: getClientIp(req),
-      userAgent: req.headers['user-agent'],
-    });
-    if (!result || result.status !== 'authenticated') {
-      res
-        .status(403)
-        .json({ success: false, message: 'Account is not active' });
-      return;
-    }
-    res.json({
-      success: true,
-      data: {
-        user: result.user,
-        token: result.token,
-        systemInfo: await authService.getSystemInfo(),
-      },
-    });
+    await respondWithCanonicalSession(assertion, req, res);
   } catch (error) {
     logger.error('Canonical authentication exchange failed', error);
     res.status(502).json({
