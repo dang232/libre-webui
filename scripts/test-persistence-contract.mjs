@@ -32,6 +32,7 @@ const user = (id, overrides = {}) => ({
   approved_at: null,
   approved_by: null,
   avatar: null,
+  canonical_user_id: null,
   created_at: 100,
   updated_at: 100,
   ...overrides,
@@ -51,9 +52,17 @@ const createIdentitySchema = database => {
       approved_at INTEGER,
       approved_by TEXT,
       avatar TEXT,
+      canonical_user_id TEXT,
       created_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL
-    )
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_users_canonical_user_id
+      ON users(canonical_user_id)
+      WHERE canonical_user_id IS NOT NULL;
+    CREATE TABLE IF NOT EXISTS canonical_identity_conflicts (
+      canonical_user_id TEXT PRIMARY KEY,
+      queued_at INTEGER NOT NULL
+    );
   `);
 };
 
@@ -320,8 +329,9 @@ test('SQLite identity repository satisfies the async persistence contract', asyn
             .prepare(
               `INSERT INTO users (
                  id, username, email, password_hash, role, account_status,
-                 approved_at, approved_by, avatar, created_at, updated_at
-               ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+                 approved_at, approved_by, avatar, canonical_user_id,
+                 created_at, updated_at
+               ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
             )
             .run(
               ...Object.values(
@@ -920,8 +930,9 @@ test('SQLite identity repository migrates legacy email storage without plaintext
   const insert = database.prepare(
     `INSERT INTO users (
        id, username, email, password_hash, role, account_status,
-       approved_at, approved_by, avatar, created_at, updated_at
-     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+       approved_at, approved_by, avatar, canonical_user_id, created_at,
+       updated_at
+     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   );
   insert.run(...Object.values(user('legacy-plaintext')));
   insert.run(
@@ -1023,8 +1034,9 @@ test('SQLite identity repository rejects damaged encrypted legacy emails', async
     .prepare(
       `INSERT INTO users (
          id, username, email, password_hash, role, account_status,
-         approved_at, approved_by, avatar, created_at, updated_at
-       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+         approved_at, approved_by, avatar, canonical_user_id, created_at,
+         updated_at
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
     .run(...Object.values(user('damaged', { email: damaged })));
 
@@ -1058,8 +1070,9 @@ test('SQLite identity migration rejects a damaged envelope that lost fixed width
     .prepare(
       `INSERT INTO users (
          id, username, email, password_hash, role, account_status,
-         approved_at, approved_by, avatar, created_at, updated_at
-       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+         approved_at, approved_by, avatar, canonical_user_id, created_at,
+         updated_at
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
     .run(...Object.values(user('shortened', { email: damaged })));
 
