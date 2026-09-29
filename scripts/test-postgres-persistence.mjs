@@ -3289,6 +3289,12 @@ test(
       `DELETE FROM libre_sqlite_import_tables
         WHERE source_table = 'work_messages'`
     );
+    await target.query('DROP INDEX idx_users_canonical_user_id');
+    await target.query('ALTER TABLE users DROP COLUMN canonical_user_id');
+    await target.query('DROP TABLE canonical_identity_conflicts');
+    await target.query(
+      'DELETE FROM libre_schema_migrations WHERE version = 30'
+    );
     await target.query(
       `ALTER TABLE work_messages
          DROP CONSTRAINT work_messages_content_json_string_check`
@@ -3482,7 +3488,7 @@ test(
     assert.equal(prefixDryRun.sourceFingerprint, dryRun.sourceFingerprint);
     assert.match(
       prefixDryRun.warnings.join('\n'),
-      /exact version 10 migration-ledger prefix.*--resume can safely apply through version 29/i
+      /exact version 10 migration-ledger prefix.*--resume can safely apply through version 30/i
     );
     const codec = {
       encrypt: value => value,
@@ -3512,7 +3518,7 @@ test(
       resumed.tables.every(row => row.status === 'verified'),
       true
     );
-    assert.equal(resumed.targetSchemaVersion, 29);
+    assert.equal(resumed.targetSchemaVersion, 30);
     const resumedState = await target.query(
       `SELECT
          (SELECT MAX(version)::text FROM libre_schema_migrations)
@@ -3525,7 +3531,7 @@ test(
          (SELECT COUNT(*)::text FROM work_messages) AS work_messages`
     );
     assert.deepEqual(resumedState.rows[0], {
-      schema_version: '29',
+      schema_version: '30',
       import_status: 'complete',
       journal_count: String(dryRun.tables.length),
       work_journal: '1',
