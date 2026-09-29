@@ -3,6 +3,8 @@ import { createHmac } from 'node:crypto';
 import test from 'node:test';
 import {
   exchangeCanonicalCredentials,
+  exchangeCanonicalGoogleToken,
+  getCanonicalGoogleStatus,
   forwardAlcoreGoogle,
   forwardAlcorePassword,
   verifyProductAssertion,
@@ -136,6 +138,59 @@ test('Given valid canonical credentials, when exchanged, then returns the verifi
     `Bearer ${authBearer}`
   );
   assert.equal(calls[1]?.init.body?.toString().includes(authBearer), false);
+});
+
+test('Given a Google ID token, when forwarded to Auth, then exchanges the returned session for a Libre code', async () => {
+  process.env.AUTH_BASE_URL = 'https://auth.example';
+  const calls: Array<{ path: string; init: RequestInit }> = [];
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (input, init) => {
+    const path = String(input);
+    calls.push({ path, init: init ?? {} });
+    if (path.endsWith('/auth/google/verify'))
+      return Response.json({ access_token: 'auth-session' });
+    return Response.json({ code: 'libre-code' });
+  };
+  try {
+    assert.equal(await exchangeCanonicalGoogleToken('gis-token'), 'libre-code');
+    assert.deepEqual(
+      calls.map(call => call.path),
+      [
+        'https://auth.example/auth/google/verify',
+        'https://auth.example/oidc/exchange',
+      ]
+    );
+    assert.equal(JSON.parse(String(calls[0]?.init.body)).idToken, 'gis-token');
+    assert.equal(
+      (calls[1]?.init.headers as Record<string, string>).Authorization,
+      'Bearer auth-session'
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('Given Auth returns a server error, when Google token verification runs, then propagates the upstream failure', async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => Response.json({}, { status: 503 });
+  try {
+    await assert.rejects(exchangeCanonicalGoogleToken('gis-token'));
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('Given Auth has no public Google client ID, when status is queried, then Google remains unconfigured', async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => Response.json({ clientId: '' });
+  try {
+    assert.deepEqual(await getCanonicalGoogleStatus(), {
+      configured: false,
+      clientId: '',
+    });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });
 
 test('Given a wrong signing key, when verified, then rejects assertion', () => {

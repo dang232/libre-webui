@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { getPasskeyAssertion, passkeysSupported } from '@/utils/webauthnClient';
 import { GitHubAuthButton } from '@/components/GitHubAuthButton';
+import { CanonicalGoogleButton } from '@/components/CanonicalGoogleButton';
 import { HuggingFaceAuthButton } from '@/components/HuggingFaceAuthButton';
 import { OidcAuthButton } from '@/components/OidcAuthButton';
 import { isDemoMode } from '@/utils/demoMode';
@@ -542,6 +543,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           )}
         </button>
       </form>
+
+      {!isDemo && <CanonicalGoogleButton onSuccess={onLogin} />}
 
       {!isDemo && (
         <button

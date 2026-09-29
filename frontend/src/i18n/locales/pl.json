@@ -107,7 +107,9 @@
       "loginSuccess": "Logowanie przez OAuth zakończone pomyślnie!",
       "completionFailed": "Nie udało się ukończyć uwierzytelniania OAuth",
       "verificationFailed": "Weryfikacja uwierzytelniania OAuth nie powiodła się",
-      "authenticationFailed": "Uwierzytelnianie OAuth nie powiodło się"
+      "authenticationFailed": "Uwierzytelnianie OAuth nie powiodło się",
+      "googleFailed": "Logowanie przez Google nie powiodło się. Spróbuj ponownie.",
+      "googleLoading": "Logowanie przez Google..."
     },
     "checkingAuth": "Sprawdzanie uwierzytelniania...",
     "welcome": "Witaj",

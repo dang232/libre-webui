@@ -298,6 +298,53 @@ export const authenticateCanonicalPassword = async (
   return consumeLibreExchangeCode(code, signal);
 };
 
+export const exchangeCanonicalGoogleToken = async (
+  idToken: string,
+  signal: AbortSignal = AbortSignal.timeout(10_000)
+): Promise<string | null> => {
+  const base = authBaseUrl();
+  const verified = await fetch(`${base}/auth/google/verify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idToken }),
+    signal,
+  });
+  if (verified.status >= 500) {
+    throw new Error('Auth Google verification is unavailable');
+  }
+  if (!verified.ok) return null;
+  const verifiedBody = await parseJson(verified);
+  if (typeof verifiedBody?.['access_token'] !== 'string') return null;
+  const exchanged = await fetch(`${base}/oidc/exchange`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${verifiedBody['access_token']}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      audience: LIBRE_AUDIENCE,
+      intent: PRODUCT_EXCHANGE_INTENT,
+    }),
+    signal,
+  });
+  if (!exchanged.ok) return null;
+  const codeBody = await parseJson(exchanged);
+  return typeof codeBody?.['code'] === 'string' ? codeBody['code'] : null;
+};
+
+export const getCanonicalGoogleStatus = async (
+  signal: AbortSignal = AbortSignal.timeout(5_000)
+): Promise<{ readonly configured: boolean; readonly clientId: string }> => {
+  const response = await fetch(`${authBaseUrl()}/auth/google/config`, {
+    signal,
+  });
+  if (!response.ok) return { configured: false, clientId: '' };
+  const body = await parseJson(response);
+  const clientId =
+    typeof body?.['clientId'] === 'string' ? body['clientId'] : '';
+  return { configured: clientId.length > 0, clientId };
+};
+
 export const consumeLibreExchangeCode = async (
   code: string,
   timeoutSignal: AbortSignal = AbortSignal.timeout(10_000)

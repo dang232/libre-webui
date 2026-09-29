@@ -92,6 +92,8 @@ import {
 import {
   alcoreCustomerAuthEnabled,
   authenticateCanonicalPassword,
+  exchangeCanonicalGoogleToken,
+  getCanonicalGoogleStatus,
   consumeLibreExchangeCode,
   forwardAlcoreGoogle,
   forwardAlcorePassword,
@@ -233,6 +235,55 @@ router.post('/canonical-password', loginRateLimiter, async (req, res) => {
     if (typeof body === 'object') body.password = '';
     if (typeof req.body === 'object' && req.body !== null)
       req.body.password = '';
+  }
+});
+
+router.get('/oauth/google/status', async (_req, res) => {
+  res.set('Cache-Control', 'no-store');
+  try {
+    res.json(await getCanonicalGoogleStatus());
+  } catch {
+    res.json({ configured: false, clientId: '' });
+  }
+});
+
+router.post('/canonical-google', loginRateLimiter, async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const idToken = req.body?.idToken;
+  if (
+    typeof idToken !== 'string' ||
+    idToken.length === 0 ||
+    Buffer.byteLength(idToken) > 8192
+  ) {
+    res.status(400).json({
+      success: false,
+      message: 'A valid Google credential is required',
+    });
+    return;
+  }
+  if (!process.env.AUTH_JWT_SECRET?.trim()) {
+    res.status(503).json({
+      success: false,
+      message: 'Canonical authentication is not configured',
+    });
+    return;
+  }
+  try {
+    const code = await exchangeCanonicalGoogleToken(idToken);
+    if (!code) {
+      res
+        .status(401)
+        .json({ success: false, message: 'Invalid Google credential' });
+      return;
+    }
+    req.body = { code };
+    await handleCanonicalExchange(req, res);
+  } catch (error) {
+    logger.error('Canonical Google authentication failed', error);
+    res.status(502).json({
+      success: false,
+      message: 'Authentication service is temporarily unavailable',
+    });
   }
 });
 

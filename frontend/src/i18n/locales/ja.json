@@ -107,7 +107,9 @@
       "loginSuccess": "OAuth ログインに成功しました！",
       "completionFailed": "OAuth 認証を完了できませんでした",
       "verificationFailed": "OAuth 認証の検証に失敗しました",
-      "authenticationFailed": "OAuth 認証に失敗しました"
+      "authenticationFailed": "OAuth 認証に失敗しました",
+      "googleFailed": "Google でのログインに失敗しました。もう一度お試しください。",
+      "googleLoading": "Google でログインしています..."
     },
     "checkingAuth": "認証を確認中...",
     "welcome": "ようこそ",

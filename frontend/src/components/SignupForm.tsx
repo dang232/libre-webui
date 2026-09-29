@@ -23,6 +23,7 @@ import { useAuthStore } from '@/store/authStore';
 import { authApi } from '@/utils/api';
 import { Clock3, Eye, EyeOff, UserPlus } from 'lucide-react';
 import { GitHubAuthButton } from '@/components/GitHubAuthButton';
+import { CanonicalGoogleButton } from '@/components/CanonicalGoogleButton';
 import { TurnstileWidget } from '@/components/TurnstileWidget';
 import { cn } from '@/utils';
 import { createLogger } from '@/utils/logger';
@@ -369,6 +370,8 @@ export const SignupForm: React.FC<SignupFormProps> = ({
       >
         Create ALcore account
       </button>
+
+      <CanonicalGoogleButton onSuccess={onSignup} />
 
       {/* GitHub OAuth Button */}
       <GitHubAuthButton />

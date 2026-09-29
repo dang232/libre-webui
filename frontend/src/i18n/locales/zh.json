@@ -107,7 +107,9 @@
       "loginSuccess": "OAuth 登录成功！",
       "completionFailed": "无法完成 OAuth 身份验证",
       "verificationFailed": "OAuth 身份验证校验失败",
-      "authenticationFailed": "OAuth 身份验证失败"
+      "authenticationFailed": "OAuth 身份验证失败",
+      "googleFailed": "Google 登录失败，请重试。",
+      "googleLoading": "正在使用 Google 登录..."
     },
     "checkingAuth": "正在检查认证...",
     "welcome": "欢迎",

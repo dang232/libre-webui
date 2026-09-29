@@ -107,7 +107,9 @@
       "loginSuccess": "OAuth 로그인에 성공했습니다!",
       "completionFailed": "OAuth 인증을 완료하지 못했습니다",
       "verificationFailed": "OAuth 인증 확인에 실패했습니다",
-      "authenticationFailed": "OAuth 인증에 실패했습니다"
+      "authenticationFailed": "OAuth 인증에 실패했습니다",
+      "googleFailed": "Google 로그인에 실패했습니다. 다시 시도해 주세요.",
+      "googleLoading": "Google 로그인 중..."
     },
     "checkingAuth": "인증 확인 중...",
     "welcome": "환영합니다",

@@ -107,7 +107,9 @@
       "loginSuccess": "Přihlášení přes OAuth bylo úspěšné!",
       "completionFailed": "Dokončení autentizace OAuth se nezdařilo",
       "verificationFailed": "Ověření autentizace OAuth se nezdařilo",
-      "authenticationFailed": "Autentizace OAuth se nezdařila"
+      "authenticationFailed": "Autentizace OAuth se nezdařila",
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "googleLoading": "Signing in with Google..."
     },
     "checkingAuth": "Kontrola ověření...",
     "welcome": "Vítejte",

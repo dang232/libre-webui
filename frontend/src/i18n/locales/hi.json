@@ -107,7 +107,9 @@
       "loginSuccess": "OAuth लॉगिन सफल रहा!",
       "completionFailed": "OAuth प्रमाणीकरण पूरा करने में विफल",
       "verificationFailed": "OAuth प्रमाणीकरण सत्यापन विफल",
-      "authenticationFailed": "OAuth प्रमाणीकरण विफल"
+      "authenticationFailed": "OAuth प्रमाणीकरण विफल",
+      "googleFailed": "Google से साइन इन नहीं हो सका। कृपया फिर से प्रयास करें।",
+      "googleLoading": "Google से साइन इन हो रहा है..."
     },
     "checkingAuth": "प्रमाणीकरण जाँच रहा है...",
     "welcome": "स्वागत है",

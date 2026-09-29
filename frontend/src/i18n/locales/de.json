@@ -107,7 +107,9 @@
       "loginSuccess": "OAuth-Anmeldung erfolgreich!",
       "completionFailed": "OAuth-Authentifizierung konnte nicht abgeschlossen werden",
       "verificationFailed": "Überprüfung der OAuth-Authentifizierung fehlgeschlagen",
-      "authenticationFailed": "OAuth-Authentifizierung fehlgeschlagen"
+      "authenticationFailed": "OAuth-Authentifizierung fehlgeschlagen",
+      "googleFailed": "Google-Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "googleLoading": "Anmeldung mit Google läuft..."
     },
     "checkingAuth": "Authentifizierung wird überprüft...",
     "welcome": "Willkommen",

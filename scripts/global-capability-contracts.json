@@ -3564,6 +3564,18 @@
           "file": "backend/src/routes/auth.ts",
           "mount": "/api/auth",
           "method": "POST",
+          "path": "/canonical-google"
+        },
+        {
+          "file": "backend/src/routes/auth.ts",
+          "mount": "/api/auth",
+          "method": "GET",
+          "path": "/oauth/google/status"
+        },
+        {
+          "file": "backend/src/routes/auth.ts",
+          "mount": "/api/auth",
+          "method": "POST",
           "path": "/login"
         },
         {

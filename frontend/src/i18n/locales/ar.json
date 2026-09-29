@@ -107,7 +107,9 @@
       "loginSuccess": "تم تسجيل الدخول عبر OAuth بنجاح!",
       "completionFailed": "تعذّر إكمال مصادقة OAuth",
       "verificationFailed": "فشل التحقق من مصادقة OAuth",
-      "authenticationFailed": "فشلت مصادقة OAuth"
+      "authenticationFailed": "فشلت مصادقة OAuth",
+      "googleFailed": "تعذّر تسجيل الدخول باستخدام Google. يُرجى المحاولة مرة أخرى.",
+      "googleLoading": "جارٍ تسجيل الدخول باستخدام Google..."
     },
     "checkingAuth": "جاري التحقق من المصادقة...",
     "welcome": "مرحباً",

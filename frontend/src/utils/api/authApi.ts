@@ -152,6 +152,9 @@ export const authApi = {
       .post('/auth/canonical-signup', { email, password })
       .then(res => res.data),
 
+  canonicalGoogle: (idToken: string): Promise<ApiResponse<LoginResponse>> =>
+    api.post('/auth/canonical-google', { idToken }).then(res => res.data),
+
   signup: (credentials: {
     username: string;
     password: string;
