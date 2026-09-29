@@ -23,25 +23,26 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT }}
+          command_timeout: 15m
           script: |
-            set -e
+            set -euo pipefail
             cd "${{ secrets.VPS_PROJECT_DIR }}"
-            git fetch origin main
+            test -d .git || { echo "VPS_PROJECT_DIR is not a Git checkout." >&2; exit 1; }
+            timeout 2m git fetch origin main
             git reset --hard origin/main
-            docker compose pull || true
-            docker compose up -d --build
+            docker image inspect alcore/alcore:latest >/dev/null
+            timeout 2m docker compose up -d --no-build --pull never
             docker image prune -f
-            docker compose ps
-            PORT=$(grep -E '^WEBUI_PORT=' .env | cut -d= -f2 || true)
+            timeout 30s docker compose ps
+            PORT=$(awk -F= '$1 == "WEBUI_PORT" { print $2; exit }' .env 2>/dev/null || true)
             PORT=${PORT:-8080}
             for attempt in $(seq 1 36); do
-              if curl --fail --max-time 10 "http://localhost:${PORT}/" > /dev/null 2>&1; then
+              if curl --fail --silent --show-error --max-time 5 "http://localhost:${PORT}/" > /dev/null 2>&1; then
                 echo "Healthy on port ${PORT}."
-                break
-              fi
-              if [ "$attempt" -eq 36 ]; then
-                docker compose logs --tail=100 alcore
-                exit 1
+                exit 0
               fi
               sleep 5
             done
+            timeout 30s docker compose logs --tail=100 alcore || true
+            echo "Health check failed on localhost port ${PORT}." >&2
+            exit 1
