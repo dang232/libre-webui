@@ -10,8 +10,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { useAuthStore } from '@/store/authStore';
 import { authApi } from '@/utils/api';
 import {
-  canonicalCallbackUrl,
-  consumeHandoffState,
+  completeCanonicalCallback,
   type StateRejection,
 } from '@/utils/canonicalHandoff';
 
@@ -42,34 +41,28 @@ export const CanonicalCallbackPage: React.FC = () => {
     if (started.current) return;
     started.current = true;
 
-    const code = searchParams.get('code');
-    const state = searchParams.get('state');
-
-    const check = consumeHandoffState(state);
-    if (!check.ok) {
-      setReason(check.reason ?? 'state_mismatch');
-      setPhase('failed');
-      return;
-    }
-    if (code === null || code === '') {
-      setReason('missing_code');
-      setPhase('failed');
-      return;
-    }
-
     void (async () => {
       try {
-        const result = await authApi.canonicalExchange(
-          code,
-          canonicalCallbackUrl(window.location.origin),
-          state ?? ''
+        const outcome = await completeCanonicalCallback(
+          {
+            code: searchParams.get('code'),
+            state: searchParams.get('state'),
+            origin: window.location.origin,
+          },
+          (c, redirectUri, s) => authApi.canonicalExchange(c, redirectUri, s)
         );
-        if (!result.success || !result.data) {
+        if (!outcome.ok) {
+          setReason(outcome.reason);
+          setPhase('failed');
+          return;
+        }
+        const data = outcome.data.data;
+        if (!data) {
           setReason('exchange_failed');
           setPhase('failed');
           return;
         }
-        login(result.data.user, result.data.token, result.data.systemInfo);
+        login(data.user, data.token, data.systemInfo);
         // Replace the URL so the spent code cannot be reloaded or bookmarked.
         navigate('/', { replace: true });
       } catch {

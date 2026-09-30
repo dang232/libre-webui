@@ -151,6 +151,64 @@ export function consumeHandoffState(
 }
 
 /**
+ * Outcome of completing a handoff callback. `ok: false` always carries a reason
+ * that is safe to show a user: it never distinguishes "no session was started"
+ * from "someone tampered", which would make this an oracle.
+ */
+export type CallbackOutcome<T> =
+  | { readonly ok: true; readonly data: T }
+  | {
+      readonly ok: false;
+      readonly reason: StateRejection | 'missing_code' | 'exchange_failed';
+    };
+
+export interface CallbackExchangeResult {
+  readonly success: boolean;
+}
+
+/**
+ * The whole callback decision, free of React and of the network.
+ *
+ * Keeping the ordering here — state before code before redemption — is the
+ * security-relevant part, and it is exactly what a component-level render test
+ * cannot reach: the effects that drive it never run under SSR. Injecting the
+ * exchange call keeps this unit-testable without a DOM harness.
+ */
+export async function completeCanonicalCallback<
+  T extends CallbackExchangeResult,
+>(
+  params: {
+    readonly code: string | null;
+    readonly state: string | null;
+    readonly origin: string;
+    readonly consumeState?: typeof consumeHandoffState;
+  },
+  exchange?: (code: string, redirectUri: string, state: string) => Promise<T>
+): Promise<CallbackOutcome<T>> {
+  const consumeState = params.consumeState ?? consumeHandoffState;
+
+  const check = consumeState(params.state);
+  if (!check.ok) return { ok: false, reason: check.reason ?? 'state_mismatch' };
+
+  const code = params.code;
+  if (code === null || code === '')
+    return { ok: false, reason: 'missing_code' };
+
+  const state = params.state ?? '';
+  if (exchange === undefined) {
+    // Fail closed rather than treating "no transport wired up" as success.
+    return { ok: false, reason: 'exchange_failed' };
+  }
+  const result = await exchange(
+    code,
+    canonicalCallbackUrl(params.origin),
+    state
+  );
+  if (!result.success) return { ok: false, reason: 'exchange_failed' };
+  return { ok: true, data: result };
+}
+
+/**
  * Starts a handoff and returns the Auth URL to navigate to. The caller supplies
  * the Auth base URL and its own origin so this module stays importable outside a
  * browser (unit tests run under plain Node).

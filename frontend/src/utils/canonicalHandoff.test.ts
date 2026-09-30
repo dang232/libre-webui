@@ -10,12 +10,13 @@
  * cases below cover both directions: a genuine callback succeeds, and every
  * shape of forged or stale callback fails closed.
  */
-import { describe, it } from 'node:test';
+import { beforeEach, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
   buildAuthRedirectUrl,
   canonicalCallbackUrl,
+  completeCanonicalCallback,
   consumeHandoffState,
   generateState,
   HANDSOFF_STATE_TTL_MS,
@@ -187,5 +188,143 @@ describe('canonical handoff URLs', () => {
       )
     );
     assert.equal(url.searchParams.get('state'), hostile);
+  });
+});
+
+describe('canonical callback completion', () => {
+  const ORIGIN = 'https://web.alcore.io.vn';
+  const calls: Array<[string, string, string]> = [];
+  let exchangeResult: { success: boolean };
+
+  const exchange = async (code: string, redirectUri: string, state: string) => {
+    calls.push([code, redirectUri, state]);
+    return exchangeResult;
+  };
+
+  /** consumeState bound to a storage seeded with `state`. */
+  const seeded =
+    (state: string, at: number, now = at + 100) =>
+    (received: string | null) => {
+      const storage = fakeStorage();
+      rememberHandoffState(state, storage, at);
+      return consumeHandoffState(received, storage, now);
+    };
+
+  beforeEach(() => {
+    calls.length = 0;
+    exchangeResult = { success: true };
+  });
+
+  it('redeems the code and reports success when state and code are both valid', async () => {
+    const outcome = await completeCanonicalCallback(
+      {
+        code: 'code-1',
+        state: 'st-ok',
+        origin: ORIGIN,
+        consumeState: seeded('st-ok', 1000),
+      },
+      exchange
+    );
+    assert.equal(outcome.ok, true);
+    // The success path must hand the exchange payload back so the caller can
+    // establish a session from it; it is not enough to report ok.
+    assert.deepEqual(outcome.ok && outcome.data, { success: true });
+    assert.deepEqual(calls, [['code-1', `${ORIGIN}/auth/callback`, 'st-ok']]);
+  });
+
+  it('validates state BEFORE redeeming, so a forged callback never reaches the network', async () => {
+    const outcome = await completeCanonicalCallback(
+      {
+        code: 'code-1',
+        state: 'st-forged',
+        origin: ORIGIN,
+        consumeState: seeded('st-real', 1000),
+      },
+      exchange
+    );
+    assert.equal(outcome.ok, false);
+    assert.equal(calls.length, 0, 'exchange must not be called');
+  });
+
+  it('reports missing_code only after state passes', async () => {
+    for (const code of [null, '']) {
+      const outcome = await completeCanonicalCallback(
+        {
+          code,
+          state: 'st-ok',
+          origin: ORIGIN,
+          consumeState: seeded('st-ok', 1000),
+        },
+        exchange
+      );
+      assert.deepEqual(outcome, { ok: false, reason: 'missing_code' });
+    }
+    assert.equal(calls.length, 0);
+  });
+
+  it('rejects a missing state ahead of any code handling', async () => {
+    const outcome = await completeCanonicalCallback(
+      {
+        code: 'code-1',
+        state: null,
+        origin: ORIGIN,
+        consumeState: seeded('st-ok', 1000),
+      },
+      exchange
+    );
+    assert.deepEqual(outcome, { ok: false, reason: 'missing_state' });
+    assert.equal(calls.length, 0);
+  });
+
+  it('surfaces an expired state distinctly from a mismatch', async () => {
+    const outcome = await completeCanonicalCallback(
+      {
+        code: 'code-1',
+        state: 'st-old',
+        origin: ORIGIN,
+        consumeState: seeded('st-old', 1000, 1000 + HANDSOFF_STATE_TTL_MS + 1),
+      },
+      exchange
+    );
+    assert.deepEqual(outcome, { ok: false, reason: 'state_expired' });
+    assert.equal(calls.length, 0);
+  });
+
+  it('maps a rejected redemption to exchange_failed without leaking upstream detail', async () => {
+    exchangeResult = { success: false };
+    const outcome = await completeCanonicalCallback(
+      {
+        code: 'code-1',
+        state: 'st-ok',
+        origin: ORIGIN,
+        consumeState: seeded('st-ok', 1000),
+      },
+      exchange
+    );
+    assert.deepEqual(outcome, { ok: false, reason: 'exchange_failed' });
+    assert.equal(calls.length, 1);
+  });
+
+  it('fails closed when no exchange implementation is supplied', async () => {
+    const outcome = await completeCanonicalCallback({
+      code: 'code-1',
+      state: 'st-ok',
+      origin: ORIGIN,
+      consumeState: seeded('st-ok', 1000),
+    });
+    assert.deepEqual(outcome, { ok: false, reason: 'exchange_failed' });
+  });
+
+  it('sends the exact registered redirect URI so Auth can match its binding', async () => {
+    await completeCanonicalCallback(
+      {
+        code: 'c',
+        state: 'st-ok',
+        origin: `${ORIGIN}/`,
+        consumeState: seeded('st-ok', 1000),
+      },
+      exchange
+    );
+    assert.equal(calls[0]?.[1], `${ORIGIN}/auth/callback`);
   });
 });
