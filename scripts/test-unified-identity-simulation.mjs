@@ -57,6 +57,11 @@ let canonicalUserId;
 // Ports are fixed for simplicity; a concurrent run collides with EADDRINUSE.
 // Override with AUTH_SIM_PORT / LIBRE_SIM_PORT. waitFor fails fast on an
 // occupied port instead of burning the full readiness budget.
+// Budget is wall-clock, not attempt count: Libre's cold start (preflight +
+// migrations on a fresh DATA_DIR) measures ~11s, so the previous 100x100ms
+// ceiling sat right at the edge and timed out intermittently, failing every
+// later test with ECONNREFUSED because Libre was never up.
+const readyTimeoutMs = Number(process.env.SIM_READY_TIMEOUT_MS || 90_000);
 const waitFor = async (url, child, label) => {
   let output = '';
   let exited = null;
@@ -70,7 +75,8 @@ const waitFor = async (url, child, label) => {
   child.stderr.setEncoding('utf8').on('data', onOut);
   child.once('exit', onExit);
   try {
-    for (let attempt = 0; attempt < 100; attempt += 1) {
+    const deadline = Date.now() + readyTimeoutMs;
+    for (;;) {
       if (exited !== null) {
         throw new Error(`${label} exited early (${exited}): ${output}`);
       }
@@ -83,9 +89,13 @@ const waitFor = async (url, child, label) => {
           );
         }
       }
+      if (Date.now() >= deadline) {
+        throw new Error(
+          `${label} did not become ready within ${readyTimeoutMs}ms: ${output}`
+        );
+      }
       await new Promise(resolve => setTimeout(resolve, 100));
     }
-    throw new Error(`${label} did not become ready: ${output}`);
   } finally {
     child.stdout.off('data', onOut);
     child.stderr.off('data', onOut);
