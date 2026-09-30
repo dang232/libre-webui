@@ -54,21 +54,50 @@ const bun = process.env.BUN_EXECUTABLE || 'bun';
 let auth;
 let libre;
 let canonicalUserId;
+// Ports are fixed for simplicity; a concurrent run collides with EADDRINUSE.
+// Override with AUTH_SIM_PORT / LIBRE_SIM_PORT. waitFor fails fast on an
+// occupied port instead of burning the full readiness budget.
 const waitFor = async (url, child, label) => {
   let output = '';
-  child.stdout.setEncoding('utf8').on('data', chunk => {
+  let exited = null;
+  const onOut = chunk => {
     output += chunk;
-  });
-  child.stderr.setEncoding('utf8').on('data', chunk => {
-    output += chunk;
-  });
-  for (let attempt = 0; attempt < 100; attempt += 1) {
-    try {
-      if ((await fetch(url)).ok) return;
-    } catch {}
-    await new Promise(resolve => setTimeout(resolve, 100));
+  };
+  const onExit = (code, signal) => {
+    exited = `exit ${code} signal ${signal}`;
+  };
+  child.stdout.setEncoding('utf8').on('data', onOut);
+  child.stderr.setEncoding('utf8').on('data', onOut);
+  child.once('exit', onExit);
+  try {
+    for (let attempt = 0; attempt < 100; attempt += 1) {
+      if (exited !== null) {
+        throw new Error(`${label} exited early (${exited}): ${output}`);
+      }
+      try {
+        if ((await fetch(url)).ok) return;
+      } catch (error) {
+        if (error?.cause?.code === 'EADDRINUSE' || /EADDRINUSE/.test(output)) {
+          throw new Error(
+            `${label} port in use — set AUTH_SIM_PORT/LIBRE_SIM_PORT: ${output}`
+          );
+        }
+      }
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    throw new Error(`${label} did not become ready: ${output}`);
+  } finally {
+    child.stdout.off('data', onOut);
+    child.stderr.off('data', onOut);
+    child.off('exit', onExit);
   }
-  throw new Error(`${label} did not become ready: ${output}`);
+};
+const requirePrereq = (value, name) => {
+  assert.ok(
+    value,
+    `prereq failed: ${name} was not set — see the earlier failing test`
+  );
+  return value;
 };
 const postLibre = (route, body) =>
   fetch(`${libreBase}${route}`, {
@@ -290,22 +319,41 @@ test('Given an existing session, when signing in again by password, then the sam
     password,
   });
   assert.equal(again.status, 200, await again.clone().text());
-  assert.equal((await again.json()).data.user.id, canonicalUserId);
+  assert.equal(
+    (await again.json()).data.user.id,
+    requirePrereq(canonicalUserId, 'canonicalUserId from the signup test')
+  );
 });
 
-test.after(async () => {
-  for (const child of [libre, auth]) {
-    if (!child) continue;
-    child.kill();
+const reapChild = async child => {
+  if (!child || child.exitCode !== null) return;
+  child.kill('SIGTERM');
+  const exited = new Promise(resolve => child.once('exit', resolve));
+  const killTimer = setTimeout(() => child.kill('SIGKILL'), 5000);
+  try {
+    await Promise.race([
+      exited,
+      new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error('child did not exit after SIGKILL')),
+          10000
+        )
+      ),
+    ]);
+  } catch (error) {
+    console.error(`reap warning: ${error.message}`);
+  } finally {
+    clearTimeout(killTimer);
   }
-  await Promise.all(
-    [libre, auth]
-      .filter(Boolean)
-      .map(child =>
-        child.exitCode !== null
-          ? Promise.resolve()
-          : new Promise(resolve => child.once('exit', resolve))
-      )
-  );
-  fs.rmSync(scratch, { recursive: true, force: true });
+};
+
+test.after(async () => {
+  await Promise.allSettled([libre, auth].map(reapChild));
+  try {
+    fs.rmSync(scratch, { recursive: true, force: true });
+  } catch (error) {
+    // Windows file locking (EBUSY on a still-open sqlite handle) must not
+    // mask the suite result; the tmpdir is namespaced per run.
+    console.error(`scratch cleanup warning: ${error.message}`);
+  }
 });
