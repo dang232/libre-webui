@@ -418,6 +418,20 @@ const handleCanonicalExchange = async (
       .json({ success: false, message: 'A valid exchange code is required' });
     return;
   }
+  // Browser-handoff codes are bound by Auth to a redirect URI and a state value.
+  // Forward both verbatim so Auth can verify the binding; never substitute our own
+  // value, or a stolen code could be redeemed at an attacker-chosen target.
+  const redirectUri = req.body?.redirect_uri;
+  const state = req.body?.state;
+  if (
+    (redirectUri !== undefined && typeof redirectUri !== 'string') ||
+    (state !== undefined && typeof state !== 'string')
+  ) {
+    res
+      .status(400)
+      .json({ success: false, message: 'Invalid exchange redirect binding' });
+    return;
+  }
   if (!process.env.AUTH_JWT_SECRET?.trim()) {
     res.status(503).json({
       success: false,
@@ -426,7 +440,12 @@ const handleCanonicalExchange = async (
     return;
   }
   try {
-    const exchanged = await consumeLibreExchangeCode(code);
+    const exchanged = await consumeLibreExchangeCode(
+      code,
+      AbortSignal.timeout(10_000),
+      typeof redirectUri === 'string' ? redirectUri : '',
+      typeof state === 'string' ? state : ''
+    );
     if (!exchanged.ok) {
       const upstream =
         exchanged.reason === 'unavailable' ||

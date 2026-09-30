@@ -127,6 +127,16 @@ const authBaseUrl = (): string =>
     ''
   );
 
+/**
+ * The exact redirect URI registered with Auth for the browser handoff. It must
+ * match AUTH_OIDC_CLIENTS on the Auth side character for character, because Auth
+ * binds a browser-minted exchange code to this value and rejects redemption at
+ * any other target. Kept in one place so the exchange call and the callback
+ * route cannot drift apart.
+ */
+export const CANONICAL_REDIRECT_URI =
+  process.env.AUTH_REDIRECT_URI || 'https://web.alcore.io.vn/auth/callback';
+
 const parseJson = async (
   response: Response
 ): Promise<Record<string, unknown> | null> => {
@@ -389,8 +399,14 @@ export const getCanonicalGoogleStatus = async (
 
 export const consumeLibreExchangeCode = async (
   code: string,
-  timeoutSignal: AbortSignal = AbortSignal.timeout(10_000)
+  timeoutSignal: AbortSignal = AbortSignal.timeout(10_000),
+  redirectUri = '',
+  state = ''
 ): Promise<CanonicalAssertionResult> => {
+  // Codes minted by Auth's browser handoff carry a redirect+state binding and
+  // Auth refuses to redeem them without it, so both must be forwarded whenever
+  // the caller has them. Codes from the server-side Google exchange have no
+  // binding and must omit them.
   const response = await fetch(`${authBaseUrl()}/oidc/exchange/token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -398,6 +414,8 @@ export const consumeLibreExchangeCode = async (
       code,
       audience: LIBRE_AUDIENCE,
       intent: PRODUCT_EXCHANGE_INTENT,
+      ...(redirectUri === '' ? {} : { redirect_uri: redirectUri }),
+      ...(redirectUri === '' ? {} : { state }),
     }),
     signal: timeoutSignal,
   });
