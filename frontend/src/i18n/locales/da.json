@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Kunne ikke oprette forbindelse til backendtjenesten"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Login kunne ikke gennemføres",
+      "expired": "Dette loginlink er udløbet. Prøv igen.",
+      "invalid": "Dette loginlink er ikke længere gyldigt. Start igen.",
+      "backToLogin": "Tilbage til login",
+      "working": "Logger dig ind…",
+      "workingHint": "Vent venligst, mens vi er færdige."
+    },
+    "canonical": {
+      "redirecting": "Omdirigerer…",
+      "signIn": "Fortsæt med ALcore-konto"
+    },
+    "checkingAuth": "Kontrollerer godkendelse...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Lokalt først",
+        "body": "Dine samtaler og filer forbliver på den maskine, du kører dette på."
+      },
+      "providers": {
+        "title": "Enhver udbyder",
+        "body": "Lokale modeller via Ollama plus de eksterne udbydere, du vælger at tilføje."
+      },
+      "work": {
+        "title": "Isoleret arbejde",
+        "body": "Giv en model et sandkasse-arbejdsområde med filer, en terminal og en forhåndsvisning."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "JWT-godkendelse aktiv",
+    "jwtDescription": "JWT-baseret godkendelse med GitHub OAuth",
     "login": {
       "title": "Velkommen tilbage",
       "subtitle": "Log ind på din konto for at fortsætte",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Kunne ikke bekræfte GitHub-godkendelse",
       "verificationFailed": "Sikkerhedskontrollen mislykkedes. Opdater siden og prøv igen."
     },
-    "signup": {
-      "title": "Opret konto",
-      "subtitle": "Tilmeld dig en ny konto",
-      "username": "Brugernavn",
-      "usernamePlaceholder": "Vælg et brugernavn",
-      "email": "E-mail",
-      "emailPlaceholder": "din@email.dk",
-      "password": "Adgangskode",
-      "passwordPlaceholder": "Vælg en adgangskode",
-      "confirmPassword": "Bekræft adgangskode",
-      "confirmPasswordPlaceholder": "Bekræft din adgangskode",
-      "createAccount": "Opret konto",
-      "creatingAccount": "Opretter konto...",
-      "hasAccount": "Har du allerede en konto?",
-      "signInHere": "Log ind her",
-      "signupSuccess": "Konto oprettet!",
-      "approvalPending": "Registrering modtaget. En administrator skal godkende din konto.",
-      "awaitingApproval": "Afventer godkendelse",
-      "awaitingApprovalDescription": "Din konto er oprettet, men en administrator skal aktivere den, før du kan logge ind.",
-      "backToSignIn": "Tilbage til login",
-      "signupFailed": "Tilmelding mislykkedes",
-      "tryAgain": "Tilmelding mislykkedes. Prøv venligst igen.",
-      "usernameRequired": "Brugernavn og adgangskode er påkrævet",
-      "passwordMismatch": "Adgangskoderne stemmer ikke overens"
-    },
     "logout": {
       "button": "Log ud",
       "success": "Logget ud"
-    },
-    "oauth": {
-      "continueWith": "Fortsæt med {{provider}}",
-      "connectingTo": "Opretter forbindelse til {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "OAuth-login lykkedes!",
-      "completionFailed": "Kunne ikke fuldføre OAuth-godkendelsen",
-      "verificationFailed": "Bekræftelse af OAuth-godkendelsen mislykkedes",
-      "authenticationFailed": "OAuth-godkendelsen mislykkedes",
-      "googleFailed": "Google sign-in failed. Please try again.",
-      "googleLoading": "Signing in with Google..."
-    },
-    "checkingAuth": "Kontrollerer godkendelse...",
-    "welcome": "Velkommen",
-    "noEmail": "Ingen e-mail angivet",
-    "role": "Rolle",
-    "id": "ID",
-    "userId": "Bruger-ID",
-    "signInDescription": "Log ind med din GitHub-konto for at fortsætte",
-    "signInWithGitHub": "Log ind med GitHub",
-    "jwtActive": "JWT-godkendelse aktiv",
-    "jwtDescription": "JWT-baseret godkendelse med GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Udbyder",
-    "tagline": "Din AI-stack bør svare til dig.",
-    "selfHosted": "Selv-hostet · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Lokalt først",
-        "body": "Dine samtaler og filer forbliver på den maskine, du kører dette på."
-      },
-      "providers": {
-        "title": "Enhver udbyder",
-        "body": "Lokale modeller via Ollama plus de eksterne udbydere, du vælger at tilføje."
-      },
-      "work": {
-        "title": "Isoleret arbejde",
-        "body": "Giv en model et sandkasse-arbejdsområde med filer, en terminal og en forhåndsvisning."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Single sign-on"
     },
     "mfa": {
       "sectionTitle": "Totrinsbekræftelse",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Jeg har gemt mine gendannelseskoder",
       "recoveryCodesRegenerated": "Nye gendannelseskoder oprettet. De gamle virker ikke længere."
     },
+    "noEmail": "Ingen e-mail angivet",
+    "oauth": {
+      "continueWith": "Fortsæt med {{provider}}",
+      "connectingTo": "Opretter forbindelse til {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "OAuth-login lykkedes!",
+      "completionFailed": "Kunne ikke fuldføre OAuth-godkendelsen",
+      "verificationFailed": "Bekræftelse af OAuth-godkendelsen mislykkedes",
+      "authenticationFailed": "OAuth-godkendelsen mislykkedes",
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "googleLoading": "Signing in with Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Single sign-on"
+    },
     "passkeys": {
       "sectionTitle": "Adgangsnøgler",
       "sectionDescription": "Log ind uden adgangskode med din enheds skærmlås eller en sikkerhedsnøgle.",
@@ -189,7 +168,40 @@
       "removeFailed": "Adgangsnøglen kunne ikke fjernes.",
       "signInButton": "Log ind med en adgangsnøgle",
       "signInFailed": "Login med adgangsnøgle mislykkedes."
-    }
+    },
+    "provider": "Udbyder",
+    "role": "Rolle",
+    "selfHosted": "Selv-hostet · Apache 2.0",
+    "signInDescription": "Log ind med din GitHub-konto for at fortsætte",
+    "signInWithGitHub": "Log ind med GitHub",
+    "signup": {
+      "title": "Opret konto",
+      "subtitle": "Tilmeld dig en ny konto",
+      "username": "Brugernavn",
+      "usernamePlaceholder": "Vælg et brugernavn",
+      "email": "E-mail",
+      "emailPlaceholder": "din@email.dk",
+      "password": "Adgangskode",
+      "passwordPlaceholder": "Vælg en adgangskode",
+      "confirmPassword": "Bekræft adgangskode",
+      "confirmPasswordPlaceholder": "Bekræft din adgangskode",
+      "createAccount": "Opret konto",
+      "creatingAccount": "Opretter konto...",
+      "hasAccount": "Har du allerede en konto?",
+      "signInHere": "Log ind her",
+      "signupSuccess": "Konto oprettet!",
+      "approvalPending": "Registrering modtaget. En administrator skal godkende din konto.",
+      "awaitingApproval": "Afventer godkendelse",
+      "awaitingApprovalDescription": "Din konto er oprettet, men en administrator skal aktivere den, før du kan logge ind.",
+      "backToSignIn": "Tilbage til login",
+      "signupFailed": "Tilmelding mislykkedes",
+      "tryAgain": "Tilmelding mislykkedes. Prøv venligst igen.",
+      "usernameRequired": "Brugernavn og adgangskode er påkrævet",
+      "passwordMismatch": "Adgangskoderne stemmer ikke overens"
+    },
+    "tagline": "Din AI-stack bør svare til dig.",
+    "userId": "Bruger-ID",
+    "welcome": "Velkommen"
   },
   "setup": {
     "welcome": {

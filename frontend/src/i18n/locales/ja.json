@@ -49,6 +49,37 @@
     "backendConnectionFailed": "バックエンドサービスへの接続に失敗しました"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "サインインを完了できませんでした",
+      "expired": "このサインインリンクの有効期限が切れています。もう一度お試しください。",
+      "invalid": "このサインインリンクは無効になりました。最初からやり直してください。",
+      "backToLogin": "サインインに戻る",
+      "working": "サインインしています…",
+      "workingHint": "しばらくお待ちください。"
+    },
+    "canonical": {
+      "redirecting": "リダイレクトしています…",
+      "signIn": "ALcore アカウントで続行"
+    },
+    "checkingAuth": "認証を確認中...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "ローカル優先",
+        "body": "会話やファイルは、このアプリを実行しているマシン上に留まります。"
+      },
+      "providers": {
+        "title": "任意のプロバイダー",
+        "body": "Ollama経由のローカルモデルに加え、お好みで追加したリモートプロバイダーも利用可能。"
+      },
+      "work": {
+        "title": "隔離された作業環境",
+        "body": "モデルにファイル、ターミナル、プレビューを備えたサンドボックスワークスペースを提供します。"
+      }
+    },
+    "id": "ID",
+    "jwtActive": "JWT認証アクティブ",
+    "jwtDescription": "GitHub OAuthによるJWT認証",
     "login": {
       "title": "おかえりなさい",
       "subtitle": "アカウントにサインインして続行",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "GitHub認証の確認に失敗しました",
       "verificationFailed": "セキュリティ確認に失敗しました。ページを更新して再試行してください。"
     },
-    "signup": {
-      "title": "アカウント作成",
-      "subtitle": "新しいアカウントを作成",
-      "username": "ユーザー名",
-      "usernamePlaceholder": "ユーザー名を選択",
-      "email": "メールアドレス",
-      "emailPlaceholder": "your@email.com",
-      "password": "パスワード",
-      "passwordPlaceholder": "パスワードを選択",
-      "confirmPassword": "パスワード確認",
-      "confirmPasswordPlaceholder": "パスワードを再入力",
-      "createAccount": "アカウント作成",
-      "creatingAccount": "アカウント作成中...",
-      "hasAccount": "すでにアカウントをお持ちですか？",
-      "signInHere": "サインインはこちら",
-      "signupSuccess": "アカウントが正常に作成されました！",
-      "approvalPending": "登録を受け付けました。管理者がアカウントを承認する必要があります。",
-      "awaitingApproval": "承認待ち",
-      "awaitingApprovalDescription": "アカウントは作成されましたが、サインインするには管理者による有効化が必要です。",
-      "backToSignIn": "サインインに戻る",
-      "signupFailed": "登録に失敗しました",
-      "tryAgain": "登録に失敗しました。もう一度お試しください。",
-      "usernameRequired": "ユーザー名とパスワードは必須です",
-      "passwordMismatch": "パスワードが一致しません"
-    },
     "logout": {
       "button": "ログアウト",
       "success": "正常にログアウトしました"
-    },
-    "oauth": {
-      "continueWith": "{{provider}}で続行",
-      "connectingTo": "{{provider}}に接続中...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "OAuth ログインに成功しました！",
-      "completionFailed": "OAuth 認証を完了できませんでした",
-      "verificationFailed": "OAuth 認証の検証に失敗しました",
-      "authenticationFailed": "OAuth 認証に失敗しました",
-      "googleFailed": "Google でのログインに失敗しました。もう一度お試しください。",
-      "googleLoading": "Google でログインしています..."
-    },
-    "checkingAuth": "認証を確認中...",
-    "welcome": "ようこそ",
-    "noEmail": "メールアドレスなし",
-    "role": "ロール",
-    "id": "ID",
-    "userId": "ユーザーID",
-    "signInDescription": "続行するにはGitHubアカウントでサインインしてください",
-    "signInWithGitHub": "GitHubでサインイン",
-    "jwtActive": "JWT認証アクティブ",
-    "jwtDescription": "GitHub OAuthによるJWT認証",
-    "github": "GitHub",
-    "provider": "プロバイダー",
-    "tagline": "あなたのAIスタックは、あなたに応えるべきです。",
-    "selfHosted": "セルフホスト · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "ローカル優先",
-        "body": "会話やファイルは、このアプリを実行しているマシン上に留まります。"
-      },
-      "providers": {
-        "title": "任意のプロバイダー",
-        "body": "Ollama経由のローカルモデルに加え、お好みで追加したリモートプロバイダーも利用可能。"
-      },
-      "work": {
-        "title": "隔離された作業環境",
-        "body": "モデルにファイル、ターミナル、プレビューを備えたサンドボックスワークスペースを提供します。"
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "シングルサインオン"
     },
     "mfa": {
       "sectionTitle": "2要素認証",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "リカバリーコードを保存しました",
       "recoveryCodesRegenerated": "新しいリカバリーコードを作成しました。古いコードは使えません。"
     },
+    "noEmail": "メールアドレスなし",
+    "oauth": {
+      "continueWith": "{{provider}}で続行",
+      "connectingTo": "{{provider}}に接続中...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "OAuth ログインに成功しました！",
+      "completionFailed": "OAuth 認証を完了できませんでした",
+      "verificationFailed": "OAuth 認証の検証に失敗しました",
+      "authenticationFailed": "OAuth 認証に失敗しました",
+      "googleFailed": "Google でのログインに失敗しました。もう一度お試しください。",
+      "googleLoading": "Google でログインしています..."
+    },
+    "oidc": {
+      "defaultProviderName": "シングルサインオン"
+    },
     "passkeys": {
       "sectionTitle": "パスキー",
       "sectionDescription": "デバイスの画面ロックやセキュリティキーでパスワードなしでサインインします。",
@@ -189,7 +168,40 @@
       "removeFailed": "パスキーを削除できませんでした。",
       "signInButton": "パスキーでサインイン",
       "signInFailed": "パスキーでのサインインに失敗しました。"
-    }
+    },
+    "provider": "プロバイダー",
+    "role": "ロール",
+    "selfHosted": "セルフホスト · Apache 2.0",
+    "signInDescription": "続行するにはGitHubアカウントでサインインしてください",
+    "signInWithGitHub": "GitHubでサインイン",
+    "signup": {
+      "title": "アカウント作成",
+      "subtitle": "新しいアカウントを作成",
+      "username": "ユーザー名",
+      "usernamePlaceholder": "ユーザー名を選択",
+      "email": "メールアドレス",
+      "emailPlaceholder": "your@email.com",
+      "password": "パスワード",
+      "passwordPlaceholder": "パスワードを選択",
+      "confirmPassword": "パスワード確認",
+      "confirmPasswordPlaceholder": "パスワードを再入力",
+      "createAccount": "アカウント作成",
+      "creatingAccount": "アカウント作成中...",
+      "hasAccount": "すでにアカウントをお持ちですか？",
+      "signInHere": "サインインはこちら",
+      "signupSuccess": "アカウントが正常に作成されました！",
+      "approvalPending": "登録を受け付けました。管理者がアカウントを承認する必要があります。",
+      "awaitingApproval": "承認待ち",
+      "awaitingApprovalDescription": "アカウントは作成されましたが、サインインするには管理者による有効化が必要です。",
+      "backToSignIn": "サインインに戻る",
+      "signupFailed": "登録に失敗しました",
+      "tryAgain": "登録に失敗しました。もう一度お試しください。",
+      "usernameRequired": "ユーザー名とパスワードは必須です",
+      "passwordMismatch": "パスワードが一致しません"
+    },
+    "tagline": "あなたのAIスタックは、あなたに応えるべきです。",
+    "userId": "ユーザーID",
+    "welcome": "ようこそ"
   },
   "setup": {
     "welcome": {

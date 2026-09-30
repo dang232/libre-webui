@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Failed to connect to the backend service"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Sign-in could not be completed",
+      "expired": "This sign-in link expired. Please try again.",
+      "invalid": "This sign-in link is no longer valid. Please start again.",
+      "backToLogin": "Back to sign in",
+      "working": "Signing you in…",
+      "workingHint": "Please wait while we finish."
+    },
+    "canonical": {
+      "redirecting": "Redirecting…",
+      "signIn": "Continue with ALcore"
+    },
+    "checkingAuth": "Checking authentication...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Local first",
+        "body": "Your conversations and files stay on the machine you run this on."
+      },
+      "providers": {
+        "title": "Any provider",
+        "body": "Local models through Ollama, plus the remote providers you choose to add."
+      },
+      "work": {
+        "title": "Isolated Work",
+        "body": "Give a model a sandboxed workspace with files, a terminal, and a preview."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "JWT Authentication Active",
+    "jwtDescription": "JWT-based authentication with GitHub OAuth",
     "login": {
       "title": "Welcome Back",
       "subtitle": "Sign in to your account to continue",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Failed to verify GitHub authentication",
       "verificationFailed": "Security verification failed. Please refresh and try again."
     },
-    "signup": {
-      "title": "Create Account",
-      "subtitle": "Sign up for your new account",
-      "username": "Username",
-      "usernamePlaceholder": "Choose a username",
-      "email": "Email",
-      "emailPlaceholder": "your@email.com",
-      "password": "Password",
-      "passwordPlaceholder": "Choose a password",
-      "confirmPassword": "Confirm Password",
-      "confirmPasswordPlaceholder": "Confirm your password",
-      "createAccount": "Create Account",
-      "creatingAccount": "Creating account...",
-      "hasAccount": "Already have an account?",
-      "signInHere": "Sign in here",
-      "signupSuccess": "Account created successfully!",
-      "approvalPending": "Registration received. An administrator must approve your account.",
-      "awaitingApproval": "Awaiting approval",
-      "awaitingApprovalDescription": "Your account has been created, but an administrator must activate it before you can sign in.",
-      "backToSignIn": "Back to sign in",
-      "signupFailed": "Signup failed",
-      "tryAgain": "Signup failed. Please try again.",
-      "usernameRequired": "Username and password are required",
-      "passwordMismatch": "Passwords do not match"
-    },
     "logout": {
       "button": "Log out",
       "success": "Logged out successfully"
-    },
-    "oauth": {
-      "continueWith": "Continue with {{provider}}",
-      "connectingTo": "Connecting to {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "OAuth login successful!",
-      "completionFailed": "Failed to complete OAuth authentication",
-      "verificationFailed": "OAuth authentication verification failed",
-      "authenticationFailed": "OAuth authentication failed",
-      "googleFailed": "Google sign-in failed. Please try again.",
-      "googleLoading": "Signing in with Google..."
-    },
-    "checkingAuth": "Checking authentication...",
-    "welcome": "Welcome",
-    "noEmail": "No email provided",
-    "role": "Role",
-    "id": "ID",
-    "userId": "User ID",
-    "signInDescription": "Sign in with your GitHub account to continue",
-    "signInWithGitHub": "Sign in with GitHub",
-    "jwtActive": "JWT Authentication Active",
-    "jwtDescription": "JWT-based authentication with GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Provider",
-    "tagline": "Your AI stack should answer to you.",
-    "selfHosted": "Self-hosted · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Local first",
-        "body": "Your conversations and files stay on the machine you run this on."
-      },
-      "providers": {
-        "title": "Any provider",
-        "body": "Local models through Ollama, plus the remote providers you choose to add."
-      },
-      "work": {
-        "title": "Isolated Work",
-        "body": "Give a model a sandboxed workspace with files, a terminal, and a preview."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Single sign-on"
     },
     "mfa": {
       "sectionTitle": "Two-factor authentication",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "I saved my recovery codes",
       "recoveryCodesRegenerated": "New recovery codes created. The old ones no longer work."
     },
+    "noEmail": "No email provided",
+    "oauth": {
+      "continueWith": "Continue with {{provider}}",
+      "connectingTo": "Connecting to {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "OAuth login successful!",
+      "completionFailed": "Failed to complete OAuth authentication",
+      "verificationFailed": "OAuth authentication verification failed",
+      "authenticationFailed": "OAuth authentication failed",
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "googleLoading": "Signing in with Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Single sign-on"
+    },
     "passkeys": {
       "sectionTitle": "Passkeys",
       "sectionDescription": "Sign in without a password using your device's screen lock or security key.",
@@ -189,7 +168,40 @@
       "removeFailed": "The passkey could not be removed.",
       "signInButton": "Sign in with a passkey",
       "signInFailed": "Passkey sign-in failed."
-    }
+    },
+    "provider": "Provider",
+    "role": "Role",
+    "selfHosted": "Self-hosted · Apache 2.0",
+    "signInDescription": "Sign in with your GitHub account to continue",
+    "signInWithGitHub": "Sign in with GitHub",
+    "signup": {
+      "title": "Create Account",
+      "subtitle": "Sign up for your new account",
+      "username": "Username",
+      "usernamePlaceholder": "Choose a username",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Choose a password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "createAccount": "Create Account",
+      "creatingAccount": "Creating account...",
+      "hasAccount": "Already have an account?",
+      "signInHere": "Sign in here",
+      "signupSuccess": "Account created successfully!",
+      "approvalPending": "Registration received. An administrator must approve your account.",
+      "awaitingApproval": "Awaiting approval",
+      "awaitingApprovalDescription": "Your account has been created, but an administrator must activate it before you can sign in.",
+      "backToSignIn": "Back to sign in",
+      "signupFailed": "Signup failed",
+      "tryAgain": "Signup failed. Please try again.",
+      "usernameRequired": "Username and password are required",
+      "passwordMismatch": "Passwords do not match"
+    },
+    "tagline": "Your AI stack should answer to you.",
+    "userId": "User ID",
+    "welcome": "Welcome"
   },
   "setup": {
     "welcome": {

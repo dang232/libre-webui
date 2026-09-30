@@ -49,6 +49,37 @@
     "backendConnectionFailed": "ব্যাকএন্ড পরিষেবার সাথে সংযোগ করা যায়নি"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "সাইন-ইন সম্পন্ন করা যায়নি",
+      "expired": "এই সাইন-ইন লিঙ্কের মেয়াদ শেষ হয়েছে। আবার চেষ্টা করুন।",
+      "invalid": "এই সাইন-ইন লিঙ্কটি আর বৈধ নয়। আবার শুরু করুন।",
+      "backToLogin": "সাইন-ইন-এ ফিরে যান",
+      "working": "আপনাকে সাইন ইন করা হচ্ছে…",
+      "workingHint": "সম্পন্ন হওয়া পর্যন্ত অপেক্ষা করুন।"
+    },
+    "canonical": {
+      "redirecting": "পুনর্নির্দেশ করা হচ্ছে…",
+      "signIn": "ALcore অ্যাকাউন্ট দিয়ে চালিয়ে যান"
+    },
+    "checkingAuth": "প্রমাণীকরণ যাচাই হচ্ছে...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "লোকাল ফার্স্ট",
+        "body": "আপনার কথোপকথন এবং ফাইলগুলি আপনি এটি চালানো মেশিনেই থাকে।"
+      },
+      "providers": {
+        "title": "যেকোনো প্রোভাইডার",
+        "body": "Ollama-এর মাধ্যমে লোকাল মডেল, পাশাপাশি আপনি যোগ করতে চয়ন করা রিমোট প্রোভাইডার।"
+      },
+      "work": {
+        "title": "বিচ্ছিন্ন কাজ",
+        "body": "একটি মডেলকে ফাইল, একটি টার্মিনাল এবং একটি প্রিভিউ সহ একটি স্যান্ডবক্সড ওয়ার্কস্পেস দিন।"
+      }
+    },
+    "id": "আইডি",
+    "jwtActive": "JWT প্রমাণীকরণ সক্রিয়",
+    "jwtDescription": "GitHub OAuth সহ JWT প্রমাণীকরণ",
     "login": {
       "title": "স্বাগতম",
       "subtitle": "আপনার অ্যাকাউন্টে সাইন ইন করুন",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "GitHub প্রমাণীকরণ যাচাই করতে ব্যর্থ",
       "verificationFailed": "নিরাপত্তা যাচাই ব্যর্থ। পৃষ্ঠা রিফ্রেশ করে আবার চেষ্টা করুন।"
     },
-    "signup": {
-      "title": "অ্যাকাউন্ট তৈরি করুন",
-      "subtitle": "আপনার নতুন অ্যাকাউন্টের জন্য সাইন আপ করুন",
-      "username": "ব্যবহারকারীর নাম",
-      "usernamePlaceholder": "একটি ব্যবহারকারীর নাম বেছে নিন",
-      "email": "ইমেইল",
-      "emailPlaceholder": "your@email.com",
-      "password": "পাসওয়ার্ড",
-      "passwordPlaceholder": "একটি পাসওয়ার্ড বেছে নিন",
-      "confirmPassword": "পাসওয়ার্ড নিশ্চিত করুন",
-      "confirmPasswordPlaceholder": "আপনার পাসওয়ার্ড নিশ্চিত করুন",
-      "createAccount": "অ্যাকাউন্ট তৈরি করুন",
-      "creatingAccount": "অ্যাকাউন্ট তৈরি হচ্ছে...",
-      "hasAccount": "ইতিমধ্যে অ্যাকাউন্ট আছে?",
-      "signInHere": "এখানে সাইন ইন করুন",
-      "signupSuccess": "অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!",
-      "approvalPending": "নিবন্ধন গৃহীত হয়েছে। একজন অ্যাডমিনিস্ট্রেটরকে অবশ্যই আপনার অ্যাকাউন্ট অনুমোদন করতে হবে।",
-      "awaitingApproval": "অনুমোদনের অপেক্ষায়",
-      "awaitingApprovalDescription": "আপনার অ্যাকাউন্ট তৈরি করা হয়েছে, তবে সাইন ইন করার আগে একজন অ্যাডমিনিস্ট্রেটরকে অবশ্যই এটি সক্রিয় করতে হবে।",
-      "backToSignIn": "সাইন ইনে ফিরে যান",
-      "signupFailed": "সাইন আপ ব্যর্থ",
-      "tryAgain": "সাইন আপ ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।",
-      "usernameRequired": "ব্যবহারকারীর নাম এবং পাসওয়ার্ড প্রয়োজন",
-      "passwordMismatch": "পাসওয়ার্ড মিলছে না"
-    },
     "logout": {
       "button": "লগ আউট",
       "success": "সফলভাবে লগ আউট হয়েছে"
-    },
-    "oauth": {
-      "continueWith": "{{provider}} দিয়ে চালিয়ে যান",
-      "connectingTo": "{{provider}} এ সংযোগ হচ্ছে...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "OAuth লগইন সফল হয়েছে!",
-      "completionFailed": "OAuth প্রমাণীকরণ সম্পন্ন করা যায়নি",
-      "verificationFailed": "OAuth প্রমাণীকরণ যাচাই করা যায়নি",
-      "authenticationFailed": "OAuth প্রমাণীকরণ ব্যর্থ হয়েছে",
-      "googleFailed": "Google sign-in failed. Please try again.",
-      "googleLoading": "Signing in with Google..."
-    },
-    "checkingAuth": "প্রমাণীকরণ যাচাই হচ্ছে...",
-    "welcome": "স্বাগতম",
-    "noEmail": "কোনো ইমেইল দেওয়া হয়নি",
-    "role": "ভূমিকা",
-    "id": "আইডি",
-    "userId": "ইউজার আইডি",
-    "signInDescription": "চালিয়ে যেতে আপনার GitHub অ্যাকাউন্ট দিয়ে সাইন ইন করুন",
-    "signInWithGitHub": "GitHub দিয়ে সাইন ইন করুন",
-    "jwtActive": "JWT প্রমাণীকরণ সক্রিয়",
-    "jwtDescription": "GitHub OAuth সহ JWT প্রমাণীকরণ",
-    "github": "GitHub",
-    "provider": "প্রদানকারী",
-    "tagline": "আপনার AI স্ট্যাক আপনার কাছে উত্তর দেওয়া উচিত।",
-    "selfHosted": "সেলফ-হোস্টেড · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "লোকাল ফার্স্ট",
-        "body": "আপনার কথোপকথন এবং ফাইলগুলি আপনি এটি চালানো মেশিনেই থাকে।"
-      },
-      "providers": {
-        "title": "যেকোনো প্রোভাইডার",
-        "body": "Ollama-এর মাধ্যমে লোকাল মডেল, পাশাপাশি আপনি যোগ করতে চয়ন করা রিমোট প্রোভাইডার।"
-      },
-      "work": {
-        "title": "বিচ্ছিন্ন কাজ",
-        "body": "একটি মডেলকে ফাইল, একটি টার্মিনাল এবং একটি প্রিভিউ সহ একটি স্যান্ডবক্সড ওয়ার্কস্পেস দিন।"
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "সিঙ্গেল সাইন-অন"
     },
     "mfa": {
       "sectionTitle": "দুই-ধাপ যাচাইকরণ",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "আমি পুনরুদ্ধার কোড সংরক্ষণ করেছি",
       "recoveryCodesRegenerated": "নতুন পুনরুদ্ধার কোড তৈরি হয়েছে। পুরোনোগুলো আর কাজ করবে না।"
     },
+    "noEmail": "কোনো ইমেইল দেওয়া হয়নি",
+    "oauth": {
+      "continueWith": "{{provider}} দিয়ে চালিয়ে যান",
+      "connectingTo": "{{provider}} এ সংযোগ হচ্ছে...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "OAuth লগইন সফল হয়েছে!",
+      "completionFailed": "OAuth প্রমাণীকরণ সম্পন্ন করা যায়নি",
+      "verificationFailed": "OAuth প্রমাণীকরণ যাচাই করা যায়নি",
+      "authenticationFailed": "OAuth প্রমাণীকরণ ব্যর্থ হয়েছে",
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "googleLoading": "Signing in with Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "সিঙ্গেল সাইন-অন"
+    },
     "passkeys": {
       "sectionTitle": "পাসকি",
       "sectionDescription": "ডিভাইসের স্ক্রিন লক বা সিকিউরিটি কি দিয়ে পাসওয়ার্ড ছাড়াই সাইন ইন করুন।",
@@ -189,7 +168,40 @@
       "removeFailed": "পাসকি সরানো যায়নি।",
       "signInButton": "পাসকি দিয়ে সাইন ইন করুন",
       "signInFailed": "পাসকি দিয়ে সাইন ইন ব্যর্থ হয়েছে।"
-    }
+    },
+    "provider": "প্রদানকারী",
+    "role": "ভূমিকা",
+    "selfHosted": "সেলফ-হোস্টেড · Apache 2.0",
+    "signInDescription": "চালিয়ে যেতে আপনার GitHub অ্যাকাউন্ট দিয়ে সাইন ইন করুন",
+    "signInWithGitHub": "GitHub দিয়ে সাইন ইন করুন",
+    "signup": {
+      "title": "অ্যাকাউন্ট তৈরি করুন",
+      "subtitle": "আপনার নতুন অ্যাকাউন্টের জন্য সাইন আপ করুন",
+      "username": "ব্যবহারকারীর নাম",
+      "usernamePlaceholder": "একটি ব্যবহারকারীর নাম বেছে নিন",
+      "email": "ইমেইল",
+      "emailPlaceholder": "your@email.com",
+      "password": "পাসওয়ার্ড",
+      "passwordPlaceholder": "একটি পাসওয়ার্ড বেছে নিন",
+      "confirmPassword": "পাসওয়ার্ড নিশ্চিত করুন",
+      "confirmPasswordPlaceholder": "আপনার পাসওয়ার্ড নিশ্চিত করুন",
+      "createAccount": "অ্যাকাউন্ট তৈরি করুন",
+      "creatingAccount": "অ্যাকাউন্ট তৈরি হচ্ছে...",
+      "hasAccount": "ইতিমধ্যে অ্যাকাউন্ট আছে?",
+      "signInHere": "এখানে সাইন ইন করুন",
+      "signupSuccess": "অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!",
+      "approvalPending": "নিবন্ধন গৃহীত হয়েছে। একজন অ্যাডমিনিস্ট্রেটরকে অবশ্যই আপনার অ্যাকাউন্ট অনুমোদন করতে হবে।",
+      "awaitingApproval": "অনুমোদনের অপেক্ষায়",
+      "awaitingApprovalDescription": "আপনার অ্যাকাউন্ট তৈরি করা হয়েছে, তবে সাইন ইন করার আগে একজন অ্যাডমিনিস্ট্রেটরকে অবশ্যই এটি সক্রিয় করতে হবে।",
+      "backToSignIn": "সাইন ইনে ফিরে যান",
+      "signupFailed": "সাইন আপ ব্যর্থ",
+      "tryAgain": "সাইন আপ ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।",
+      "usernameRequired": "ব্যবহারকারীর নাম এবং পাসওয়ার্ড প্রয়োজন",
+      "passwordMismatch": "পাসওয়ার্ড মিলছে না"
+    },
+    "tagline": "আপনার AI স্ট্যাক আপনার কাছে উত্তর দেওয়া উচিত।",
+    "userId": "ইউজার আইডি",
+    "welcome": "স্বাগতম"
   },
   "setup": {
     "welcome": {

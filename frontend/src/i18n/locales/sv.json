@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Det gick inte att ansluta till backendtjänsten"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Inloggningen kunde inte slutföras",
+      "expired": "Den här inloggningslänken har gått ut. Försök igen.",
+      "invalid": "Den här inloggningslänken är inte längre giltig. Börja om.",
+      "backToLogin": "Tillbaka till inloggningen",
+      "working": "Loggar in…",
+      "workingHint": "Vänta medan vi slutför."
+    },
+    "canonical": {
+      "redirecting": "Omdirigerar…",
+      "signIn": "Fortsätt med ALcore-konto"
+    },
+    "checkingAuth": "Kontrollerar autentisering...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Lokalt först",
+        "body": "Dina konversationer och filer stannar på maskinen du kör detta på."
+      },
+      "providers": {
+        "title": "Valfri leverantör",
+        "body": "Lokala modeller via Ollama, plus de fjärrleverantörer du väljer att lägga till."
+      },
+      "work": {
+        "title": "Isolerat arbete",
+        "body": "Ge en modell en sandlådead arbetsyta med filer, en terminal och en förhandsgranskning."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "JWT-autentisering aktiv",
+    "jwtDescription": "JWT-baserad autentisering med GitHub OAuth",
     "login": {
       "title": "Välkommen tillbaka",
       "subtitle": "Logga in på ditt konto för att fortsätta",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Kunde inte verifiera GitHub-autentiseringen",
       "verificationFailed": "Säkerhetsverifieringen misslyckades. Uppdatera sidan och försök igen."
     },
-    "signup": {
-      "title": "Skapa konto",
-      "subtitle": "Registrera ett nytt konto",
-      "username": "Användarnamn",
-      "usernamePlaceholder": "Välj ett användarnamn",
-      "email": "E-post",
-      "emailPlaceholder": "din@epost.se",
-      "password": "Lösenord",
-      "passwordPlaceholder": "Välj ett lösenord",
-      "confirmPassword": "Bekräfta lösenord",
-      "confirmPasswordPlaceholder": "Bekräfta ditt lösenord",
-      "createAccount": "Skapa konto",
-      "creatingAccount": "Skapar konto...",
-      "hasAccount": "Har du redan ett konto?",
-      "signInHere": "Logga in här",
-      "signupSuccess": "Kontot skapades!",
-      "approvalPending": "Registrering mottagen. En administratör måste godkänna ditt konto.",
-      "awaitingApproval": "Väntar på godkännande",
-      "awaitingApprovalDescription": "Ditt konto har skapats, men en administratör måste aktivera det innan du kan logga in.",
-      "backToSignIn": "Tillbaka till inloggning",
-      "signupFailed": "Registreringen misslyckades",
-      "tryAgain": "Registreringen misslyckades. Försök igen.",
-      "usernameRequired": "Användarnamn och lösenord krävs",
-      "passwordMismatch": "Lösenorden matchar inte"
-    },
     "logout": {
       "button": "Logga ut",
       "success": "Utloggningen lyckades"
-    },
-    "oauth": {
-      "continueWith": "Fortsätt med {{provider}}",
-      "connectingTo": "Ansluter till {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "OAuth-inloggningen lyckades!",
-      "completionFailed": "Det gick inte att slutföra OAuth-autentiseringen",
-      "verificationFailed": "Verifieringen av OAuth-autentiseringen misslyckades",
-      "authenticationFailed": "OAuth-autentiseringen misslyckades",
-      "googleFailed": "Google-inloggningen misslyckades. Försök igen.",
-      "googleLoading": "Loggar in med Google..."
-    },
-    "checkingAuth": "Kontrollerar autentisering...",
-    "welcome": "Välkommen",
-    "noEmail": "Ingen e-post angiven",
-    "role": "Roll",
-    "id": "ID",
-    "userId": "Användar-ID",
-    "signInDescription": "Logga in med ditt GitHub-konto för att fortsätta",
-    "signInWithGitHub": "Logga in med GitHub",
-    "jwtActive": "JWT-autentisering aktiv",
-    "jwtDescription": "JWT-baserad autentisering med GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Leverantör",
-    "tagline": "Din AI-stack bör svara dig.",
-    "selfHosted": "Egenhostad · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Lokalt först",
-        "body": "Dina konversationer och filer stannar på maskinen du kör detta på."
-      },
-      "providers": {
-        "title": "Valfri leverantör",
-        "body": "Lokala modeller via Ollama, plus de fjärrleverantörer du väljer att lägga till."
-      },
-      "work": {
-        "title": "Isolerat arbete",
-        "body": "Ge en modell en sandlådead arbetsyta med filer, en terminal och en förhandsgranskning."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Enkel inloggning"
     },
     "mfa": {
       "sectionTitle": "Tvåfaktorsautentisering",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Jag har sparat mina återställningskoder",
       "recoveryCodesRegenerated": "Nya återställningskoder skapade. De gamla fungerar inte längre."
     },
+    "noEmail": "Ingen e-post angiven",
+    "oauth": {
+      "continueWith": "Fortsätt med {{provider}}",
+      "connectingTo": "Ansluter till {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "OAuth-inloggningen lyckades!",
+      "completionFailed": "Det gick inte att slutföra OAuth-autentiseringen",
+      "verificationFailed": "Verifieringen av OAuth-autentiseringen misslyckades",
+      "authenticationFailed": "OAuth-autentiseringen misslyckades",
+      "googleFailed": "Google-inloggningen misslyckades. Försök igen.",
+      "googleLoading": "Loggar in med Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Enkel inloggning"
+    },
     "passkeys": {
       "sectionTitle": "Passnycklar",
       "sectionDescription": "Logga in utan lösenord med enhetens skärmlås eller en säkerhetsnyckel.",
@@ -189,7 +168,40 @@
       "removeFailed": "Passnyckeln kunde inte tas bort.",
       "signInButton": "Logga in med passnyckel",
       "signInFailed": "Inloggning med passnyckel misslyckades."
-    }
+    },
+    "provider": "Leverantör",
+    "role": "Roll",
+    "selfHosted": "Egenhostad · Apache 2.0",
+    "signInDescription": "Logga in med ditt GitHub-konto för att fortsätta",
+    "signInWithGitHub": "Logga in med GitHub",
+    "signup": {
+      "title": "Skapa konto",
+      "subtitle": "Registrera ett nytt konto",
+      "username": "Användarnamn",
+      "usernamePlaceholder": "Välj ett användarnamn",
+      "email": "E-post",
+      "emailPlaceholder": "din@epost.se",
+      "password": "Lösenord",
+      "passwordPlaceholder": "Välj ett lösenord",
+      "confirmPassword": "Bekräfta lösenord",
+      "confirmPasswordPlaceholder": "Bekräfta ditt lösenord",
+      "createAccount": "Skapa konto",
+      "creatingAccount": "Skapar konto...",
+      "hasAccount": "Har du redan ett konto?",
+      "signInHere": "Logga in här",
+      "signupSuccess": "Kontot skapades!",
+      "approvalPending": "Registrering mottagen. En administratör måste godkänna ditt konto.",
+      "awaitingApproval": "Väntar på godkännande",
+      "awaitingApprovalDescription": "Ditt konto har skapats, men en administratör måste aktivera det innan du kan logga in.",
+      "backToSignIn": "Tillbaka till inloggning",
+      "signupFailed": "Registreringen misslyckades",
+      "tryAgain": "Registreringen misslyckades. Försök igen.",
+      "usernameRequired": "Användarnamn och lösenord krävs",
+      "passwordMismatch": "Lösenorden matchar inte"
+    },
+    "tagline": "Din AI-stack bör svara dig.",
+    "userId": "Användar-ID",
+    "welcome": "Välkommen"
   },
   "setup": {
     "welcome": {

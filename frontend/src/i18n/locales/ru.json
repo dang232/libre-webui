@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Не удалось подключиться к серверной службе"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Не удалось выполнить вход",
+      "expired": "Срок действия этой ссылки для входа истёк. Попробуйте снова.",
+      "invalid": "Эта ссылка для входа больше недействительна. Начните заново.",
+      "backToLogin": "Вернуться ко входу",
+      "working": "Выполняется вход…",
+      "workingHint": "Пожалуйста, подождите, пока мы закончим."
+    },
+    "canonical": {
+      "redirecting": "Перенаправление…",
+      "signIn": "Продолжить с учётной записью ALcore"
+    },
+    "checkingAuth": "Проверка аутентификации...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Локально",
+        "body": "Ваши диалоги и файлы остаются на устройстве, на котором вы это запускаете."
+      },
+      "providers": {
+        "title": "Любой провайдер",
+        "body": "Локальные модели через Ollama, а также удаленные провайдеры, которые вы добавляете."
+      },
+      "work": {
+        "title": "Изолированная работа",
+        "body": "Предоставьте модели изолированное рабочее пространство с файлами, терминалом и предпросмотром."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "JWT-аутентификация активна",
+    "jwtDescription": "JWT-аутентификация с GitHub OAuth",
     "login": {
       "title": "С возвращением",
       "subtitle": "Войдите в свой аккаунт, чтобы продолжить",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Не удалось проверить аутентификацию GitHub",
       "verificationFailed": "Проверка безопасности не пройдена. Обновите страницу и попробуйте снова."
     },
-    "signup": {
-      "title": "Создать аккаунт",
-      "subtitle": "Зарегистрируйте новый аккаунт",
-      "username": "Имя пользователя",
-      "usernamePlaceholder": "Выберите имя пользователя",
-      "email": "Эл. почта",
-      "emailPlaceholder": "ваш@email.com",
-      "password": "Пароль",
-      "passwordPlaceholder": "Выберите пароль",
-      "confirmPassword": "Подтвердите пароль",
-      "confirmPasswordPlaceholder": "Подтвердите ваш пароль",
-      "createAccount": "Создать аккаунт",
-      "creatingAccount": "Создание аккаунта...",
-      "hasAccount": "Уже есть аккаунт?",
-      "signInHere": "Войдите здесь",
-      "signupSuccess": "Аккаунт успешно создан!",
-      "approvalPending": "Регистрация получена. Администратор должен одобрить ваш аккаунт.",
-      "awaitingApproval": "Ожидает одобрения",
-      "awaitingApprovalDescription": "Ваш аккаунт создан, но администратор должен активировать его, прежде чем вы сможете войти.",
-      "backToSignIn": "Вернуться к входу",
-      "signupFailed": "Ошибка регистрации",
-      "tryAgain": "Ошибка регистрации. Попробуйте снова.",
-      "usernameRequired": "Имя пользователя и пароль обязательны",
-      "passwordMismatch": "Пароли не совпадают"
-    },
     "logout": {
       "button": "Выйти",
       "success": "Выход выполнен успешно"
-    },
-    "oauth": {
-      "continueWith": "Продолжить через {{provider}}",
-      "connectingTo": "Подключение к {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "Вход через OAuth выполнен!",
-      "completionFailed": "Не удалось завершить аутентификацию OAuth",
-      "verificationFailed": "Не удалось проверить аутентификацию OAuth",
-      "authenticationFailed": "Сбой аутентификации OAuth",
-      "googleFailed": "Не удалось войти через Google. Попробуйте ещё раз.",
-      "googleLoading": "Вход через Google..."
-    },
-    "checkingAuth": "Проверка аутентификации...",
-    "welcome": "Добро пожаловать",
-    "noEmail": "Email не указан",
-    "role": "Роль",
-    "id": "ID",
-    "userId": "ID пользователя",
-    "signInDescription": "Войдите с помощью учётной записи GitHub, чтобы продолжить",
-    "signInWithGitHub": "Войти через GitHub",
-    "jwtActive": "JWT-аутентификация активна",
-    "jwtDescription": "JWT-аутентификация с GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Провайдер",
-    "tagline": "Ваш ИИ-стек должен подчиняться вам.",
-    "selfHosted": "Самостоятельный хостинг · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Локально",
-        "body": "Ваши диалоги и файлы остаются на устройстве, на котором вы это запускаете."
-      },
-      "providers": {
-        "title": "Любой провайдер",
-        "body": "Локальные модели через Ollama, а также удаленные провайдеры, которые вы добавляете."
-      },
-      "work": {
-        "title": "Изолированная работа",
-        "body": "Предоставьте модели изолированное рабочее пространство с файлами, терминалом и предпросмотром."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Единый вход"
     },
     "mfa": {
       "sectionTitle": "Двухфакторная аутентификация",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Я сохранил коды восстановления",
       "recoveryCodesRegenerated": "Созданы новые коды восстановления. Старые больше не работают."
     },
+    "noEmail": "Email не указан",
+    "oauth": {
+      "continueWith": "Продолжить через {{provider}}",
+      "connectingTo": "Подключение к {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "Вход через OAuth выполнен!",
+      "completionFailed": "Не удалось завершить аутентификацию OAuth",
+      "verificationFailed": "Не удалось проверить аутентификацию OAuth",
+      "authenticationFailed": "Сбой аутентификации OAuth",
+      "googleFailed": "Не удалось войти через Google. Попробуйте ещё раз.",
+      "googleLoading": "Вход через Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Единый вход"
+    },
     "passkeys": {
       "sectionTitle": "Ключи доступа",
       "sectionDescription": "Входите без пароля с помощью блокировки экрана устройства или ключа безопасности.",
@@ -189,7 +168,40 @@
       "removeFailed": "Не удалось удалить ключ доступа.",
       "signInButton": "Войти с ключом доступа",
       "signInFailed": "Вход с ключом доступа не удался."
-    }
+    },
+    "provider": "Провайдер",
+    "role": "Роль",
+    "selfHosted": "Самостоятельный хостинг · Apache 2.0",
+    "signInDescription": "Войдите с помощью учётной записи GitHub, чтобы продолжить",
+    "signInWithGitHub": "Войти через GitHub",
+    "signup": {
+      "title": "Создать аккаунт",
+      "subtitle": "Зарегистрируйте новый аккаунт",
+      "username": "Имя пользователя",
+      "usernamePlaceholder": "Выберите имя пользователя",
+      "email": "Эл. почта",
+      "emailPlaceholder": "ваш@email.com",
+      "password": "Пароль",
+      "passwordPlaceholder": "Выберите пароль",
+      "confirmPassword": "Подтвердите пароль",
+      "confirmPasswordPlaceholder": "Подтвердите ваш пароль",
+      "createAccount": "Создать аккаунт",
+      "creatingAccount": "Создание аккаунта...",
+      "hasAccount": "Уже есть аккаунт?",
+      "signInHere": "Войдите здесь",
+      "signupSuccess": "Аккаунт успешно создан!",
+      "approvalPending": "Регистрация получена. Администратор должен одобрить ваш аккаунт.",
+      "awaitingApproval": "Ожидает одобрения",
+      "awaitingApprovalDescription": "Ваш аккаунт создан, но администратор должен активировать его, прежде чем вы сможете войти.",
+      "backToSignIn": "Вернуться к входу",
+      "signupFailed": "Ошибка регистрации",
+      "tryAgain": "Ошибка регистрации. Попробуйте снова.",
+      "usernameRequired": "Имя пользователя и пароль обязательны",
+      "passwordMismatch": "Пароли не совпадают"
+    },
+    "tagline": "Ваш ИИ-стек должен подчиняться вам.",
+    "userId": "ID пользователя",
+    "welcome": "Добро пожаловать"
   },
   "setup": {
     "welcome": {

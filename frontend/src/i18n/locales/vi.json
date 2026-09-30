@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Không thể kết nối với dịch vụ backend"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Không thể hoàn tất đăng nhập",
+      "expired": "Liên kết đăng nhập này đã hết hạn. Vui lòng thử lại.",
+      "invalid": "Liên kết đăng nhập này không còn hợp lệ. Vui lòng bắt đầu lại.",
+      "backToLogin": "Quay lại đăng nhập",
+      "working": "Đang đăng nhập…",
+      "workingHint": "Vui lòng đợi trong khi chúng tôi hoàn tất."
+    },
+    "canonical": {
+      "redirecting": "Đang chuyển hướng…",
+      "signIn": "Tiếp tục bằng tài khoản ALcore"
+    },
+    "checkingAuth": "Đang kiểm tra xác thực...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Ưu tiên cục bộ",
+        "body": "Các cuộc trò chuyện và tệp của bạn vẫn nằm trên máy bạn đang chạy ứng dụng này."
+      },
+      "providers": {
+        "title": "Bất kỳ nhà cung cấp nào",
+        "body": "Mô hình cục bộ thông qua Ollama, cộng với các nhà cung cấp từ xa mà bạn chọn thêm."
+      },
+      "work": {
+        "title": "Công việc cô lập",
+        "body": "Cấp cho mô hình một không gian làm việc sandbox với tệp, terminal và bản xem trước."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "Xác thực JWT đang hoạt động",
+    "jwtDescription": "Xác thực dựa trên JWT với GitHub OAuth",
     "login": {
       "title": "Chào mừng trở lại",
       "subtitle": "Đăng nhập vào tài khoản của bạn để tiếp tục",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Không thể xác minh xác thực GitHub",
       "verificationFailed": "Xác minh bảo mật thất bại. Hãy tải lại trang và thử lại."
     },
-    "signup": {
-      "title": "Tạo tài khoản",
-      "subtitle": "Đăng ký tài khoản mới",
-      "username": "Tên người dùng",
-      "usernamePlaceholder": "Chọn tên người dùng",
-      "email": "Email",
-      "emailPlaceholder": "email@example.com",
-      "password": "Mật khẩu",
-      "passwordPlaceholder": "Chọn mật khẩu",
-      "confirmPassword": "Xác nhận mật khẩu",
-      "confirmPasswordPlaceholder": "Xác nhận mật khẩu của bạn",
-      "createAccount": "Tạo tài khoản",
-      "creatingAccount": "Đang tạo tài khoản...",
-      "hasAccount": "Đã có tài khoản?",
-      "signInHere": "Đăng nhập tại đây",
-      "signupSuccess": "Tạo tài khoản thành công!",
-      "approvalPending": "Đã nhận đăng ký. Quản trị viên phải phê duyệt tài khoản của bạn.",
-      "awaitingApproval": "Đang chờ phê duyệt",
-      "awaitingApprovalDescription": "Tài khoản của bạn đã được tạo, nhưng quản trị viên phải kích hoạt nó trước khi bạn có thể đăng nhập.",
-      "backToSignIn": "Quay lại đăng nhập",
-      "signupFailed": "Đăng ký thất bại",
-      "tryAgain": "Đăng ký thất bại. Vui lòng thử lại.",
-      "usernameRequired": "Tên người dùng và mật khẩu là bắt buộc",
-      "passwordMismatch": "Mật khẩu không khớp"
-    },
     "logout": {
       "button": "Đăng xuất",
       "success": "Đăng xuất thành công"
-    },
-    "oauth": {
-      "continueWith": "Tiếp tục với {{provider}}",
-      "connectingTo": "Đang kết nối đến {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "Đăng nhập OAuth thành công!",
-      "completionFailed": "Không thể hoàn tất xác thực OAuth",
-      "verificationFailed": "Không thể xác minh xác thực OAuth",
-      "authenticationFailed": "Xác thực OAuth thất bại",
-      "googleFailed": "Đăng nhập bằng Google thất bại. Vui lòng thử lại.",
-      "googleLoading": "Đang đăng nhập bằng Google..."
-    },
-    "checkingAuth": "Đang kiểm tra xác thực...",
-    "welcome": "Chào mừng",
-    "noEmail": "Chưa cung cấp email",
-    "role": "Vai trò",
-    "id": "ID",
-    "userId": "ID người dùng",
-    "signInDescription": "Đăng nhập bằng tài khoản GitHub để tiếp tục",
-    "signInWithGitHub": "Đăng nhập bằng GitHub",
-    "jwtActive": "Xác thực JWT đang hoạt động",
-    "jwtDescription": "Xác thực dựa trên JWT với GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Nhà cung cấp",
-    "tagline": "Ngăn xếp AI của bạn nên trả lời bạn.",
-    "selfHosted": "Tự lưu trữ · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Ưu tiên cục bộ",
-        "body": "Các cuộc trò chuyện và tệp của bạn vẫn nằm trên máy bạn đang chạy ứng dụng này."
-      },
-      "providers": {
-        "title": "Bất kỳ nhà cung cấp nào",
-        "body": "Mô hình cục bộ thông qua Ollama, cộng với các nhà cung cấp từ xa mà bạn chọn thêm."
-      },
-      "work": {
-        "title": "Công việc cô lập",
-        "body": "Cấp cho mô hình một không gian làm việc sandbox với tệp, terminal và bản xem trước."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Đăng nhập một lần"
     },
     "mfa": {
       "sectionTitle": "Xác thực hai bước",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Tôi đã lưu mã khôi phục",
       "recoveryCodesRegenerated": "Đã tạo mã khôi phục mới. Mã cũ không còn hiệu lực."
     },
+    "noEmail": "Chưa cung cấp email",
+    "oauth": {
+      "continueWith": "Tiếp tục với {{provider}}",
+      "connectingTo": "Đang kết nối đến {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "Đăng nhập OAuth thành công!",
+      "completionFailed": "Không thể hoàn tất xác thực OAuth",
+      "verificationFailed": "Không thể xác minh xác thực OAuth",
+      "authenticationFailed": "Xác thực OAuth thất bại",
+      "googleFailed": "Đăng nhập bằng Google thất bại. Vui lòng thử lại.",
+      "googleLoading": "Đang đăng nhập bằng Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Đăng nhập một lần"
+    },
     "passkeys": {
       "sectionTitle": "Khóa truy cập",
       "sectionDescription": "Đăng nhập không cần mật khẩu bằng khóa màn hình thiết bị hoặc khóa bảo mật.",
@@ -189,7 +168,40 @@
       "removeFailed": "Không thể xóa khóa truy cập.",
       "signInButton": "Đăng nhập bằng khóa truy cập",
       "signInFailed": "Đăng nhập bằng khóa truy cập thất bại."
-    }
+    },
+    "provider": "Nhà cung cấp",
+    "role": "Vai trò",
+    "selfHosted": "Tự lưu trữ · Apache 2.0",
+    "signInDescription": "Đăng nhập bằng tài khoản GitHub để tiếp tục",
+    "signInWithGitHub": "Đăng nhập bằng GitHub",
+    "signup": {
+      "title": "Tạo tài khoản",
+      "subtitle": "Đăng ký tài khoản mới",
+      "username": "Tên người dùng",
+      "usernamePlaceholder": "Chọn tên người dùng",
+      "email": "Email",
+      "emailPlaceholder": "email@example.com",
+      "password": "Mật khẩu",
+      "passwordPlaceholder": "Chọn mật khẩu",
+      "confirmPassword": "Xác nhận mật khẩu",
+      "confirmPasswordPlaceholder": "Xác nhận mật khẩu của bạn",
+      "createAccount": "Tạo tài khoản",
+      "creatingAccount": "Đang tạo tài khoản...",
+      "hasAccount": "Đã có tài khoản?",
+      "signInHere": "Đăng nhập tại đây",
+      "signupSuccess": "Tạo tài khoản thành công!",
+      "approvalPending": "Đã nhận đăng ký. Quản trị viên phải phê duyệt tài khoản của bạn.",
+      "awaitingApproval": "Đang chờ phê duyệt",
+      "awaitingApprovalDescription": "Tài khoản của bạn đã được tạo, nhưng quản trị viên phải kích hoạt nó trước khi bạn có thể đăng nhập.",
+      "backToSignIn": "Quay lại đăng nhập",
+      "signupFailed": "Đăng ký thất bại",
+      "tryAgain": "Đăng ký thất bại. Vui lòng thử lại.",
+      "usernameRequired": "Tên người dùng và mật khẩu là bắt buộc",
+      "passwordMismatch": "Mật khẩu không khớp"
+    },
+    "tagline": "Ngăn xếp AI của bạn nên trả lời bạn.",
+    "userId": "ID người dùng",
+    "welcome": "Chào mừng"
   },
   "setup": {
     "welcome": {

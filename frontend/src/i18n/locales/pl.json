@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Nie udało się połączyć z usługą backendu"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Nie udało się zakończyć logowania",
+      "expired": "Ten link logowania wygasł. Spróbuj ponownie.",
+      "invalid": "Ten link logowania jest już nieaktualny. Zacznij od nowa.",
+      "backToLogin": "Powrót do logowania",
+      "working": "Logowanie…",
+      "workingHint": "Poczekaj, aż zakończymy."
+    },
+    "canonical": {
+      "redirecting": "Przekierowywanie…",
+      "signIn": "Kontynuuj kontem ALcore"
+    },
+    "checkingAuth": "Sprawdzanie uwierzytelniania...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Najpierw lokalnie",
+        "body": "Twoje rozmowy i pliki pozostają na maszynie, na której to uruchamiasz."
+      },
+      "providers": {
+        "title": "Dowolny dostawca",
+        "body": "Modele lokalne przez Ollama oraz zdalni dostawcy, których dodasz."
+      },
+      "work": {
+        "title": "Odizolowana praca",
+        "body": "Daj modelowi odizolowane środowisko z plikami, terminalem i podglądem."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "Uwierzytelnianie JWT aktywne",
+    "jwtDescription": "Uwierzytelnianie JWT z GitHub OAuth",
     "login": {
       "title": "Witaj ponownie",
       "subtitle": "Zaloguj się na swoje konto, aby kontynuować",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Nie udało się zweryfikować uwierzytelnienia GitHub",
       "verificationFailed": "Weryfikacja bezpieczeństwa nie powiodła się. Odśwież stronę i spróbuj ponownie."
     },
-    "signup": {
-      "title": "Utwórz konto",
-      "subtitle": "Zarejestruj nowe konto",
-      "username": "Nazwa użytkownika",
-      "usernamePlaceholder": "Wybierz nazwę użytkownika",
-      "email": "Email",
-      "emailPlaceholder": "twoj@email.com",
-      "password": "Hasło",
-      "passwordPlaceholder": "Wybierz hasło",
-      "confirmPassword": "Potwierdź hasło",
-      "confirmPasswordPlaceholder": "Potwierdź hasło",
-      "createAccount": "Utwórz konto",
-      "creatingAccount": "Tworzenie konta...",
-      "hasAccount": "Masz już konto?",
-      "signInHere": "Zaloguj się tutaj",
-      "signupSuccess": "Konto utworzone pomyślnie!",
-      "approvalPending": "Rejestracja przyjęta. Administrator musi zatwierdzić Twoje konto.",
-      "awaitingApproval": "Oczekuje na zatwierdzenie",
-      "awaitingApprovalDescription": "Twoje konto zostało utworzone, ale administrator musi je aktywować, zanim będziesz mógł się zalogować.",
-      "backToSignIn": "Powrót do logowania",
-      "signupFailed": "Rejestracja nie powiodła się",
-      "tryAgain": "Rejestracja nie powiodła się. Spróbuj ponownie.",
-      "usernameRequired": "Nazwa użytkownika i hasło są wymagane",
-      "passwordMismatch": "Hasła nie pasują do siebie"
-    },
     "logout": {
       "button": "Wyloguj się",
       "success": "Wylogowano pomyślnie"
-    },
-    "oauth": {
-      "continueWith": "Kontynuuj z {{provider}}",
-      "connectingTo": "Łączenie z {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "Logowanie przez OAuth zakończone pomyślnie!",
-      "completionFailed": "Nie udało się ukończyć uwierzytelniania OAuth",
-      "verificationFailed": "Weryfikacja uwierzytelniania OAuth nie powiodła się",
-      "authenticationFailed": "Uwierzytelnianie OAuth nie powiodło się",
-      "googleFailed": "Logowanie przez Google nie powiodło się. Spróbuj ponownie.",
-      "googleLoading": "Logowanie przez Google..."
-    },
-    "checkingAuth": "Sprawdzanie uwierzytelniania...",
-    "welcome": "Witaj",
-    "noEmail": "Brak adresu e-mail",
-    "role": "Rola",
-    "id": "ID",
-    "userId": "ID użytkownika",
-    "signInDescription": "Zaloguj się kontem GitHub, aby kontynuować",
-    "signInWithGitHub": "Zaloguj się przez GitHub",
-    "jwtActive": "Uwierzytelnianie JWT aktywne",
-    "jwtDescription": "Uwierzytelnianie JWT z GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Dostawca",
-    "tagline": "Twój stos AI powinien odpowiadać Tobie.",
-    "selfHosted": "Samodzielnie hostowane · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Najpierw lokalnie",
-        "body": "Twoje rozmowy i pliki pozostają na maszynie, na której to uruchamiasz."
-      },
-      "providers": {
-        "title": "Dowolny dostawca",
-        "body": "Modele lokalne przez Ollama oraz zdalni dostawcy, których dodasz."
-      },
-      "work": {
-        "title": "Odizolowana praca",
-        "body": "Daj modelowi odizolowane środowisko z plikami, terminalem i podglądem."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Logowanie jednokrotne"
     },
     "mfa": {
       "sectionTitle": "Uwierzytelnianie dwuskładnikowe",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Zapisałem kody odzyskiwania",
       "recoveryCodesRegenerated": "Utworzono nowe kody odzyskiwania. Stare już nie działają."
     },
+    "noEmail": "Brak adresu e-mail",
+    "oauth": {
+      "continueWith": "Kontynuuj z {{provider}}",
+      "connectingTo": "Łączenie z {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "Logowanie przez OAuth zakończone pomyślnie!",
+      "completionFailed": "Nie udało się ukończyć uwierzytelniania OAuth",
+      "verificationFailed": "Weryfikacja uwierzytelniania OAuth nie powiodła się",
+      "authenticationFailed": "Uwierzytelnianie OAuth nie powiodło się",
+      "googleFailed": "Logowanie przez Google nie powiodło się. Spróbuj ponownie.",
+      "googleLoading": "Logowanie przez Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Logowanie jednokrotne"
+    },
     "passkeys": {
       "sectionTitle": "Klucze dostępu",
       "sectionDescription": "Loguj się bez hasła za pomocą blokady ekranu urządzenia lub klucza bezpieczeństwa.",
@@ -189,7 +168,40 @@
       "removeFailed": "Nie udało się usunąć klucza dostępu.",
       "signInButton": "Zaloguj się kluczem dostępu",
       "signInFailed": "Logowanie kluczem dostępu nie powiodło się."
-    }
+    },
+    "provider": "Dostawca",
+    "role": "Rola",
+    "selfHosted": "Samodzielnie hostowane · Apache 2.0",
+    "signInDescription": "Zaloguj się kontem GitHub, aby kontynuować",
+    "signInWithGitHub": "Zaloguj się przez GitHub",
+    "signup": {
+      "title": "Utwórz konto",
+      "subtitle": "Zarejestruj nowe konto",
+      "username": "Nazwa użytkownika",
+      "usernamePlaceholder": "Wybierz nazwę użytkownika",
+      "email": "Email",
+      "emailPlaceholder": "twoj@email.com",
+      "password": "Hasło",
+      "passwordPlaceholder": "Wybierz hasło",
+      "confirmPassword": "Potwierdź hasło",
+      "confirmPasswordPlaceholder": "Potwierdź hasło",
+      "createAccount": "Utwórz konto",
+      "creatingAccount": "Tworzenie konta...",
+      "hasAccount": "Masz już konto?",
+      "signInHere": "Zaloguj się tutaj",
+      "signupSuccess": "Konto utworzone pomyślnie!",
+      "approvalPending": "Rejestracja przyjęta. Administrator musi zatwierdzić Twoje konto.",
+      "awaitingApproval": "Oczekuje na zatwierdzenie",
+      "awaitingApprovalDescription": "Twoje konto zostało utworzone, ale administrator musi je aktywować, zanim będziesz mógł się zalogować.",
+      "backToSignIn": "Powrót do logowania",
+      "signupFailed": "Rejestracja nie powiodła się",
+      "tryAgain": "Rejestracja nie powiodła się. Spróbuj ponownie.",
+      "usernameRequired": "Nazwa użytkownika i hasło są wymagane",
+      "passwordMismatch": "Hasła nie pasują do siebie"
+    },
+    "tagline": "Twój stos AI powinien odpowiadać Tobie.",
+    "userId": "ID użytkownika",
+    "welcome": "Witaj"
   },
   "setup": {
     "welcome": {

@@ -49,6 +49,37 @@
     "backendConnectionFailed": "No se pudo conectar al servicio del backend"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "No se pudo completar el inicio de sesión",
+      "expired": "Este enlace de inicio de sesión ha caducado. Inténtalo de nuevo.",
+      "invalid": "Este enlace de inicio de sesión ya no es válido. Vuelve a empezar.",
+      "backToLogin": "Volver al inicio de sesión",
+      "working": "Iniciando sesión…",
+      "workingHint": "Espera mientras terminamos."
+    },
+    "canonical": {
+      "redirecting": "Redirigiendo…",
+      "signIn": "Continuar con la cuenta de ALcore"
+    },
+    "checkingAuth": "Verificando autenticación...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Primero local",
+        "body": "Tus conversaciones y archivos permanecen en la máquina donde ejecutas esto."
+      },
+      "providers": {
+        "title": "Cualquier proveedor",
+        "body": "Modelos locales a través de Ollama, además de los proveedores remotos que elijas añadir."
+      },
+      "work": {
+        "title": "Trabajo aislado",
+        "body": "Dale a un modelo un espacio de trabajo aislado con archivos, una terminal y una vista previa."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "Autenticación JWT activa",
+    "jwtDescription": "Autenticación basada en JWT con GitHub OAuth",
     "login": {
       "title": "Bienvenido de nuevo",
       "subtitle": "Inicia sesión en tu cuenta para continuar",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Error al verificar autenticación de GitHub",
       "verificationFailed": "La verificación de seguridad falló. Actualiza la página e inténtalo de nuevo."
     },
-    "signup": {
-      "title": "Crear cuenta",
-      "subtitle": "Regístrate para una nueva cuenta",
-      "username": "Nombre de usuario",
-      "usernamePlaceholder": "Elige un nombre de usuario",
-      "email": "Correo electrónico",
-      "emailPlaceholder": "tu@correo.com",
-      "password": "Contraseña",
-      "passwordPlaceholder": "Elige una contraseña",
-      "confirmPassword": "Confirmar contraseña",
-      "confirmPasswordPlaceholder": "Confirma tu contraseña",
-      "createAccount": "Crear cuenta",
-      "creatingAccount": "Creando cuenta...",
-      "hasAccount": "¿Ya tienes una cuenta?",
-      "signInHere": "Inicia sesión aquí",
-      "signupSuccess": "¡Cuenta creada exitosamente!",
-      "approvalPending": "Registro recibido. Un administrador debe aprobar tu cuenta.",
-      "awaitingApproval": "Esperando aprobación",
-      "awaitingApprovalDescription": "Tu cuenta ha sido creada, pero un administrador debe activarla antes de que puedas iniciar sesión.",
-      "backToSignIn": "Volver a iniciar sesión",
-      "signupFailed": "Error en el registro",
-      "tryAgain": "Error en el registro. Por favor intenta de nuevo.",
-      "usernameRequired": "Nombre de usuario y contraseña son obligatorios",
-      "passwordMismatch": "Las contraseñas no coinciden"
-    },
     "logout": {
       "button": "Cerrar sesión",
       "success": "Sesión cerrada exitosamente"
-    },
-    "oauth": {
-      "continueWith": "Continuar con {{provider}}",
-      "connectingTo": "Conectando a {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "¡Inicio de sesión con OAuth exitoso!",
-      "completionFailed": "No se pudo completar la autenticación OAuth",
-      "verificationFailed": "Falló la verificación de la autenticación OAuth",
-      "authenticationFailed": "Falló la autenticación OAuth",
-      "googleFailed": "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
-      "googleLoading": "Iniciando sesión con Google..."
-    },
-    "checkingAuth": "Verificando autenticación...",
-    "welcome": "Bienvenido",
-    "noEmail": "Sin correo electrónico",
-    "role": "Rol",
-    "id": "ID",
-    "userId": "ID de usuario",
-    "signInDescription": "Inicia sesión con tu cuenta de GitHub para continuar",
-    "signInWithGitHub": "Iniciar sesión con GitHub",
-    "jwtActive": "Autenticación JWT activa",
-    "jwtDescription": "Autenticación basada en JWT con GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Proveedor",
-    "tagline": "Tu pila de IA debería responder a ti.",
-    "selfHosted": "Autohospedado · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Primero local",
-        "body": "Tus conversaciones y archivos permanecen en la máquina donde ejecutas esto."
-      },
-      "providers": {
-        "title": "Cualquier proveedor",
-        "body": "Modelos locales a través de Ollama, además de los proveedores remotos que elijas añadir."
-      },
-      "work": {
-        "title": "Trabajo aislado",
-        "body": "Dale a un modelo un espacio de trabajo aislado con archivos, una terminal y una vista previa."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Inicio de sesión único"
     },
     "mfa": {
       "sectionTitle": "Autenticación en dos pasos",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "He guardado mis códigos de recuperación",
       "recoveryCodesRegenerated": "Nuevos códigos de recuperación creados. Los anteriores ya no funcionan."
     },
+    "noEmail": "Sin correo electrónico",
+    "oauth": {
+      "continueWith": "Continuar con {{provider}}",
+      "connectingTo": "Conectando a {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "¡Inicio de sesión con OAuth exitoso!",
+      "completionFailed": "No se pudo completar la autenticación OAuth",
+      "verificationFailed": "Falló la verificación de la autenticación OAuth",
+      "authenticationFailed": "Falló la autenticación OAuth",
+      "googleFailed": "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
+      "googleLoading": "Iniciando sesión con Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Inicio de sesión único"
+    },
     "passkeys": {
       "sectionTitle": "Llaves de acceso",
       "sectionDescription": "Inicia sesión sin contraseña con el bloqueo de pantalla de tu dispositivo o una llave de seguridad.",
@@ -189,7 +168,40 @@
       "removeFailed": "No se pudo eliminar la llave de acceso.",
       "signInButton": "Iniciar sesión con una llave de acceso",
       "signInFailed": "El inicio de sesión con llave de acceso falló."
-    }
+    },
+    "provider": "Proveedor",
+    "role": "Rol",
+    "selfHosted": "Autohospedado · Apache 2.0",
+    "signInDescription": "Inicia sesión con tu cuenta de GitHub para continuar",
+    "signInWithGitHub": "Iniciar sesión con GitHub",
+    "signup": {
+      "title": "Crear cuenta",
+      "subtitle": "Regístrate para una nueva cuenta",
+      "username": "Nombre de usuario",
+      "usernamePlaceholder": "Elige un nombre de usuario",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "tu@correo.com",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Elige una contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "confirmPasswordPlaceholder": "Confirma tu contraseña",
+      "createAccount": "Crear cuenta",
+      "creatingAccount": "Creando cuenta...",
+      "hasAccount": "¿Ya tienes una cuenta?",
+      "signInHere": "Inicia sesión aquí",
+      "signupSuccess": "¡Cuenta creada exitosamente!",
+      "approvalPending": "Registro recibido. Un administrador debe aprobar tu cuenta.",
+      "awaitingApproval": "Esperando aprobación",
+      "awaitingApprovalDescription": "Tu cuenta ha sido creada, pero un administrador debe activarla antes de que puedas iniciar sesión.",
+      "backToSignIn": "Volver a iniciar sesión",
+      "signupFailed": "Error en el registro",
+      "tryAgain": "Error en el registro. Por favor intenta de nuevo.",
+      "usernameRequired": "Nombre de usuario y contraseña son obligatorios",
+      "passwordMismatch": "Las contraseñas no coinciden"
+    },
+    "tagline": "Tu pila de IA debería responder a ti.",
+    "userId": "ID de usuario",
+    "welcome": "Bienvenido"
   },
   "setup": {
     "welcome": {

@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Échec de la connexion au service backend"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "La connexion n'a pas pu aboutir",
+      "expired": "Ce lien de connexion a expiré. Veuillez réessayer.",
+      "invalid": "Ce lien de connexion n'est plus valide. Veuillez recommencer.",
+      "backToLogin": "Retour à la connexion",
+      "working": "Connexion en cours…",
+      "workingHint": "Veuillez patienter pendant que nous finalisons."
+    },
+    "canonical": {
+      "redirecting": "Redirection…",
+      "signIn": "Continuer avec le compte ALcore"
+    },
+    "checkingAuth": "Vérification de l'authentification...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Local d'abord",
+        "body": "Vos conversations et fichiers restent sur la machine sur laquelle vous l'exécutez."
+      },
+      "providers": {
+        "title": "N'importe quel fournisseur",
+        "body": "Modèles locaux via Ollama, plus les fournisseurs distants que vous choisissez d'ajouter."
+      },
+      "work": {
+        "title": "Travail isolé",
+        "body": "Donnez à un modèle un espace de travail sandbox avec fichiers, terminal et aperçu."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "Authentification JWT active",
+    "jwtDescription": "Authentification JWT avec GitHub OAuth",
     "login": {
       "title": "Bon retour",
       "subtitle": "Connectez-vous à votre compte pour continuer",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Échec de la vérification de l'authentification GitHub",
       "verificationFailed": "La vérification de sécurité a échoué. Actualisez la page et réessayez."
     },
-    "signup": {
-      "title": "Créer un compte",
-      "subtitle": "Inscrivez-vous pour créer votre compte",
-      "username": "Nom d'utilisateur",
-      "usernamePlaceholder": "Choisissez un nom d'utilisateur",
-      "email": "Email",
-      "emailPlaceholder": "votre@email.com",
-      "password": "Mot de passe",
-      "passwordPlaceholder": "Choisissez un mot de passe",
-      "confirmPassword": "Confirmer le mot de passe",
-      "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
-      "createAccount": "Créer un compte",
-      "creatingAccount": "Création du compte...",
-      "hasAccount": "Vous avez déjà un compte ?",
-      "signInHere": "Connectez-vous ici",
-      "signupSuccess": "Compte créé avec succès !",
-      "approvalPending": "Inscription reçue. Un administrateur doit approuver votre compte.",
-      "awaitingApproval": "En attente d'approbation",
-      "awaitingApprovalDescription": "Votre compte a été créé, mais un administrateur doit l'activer avant que vous puissiez vous connecter.",
-      "backToSignIn": "Retour à la connexion",
-      "signupFailed": "Échec de l'inscription",
-      "tryAgain": "Échec de l'inscription. Veuillez réessayer.",
-      "usernameRequired": "Le nom d'utilisateur et le mot de passe sont requis",
-      "passwordMismatch": "Les mots de passe ne correspondent pas"
-    },
     "logout": {
       "button": "Déconnexion",
       "success": "Déconnexion réussie"
-    },
-    "oauth": {
-      "continueWith": "Continuer avec {{provider}}",
-      "connectingTo": "Connexion à {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "Connexion OAuth réussie !",
-      "completionFailed": "Échec de la finalisation de l’authentification OAuth",
-      "verificationFailed": "Échec de la vérification de l’authentification OAuth",
-      "authenticationFailed": "Échec de l’authentification OAuth",
-      "googleFailed": "La connexion Google a échoué. Veuillez réessayer.",
-      "googleLoading": "Connexion avec Google..."
-    },
-    "checkingAuth": "Vérification de l'authentification...",
-    "welcome": "Bienvenue",
-    "noEmail": "Aucun e-mail fourni",
-    "role": "Rôle",
-    "id": "ID",
-    "userId": "ID utilisateur",
-    "signInDescription": "Connectez-vous avec votre compte GitHub pour continuer",
-    "signInWithGitHub": "Se connecter avec GitHub",
-    "jwtActive": "Authentification JWT active",
-    "jwtDescription": "Authentification JWT avec GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Fournisseur",
-    "tagline": "Votre pile d'IA devrait répondre à vos ordres.",
-    "selfHosted": "Auto-hébergé · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Local d'abord",
-        "body": "Vos conversations et fichiers restent sur la machine sur laquelle vous l'exécutez."
-      },
-      "providers": {
-        "title": "N'importe quel fournisseur",
-        "body": "Modèles locaux via Ollama, plus les fournisseurs distants que vous choisissez d'ajouter."
-      },
-      "work": {
-        "title": "Travail isolé",
-        "body": "Donnez à un modèle un espace de travail sandbox avec fichiers, terminal et aperçu."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Authentification unique"
     },
     "mfa": {
       "sectionTitle": "Authentification à deux facteurs",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "J'ai enregistré mes codes de récupération",
       "recoveryCodesRegenerated": "Nouveaux codes de récupération créés. Les anciens ne fonctionnent plus."
     },
+    "noEmail": "Aucun e-mail fourni",
+    "oauth": {
+      "continueWith": "Continuer avec {{provider}}",
+      "connectingTo": "Connexion à {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "Connexion OAuth réussie !",
+      "completionFailed": "Échec de la finalisation de l’authentification OAuth",
+      "verificationFailed": "Échec de la vérification de l’authentification OAuth",
+      "authenticationFailed": "Échec de l’authentification OAuth",
+      "googleFailed": "La connexion Google a échoué. Veuillez réessayer.",
+      "googleLoading": "Connexion avec Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Authentification unique"
+    },
     "passkeys": {
       "sectionTitle": "Clés d'accès",
       "sectionDescription": "Connectez-vous sans mot de passe grâce au verrouillage de votre appareil ou à une clé de sécurité.",
@@ -189,7 +168,40 @@
       "removeFailed": "La clé d'accès n'a pas pu être supprimée.",
       "signInButton": "Se connecter avec une clé d'accès",
       "signInFailed": "Échec de la connexion par clé d'accès."
-    }
+    },
+    "provider": "Fournisseur",
+    "role": "Rôle",
+    "selfHosted": "Auto-hébergé · Apache 2.0",
+    "signInDescription": "Connectez-vous avec votre compte GitHub pour continuer",
+    "signInWithGitHub": "Se connecter avec GitHub",
+    "signup": {
+      "title": "Créer un compte",
+      "subtitle": "Inscrivez-vous pour créer votre compte",
+      "username": "Nom d'utilisateur",
+      "usernamePlaceholder": "Choisissez un nom d'utilisateur",
+      "email": "Email",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Choisissez un mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+      "createAccount": "Créer un compte",
+      "creatingAccount": "Création du compte...",
+      "hasAccount": "Vous avez déjà un compte ?",
+      "signInHere": "Connectez-vous ici",
+      "signupSuccess": "Compte créé avec succès !",
+      "approvalPending": "Inscription reçue. Un administrateur doit approuver votre compte.",
+      "awaitingApproval": "En attente d'approbation",
+      "awaitingApprovalDescription": "Votre compte a été créé, mais un administrateur doit l'activer avant que vous puissiez vous connecter.",
+      "backToSignIn": "Retour à la connexion",
+      "signupFailed": "Échec de l'inscription",
+      "tryAgain": "Échec de l'inscription. Veuillez réessayer.",
+      "usernameRequired": "Le nom d'utilisateur et le mot de passe sont requis",
+      "passwordMismatch": "Les mots de passe ne correspondent pas"
+    },
+    "tagline": "Votre pile d'IA devrait répondre à vos ordres.",
+    "userId": "ID utilisateur",
+    "welcome": "Bienvenue"
   },
   "setup": {
     "welcome": {

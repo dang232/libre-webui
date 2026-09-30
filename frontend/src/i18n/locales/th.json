@@ -49,6 +49,37 @@
     "backendConnectionFailed": "ไม่สามารถเชื่อมต่อกับบริการแบ็กเอนด์ได้"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "ไม่สามารถเข้าสู่ระบบได้",
+      "expired": "ลิงก์เข้าสู่ระบบหมดอายุแล้ว กรุณาลองใหม่อีกครั้ง",
+      "invalid": "ลิงก์เข้าสู่ระบบไม่ถูกต้องแล้ว กรุณาเริ่มต้นใหม่",
+      "backToLogin": "กลับไปหน้าเข้าสู่ระบบ",
+      "working": "กำลังเข้าสู่ระบบ…",
+      "workingHint": "กรุณารอสักครู่"
+    },
+    "canonical": {
+      "redirecting": "กำลังเปลี่ยนเส้นทาง…",
+      "signIn": "ดำเนินการต่อด้วยบัญชี ALcore"
+    },
+    "checkingAuth": "กำลังตรวจสอบการยืนยันตัวตน...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "ทำงานในเครื่องเป็นหลัก",
+        "body": "การสนทนาและไฟล์ของคุณจะอยู่บนเครื่องที่คุณเรียกใช้งานนี้"
+      },
+      "providers": {
+        "title": "ผู้ให้บริการใดก็ได้",
+        "body": "โมเดลในเครื่องผ่าน Ollama รวมถึงผู้ให้บริการระยะไกลที่คุณเลือกเพิ่ม"
+      },
+      "work": {
+        "title": "การทำงานแบบแยกส่วน",
+        "body": "มอบพื้นที่ทำงานแบบแซนด์บ็อกซ์ให้กับโมเดล พร้อมไฟล์ เทอร์มินัล และตัวอย่างผลลัพธ์"
+      }
+    },
+    "id": "ID",
+    "jwtActive": "การยืนยันตัวตน JWT ใช้งานอยู่",
+    "jwtDescription": "การยืนยันตัวตนแบบ JWT ด้วย GitHub OAuth",
     "login": {
       "title": "ยินดีต้อนรับกลับ",
       "subtitle": "เข้าสู่ระบบเพื่อดำเนินการต่อ",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "ไม่สามารถยืนยันการยืนยันตัวตน GitHub",
       "verificationFailed": "การยืนยันความปลอดภัยล้มเหลว โปรดรีเฟรชหน้าแล้วลองอีกครั้ง"
     },
-    "signup": {
-      "title": "สร้างบัญชี",
-      "subtitle": "ลงทะเบียนสำหรับบัญชีใหม่",
-      "username": "ชื่อผู้ใช้",
-      "usernamePlaceholder": "เลือกชื่อผู้ใช้",
-      "email": "อีเมล",
-      "emailPlaceholder": "your@email.com",
-      "password": "รหัสผ่าน",
-      "passwordPlaceholder": "เลือกรหัสผ่าน",
-      "confirmPassword": "ยืนยันรหัสผ่าน",
-      "confirmPasswordPlaceholder": "ยืนยันรหัสผ่านของคุณ",
-      "createAccount": "สร้างบัญชี",
-      "creatingAccount": "กำลังสร้างบัญชี...",
-      "hasAccount": "มีบัญชีอยู่แล้ว?",
-      "signInHere": "เข้าสู่ระบบที่นี่",
-      "signupSuccess": "สร้างบัญชีสำเร็จ!",
-      "approvalPending": "ได้รับการลงทะเบียนแล้ว ผู้ดูแลระบบต้องอนุมัติบัญชีของคุณ",
-      "awaitingApproval": "กำลังรอการอนุมัติ",
-      "awaitingApprovalDescription": "บัญชีของคุณถูกสร้างขึ้นแล้ว แต่ผู้ดูแลระบบต้องเปิดใช้งานก่อนจึงจะสามารถเข้าสู่ระบบได้",
-      "backToSignIn": "กลับไปเข้าสู่ระบบ",
-      "signupFailed": "สมัครสมาชิกล้มเหลว",
-      "tryAgain": "สมัครสมาชิกล้มเหลว กรุณาลองอีกครั้ง",
-      "usernameRequired": "ต้องระบุชื่อผู้ใช้และรหัสผ่าน",
-      "passwordMismatch": "รหัสผ่านไม่ตรงกัน"
-    },
     "logout": {
       "button": "ออกจากระบบ",
       "success": "ออกจากระบบสำเร็จ"
-    },
-    "oauth": {
-      "continueWith": "ดำเนินการต่อด้วย {{provider}}",
-      "connectingTo": "กำลังเชื่อมต่อกับ {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "เข้าสู่ระบบ OAuth สำเร็จ!",
-      "completionFailed": "ไม่สามารถดำเนินการยืนยันตัวตน OAuth ให้เสร็จสิ้นได้",
-      "verificationFailed": "การตรวจสอบการยืนยันตัวตน OAuth ล้มเหลว",
-      "authenticationFailed": "การยืนยันตัวตน OAuth ล้มเหลว",
-      "googleFailed": "เข้าสู่ระบบด้วย Google ไม่สำเร็จ โปรดลองอีกครั้ง",
-      "googleLoading": "กำลังเข้าสู่ระบบด้วย Google..."
-    },
-    "checkingAuth": "กำลังตรวจสอบการยืนยันตัวตน...",
-    "welcome": "ยินดีต้อนรับ",
-    "noEmail": "ไม่มีอีเมล",
-    "role": "บทบาท",
-    "id": "ID",
-    "userId": "ID ผู้ใช้",
-    "signInDescription": "ลงชื่อเข้าใช้ด้วยบัญชี GitHub เพื่อดำเนินการต่อ",
-    "signInWithGitHub": "ลงชื่อเข้าใช้ด้วย GitHub",
-    "jwtActive": "การยืนยันตัวตน JWT ใช้งานอยู่",
-    "jwtDescription": "การยืนยันตัวตนแบบ JWT ด้วย GitHub OAuth",
-    "github": "GitHub",
-    "provider": "ผู้ให้บริการ",
-    "tagline": "ชุด AI ของคุณควรตอบสนองต่อคุณ",
-    "selfHosted": "โฮสต์เอง · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "ทำงานในเครื่องเป็นหลัก",
-        "body": "การสนทนาและไฟล์ของคุณจะอยู่บนเครื่องที่คุณเรียกใช้งานนี้"
-      },
-      "providers": {
-        "title": "ผู้ให้บริการใดก็ได้",
-        "body": "โมเดลในเครื่องผ่าน Ollama รวมถึงผู้ให้บริการระยะไกลที่คุณเลือกเพิ่ม"
-      },
-      "work": {
-        "title": "การทำงานแบบแยกส่วน",
-        "body": "มอบพื้นที่ทำงานแบบแซนด์บ็อกซ์ให้กับโมเดล พร้อมไฟล์ เทอร์มินัล และตัวอย่างผลลัพธ์"
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "การลงชื่อเข้าใช้ครั้งเดียว"
     },
     "mfa": {
       "sectionTitle": "การยืนยันตัวตนสองขั้นตอน",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "ฉันบันทึกรหัสกู้คืนแล้ว",
       "recoveryCodesRegenerated": "สร้างรหัสกู้คืนชุดใหม่แล้ว รหัสเดิมใช้ไม่ได้อีกต่อไป"
     },
+    "noEmail": "ไม่มีอีเมล",
+    "oauth": {
+      "continueWith": "ดำเนินการต่อด้วย {{provider}}",
+      "connectingTo": "กำลังเชื่อมต่อกับ {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "เข้าสู่ระบบ OAuth สำเร็จ!",
+      "completionFailed": "ไม่สามารถดำเนินการยืนยันตัวตน OAuth ให้เสร็จสิ้นได้",
+      "verificationFailed": "การตรวจสอบการยืนยันตัวตน OAuth ล้มเหลว",
+      "authenticationFailed": "การยืนยันตัวตน OAuth ล้มเหลว",
+      "googleFailed": "เข้าสู่ระบบด้วย Google ไม่สำเร็จ โปรดลองอีกครั้ง",
+      "googleLoading": "กำลังเข้าสู่ระบบด้วย Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "การลงชื่อเข้าใช้ครั้งเดียว"
+    },
     "passkeys": {
       "sectionTitle": "พาสคีย์",
       "sectionDescription": "เข้าสู่ระบบโดยไม่ใช้รหัสผ่านด้วยการล็อกหน้าจอของอุปกรณ์หรือกุญแจความปลอดภัย",
@@ -189,7 +168,40 @@
       "removeFailed": "ไม่สามารถลบพาสคีย์ได้",
       "signInButton": "เข้าสู่ระบบด้วยพาสคีย์",
       "signInFailed": "เข้าสู่ระบบด้วยพาสคีย์ไม่สำเร็จ"
-    }
+    },
+    "provider": "ผู้ให้บริการ",
+    "role": "บทบาท",
+    "selfHosted": "โฮสต์เอง · Apache 2.0",
+    "signInDescription": "ลงชื่อเข้าใช้ด้วยบัญชี GitHub เพื่อดำเนินการต่อ",
+    "signInWithGitHub": "ลงชื่อเข้าใช้ด้วย GitHub",
+    "signup": {
+      "title": "สร้างบัญชี",
+      "subtitle": "ลงทะเบียนสำหรับบัญชีใหม่",
+      "username": "ชื่อผู้ใช้",
+      "usernamePlaceholder": "เลือกชื่อผู้ใช้",
+      "email": "อีเมล",
+      "emailPlaceholder": "your@email.com",
+      "password": "รหัสผ่าน",
+      "passwordPlaceholder": "เลือกรหัสผ่าน",
+      "confirmPassword": "ยืนยันรหัสผ่าน",
+      "confirmPasswordPlaceholder": "ยืนยันรหัสผ่านของคุณ",
+      "createAccount": "สร้างบัญชี",
+      "creatingAccount": "กำลังสร้างบัญชี...",
+      "hasAccount": "มีบัญชีอยู่แล้ว?",
+      "signInHere": "เข้าสู่ระบบที่นี่",
+      "signupSuccess": "สร้างบัญชีสำเร็จ!",
+      "approvalPending": "ได้รับการลงทะเบียนแล้ว ผู้ดูแลระบบต้องอนุมัติบัญชีของคุณ",
+      "awaitingApproval": "กำลังรอการอนุมัติ",
+      "awaitingApprovalDescription": "บัญชีของคุณถูกสร้างขึ้นแล้ว แต่ผู้ดูแลระบบต้องเปิดใช้งานก่อนจึงจะสามารถเข้าสู่ระบบได้",
+      "backToSignIn": "กลับไปเข้าสู่ระบบ",
+      "signupFailed": "สมัครสมาชิกล้มเหลว",
+      "tryAgain": "สมัครสมาชิกล้มเหลว กรุณาลองอีกครั้ง",
+      "usernameRequired": "ต้องระบุชื่อผู้ใช้และรหัสผ่าน",
+      "passwordMismatch": "รหัสผ่านไม่ตรงกัน"
+    },
+    "tagline": "ชุด AI ของคุณควรตอบสนองต่อคุณ",
+    "userId": "ID ผู้ใช้",
+    "welcome": "ยินดีต้อนรับ"
   },
   "setup": {
     "welcome": {

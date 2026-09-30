@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Kan geen verbinding maken met de backendservice"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Aanmelden kon niet worden voltooid",
+      "expired": "Deze aanmeldlink is verlopen. Probeer het opnieuw.",
+      "invalid": "Deze aanmeldlink is niet langer geldig. Begin opnieuw.",
+      "backToLogin": "Terug naar aanmelden",
+      "working": "Bezig met aanmelden…",
+      "workingHint": "Even geduld, we zijn bijna klaar."
+    },
+    "canonical": {
+      "redirecting": "Doorsturen…",
+      "signIn": "Doorgaan met ALcore-account"
+    },
+    "checkingAuth": "Authenticatie controleren...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Lokaal eerst",
+        "body": "Uw gesprekken en bestanden blijven op de machine waarop u dit uitvoert."
+      },
+      "providers": {
+        "title": "Elke provider",
+        "body": "Lokale modellen via Ollama, plus de externe providers die u kiest toe te voegen."
+      },
+      "work": {
+        "title": "Geïsoleerd werk",
+        "body": "Geef een model een sandbox-werkruimte met bestanden, een terminal en een voorvertoning."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "JWT-authenticatie actief",
+    "jwtDescription": "JWT-authenticatie met GitHub OAuth",
     "login": {
       "title": "Welkom terug",
       "subtitle": "Meld u aan bij uw account om door te gaan",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Verificatie van GitHub-authenticatie mislukt",
       "verificationFailed": "Beveiligingsverificatie mislukt. Vernieuw de pagina en probeer opnieuw."
     },
-    "signup": {
-      "title": "Account aanmaken",
-      "subtitle": "Registreer voor een nieuw account",
-      "username": "Gebruikersnaam",
-      "usernamePlaceholder": "Kies een gebruikersnaam",
-      "email": "E-mail",
-      "emailPlaceholder": "uw@email.nl",
-      "password": "Wachtwoord",
-      "passwordPlaceholder": "Kies een wachtwoord",
-      "confirmPassword": "Wachtwoord bevestigen",
-      "confirmPasswordPlaceholder": "Bevestig uw wachtwoord",
-      "createAccount": "Account aanmaken",
-      "creatingAccount": "Account aanmaken...",
-      "hasAccount": "Heeft u al een account?",
-      "signInHere": "Hier aanmelden",
-      "signupSuccess": "Account succesvol aangemaakt!",
-      "approvalPending": "Registratie ontvangen. Een beheerder moet uw account goedkeuren.",
-      "awaitingApproval": "In afwachting van goedkeuring",
-      "awaitingApprovalDescription": "Uw account is aangemaakt, maar een beheerder moet het activeren voordat u kunt inloggen.",
-      "backToSignIn": "Terug naar inloggen",
-      "signupFailed": "Registratie mislukt",
-      "tryAgain": "Registratie mislukt. Probeer het opnieuw.",
-      "usernameRequired": "Gebruikersnaam en wachtwoord zijn verplicht",
-      "passwordMismatch": "Wachtwoorden komen niet overeen"
-    },
     "logout": {
       "button": "Uitloggen",
       "success": "Succesvol uitgelogd"
-    },
-    "oauth": {
-      "continueWith": "Doorgaan met {{provider}}",
-      "connectingTo": "Verbinden met {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "OAuth-aanmelding geslaagd!",
-      "completionFailed": "OAuth-authenticatie kon niet worden voltooid",
-      "verificationFailed": "Verificatie van OAuth-authenticatie mislukt",
-      "authenticationFailed": "OAuth-authenticatie mislukt",
-      "googleFailed": "Inloggen met Google is mislukt. Probeer het opnieuw.",
-      "googleLoading": "Inloggen met Google..."
-    },
-    "checkingAuth": "Authenticatie controleren...",
-    "welcome": "Welkom",
-    "noEmail": "Geen e-mail opgegeven",
-    "role": "Rol",
-    "id": "ID",
-    "userId": "Gebruikers-ID",
-    "signInDescription": "Log in met uw GitHub-account om door te gaan",
-    "signInWithGitHub": "Inloggen met GitHub",
-    "jwtActive": "JWT-authenticatie actief",
-    "jwtDescription": "JWT-authenticatie met GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Provider",
-    "tagline": "Uw AI-stack moet u antwoorden.",
-    "selfHosted": "Zelfgehost · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Lokaal eerst",
-        "body": "Uw gesprekken en bestanden blijven op de machine waarop u dit uitvoert."
-      },
-      "providers": {
-        "title": "Elke provider",
-        "body": "Lokale modellen via Ollama, plus de externe providers die u kiest toe te voegen."
-      },
-      "work": {
-        "title": "Geïsoleerd werk",
-        "body": "Geef een model een sandbox-werkruimte met bestanden, een terminal en een voorvertoning."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Single sign-on"
     },
     "mfa": {
       "sectionTitle": "Tweestapsverificatie",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Ik heb mijn herstelcodes opgeslagen",
       "recoveryCodesRegenerated": "Nieuwe herstelcodes aangemaakt. De oude werken niet meer."
     },
+    "noEmail": "Geen e-mail opgegeven",
+    "oauth": {
+      "continueWith": "Doorgaan met {{provider}}",
+      "connectingTo": "Verbinden met {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "OAuth-aanmelding geslaagd!",
+      "completionFailed": "OAuth-authenticatie kon niet worden voltooid",
+      "verificationFailed": "Verificatie van OAuth-authenticatie mislukt",
+      "authenticationFailed": "OAuth-authenticatie mislukt",
+      "googleFailed": "Inloggen met Google is mislukt. Probeer het opnieuw.",
+      "googleLoading": "Inloggen met Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Single sign-on"
+    },
     "passkeys": {
       "sectionTitle": "Passkeys",
       "sectionDescription": "Log in zonder wachtwoord met de schermvergrendeling van je apparaat of een beveiligingssleutel.",
@@ -189,7 +168,40 @@
       "removeFailed": "De passkey kon niet worden verwijderd.",
       "signInButton": "Inloggen met een passkey",
       "signInFailed": "Inloggen met passkey mislukt."
-    }
+    },
+    "provider": "Provider",
+    "role": "Rol",
+    "selfHosted": "Zelfgehost · Apache 2.0",
+    "signInDescription": "Log in met uw GitHub-account om door te gaan",
+    "signInWithGitHub": "Inloggen met GitHub",
+    "signup": {
+      "title": "Account aanmaken",
+      "subtitle": "Registreer voor een nieuw account",
+      "username": "Gebruikersnaam",
+      "usernamePlaceholder": "Kies een gebruikersnaam",
+      "email": "E-mail",
+      "emailPlaceholder": "uw@email.nl",
+      "password": "Wachtwoord",
+      "passwordPlaceholder": "Kies een wachtwoord",
+      "confirmPassword": "Wachtwoord bevestigen",
+      "confirmPasswordPlaceholder": "Bevestig uw wachtwoord",
+      "createAccount": "Account aanmaken",
+      "creatingAccount": "Account aanmaken...",
+      "hasAccount": "Heeft u al een account?",
+      "signInHere": "Hier aanmelden",
+      "signupSuccess": "Account succesvol aangemaakt!",
+      "approvalPending": "Registratie ontvangen. Een beheerder moet uw account goedkeuren.",
+      "awaitingApproval": "In afwachting van goedkeuring",
+      "awaitingApprovalDescription": "Uw account is aangemaakt, maar een beheerder moet het activeren voordat u kunt inloggen.",
+      "backToSignIn": "Terug naar inloggen",
+      "signupFailed": "Registratie mislukt",
+      "tryAgain": "Registratie mislukt. Probeer het opnieuw.",
+      "usernameRequired": "Gebruikersnaam en wachtwoord zijn verplicht",
+      "passwordMismatch": "Wachtwoorden komen niet overeen"
+    },
+    "tagline": "Uw AI-stack moet u antwoorden.",
+    "userId": "Gebruikers-ID",
+    "welcome": "Welkom"
   },
   "setup": {
     "welcome": {

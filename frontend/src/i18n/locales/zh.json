@@ -49,6 +49,37 @@
     "backendConnectionFailed": "无法连接后端服务"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "无法完成登录",
+      "expired": "此登录链接已过期，请重试。",
+      "invalid": "此登录链接已无效，请重新开始。",
+      "backToLogin": "返回登录",
+      "working": "正在登录…",
+      "workingHint": "请稍候，正在完成。"
+    },
+    "canonical": {
+      "redirecting": "正在跳转…",
+      "signIn": "使用 ALcore 账户继续"
+    },
+    "checkingAuth": "正在检查认证...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "本地优先",
+        "body": "你的对话和文件保留在你运行此程序的机器上。"
+      },
+      "providers": {
+        "title": "任意提供商",
+        "body": "通过 Ollama 使用本地模型，以及你选择添加的远程提供商。"
+      },
+      "work": {
+        "title": "隔离工作区",
+        "body": "为模型提供一个包含文件、终端和预览的沙盒工作区。"
+      }
+    },
+    "id": "ID",
+    "jwtActive": "JWT 认证已激活",
+    "jwtDescription": "基于 JWT 的 GitHub OAuth 认证",
     "login": {
       "title": "欢迎回来",
       "subtitle": "登录您的账户以继续",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "GitHub 认证验证失败",
       "verificationFailed": "安全验证失败。请刷新页面后重试。"
     },
-    "signup": {
-      "title": "创建账户",
-      "subtitle": "注册新账户",
-      "username": "用户名",
-      "usernamePlaceholder": "请选择用户名",
-      "email": "电子邮箱",
-      "emailPlaceholder": "your@email.com",
-      "password": "密码",
-      "passwordPlaceholder": "请选择密码",
-      "confirmPassword": "确认密码",
-      "confirmPasswordPlaceholder": "请再次输入密码",
-      "createAccount": "创建账户",
-      "creatingAccount": "创建账户中...",
-      "hasAccount": "已有账户？",
-      "signInHere": "点击登录",
-      "signupSuccess": "账户创建成功！",
-      "approvalPending": "已收到注册申请。需要管理员批准您的账户。",
-      "awaitingApproval": "等待批准",
-      "awaitingApprovalDescription": "您的账户已创建，但需要管理员激活后才能登录。",
-      "backToSignIn": "返回登录",
-      "signupFailed": "注册失败",
-      "tryAgain": "注册失败，请重试。",
-      "usernameRequired": "用户名和密码为必填项",
-      "passwordMismatch": "两次输入的密码不一致"
-    },
     "logout": {
       "button": "退出登录",
       "success": "已成功退出登录"
-    },
-    "oauth": {
-      "continueWith": "使用 {{provider}} 继续",
-      "connectingTo": "正在连接 {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "OAuth 登录成功！",
-      "completionFailed": "无法完成 OAuth 身份验证",
-      "verificationFailed": "OAuth 身份验证校验失败",
-      "authenticationFailed": "OAuth 身份验证失败",
-      "googleFailed": "Google 登录失败，请重试。",
-      "googleLoading": "正在使用 Google 登录..."
-    },
-    "checkingAuth": "正在检查认证...",
-    "welcome": "欢迎",
-    "noEmail": "未提供邮箱",
-    "role": "角色",
-    "id": "ID",
-    "userId": "用户 ID",
-    "signInDescription": "使用 GitHub 账户登录以继续",
-    "signInWithGitHub": "使用 GitHub 登录",
-    "jwtActive": "JWT 认证已激活",
-    "jwtDescription": "基于 JWT 的 GitHub OAuth 认证",
-    "github": "GitHub",
-    "provider": "提供商",
-    "tagline": "你的 AI 技术栈应由你掌控。",
-    "selfHosted": "自托管 · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "本地优先",
-        "body": "你的对话和文件保留在你运行此程序的机器上。"
-      },
-      "providers": {
-        "title": "任意提供商",
-        "body": "通过 Ollama 使用本地模型，以及你选择添加的远程提供商。"
-      },
-      "work": {
-        "title": "隔离工作区",
-        "body": "为模型提供一个包含文件、终端和预览的沙盒工作区。"
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "单点登录"
     },
     "mfa": {
       "sectionTitle": "两步验证",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "我已保存恢复代码",
       "recoveryCodesRegenerated": "已生成新的恢复代码，旧代码不再有效。"
     },
+    "noEmail": "未提供邮箱",
+    "oauth": {
+      "continueWith": "使用 {{provider}} 继续",
+      "connectingTo": "正在连接 {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "OAuth 登录成功！",
+      "completionFailed": "无法完成 OAuth 身份验证",
+      "verificationFailed": "OAuth 身份验证校验失败",
+      "authenticationFailed": "OAuth 身份验证失败",
+      "googleFailed": "Google 登录失败，请重试。",
+      "googleLoading": "正在使用 Google 登录..."
+    },
+    "oidc": {
+      "defaultProviderName": "单点登录"
+    },
     "passkeys": {
       "sectionTitle": "通行密钥",
       "sectionDescription": "使用设备的屏幕锁或安全密钥免密码登录。",
@@ -189,7 +168,40 @@
       "removeFailed": "无法移除通行密钥。",
       "signInButton": "使用通行密钥登录",
       "signInFailed": "通行密钥登录失败。"
-    }
+    },
+    "provider": "提供商",
+    "role": "角色",
+    "selfHosted": "自托管 · Apache 2.0",
+    "signInDescription": "使用 GitHub 账户登录以继续",
+    "signInWithGitHub": "使用 GitHub 登录",
+    "signup": {
+      "title": "创建账户",
+      "subtitle": "注册新账户",
+      "username": "用户名",
+      "usernamePlaceholder": "请选择用户名",
+      "email": "电子邮箱",
+      "emailPlaceholder": "your@email.com",
+      "password": "密码",
+      "passwordPlaceholder": "请选择密码",
+      "confirmPassword": "确认密码",
+      "confirmPasswordPlaceholder": "请再次输入密码",
+      "createAccount": "创建账户",
+      "creatingAccount": "创建账户中...",
+      "hasAccount": "已有账户？",
+      "signInHere": "点击登录",
+      "signupSuccess": "账户创建成功！",
+      "approvalPending": "已收到注册申请。需要管理员批准您的账户。",
+      "awaitingApproval": "等待批准",
+      "awaitingApprovalDescription": "您的账户已创建，但需要管理员激活后才能登录。",
+      "backToSignIn": "返回登录",
+      "signupFailed": "注册失败",
+      "tryAgain": "注册失败，请重试。",
+      "usernameRequired": "用户名和密码为必填项",
+      "passwordMismatch": "两次输入的密码不一致"
+    },
+    "tagline": "你的 AI 技术栈应由你掌控。",
+    "userId": "用户 ID",
+    "welcome": "欢迎"
   },
   "setup": {
     "welcome": {

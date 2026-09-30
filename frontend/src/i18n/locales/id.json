@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Gagal terhubung ke layanan backend"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Tidak dapat menyelesaikan proses masuk",
+      "expired": "Tautan masuk ini telah kedaluwarsa. Silakan coba lagi.",
+      "invalid": "Tautan masuk ini tidak lagi valid. Silakan mulai lagi.",
+      "backToLogin": "Kembali ke halaman masuk",
+      "working": "Sedang masuk…",
+      "workingHint": "Harap tunggu sebentar."
+    },
+    "canonical": {
+      "redirecting": "Mengalihkan…",
+      "signIn": "Lanjutkan dengan akun ALcore"
+    },
+    "checkingAuth": "Memeriksa autentikasi...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Prioritas lokal",
+        "body": "Percakapan dan file Anda tetap berada di mesin tempat Anda menjalankan ini."
+      },
+      "providers": {
+        "title": "Penyedia apa pun",
+        "body": "Model lokal melalui Ollama, ditambah penyedia jarak jauh yang Anda pilih untuk ditambahkan."
+      },
+      "work": {
+        "title": "Kerja Terisolasi",
+        "body": "Beri model ruang kerja sandbox dengan file, terminal, dan pratinjau."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "Autentikasi JWT aktif",
+    "jwtDescription": "Autentikasi berbasis JWT dengan GitHub OAuth",
     "login": {
       "title": "Selamat Datang Kembali",
       "subtitle": "Masuk ke akun Anda untuk melanjutkan",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Gagal memverifikasi autentikasi GitHub",
       "verificationFailed": "Verifikasi keamanan gagal. Muat ulang halaman dan coba lagi."
     },
-    "signup": {
-      "title": "Buat Akun",
-      "subtitle": "Daftar untuk akun baru Anda",
-      "username": "Nama Pengguna",
-      "usernamePlaceholder": "Pilih nama pengguna",
-      "email": "Email",
-      "emailPlaceholder": "email@contoh.com",
-      "password": "Kata Sandi",
-      "passwordPlaceholder": "Pilih kata sandi",
-      "confirmPassword": "Konfirmasi Kata Sandi",
-      "confirmPasswordPlaceholder": "Konfirmasi kata sandi Anda",
-      "createAccount": "Buat Akun",
-      "creatingAccount": "Membuat akun...",
-      "hasAccount": "Sudah punya akun?",
-      "signInHere": "Masuk di sini",
-      "signupSuccess": "Akun berhasil dibuat!",
-      "approvalPending": "Pendaftaran diterima. Administrator harus menyetujui akun Anda.",
-      "awaitingApproval": "Menunggu persetujuan",
-      "awaitingApprovalDescription": "Akun Anda telah dibuat, tetapi administrator harus mengaktifkannya sebelum Anda dapat masuk.",
-      "backToSignIn": "Kembali ke masuk",
-      "signupFailed": "Pendaftaran gagal",
-      "tryAgain": "Pendaftaran gagal. Silakan coba lagi.",
-      "usernameRequired": "Nama pengguna dan kata sandi wajib diisi",
-      "passwordMismatch": "Kata sandi tidak cocok"
-    },
     "logout": {
       "button": "Keluar",
       "success": "Berhasil keluar"
-    },
-    "oauth": {
-      "continueWith": "Lanjutkan dengan {{provider}}",
-      "connectingTo": "Menghubungkan ke {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "Login OAuth berhasil!",
-      "completionFailed": "Gagal menyelesaikan autentikasi OAuth",
-      "verificationFailed": "Verifikasi autentikasi OAuth gagal",
-      "authenticationFailed": "Autentikasi OAuth gagal",
-      "googleFailed": "Google sign-in failed. Please try again.",
-      "googleLoading": "Signing in with Google..."
-    },
-    "checkingAuth": "Memeriksa autentikasi...",
-    "welcome": "Selamat datang",
-    "noEmail": "Tidak ada email",
-    "role": "Peran",
-    "id": "ID",
-    "userId": "ID pengguna",
-    "signInDescription": "Masuk dengan akun GitHub Anda untuk melanjutkan",
-    "signInWithGitHub": "Masuk dengan GitHub",
-    "jwtActive": "Autentikasi JWT aktif",
-    "jwtDescription": "Autentikasi berbasis JWT dengan GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Penyedia",
-    "tagline": "Stack AI Anda harus tunduk pada Anda.",
-    "selfHosted": "Dihosting sendiri · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Prioritas lokal",
-        "body": "Percakapan dan file Anda tetap berada di mesin tempat Anda menjalankan ini."
-      },
-      "providers": {
-        "title": "Penyedia apa pun",
-        "body": "Model lokal melalui Ollama, ditambah penyedia jarak jauh yang Anda pilih untuk ditambahkan."
-      },
-      "work": {
-        "title": "Kerja Terisolasi",
-        "body": "Beri model ruang kerja sandbox dengan file, terminal, dan pratinjau."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Single sign-on"
     },
     "mfa": {
       "sectionTitle": "Autentikasi dua langkah",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Saya sudah menyimpan kode pemulihan",
       "recoveryCodesRegenerated": "Kode pemulihan baru dibuat. Kode lama tidak berlaku lagi."
     },
+    "noEmail": "Tidak ada email",
+    "oauth": {
+      "continueWith": "Lanjutkan dengan {{provider}}",
+      "connectingTo": "Menghubungkan ke {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "Login OAuth berhasil!",
+      "completionFailed": "Gagal menyelesaikan autentikasi OAuth",
+      "verificationFailed": "Verifikasi autentikasi OAuth gagal",
+      "authenticationFailed": "Autentikasi OAuth gagal",
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "googleLoading": "Signing in with Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Single sign-on"
+    },
     "passkeys": {
       "sectionTitle": "Kunci sandi",
       "sectionDescription": "Masuk tanpa kata sandi menggunakan kunci layar perangkat atau kunci keamanan.",
@@ -189,7 +168,40 @@
       "removeFailed": "Kunci sandi tidak dapat dihapus.",
       "signInButton": "Masuk dengan kunci sandi",
       "signInFailed": "Masuk dengan kunci sandi gagal."
-    }
+    },
+    "provider": "Penyedia",
+    "role": "Peran",
+    "selfHosted": "Dihosting sendiri · Apache 2.0",
+    "signInDescription": "Masuk dengan akun GitHub Anda untuk melanjutkan",
+    "signInWithGitHub": "Masuk dengan GitHub",
+    "signup": {
+      "title": "Buat Akun",
+      "subtitle": "Daftar untuk akun baru Anda",
+      "username": "Nama Pengguna",
+      "usernamePlaceholder": "Pilih nama pengguna",
+      "email": "Email",
+      "emailPlaceholder": "email@contoh.com",
+      "password": "Kata Sandi",
+      "passwordPlaceholder": "Pilih kata sandi",
+      "confirmPassword": "Konfirmasi Kata Sandi",
+      "confirmPasswordPlaceholder": "Konfirmasi kata sandi Anda",
+      "createAccount": "Buat Akun",
+      "creatingAccount": "Membuat akun...",
+      "hasAccount": "Sudah punya akun?",
+      "signInHere": "Masuk di sini",
+      "signupSuccess": "Akun berhasil dibuat!",
+      "approvalPending": "Pendaftaran diterima. Administrator harus menyetujui akun Anda.",
+      "awaitingApproval": "Menunggu persetujuan",
+      "awaitingApprovalDescription": "Akun Anda telah dibuat, tetapi administrator harus mengaktifkannya sebelum Anda dapat masuk.",
+      "backToSignIn": "Kembali ke masuk",
+      "signupFailed": "Pendaftaran gagal",
+      "tryAgain": "Pendaftaran gagal. Silakan coba lagi.",
+      "usernameRequired": "Nama pengguna dan kata sandi wajib diisi",
+      "passwordMismatch": "Kata sandi tidak cocok"
+    },
+    "tagline": "Stack AI Anda harus tunduk pada Anda.",
+    "userId": "ID pengguna",
+    "welcome": "Selamat datang"
   },
   "setup": {
     "welcome": {

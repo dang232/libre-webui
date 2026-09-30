@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Nepodařilo se připojit k backendové službě"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Přihlášení se nepodařilo dokončit",
+      "expired": "Platnost tohoto odkazu pro přihlášení vypršela. Zkuste to prosím znovu.",
+      "invalid": "Tento odkaz pro přihlášení už není platný. Začněte prosím znovu.",
+      "backToLogin": "Zpět na přihlášení",
+      "working": "Přihlašujeme vás…",
+      "workingHint": "Počkejte prosím, dokud nebude hotovo."
+    },
+    "canonical": {
+      "redirecting": "Přesměrování…",
+      "signIn": "Pokračovat s účtem ALcore"
+    },
+    "checkingAuth": "Kontrola ověření...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Lokální priorita",
+        "body": "Vaše konverzace a soubory zůstávají na počítači, na kterém to spouštíte."
+      },
+      "providers": {
+        "title": "Jakýkoliv poskytovatel",
+        "body": "Lokální modely přes Ollama a vzdálení poskytovatelé, které si přidáte."
+      },
+      "work": {
+        "title": "Izolovaná práce",
+        "body": "Dejte modelu izolovaný pracovní prostor se soubory, terminálem a náhledem."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "JWT autentizace aktivní",
+    "jwtDescription": "JWT autentizace s GitHub OAuth",
     "login": {
       "title": "Vítejte zpět",
       "subtitle": "Přihlaste se ke svému účtu a pokračujte",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Nepodařilo se ověřit GitHub autentizaci",
       "verificationFailed": "Bezpečnostní ověření selhalo. Obnovte stránku a zkuste to znovu."
     },
-    "signup": {
-      "title": "Vytvořit účet",
-      "subtitle": "Zaregistrujte nový účet",
-      "username": "Uživatelské jméno",
-      "usernamePlaceholder": "Zvolte uživatelské jméno",
-      "email": "Email",
-      "emailPlaceholder": "vas@email.cz",
-      "password": "Heslo",
-      "passwordPlaceholder": "Zvolte heslo",
-      "confirmPassword": "Potvrdit heslo",
-      "confirmPasswordPlaceholder": "Potvrďte heslo",
-      "createAccount": "Vytvořit účet",
-      "creatingAccount": "Vytváření účtu...",
-      "hasAccount": "Již máte účet?",
-      "signInHere": "Přihlaste se zde",
-      "signupSuccess": "Účet úspěšně vytvořen!",
-      "approvalPending": "Registrace přijata. Správce musí schválit váš účet.",
-      "awaitingApproval": "Čeká na schválení",
-      "awaitingApprovalDescription": "Váš účet byl vytvořen, ale správce ho musí aktivovat, než se budete moci přihlásit.",
-      "backToSignIn": "Zpět na přihlášení",
-      "signupFailed": "Registrace se nezdařila",
-      "tryAgain": "Registrace se nezdařila. Zkuste to znovu.",
-      "usernameRequired": "Uživatelské jméno a heslo jsou povinné",
-      "passwordMismatch": "Hesla se neshodují"
-    },
     "logout": {
       "button": "Odhlásit se",
       "success": "Úspěšně odhlášeno"
-    },
-    "oauth": {
-      "continueWith": "Pokračovat s {{provider}}",
-      "connectingTo": "Připojování k {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "Přihlášení přes OAuth bylo úspěšné!",
-      "completionFailed": "Dokončení autentizace OAuth se nezdařilo",
-      "verificationFailed": "Ověření autentizace OAuth se nezdařilo",
-      "authenticationFailed": "Autentizace OAuth se nezdařila",
-      "googleFailed": "Google sign-in failed. Please try again.",
-      "googleLoading": "Signing in with Google..."
-    },
-    "checkingAuth": "Kontrola ověření...",
-    "welcome": "Vítejte",
-    "noEmail": "E-mail nebyl zadán",
-    "role": "Role",
-    "id": "ID",
-    "userId": "ID uživatele",
-    "signInDescription": "Pro pokračování se přihlaste pomocí účtu GitHub",
-    "signInWithGitHub": "Přihlásit se přes GitHub",
-    "jwtActive": "JWT autentizace aktivní",
-    "jwtDescription": "JWT autentizace s GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Poskytovatel",
-    "tagline": "Váš AI stack by měl odpovídat vám.",
-    "selfHosted": "Vlastní hosting · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Lokální priorita",
-        "body": "Vaše konverzace a soubory zůstávají na počítači, na kterém to spouštíte."
-      },
-      "providers": {
-        "title": "Jakýkoliv poskytovatel",
-        "body": "Lokální modely přes Ollama a vzdálení poskytovatelé, které si přidáte."
-      },
-      "work": {
-        "title": "Izolovaná práce",
-        "body": "Dejte modelu izolovaný pracovní prostor se soubory, terminálem a náhledem."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Jednotné přihlášení"
     },
     "mfa": {
       "sectionTitle": "Dvoufaktorové ověření",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Záložní kódy jsem si uložil",
       "recoveryCodesRegenerated": "Byly vytvořeny nové záložní kódy. Staré už neplatí."
     },
+    "noEmail": "E-mail nebyl zadán",
+    "oauth": {
+      "continueWith": "Pokračovat s {{provider}}",
+      "connectingTo": "Připojování k {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "Přihlášení přes OAuth bylo úspěšné!",
+      "completionFailed": "Dokončení autentizace OAuth se nezdařilo",
+      "verificationFailed": "Ověření autentizace OAuth se nezdařilo",
+      "authenticationFailed": "Autentizace OAuth se nezdařila",
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "googleLoading": "Signing in with Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Jednotné přihlášení"
+    },
     "passkeys": {
       "sectionTitle": "Přístupové klíče",
       "sectionDescription": "Přihlašujte se bez hesla pomocí zámku obrazovky zařízení nebo bezpečnostního klíče.",
@@ -189,7 +168,40 @@
       "removeFailed": "Přístupový klíč se nepodařilo odebrat.",
       "signInButton": "Přihlásit se přístupovým klíčem",
       "signInFailed": "Přihlášení přístupovým klíčem se nezdařilo."
-    }
+    },
+    "provider": "Poskytovatel",
+    "role": "Role",
+    "selfHosted": "Vlastní hosting · Apache 2.0",
+    "signInDescription": "Pro pokračování se přihlaste pomocí účtu GitHub",
+    "signInWithGitHub": "Přihlásit se přes GitHub",
+    "signup": {
+      "title": "Vytvořit účet",
+      "subtitle": "Zaregistrujte nový účet",
+      "username": "Uživatelské jméno",
+      "usernamePlaceholder": "Zvolte uživatelské jméno",
+      "email": "Email",
+      "emailPlaceholder": "vas@email.cz",
+      "password": "Heslo",
+      "passwordPlaceholder": "Zvolte heslo",
+      "confirmPassword": "Potvrdit heslo",
+      "confirmPasswordPlaceholder": "Potvrďte heslo",
+      "createAccount": "Vytvořit účet",
+      "creatingAccount": "Vytváření účtu...",
+      "hasAccount": "Již máte účet?",
+      "signInHere": "Přihlaste se zde",
+      "signupSuccess": "Účet úspěšně vytvořen!",
+      "approvalPending": "Registrace přijata. Správce musí schválit váš účet.",
+      "awaitingApproval": "Čeká na schválení",
+      "awaitingApprovalDescription": "Váš účet byl vytvořen, ale správce ho musí aktivovat, než se budete moci přihlásit.",
+      "backToSignIn": "Zpět na přihlášení",
+      "signupFailed": "Registrace se nezdařila",
+      "tryAgain": "Registrace se nezdařila. Zkuste to znovu.",
+      "usernameRequired": "Uživatelské jméno a heslo jsou povinné",
+      "passwordMismatch": "Hesla se neshodují"
+    },
+    "tagline": "Váš AI stack by měl odpovídat vám.",
+    "userId": "ID uživatele",
+    "welcome": "Vítejte"
   },
   "setup": {
     "welcome": {

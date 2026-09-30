@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Gagal menyambung ke perkhidmatan backend"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Log masuk tidak dapat diselesaikan",
+      "expired": "Pautan log masuk ini telah tamat tempoh. Sila cuba lagi.",
+      "invalid": "Pautan log masuk ini tidak lagi sah. Sila mulakan semula.",
+      "backToLogin": "Kembali ke log masuk",
+      "working": "Sedang log masuk…",
+      "workingHint": "Sila tunggu sebentar."
+    },
+    "canonical": {
+      "redirecting": "Mengalihkan…",
+      "signIn": "Teruskan dengan akaun ALcore"
+    },
+    "checkingAuth": "Memeriksa pengesahan...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Tempatan dahulu",
+        "body": "Perbualan dan fail anda kekal pada mesin tempat anda menjalankan ini."
+      },
+      "providers": {
+        "title": "Mana-mana penyedia",
+        "body": "Model tempatan melalui Ollama, serta penyedia jauh yang anda pilih untuk ditambah."
+      },
+      "work": {
+        "title": "Kerja Terpencil",
+        "body": "Beri model ruang kerja terkotak pasir dengan fail, terminal, dan pratonton."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "Pengesahan JWT aktif",
+    "jwtDescription": "Pengesahan berasaskan JWT dengan GitHub OAuth",
     "login": {
       "title": "Selamat Kembali",
       "subtitle": "Log masuk ke akaun anda untuk meneruskan",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Gagal mengesahkan pengesahan GitHub",
       "verificationFailed": "Pengesahan keselamatan gagal. Muat semula halaman dan cuba lagi."
     },
-    "signup": {
-      "title": "Cipta Akaun",
-      "subtitle": "Daftar untuk akaun baharu anda",
-      "username": "Nama Pengguna",
-      "usernamePlaceholder": "Pilih nama pengguna",
-      "email": "E-mel",
-      "emailPlaceholder": "emel@anda.com",
-      "password": "Kata Laluan",
-      "passwordPlaceholder": "Pilih kata laluan",
-      "confirmPassword": "Sahkan Kata Laluan",
-      "confirmPasswordPlaceholder": "Sahkan kata laluan anda",
-      "createAccount": "Cipta Akaun",
-      "creatingAccount": "Sedang mencipta akaun...",
-      "hasAccount": "Sudah mempunyai akaun?",
-      "signInHere": "Log masuk di sini",
-      "signupSuccess": "Akaun berjaya dicipta!",
-      "approvalPending": "Pendaftaran diterima. Pentadbir perlu meluluskan akaun anda.",
-      "awaitingApproval": "Menunggu kelulusan",
-      "awaitingApprovalDescription": "Akaun anda telah dicipta, tetapi pentadbir perlu mengaktifkannya sebelum anda boleh log masuk.",
-      "backToSignIn": "Kembali ke log masuk",
-      "signupFailed": "Gagal mendaftar",
-      "tryAgain": "Gagal mendaftar. Sila cuba lagi.",
-      "usernameRequired": "Nama pengguna dan kata laluan diperlukan",
-      "passwordMismatch": "Kata laluan tidak sepadan"
-    },
     "logout": {
       "button": "Log keluar",
       "success": "Berjaya log keluar"
-    },
-    "oauth": {
-      "continueWith": "Teruskan dengan {{provider}}",
-      "connectingTo": "Menyambung ke {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "Log masuk OAuth berjaya!",
-      "completionFailed": "Gagal melengkapkan pengesahan OAuth",
-      "verificationFailed": "Pengesahan OAuth tidak dapat disahkan",
-      "authenticationFailed": "Pengesahan OAuth gagal",
-      "googleFailed": "Google sign-in failed. Please try again.",
-      "googleLoading": "Signing in with Google..."
-    },
-    "checkingAuth": "Memeriksa pengesahan...",
-    "welcome": "Selamat datang",
-    "noEmail": "Tiada e-mel",
-    "role": "Peranan",
-    "id": "ID",
-    "userId": "ID pengguna",
-    "signInDescription": "Log masuk dengan akaun GitHub anda untuk meneruskan",
-    "signInWithGitHub": "Log masuk dengan GitHub",
-    "jwtActive": "Pengesahan JWT aktif",
-    "jwtDescription": "Pengesahan berasaskan JWT dengan GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Pembekal",
-    "tagline": "Tindanan AI anda patut menjawab kepada anda.",
-    "selfHosted": "Dihoskan sendiri · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Tempatan dahulu",
-        "body": "Perbualan dan fail anda kekal pada mesin tempat anda menjalankan ini."
-      },
-      "providers": {
-        "title": "Mana-mana penyedia",
-        "body": "Model tempatan melalui Ollama, serta penyedia jauh yang anda pilih untuk ditambah."
-      },
-      "work": {
-        "title": "Kerja Terpencil",
-        "body": "Beri model ruang kerja terkotak pasir dengan fail, terminal, dan pratonton."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Log masuk tunggal"
     },
     "mfa": {
       "sectionTitle": "Pengesahan dua langkah",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Saya telah menyimpan kod pemulihan saya",
       "recoveryCodesRegenerated": "Kod pemulihan baharu dicipta. Kod lama tidak lagi berfungsi."
     },
+    "noEmail": "Tiada e-mel",
+    "oauth": {
+      "continueWith": "Teruskan dengan {{provider}}",
+      "connectingTo": "Menyambung ke {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "Log masuk OAuth berjaya!",
+      "completionFailed": "Gagal melengkapkan pengesahan OAuth",
+      "verificationFailed": "Pengesahan OAuth tidak dapat disahkan",
+      "authenticationFailed": "Pengesahan OAuth gagal",
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "googleLoading": "Signing in with Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Log masuk tunggal"
+    },
     "passkeys": {
       "sectionTitle": "Kunci laluan",
       "sectionDescription": "Log masuk tanpa kata laluan menggunakan kunci skrin peranti anda atau kunci keselamatan.",
@@ -189,7 +168,40 @@
       "removeFailed": "Kunci laluan tidak dapat dibuang.",
       "signInButton": "Log masuk dengan kunci laluan",
       "signInFailed": "Log masuk dengan kunci laluan gagal."
-    }
+    },
+    "provider": "Pembekal",
+    "role": "Peranan",
+    "selfHosted": "Dihoskan sendiri · Apache 2.0",
+    "signInDescription": "Log masuk dengan akaun GitHub anda untuk meneruskan",
+    "signInWithGitHub": "Log masuk dengan GitHub",
+    "signup": {
+      "title": "Cipta Akaun",
+      "subtitle": "Daftar untuk akaun baharu anda",
+      "username": "Nama Pengguna",
+      "usernamePlaceholder": "Pilih nama pengguna",
+      "email": "E-mel",
+      "emailPlaceholder": "emel@anda.com",
+      "password": "Kata Laluan",
+      "passwordPlaceholder": "Pilih kata laluan",
+      "confirmPassword": "Sahkan Kata Laluan",
+      "confirmPasswordPlaceholder": "Sahkan kata laluan anda",
+      "createAccount": "Cipta Akaun",
+      "creatingAccount": "Sedang mencipta akaun...",
+      "hasAccount": "Sudah mempunyai akaun?",
+      "signInHere": "Log masuk di sini",
+      "signupSuccess": "Akaun berjaya dicipta!",
+      "approvalPending": "Pendaftaran diterima. Pentadbir perlu meluluskan akaun anda.",
+      "awaitingApproval": "Menunggu kelulusan",
+      "awaitingApprovalDescription": "Akaun anda telah dicipta, tetapi pentadbir perlu mengaktifkannya sebelum anda boleh log masuk.",
+      "backToSignIn": "Kembali ke log masuk",
+      "signupFailed": "Gagal mendaftar",
+      "tryAgain": "Gagal mendaftar. Sila cuba lagi.",
+      "usernameRequired": "Nama pengguna dan kata laluan diperlukan",
+      "passwordMismatch": "Kata laluan tidak sepadan"
+    },
+    "tagline": "Tindanan AI anda patut menjawab kepada anda.",
+    "userId": "ID pengguna",
+    "welcome": "Selamat datang"
   },
   "setup": {
     "welcome": {

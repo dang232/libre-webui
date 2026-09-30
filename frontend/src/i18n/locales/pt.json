@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Falha ao conectar ao serviço de backend"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Não foi possível concluir o login",
+      "expired": "Este link de login expirou. Tente novamente.",
+      "invalid": "Este link de login não é mais válido. Comece novamente.",
+      "backToLogin": "Voltar ao login",
+      "working": "A iniciar sessão…",
+      "workingHint": "Aguarde enquanto concluímos."
+    },
+    "canonical": {
+      "redirecting": "A redirecionar…",
+      "signIn": "Continuar com a conta ALcore"
+    },
+    "checkingAuth": "Verificando autenticação...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Local primeiro",
+        "body": "As suas conversas e ficheiros permanecem na máquina onde executa isto."
+      },
+      "providers": {
+        "title": "Qualquer fornecedor",
+        "body": "Modelos locais através do Ollama, além dos fornecedores remotos que escolher adicionar."
+      },
+      "work": {
+        "title": "Trabalho Isolado",
+        "body": "Dê a um modelo um espaço de trabalho isolado com ficheiros, um terminal e uma pré-visualização."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "Autenticação JWT ativa",
+    "jwtDescription": "Autenticação baseada em JWT com GitHub OAuth",
     "login": {
       "title": "Bem-vindo de volta",
       "subtitle": "Entre na sua conta para continuar",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Falha ao verificar autenticação do GitHub",
       "verificationFailed": "A verificação de segurança falhou. Atualize a página e tente novamente."
     },
-    "signup": {
-      "title": "Criar conta",
-      "subtitle": "Cadastre-se para criar sua nova conta",
-      "username": "Usuário",
-      "usernamePlaceholder": "Escolha um nome de usuário",
-      "email": "E-mail",
-      "emailPlaceholder": "seu@email.com",
-      "password": "Senha",
-      "passwordPlaceholder": "Escolha uma senha",
-      "confirmPassword": "Confirmar senha",
-      "confirmPasswordPlaceholder": "Confirme sua senha",
-      "createAccount": "Criar conta",
-      "creatingAccount": "Criando conta...",
-      "hasAccount": "Já tem uma conta?",
-      "signInHere": "Entre aqui",
-      "signupSuccess": "Conta criada com sucesso!",
-      "approvalPending": "Registo recebido. Um administrador tem de aprovar a sua conta.",
-      "awaitingApproval": "A aguardar aprovação",
-      "awaitingApprovalDescription": "A sua conta foi criada, mas um administrador tem de a ativar antes de poder iniciar sessão.",
-      "backToSignIn": "Voltar ao início de sessão",
-      "signupFailed": "Falha no cadastro",
-      "tryAgain": "Falha no cadastro. Por favor, tente novamente.",
-      "usernameRequired": "Usuário e senha são obrigatórios",
-      "passwordMismatch": "As senhas não coincidem"
-    },
     "logout": {
       "button": "Sair",
       "success": "Desconectado com sucesso"
-    },
-    "oauth": {
-      "continueWith": "Continuar com {{provider}}",
-      "connectingTo": "Conectando ao {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "Login OAuth realizado com sucesso!",
-      "completionFailed": "Falha ao concluir a autenticação OAuth",
-      "verificationFailed": "Falha na verificação da autenticação OAuth",
-      "authenticationFailed": "Falha na autenticação OAuth",
-      "googleFailed": "Falha ao iniciar sessão com o Google. Tente novamente.",
-      "googleLoading": "A iniciar sessão com o Google..."
-    },
-    "checkingAuth": "Verificando autenticação...",
-    "welcome": "Bem-vindo",
-    "noEmail": "Sem e-mail fornecido",
-    "role": "Função",
-    "id": "ID",
-    "userId": "ID do usuário",
-    "signInDescription": "Entre com sua conta GitHub para continuar",
-    "signInWithGitHub": "Entrar com GitHub",
-    "jwtActive": "Autenticação JWT ativa",
-    "jwtDescription": "Autenticação baseada em JWT com GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Provedor",
-    "tagline": "A sua stack de IA deve responder a si.",
-    "selfHosted": "Auto-hospedado · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Local primeiro",
-        "body": "As suas conversas e ficheiros permanecem na máquina onde executa isto."
-      },
-      "providers": {
-        "title": "Qualquer fornecedor",
-        "body": "Modelos locais através do Ollama, além dos fornecedores remotos que escolher adicionar."
-      },
-      "work": {
-        "title": "Trabalho Isolado",
-        "body": "Dê a um modelo um espaço de trabalho isolado com ficheiros, um terminal e uma pré-visualização."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Login único"
     },
     "mfa": {
       "sectionTitle": "Autenticação em dois fatores",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Salvei meus códigos de recuperação",
       "recoveryCodesRegenerated": "Novos códigos de recuperação criados. Os antigos não funcionam mais."
     },
+    "noEmail": "Sem e-mail fornecido",
+    "oauth": {
+      "continueWith": "Continuar com {{provider}}",
+      "connectingTo": "Conectando ao {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "Login OAuth realizado com sucesso!",
+      "completionFailed": "Falha ao concluir a autenticação OAuth",
+      "verificationFailed": "Falha na verificação da autenticação OAuth",
+      "authenticationFailed": "Falha na autenticação OAuth",
+      "googleFailed": "Falha ao iniciar sessão com o Google. Tente novamente.",
+      "googleLoading": "A iniciar sessão com o Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Login único"
+    },
     "passkeys": {
       "sectionTitle": "Chaves de acesso",
       "sectionDescription": "Entre sem senha usando o bloqueio de tela do seu dispositivo ou uma chave de segurança.",
@@ -189,7 +168,40 @@
       "removeFailed": "Não foi possível remover a chave de acesso.",
       "signInButton": "Entrar com uma chave de acesso",
       "signInFailed": "Falha no login com chave de acesso."
-    }
+    },
+    "provider": "Provedor",
+    "role": "Função",
+    "selfHosted": "Auto-hospedado · Apache 2.0",
+    "signInDescription": "Entre com sua conta GitHub para continuar",
+    "signInWithGitHub": "Entrar com GitHub",
+    "signup": {
+      "title": "Criar conta",
+      "subtitle": "Cadastre-se para criar sua nova conta",
+      "username": "Usuário",
+      "usernamePlaceholder": "Escolha um nome de usuário",
+      "email": "E-mail",
+      "emailPlaceholder": "seu@email.com",
+      "password": "Senha",
+      "passwordPlaceholder": "Escolha uma senha",
+      "confirmPassword": "Confirmar senha",
+      "confirmPasswordPlaceholder": "Confirme sua senha",
+      "createAccount": "Criar conta",
+      "creatingAccount": "Criando conta...",
+      "hasAccount": "Já tem uma conta?",
+      "signInHere": "Entre aqui",
+      "signupSuccess": "Conta criada com sucesso!",
+      "approvalPending": "Registo recebido. Um administrador tem de aprovar a sua conta.",
+      "awaitingApproval": "A aguardar aprovação",
+      "awaitingApprovalDescription": "A sua conta foi criada, mas um administrador tem de a ativar antes de poder iniciar sessão.",
+      "backToSignIn": "Voltar ao início de sessão",
+      "signupFailed": "Falha no cadastro",
+      "tryAgain": "Falha no cadastro. Por favor, tente novamente.",
+      "usernameRequired": "Usuário e senha são obrigatórios",
+      "passwordMismatch": "As senhas não coincidem"
+    },
+    "tagline": "A sua stack de IA deve responder a si.",
+    "userId": "ID do usuário",
+    "welcome": "Bem-vindo"
   },
   "setup": {
     "welcome": {

@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Connessione al servizio backend non riuscita"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Impossibile completare l'accesso",
+      "expired": "Questo link di accesso è scaduto. Riprova.",
+      "invalid": "Questo link di accesso non è più valido. Ricomincia.",
+      "backToLogin": "Torna all'accesso",
+      "working": "Accesso in corso…",
+      "workingHint": "Attendi qualche istante."
+    },
+    "canonical": {
+      "redirecting": "Reindirizzamento…",
+      "signIn": "Continua con l'account ALcore"
+    },
+    "checkingAuth": "Verifica autenticazione...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Locale prima di tutto",
+        "body": "Le tue conversazioni e i tuoi file rimangono sul computer su cui lo esegui."
+      },
+      "providers": {
+        "title": "Qualsiasi provider",
+        "body": "Modelli locali tramite Ollama, più i provider remoti che scegli di aggiungere."
+      },
+      "work": {
+        "title": "Lavoro isolato",
+        "body": "Dai a un modello un'area di lavoro sandbox con file, un terminale e un'anteprima."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "Autenticazione JWT attiva",
+    "jwtDescription": "Autenticazione basata su JWT con GitHub OAuth",
     "login": {
       "title": "Bentornato",
       "subtitle": "Accedi al tuo account per continuare",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Verifica autenticazione GitHub fallita",
       "verificationFailed": "Verifica di sicurezza non riuscita. Aggiorna la pagina e riprova."
     },
-    "signup": {
-      "title": "Crea account",
-      "subtitle": "Registrati per un nuovo account",
-      "username": "Nome utente",
-      "usernamePlaceholder": "Scegli un nome utente",
-      "email": "Email",
-      "emailPlaceholder": "tua@email.it",
-      "password": "Password",
-      "passwordPlaceholder": "Scegli una password",
-      "confirmPassword": "Conferma password",
-      "confirmPasswordPlaceholder": "Conferma la tua password",
-      "createAccount": "Crea account",
-      "creatingAccount": "Creazione account...",
-      "hasAccount": "Hai già un account?",
-      "signInHere": "Accedi qui",
-      "signupSuccess": "Account creato con successo!",
-      "approvalPending": "Registrazione ricevuta. Un amministratore deve approvare il tuo account.",
-      "awaitingApproval": "In attesa di approvazione",
-      "awaitingApprovalDescription": "Il tuo account è stato creato, ma un amministratore deve attivarlo prima che tu possa accedere.",
-      "backToSignIn": "Torna all'accesso",
-      "signupFailed": "Registrazione fallita",
-      "tryAgain": "Registrazione fallita. Riprova.",
-      "usernameRequired": "Nome utente e password sono obbligatori",
-      "passwordMismatch": "Le password non corrispondono"
-    },
     "logout": {
       "button": "Esci",
       "success": "Disconnessione riuscita"
-    },
-    "oauth": {
-      "continueWith": "Continua con {{provider}}",
-      "connectingTo": "Connessione a {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "Accesso OAuth riuscito!",
-      "completionFailed": "Impossibile completare l’autenticazione OAuth",
-      "verificationFailed": "Verifica dell’autenticazione OAuth non riuscita",
-      "authenticationFailed": "Autenticazione OAuth non riuscita",
-      "googleFailed": "Accesso con Google non riuscito. Riprova.",
-      "googleLoading": "Accesso con Google in corso..."
-    },
-    "checkingAuth": "Verifica autenticazione...",
-    "welcome": "Benvenuto",
-    "noEmail": "Nessuna email fornita",
-    "role": "Ruolo",
-    "id": "ID",
-    "userId": "ID utente",
-    "signInDescription": "Accedi con il tuo account GitHub per continuare",
-    "signInWithGitHub": "Accedi con GitHub",
-    "jwtActive": "Autenticazione JWT attiva",
-    "jwtDescription": "Autenticazione basata su JWT con GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Provider",
-    "tagline": "Il tuo stack AI dovrebbe rispondere a te.",
-    "selfHosted": "Ospitato autonomamente · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Locale prima di tutto",
-        "body": "Le tue conversazioni e i tuoi file rimangono sul computer su cui lo esegui."
-      },
-      "providers": {
-        "title": "Qualsiasi provider",
-        "body": "Modelli locali tramite Ollama, più i provider remoti che scegli di aggiungere."
-      },
-      "work": {
-        "title": "Lavoro isolato",
-        "body": "Dai a un modello un'area di lavoro sandbox con file, un terminale e un'anteprima."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Single sign-on"
     },
     "mfa": {
       "sectionTitle": "Autenticazione a due fattori",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Ho salvato i miei codici di recupero",
       "recoveryCodesRegenerated": "Nuovi codici di recupero creati. I vecchi non funzionano più."
     },
+    "noEmail": "Nessuna email fornita",
+    "oauth": {
+      "continueWith": "Continua con {{provider}}",
+      "connectingTo": "Connessione a {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "Accesso OAuth riuscito!",
+      "completionFailed": "Impossibile completare l’autenticazione OAuth",
+      "verificationFailed": "Verifica dell’autenticazione OAuth non riuscita",
+      "authenticationFailed": "Autenticazione OAuth non riuscita",
+      "googleFailed": "Accesso con Google non riuscito. Riprova.",
+      "googleLoading": "Accesso con Google in corso..."
+    },
+    "oidc": {
+      "defaultProviderName": "Single sign-on"
+    },
     "passkeys": {
       "sectionTitle": "Passkey",
       "sectionDescription": "Accedi senza password con il blocco schermo del tuo dispositivo o una chiave di sicurezza.",
@@ -189,7 +168,40 @@
       "removeFailed": "Impossibile rimuovere la passkey.",
       "signInButton": "Accedi con una passkey",
       "signInFailed": "Accesso con passkey non riuscito."
-    }
+    },
+    "provider": "Provider",
+    "role": "Ruolo",
+    "selfHosted": "Ospitato autonomamente · Apache 2.0",
+    "signInDescription": "Accedi con il tuo account GitHub per continuare",
+    "signInWithGitHub": "Accedi con GitHub",
+    "signup": {
+      "title": "Crea account",
+      "subtitle": "Registrati per un nuovo account",
+      "username": "Nome utente",
+      "usernamePlaceholder": "Scegli un nome utente",
+      "email": "Email",
+      "emailPlaceholder": "tua@email.it",
+      "password": "Password",
+      "passwordPlaceholder": "Scegli una password",
+      "confirmPassword": "Conferma password",
+      "confirmPasswordPlaceholder": "Conferma la tua password",
+      "createAccount": "Crea account",
+      "creatingAccount": "Creazione account...",
+      "hasAccount": "Hai già un account?",
+      "signInHere": "Accedi qui",
+      "signupSuccess": "Account creato con successo!",
+      "approvalPending": "Registrazione ricevuta. Un amministratore deve approvare il tuo account.",
+      "awaitingApproval": "In attesa di approvazione",
+      "awaitingApprovalDescription": "Il tuo account è stato creato, ma un amministratore deve attivarlo prima che tu possa accedere.",
+      "backToSignIn": "Torna all'accesso",
+      "signupFailed": "Registrazione fallita",
+      "tryAgain": "Registrazione fallita. Riprova.",
+      "usernameRequired": "Nome utente e password sono obbligatori",
+      "passwordMismatch": "Le password non corrispondono"
+    },
+    "tagline": "Il tuo stack AI dovrebbe rispondere a te.",
+    "userId": "ID utente",
+    "welcome": "Benvenuto"
   },
   "setup": {
     "welcome": {

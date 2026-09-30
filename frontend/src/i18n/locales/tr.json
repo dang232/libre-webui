@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Backend hizmetine bağlanılamadı"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Oturum açma tamamlanamadı",
+      "expired": "Bu oturum açma bağlantısının süresi doldu. Lütfen tekrar deneyin.",
+      "invalid": "Bu oturum açma bağlantısı artık geçerli değil. Lütfen yeniden başlayın.",
+      "backToLogin": "Oturum açmaya dön",
+      "working": "Oturum açılıyor…",
+      "workingHint": "Lütfen tamamlanmasını bekleyin."
+    },
+    "canonical": {
+      "redirecting": "Yönlendiriliyor…",
+      "signIn": "ALcore hesabıyla devam et"
+    },
+    "checkingAuth": "Kimlik doğrulama kontrol ediliyor...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Önce yerel",
+        "body": "Konuşmalarınız ve dosyalarınız bunu çalıştırdığınız makinede kalır."
+      },
+      "providers": {
+        "title": "Herhangi bir sağlayıcı",
+        "body": "Ollama üzerinden yerel modeller, ayrıca eklemeyi seçtiğiniz uzak sağlayıcılar."
+      },
+      "work": {
+        "title": "İzole Çalışma",
+        "body": "Modele dosyalar, bir terminal ve bir önizleme içeren korumalı bir çalışma alanı verin."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "JWT kimlik doğrulama aktif",
+    "jwtDescription": "GitHub OAuth ile JWT tabanlı kimlik doğrulama",
     "login": {
       "title": "Tekrar Hoş Geldiniz",
       "subtitle": "Devam etmek için hesabınıza giriş yapın",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "GitHub kimlik doğrulaması doğrulanamadı",
       "verificationFailed": "Güvenlik doğrulaması başarısız. Sayfayı yenileyip tekrar deneyin."
     },
-    "signup": {
-      "title": "Hesap Oluştur",
-      "subtitle": "Yeni hesabınız için kayıt olun",
-      "username": "Kullanıcı Adı",
-      "usernamePlaceholder": "Bir kullanıcı adı seçin",
-      "email": "E-posta",
-      "emailPlaceholder": "email@adresiniz.com",
-      "password": "Şifre",
-      "passwordPlaceholder": "Bir şifre belirleyin",
-      "confirmPassword": "Şifre Onayı",
-      "confirmPasswordPlaceholder": "Şifrenizi tekrar girin",
-      "createAccount": "Hesap Oluştur",
-      "creatingAccount": "Hesap oluşturuluyor...",
-      "hasAccount": "Zaten hesabınız var mı?",
-      "signInHere": "Buradan giriş yapın",
-      "signupSuccess": "Hesap başarıyla oluşturuldu!",
-      "approvalPending": "Kayıt alındı. Hesabınızın bir yönetici tarafından onaylanması gerekiyor.",
-      "awaitingApproval": "Onay bekleniyor",
-      "awaitingApprovalDescription": "Hesabınız oluşturuldu, ancak oturum açmadan önce bir yönetici tarafından etkinleştirilmesi gerekiyor.",
-      "backToSignIn": "Oturum açmaya geri dön",
-      "signupFailed": "Kayıt başarısız",
-      "tryAgain": "Kayıt başarısız. Lütfen tekrar deneyin.",
-      "usernameRequired": "Kullanıcı adı ve şifre gereklidir",
-      "passwordMismatch": "Şifreler eşleşmiyor"
-    },
     "logout": {
       "button": "Çıkış Yap",
       "success": "Başarıyla çıkış yapıldı"
-    },
-    "oauth": {
-      "continueWith": "{{provider}} ile devam et",
-      "connectingTo": "{{provider}} bağlanılıyor...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "OAuth ile giriş başarılı!",
-      "completionFailed": "OAuth kimlik doğrulaması tamamlanamadı",
-      "verificationFailed": "OAuth kimlik doğrulaması doğrulanamadı",
-      "authenticationFailed": "OAuth kimlik doğrulaması başarısız oldu",
-      "googleFailed": "Google ile oturum açılamadı. Lütfen tekrar deneyin.",
-      "googleLoading": "Google ile oturum açılıyor..."
-    },
-    "checkingAuth": "Kimlik doğrulama kontrol ediliyor...",
-    "welcome": "Hoş geldiniz",
-    "noEmail": "E-posta belirtilmedi",
-    "role": "Rol",
-    "id": "ID",
-    "userId": "Kullanıcı ID",
-    "signInDescription": "Devam etmek için GitHub hesabınızla giriş yapın",
-    "signInWithGitHub": "GitHub ile giriş yap",
-    "jwtActive": "JWT kimlik doğrulama aktif",
-    "jwtDescription": "GitHub OAuth ile JWT tabanlı kimlik doğrulama",
-    "github": "GitHub",
-    "provider": "Sağlayıcı",
-    "tagline": "Yapay zeka yığınınız size cevap vermelidir.",
-    "selfHosted": "Kendi sunucunuzda · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Önce yerel",
-        "body": "Konuşmalarınız ve dosyalarınız bunu çalıştırdığınız makinede kalır."
-      },
-      "providers": {
-        "title": "Herhangi bir sağlayıcı",
-        "body": "Ollama üzerinden yerel modeller, ayrıca eklemeyi seçtiğiniz uzak sağlayıcılar."
-      },
-      "work": {
-        "title": "İzole Çalışma",
-        "body": "Modele dosyalar, bir terminal ve bir önizleme içeren korumalı bir çalışma alanı verin."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Tek oturum açma"
     },
     "mfa": {
       "sectionTitle": "İki adımlı doğrulama",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Kurtarma kodlarımı kaydettim",
       "recoveryCodesRegenerated": "Yeni kurtarma kodları oluşturuldu. Eskiler artık çalışmıyor."
     },
+    "noEmail": "E-posta belirtilmedi",
+    "oauth": {
+      "continueWith": "{{provider}} ile devam et",
+      "connectingTo": "{{provider}} bağlanılıyor...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "OAuth ile giriş başarılı!",
+      "completionFailed": "OAuth kimlik doğrulaması tamamlanamadı",
+      "verificationFailed": "OAuth kimlik doğrulaması doğrulanamadı",
+      "authenticationFailed": "OAuth kimlik doğrulaması başarısız oldu",
+      "googleFailed": "Google ile oturum açılamadı. Lütfen tekrar deneyin.",
+      "googleLoading": "Google ile oturum açılıyor..."
+    },
+    "oidc": {
+      "defaultProviderName": "Tek oturum açma"
+    },
     "passkeys": {
       "sectionTitle": "Geçiş anahtarları",
       "sectionDescription": "Cihazının ekran kilidi veya bir güvenlik anahtarıyla parolasız giriş yap.",
@@ -189,7 +168,40 @@
       "removeFailed": "Geçiş anahtarı kaldırılamadı.",
       "signInButton": "Geçiş anahtarıyla giriş yap",
       "signInFailed": "Geçiş anahtarıyla giriş başarısız."
-    }
+    },
+    "provider": "Sağlayıcı",
+    "role": "Rol",
+    "selfHosted": "Kendi sunucunuzda · Apache 2.0",
+    "signInDescription": "Devam etmek için GitHub hesabınızla giriş yapın",
+    "signInWithGitHub": "GitHub ile giriş yap",
+    "signup": {
+      "title": "Hesap Oluştur",
+      "subtitle": "Yeni hesabınız için kayıt olun",
+      "username": "Kullanıcı Adı",
+      "usernamePlaceholder": "Bir kullanıcı adı seçin",
+      "email": "E-posta",
+      "emailPlaceholder": "email@adresiniz.com",
+      "password": "Şifre",
+      "passwordPlaceholder": "Bir şifre belirleyin",
+      "confirmPassword": "Şifre Onayı",
+      "confirmPasswordPlaceholder": "Şifrenizi tekrar girin",
+      "createAccount": "Hesap Oluştur",
+      "creatingAccount": "Hesap oluşturuluyor...",
+      "hasAccount": "Zaten hesabınız var mı?",
+      "signInHere": "Buradan giriş yapın",
+      "signupSuccess": "Hesap başarıyla oluşturuldu!",
+      "approvalPending": "Kayıt alındı. Hesabınızın bir yönetici tarafından onaylanması gerekiyor.",
+      "awaitingApproval": "Onay bekleniyor",
+      "awaitingApprovalDescription": "Hesabınız oluşturuldu, ancak oturum açmadan önce bir yönetici tarafından etkinleştirilmesi gerekiyor.",
+      "backToSignIn": "Oturum açmaya geri dön",
+      "signupFailed": "Kayıt başarısız",
+      "tryAgain": "Kayıt başarısız. Lütfen tekrar deneyin.",
+      "usernameRequired": "Kullanıcı adı ve şifre gereklidir",
+      "passwordMismatch": "Şifreler eşleşmiyor"
+    },
+    "tagline": "Yapay zeka yığınınız size cevap vermelidir.",
+    "userId": "Kullanıcı ID",
+    "welcome": "Hoş geldiniz"
   },
   "setup": {
     "welcome": {

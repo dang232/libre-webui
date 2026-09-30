@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Не вдалося підключитися до серверної служби"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Не вдалося завершити вхід",
+      "expired": "Термін дії цього посилання для входу минув. Спробуйте ще раз.",
+      "invalid": "Це посилання для входу більше недійсне. Почніть спочатку.",
+      "backToLogin": "Повернутися до входу",
+      "working": "Виконується вхід…",
+      "workingHint": "Будь ласка, зачекайте, доки ми завершимо."
+    },
+    "canonical": {
+      "redirecting": "Перенаправлення…",
+      "signIn": "Продовжити з обліковим записом ALcore"
+    },
+    "checkingAuth": "Перевірка автентифікації...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Локально насамперед",
+        "body": "Ваші розмови та файли залишаються на пристрої, на якому ви запускаєте це."
+      },
+      "providers": {
+        "title": "Будь-який провайдер",
+        "body": "Локальні моделі через Ollama, а також віддалені провайдери, які ви вирішите додати."
+      },
+      "work": {
+        "title": "Ізольована робота",
+        "body": "Надайте моделі пісочницю з файлами, терміналом та попереднім переглядом."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "JWT-автентифікація активна",
+    "jwtDescription": "JWT-автентифікація з GitHub OAuth",
     "login": {
       "title": "З поверненням",
       "subtitle": "Увійдіть до свого облікового запису, щоб продовжити",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Не вдалося перевірити автентифікацію GitHub",
       "verificationFailed": "Перевірка безпеки не вдалася. Оновіть сторінку та спробуйте ще раз."
     },
-    "signup": {
-      "title": "Створити обліковий запис",
-      "subtitle": "Зареєструйте новий обліковий запис",
-      "username": "Ім'я користувача",
-      "usernamePlaceholder": "Виберіть ім'я користувача",
-      "email": "Електронна пошта",
-      "emailPlaceholder": "ваша@пошта.com",
-      "password": "Пароль",
-      "passwordPlaceholder": "Виберіть пароль",
-      "confirmPassword": "Підтвердіть пароль",
-      "confirmPasswordPlaceholder": "Підтвердіть пароль",
-      "createAccount": "Створити обліковий запис",
-      "creatingAccount": "Створення облікового запису...",
-      "hasAccount": "Вже є обліковий запис?",
-      "signInHere": "Увійдіть тут",
-      "signupSuccess": "Обліковий запис успішно створено!",
-      "approvalPending": "Реєстрацію отримано. Адміністратор має підтвердити ваш обліковий запис.",
-      "awaitingApproval": "Очікує підтвердження",
-      "awaitingApprovalDescription": "Ваш обліковий запис створено, але адміністратор має активувати його, перш ніж ви зможете увійти.",
-      "backToSignIn": "Повернутися до входу",
-      "signupFailed": "Помилка реєстрації",
-      "tryAgain": "Помилка реєстрації. Спробуйте ще раз.",
-      "usernameRequired": "Ім'я користувача та пароль обов'язкові",
-      "passwordMismatch": "Паролі не збігаються"
-    },
     "logout": {
       "button": "Вийти",
       "success": "Ви успішно вийшли"
-    },
-    "oauth": {
-      "continueWith": "Продовжити з {{provider}}",
-      "connectingTo": "Підключення до {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "Вхід через OAuth виконано!",
-      "completionFailed": "Не вдалося завершити автентифікацію OAuth",
-      "verificationFailed": "Не вдалося перевірити автентифікацію OAuth",
-      "authenticationFailed": "Помилка автентифікації OAuth",
-      "googleFailed": "Не вдалося увійти через Google. Спробуйте ще раз.",
-      "googleLoading": "Вхід через Google..."
-    },
-    "checkingAuth": "Перевірка автентифікації...",
-    "welcome": "Ласкаво просимо",
-    "noEmail": "Email не вказано",
-    "role": "Роль",
-    "id": "ID",
-    "userId": "ID користувача",
-    "signInDescription": "Увійдіть за допомогою облікового запису GitHub, щоб продовжити",
-    "signInWithGitHub": "Увійти через GitHub",
-    "jwtActive": "JWT-автентифікація активна",
-    "jwtDescription": "JWT-автентифікація з GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Провайдер",
-    "tagline": "Ваш AI стек має підпорядковуватися вам.",
-    "selfHosted": "Самостійний хостинг · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Локально насамперед",
-        "body": "Ваші розмови та файли залишаються на пристрої, на якому ви запускаєте це."
-      },
-      "providers": {
-        "title": "Будь-який провайдер",
-        "body": "Локальні моделі через Ollama, а також віддалені провайдери, які ви вирішите додати."
-      },
-      "work": {
-        "title": "Ізольована робота",
-        "body": "Надайте моделі пісочницю з файлами, терміналом та попереднім переглядом."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Єдиний вхід"
     },
     "mfa": {
       "sectionTitle": "Двофакторна автентифікація",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Я зберіг коди відновлення",
       "recoveryCodesRegenerated": "Створено нові коди відновлення. Старі більше не діють."
     },
+    "noEmail": "Email не вказано",
+    "oauth": {
+      "continueWith": "Продовжити з {{provider}}",
+      "connectingTo": "Підключення до {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "Вхід через OAuth виконано!",
+      "completionFailed": "Не вдалося завершити автентифікацію OAuth",
+      "verificationFailed": "Не вдалося перевірити автентифікацію OAuth",
+      "authenticationFailed": "Помилка автентифікації OAuth",
+      "googleFailed": "Не вдалося увійти через Google. Спробуйте ще раз.",
+      "googleLoading": "Вхід через Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Єдиний вхід"
+    },
     "passkeys": {
       "sectionTitle": "Ключі доступу",
       "sectionDescription": "Входьте без пароля за допомогою блокування екрана пристрою або ключа безпеки.",
@@ -189,7 +168,40 @@
       "removeFailed": "Не вдалося видалити ключ доступу.",
       "signInButton": "Увійти з ключем доступу",
       "signInFailed": "Вхід із ключем доступу не вдався."
-    }
+    },
+    "provider": "Провайдер",
+    "role": "Роль",
+    "selfHosted": "Самостійний хостинг · Apache 2.0",
+    "signInDescription": "Увійдіть за допомогою облікового запису GitHub, щоб продовжити",
+    "signInWithGitHub": "Увійти через GitHub",
+    "signup": {
+      "title": "Створити обліковий запис",
+      "subtitle": "Зареєструйте новий обліковий запис",
+      "username": "Ім'я користувача",
+      "usernamePlaceholder": "Виберіть ім'я користувача",
+      "email": "Електронна пошта",
+      "emailPlaceholder": "ваша@пошта.com",
+      "password": "Пароль",
+      "passwordPlaceholder": "Виберіть пароль",
+      "confirmPassword": "Підтвердіть пароль",
+      "confirmPasswordPlaceholder": "Підтвердіть пароль",
+      "createAccount": "Створити обліковий запис",
+      "creatingAccount": "Створення облікового запису...",
+      "hasAccount": "Вже є обліковий запис?",
+      "signInHere": "Увійдіть тут",
+      "signupSuccess": "Обліковий запис успішно створено!",
+      "approvalPending": "Реєстрацію отримано. Адміністратор має підтвердити ваш обліковий запис.",
+      "awaitingApproval": "Очікує підтвердження",
+      "awaitingApprovalDescription": "Ваш обліковий запис створено, але адміністратор має активувати його, перш ніж ви зможете увійти.",
+      "backToSignIn": "Повернутися до входу",
+      "signupFailed": "Помилка реєстрації",
+      "tryAgain": "Помилка реєстрації. Спробуйте ще раз.",
+      "usernameRequired": "Ім'я користувача та пароль обов'язкові",
+      "passwordMismatch": "Паролі не збігаються"
+    },
+    "tagline": "Ваш AI стек має підпорядковуватися вам.",
+    "userId": "ID користувача",
+    "welcome": "Ласкаво просимо"
   },
   "setup": {
     "welcome": {

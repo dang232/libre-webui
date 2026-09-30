@@ -49,6 +49,37 @@
     "backendConnectionFailed": "تعذّر الاتصال بخدمة الواجهة الخلفية"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "تعذّر إكمال تسجيل الدخول",
+      "expired": "انتهت صلاحية رابط تسجيل الدخول. يرجى المحاولة مرة أخرى.",
+      "invalid": "لم يعد رابط تسجيل الدخول صالحًا. يرجى البدء من جديد.",
+      "backToLogin": "العودة إلى تسجيل الدخول",
+      "working": "جارٍ تسجيل دخولك…",
+      "workingHint": "يرجى الانتظار حتى ينتهي الأمر."
+    },
+    "canonical": {
+      "redirecting": "جارٍ إعادة التوجيه…",
+      "signIn": "المتابعة بحساب ALcore"
+    },
+    "checkingAuth": "جاري التحقق من المصادقة...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "محلي أولاً",
+        "body": "تبقى محادثاتك وملفاتك على الجهاز الذي تشغل هذا عليه."
+      },
+      "providers": {
+        "title": "أي مزود",
+        "body": "نماذج محلية عبر Ollama، بالإضافة إلى المزودين عن بُعد الذين تختار إضافتهم."
+      },
+      "work": {
+        "title": "عمل معزول",
+        "body": "امنح النموذج مساحة عمل معزولة بالملفات والطرفية والمعاينة."
+      }
+    },
+    "id": "المعرف",
+    "jwtActive": "مصادقة JWT نشطة",
+    "jwtDescription": "مصادقة JWT مع GitHub OAuth",
     "login": {
       "title": "مرحباً بعودتك",
       "subtitle": "سجّل الدخول إلى حسابك للمتابعة",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "فشل التحقق من مصادقة GitHub",
       "verificationFailed": "فشل التحقق الأمني. حدّث الصفحة وحاول مجددًا."
     },
-    "signup": {
-      "title": "إنشاء حساب",
-      "subtitle": "سجّل للحصول على حساب جديد",
-      "username": "اسم المستخدم",
-      "usernamePlaceholder": "اختر اسم مستخدم",
-      "email": "البريد الإلكتروني",
-      "emailPlaceholder": "your@email.com",
-      "password": "كلمة المرور",
-      "passwordPlaceholder": "اختر كلمة مرور",
-      "confirmPassword": "تأكيد كلمة المرور",
-      "confirmPasswordPlaceholder": "أكّد كلمة المرور",
-      "createAccount": "إنشاء حساب",
-      "creatingAccount": "جاري إنشاء الحساب...",
-      "hasAccount": "لديك حساب بالفعل؟",
-      "signInHere": "سجّل الدخول هنا",
-      "signupSuccess": "تم إنشاء الحساب بنجاح!",
-      "approvalPending": "تم استلام التسجيل. يجب أن يوافق المسؤول على حسابك.",
-      "awaitingApproval": "في انتظار الموافقة",
-      "awaitingApprovalDescription": "تم إنشاء حسابك، ولكن يجب أن يقوم المسؤول بتفعيله قبل أن تتمكن من تسجيل الدخول.",
-      "backToSignIn": "العودة لتسجيل الدخول",
-      "signupFailed": "فشل التسجيل",
-      "tryAgain": "فشل التسجيل. يرجى المحاولة مرة أخرى.",
-      "usernameRequired": "اسم المستخدم وكلمة المرور مطلوبان",
-      "passwordMismatch": "كلمات المرور غير متطابقة"
-    },
     "logout": {
       "button": "تسجيل الخروج",
       "success": "تم تسجيل الخروج بنجاح"
-    },
-    "oauth": {
-      "continueWith": "المتابعة مع {{provider}}",
-      "connectingTo": "جاري الاتصال بـ {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "تم تسجيل الدخول عبر OAuth بنجاح!",
-      "completionFailed": "تعذّر إكمال مصادقة OAuth",
-      "verificationFailed": "فشل التحقق من مصادقة OAuth",
-      "authenticationFailed": "فشلت مصادقة OAuth",
-      "googleFailed": "تعذّر تسجيل الدخول باستخدام Google. يُرجى المحاولة مرة أخرى.",
-      "googleLoading": "جارٍ تسجيل الدخول باستخدام Google..."
-    },
-    "checkingAuth": "جاري التحقق من المصادقة...",
-    "welcome": "مرحباً",
-    "noEmail": "لم يتم تقديم بريد إلكتروني",
-    "role": "الدور",
-    "id": "المعرف",
-    "userId": "معرف المستخدم",
-    "signInDescription": "سجّل الدخول بحساب GitHub الخاص بك للمتابعة",
-    "signInWithGitHub": "تسجيل الدخول بواسطة GitHub",
-    "jwtActive": "مصادقة JWT نشطة",
-    "jwtDescription": "مصادقة JWT مع GitHub OAuth",
-    "github": "GitHub",
-    "provider": "المزود",
-    "tagline": "يجب أن يخضع مكدس الذكاء الاصطناعي الخاص بك لك.",
-    "selfHosted": "مستضاف ذاتيًا · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "محلي أولاً",
-        "body": "تبقى محادثاتك وملفاتك على الجهاز الذي تشغل هذا عليه."
-      },
-      "providers": {
-        "title": "أي مزود",
-        "body": "نماذج محلية عبر Ollama، بالإضافة إلى المزودين عن بُعد الذين تختار إضافتهم."
-      },
-      "work": {
-        "title": "عمل معزول",
-        "body": "امنح النموذج مساحة عمل معزولة بالملفات والطرفية والمعاينة."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "تسجيل الدخول الموحد"
     },
     "mfa": {
       "sectionTitle": "المصادقة الثنائية",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "حفظت رموز الاسترداد",
       "recoveryCodesRegenerated": "تم إنشاء رموز استرداد جديدة. الرموز القديمة لم تعد صالحة."
     },
+    "noEmail": "لم يتم تقديم بريد إلكتروني",
+    "oauth": {
+      "continueWith": "المتابعة مع {{provider}}",
+      "connectingTo": "جاري الاتصال بـ {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "تم تسجيل الدخول عبر OAuth بنجاح!",
+      "completionFailed": "تعذّر إكمال مصادقة OAuth",
+      "verificationFailed": "فشل التحقق من مصادقة OAuth",
+      "authenticationFailed": "فشلت مصادقة OAuth",
+      "googleFailed": "تعذّر تسجيل الدخول باستخدام Google. يُرجى المحاولة مرة أخرى.",
+      "googleLoading": "جارٍ تسجيل الدخول باستخدام Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "تسجيل الدخول الموحد"
+    },
     "passkeys": {
       "sectionTitle": "مفاتيح المرور",
       "sectionDescription": "سجّل الدخول دون كلمة مرور باستخدام قفل شاشة جهازك أو مفتاح أمان.",
@@ -189,7 +168,40 @@
       "removeFailed": "تعذّرت إزالة مفتاح المرور.",
       "signInButton": "تسجيل الدخول بمفتاح مرور",
       "signInFailed": "فشل تسجيل الدخول بمفتاح المرور."
-    }
+    },
+    "provider": "المزود",
+    "role": "الدور",
+    "selfHosted": "مستضاف ذاتيًا · Apache 2.0",
+    "signInDescription": "سجّل الدخول بحساب GitHub الخاص بك للمتابعة",
+    "signInWithGitHub": "تسجيل الدخول بواسطة GitHub",
+    "signup": {
+      "title": "إنشاء حساب",
+      "subtitle": "سجّل للحصول على حساب جديد",
+      "username": "اسم المستخدم",
+      "usernamePlaceholder": "اختر اسم مستخدم",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "your@email.com",
+      "password": "كلمة المرور",
+      "passwordPlaceholder": "اختر كلمة مرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "confirmPasswordPlaceholder": "أكّد كلمة المرور",
+      "createAccount": "إنشاء حساب",
+      "creatingAccount": "جاري إنشاء الحساب...",
+      "hasAccount": "لديك حساب بالفعل؟",
+      "signInHere": "سجّل الدخول هنا",
+      "signupSuccess": "تم إنشاء الحساب بنجاح!",
+      "approvalPending": "تم استلام التسجيل. يجب أن يوافق المسؤول على حسابك.",
+      "awaitingApproval": "في انتظار الموافقة",
+      "awaitingApprovalDescription": "تم إنشاء حسابك، ولكن يجب أن يقوم المسؤول بتفعيله قبل أن تتمكن من تسجيل الدخول.",
+      "backToSignIn": "العودة لتسجيل الدخول",
+      "signupFailed": "فشل التسجيل",
+      "tryAgain": "فشل التسجيل. يرجى المحاولة مرة أخرى.",
+      "usernameRequired": "اسم المستخدم وكلمة المرور مطلوبان",
+      "passwordMismatch": "كلمات المرور غير متطابقة"
+    },
+    "tagline": "يجب أن يخضع مكدس الذكاء الاصطناعي الخاص بك لك.",
+    "userId": "معرف المستخدم",
+    "welcome": "مرحباً"
   },
   "setup": {
     "welcome": {

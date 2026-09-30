@@ -49,6 +49,37 @@
     "backendConnectionFailed": "बैकएंड सेवा से कनेक्ट करने में विफल"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "साइन इन पूरा नहीं हो सका",
+      "expired": "यह साइन इन लिंक समाप्त हो गया है। कृपया फिर से प्रयास करें।",
+      "invalid": "यह साइन इन लिंक अब मान्य नहीं है। कृपया फिर से शुरू करें।",
+      "backToLogin": "साइन इन पर वापस जाएँ",
+      "working": "आपको साइन इन किया जा रहा है…",
+      "workingHint": "कृपया हमारा काम पूरा होने तक प्रतीक्षा करें।"
+    },
+    "canonical": {
+      "redirecting": "रीडायरेक्ट किया जा रहा है…",
+      "signIn": "ALcore खाते के साथ जारी रखें"
+    },
+    "checkingAuth": "प्रमाणीकरण जाँच रहा है...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "पहले स्थानीय",
+        "body": "आपकी बातचीत और फ़ाइलें उस मशीन पर रहती हैं जिस पर आप इसे चलाते हैं।"
+      },
+      "providers": {
+        "title": "कोई भी प्रदाता",
+        "body": "Ollama के माध्यम से स्थानीय मॉडल, साथ ही वे रिमोट प्रदाता जिन्हें आप जोड़ना चुनते हैं।"
+      },
+      "work": {
+        "title": "पृथक कार्य",
+        "body": "किसी मॉडल को फ़ाइलों, टर्मिनल और पूर्वावलोकन के साथ एक सैंडबॉक्स्ड वर्कस्पेस दें।"
+      }
+    },
+    "id": "आईडी",
+    "jwtActive": "JWT प्रमाणीकरण सक्रिय",
+    "jwtDescription": "GitHub OAuth के साथ JWT प्रमाणीकरण",
     "login": {
       "title": "वापसी पर स्वागत है",
       "subtitle": "जारी रखने के लिए अपने खाते में साइन इन करें",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "GitHub प्रमाणीकरण सत्यापित करने में विफल",
       "verificationFailed": "सुरक्षा सत्यापन विफल। पृष्ठ रिफ्रेश करके पुनः प्रयास करें।"
     },
-    "signup": {
-      "title": "खाता बनाएं",
-      "subtitle": "अपना नया खाता बनाने के लिए साइन अप करें",
-      "username": "उपयोगकर्ता नाम",
-      "usernamePlaceholder": "उपयोगकर्ता नाम चुनें",
-      "email": "ईमेल",
-      "emailPlaceholder": "your@email.com",
-      "password": "पासवर्ड",
-      "passwordPlaceholder": "पासवर्ड चुनें",
-      "confirmPassword": "पासवर्ड की पुष्टि करें",
-      "confirmPasswordPlaceholder": "अपना पासवर्ड फिर से दर्ज करें",
-      "createAccount": "खाता बनाएं",
-      "creatingAccount": "खाता बनाया जा रहा है...",
-      "hasAccount": "पहले से खाता है?",
-      "signInHere": "यहाँ साइन इन करें",
-      "signupSuccess": "खाता सफलतापूर्वक बनाया गया!",
-      "approvalPending": "पंजीकरण प्राप्त हुआ। किसी व्यवस्थापक को आपका खाता मंज़ूर करना होगा।",
-      "awaitingApproval": "मंज़ूरी का इंतज़ार",
-      "awaitingApprovalDescription": "आपका खाता बन गया है, लेकिन साइन इन करने से पहले किसी व्यवस्थापक को इसे सक्रिय करना होगा।",
-      "backToSignIn": "साइन इन पर वापस जाएँ",
-      "signupFailed": "साइन अप विफल",
-      "tryAgain": "साइन अप विफल। कृपया पुनः प्रयास करें।",
-      "usernameRequired": "उपयोगकर्ता नाम और पासवर्ड आवश्यक हैं",
-      "passwordMismatch": "पासवर्ड मेल नहीं खाते"
-    },
     "logout": {
       "button": "लॉग आउट",
       "success": "सफलतापूर्वक लॉग आउट हो गया"
-    },
-    "oauth": {
-      "continueWith": "{{provider}} के साथ जारी रखें",
-      "connectingTo": "{{provider}} से कनेक्ट हो रहा है...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "OAuth लॉगिन सफल रहा!",
-      "completionFailed": "OAuth प्रमाणीकरण पूरा करने में विफल",
-      "verificationFailed": "OAuth प्रमाणीकरण सत्यापन विफल",
-      "authenticationFailed": "OAuth प्रमाणीकरण विफल",
-      "googleFailed": "Google से साइन इन नहीं हो सका। कृपया फिर से प्रयास करें।",
-      "googleLoading": "Google से साइन इन हो रहा है..."
-    },
-    "checkingAuth": "प्रमाणीकरण जाँच रहा है...",
-    "welcome": "स्वागत है",
-    "noEmail": "कोई ईमेल नहीं दिया गया",
-    "role": "भूमिका",
-    "id": "आईडी",
-    "userId": "उपयोगकर्ता आईडी",
-    "signInDescription": "जारी रखने के लिए अपने GitHub खाते से साइन इन करें",
-    "signInWithGitHub": "GitHub से साइन इन करें",
-    "jwtActive": "JWT प्रमाणीकरण सक्रिय",
-    "jwtDescription": "GitHub OAuth के साथ JWT प्रमाणीकरण",
-    "github": "GitHub",
-    "provider": "प्रदाता",
-    "tagline": "आपका AI स्टैक आपको जवाब देना चाहिए।",
-    "selfHosted": "स्व-होस्टेड · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "पहले स्थानीय",
-        "body": "आपकी बातचीत और फ़ाइलें उस मशीन पर रहती हैं जिस पर आप इसे चलाते हैं।"
-      },
-      "providers": {
-        "title": "कोई भी प्रदाता",
-        "body": "Ollama के माध्यम से स्थानीय मॉडल, साथ ही वे रिमोट प्रदाता जिन्हें आप जोड़ना चुनते हैं।"
-      },
-      "work": {
-        "title": "पृथक कार्य",
-        "body": "किसी मॉडल को फ़ाइलों, टर्मिनल और पूर्वावलोकन के साथ एक सैंडबॉक्स्ड वर्कस्पेस दें।"
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "सिंगल साइन-ऑन"
     },
     "mfa": {
       "sectionTitle": "दो-चरणीय प्रमाणीकरण",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "मैंने अपने पुनर्प्राप्ति कोड सहेज लिए हैं",
       "recoveryCodesRegenerated": "नए पुनर्प्राप्ति कोड बनाए गए। पुराने अब काम नहीं करेंगे।"
     },
+    "noEmail": "कोई ईमेल नहीं दिया गया",
+    "oauth": {
+      "continueWith": "{{provider}} के साथ जारी रखें",
+      "connectingTo": "{{provider}} से कनेक्ट हो रहा है...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "OAuth लॉगिन सफल रहा!",
+      "completionFailed": "OAuth प्रमाणीकरण पूरा करने में विफल",
+      "verificationFailed": "OAuth प्रमाणीकरण सत्यापन विफल",
+      "authenticationFailed": "OAuth प्रमाणीकरण विफल",
+      "googleFailed": "Google से साइन इन नहीं हो सका। कृपया फिर से प्रयास करें।",
+      "googleLoading": "Google से साइन इन हो रहा है..."
+    },
+    "oidc": {
+      "defaultProviderName": "सिंगल साइन-ऑन"
+    },
     "passkeys": {
       "sectionTitle": "पासकी",
       "sectionDescription": "डिवाइस के स्क्रीन लॉक या सुरक्षा कुंजी से बिना पासवर्ड साइन इन करें।",
@@ -189,7 +168,40 @@
       "removeFailed": "पासकी नहीं हटाई जा सकी।",
       "signInButton": "पासकी से साइन इन करें",
       "signInFailed": "पासकी से साइन इन विफल रहा।"
-    }
+    },
+    "provider": "प्रदाता",
+    "role": "भूमिका",
+    "selfHosted": "स्व-होस्टेड · Apache 2.0",
+    "signInDescription": "जारी रखने के लिए अपने GitHub खाते से साइन इन करें",
+    "signInWithGitHub": "GitHub से साइन इन करें",
+    "signup": {
+      "title": "खाता बनाएं",
+      "subtitle": "अपना नया खाता बनाने के लिए साइन अप करें",
+      "username": "उपयोगकर्ता नाम",
+      "usernamePlaceholder": "उपयोगकर्ता नाम चुनें",
+      "email": "ईमेल",
+      "emailPlaceholder": "your@email.com",
+      "password": "पासवर्ड",
+      "passwordPlaceholder": "पासवर्ड चुनें",
+      "confirmPassword": "पासवर्ड की पुष्टि करें",
+      "confirmPasswordPlaceholder": "अपना पासवर्ड फिर से दर्ज करें",
+      "createAccount": "खाता बनाएं",
+      "creatingAccount": "खाता बनाया जा रहा है...",
+      "hasAccount": "पहले से खाता है?",
+      "signInHere": "यहाँ साइन इन करें",
+      "signupSuccess": "खाता सफलतापूर्वक बनाया गया!",
+      "approvalPending": "पंजीकरण प्राप्त हुआ। किसी व्यवस्थापक को आपका खाता मंज़ूर करना होगा।",
+      "awaitingApproval": "मंज़ूरी का इंतज़ार",
+      "awaitingApprovalDescription": "आपका खाता बन गया है, लेकिन साइन इन करने से पहले किसी व्यवस्थापक को इसे सक्रिय करना होगा।",
+      "backToSignIn": "साइन इन पर वापस जाएँ",
+      "signupFailed": "साइन अप विफल",
+      "tryAgain": "साइन अप विफल। कृपया पुनः प्रयास करें।",
+      "usernameRequired": "उपयोगकर्ता नाम और पासवर्ड आवश्यक हैं",
+      "passwordMismatch": "पासवर्ड मेल नहीं खाते"
+    },
+    "tagline": "आपका AI स्टैक आपको जवाब देना चाहिए।",
+    "userId": "उपयोगकर्ता आईडी",
+    "welcome": "स्वागत है"
   },
   "setup": {
     "welcome": {

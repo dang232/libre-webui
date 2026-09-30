@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Ekki tókst að tengjast bakendaþjónustunni"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Innskráningin ekki framkvæmd",
+      "expired": "Þessi innskráningartenging er útrunnin. Reyndu aftur.",
+      "invalid": "Þessi innskráningartenging er ekki lengur gilt. Byrjaðu aftur.",
+      "backToLogin": "Til baka í innskráningu",
+      "working": "Skráir þig inn…",
+      "workingHint": "Bíðu þar til við klárum."
+    },
+    "canonical": {
+      "redirecting": "Endurvís…",
+      "signIn": "Halda áfram með ALcore aðgangi"
+    },
+    "checkingAuth": "Athugar auðkenningu...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Staðvært í fyrsta lagi",
+        "body": "Samtöl og skrár þínar eru á þeirri vél sem þú keyrir þetta á."
+      },
+      "providers": {
+        "title": "Hvaða þjónustuaðili sem er",
+        "body": "Staðbundnar líkanir í gegnum Ollama, auk fjartengdra þjónustuaðila sem þú velur að bæta við."
+      },
+      "work": {
+        "title": "Einangrað vinnusvæði",
+        "body": "Gefðu líkani sandgryfju með skrám, skipanalínu og forskoðun."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "JWT auðkenning virk",
+    "jwtDescription": "JWT-auðkenning með GitHub OAuth",
     "login": {
       "title": "Velkomin/n aftur",
       "subtitle": "Skráðu þig inn á reikninginn þinn til að halda áfram",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Ekki tókst að staðfesta GitHub auðkenningu",
       "verificationFailed": "Öryggisstaðfesting mistókst. Endurhladdu síðunni og reyndu aftur."
     },
-    "signup": {
-      "title": "Stofna reikning",
-      "subtitle": "Nýskráðu þig fyrir nýjan reikning",
-      "username": "Notandanafn",
-      "usernamePlaceholder": "Veldu notandanafn",
-      "email": "Netfang",
-      "emailPlaceholder": "þitt@netfang.is",
-      "password": "Lykilorð",
-      "passwordPlaceholder": "Veldu lykilorð",
-      "confirmPassword": "Staðfesta lykilorð",
-      "confirmPasswordPlaceholder": "Staðfestu lykilorðið þitt",
-      "createAccount": "Stofna reikning",
-      "creatingAccount": "Stofnar reikning...",
-      "hasAccount": "Ertu nú þegar með reikning?",
-      "signInHere": "Skráðu þig inn hér",
-      "signupSuccess": "Reikningur stofnaður!",
-      "approvalPending": "Skráning móttekin. Stjórnandi verður að samþykkja aðganginn þinn.",
-      "awaitingApproval": "Bíður samþykkis",
-      "awaitingApprovalDescription": "Aðgangurinn þinn hefur verið búinn til, en stjórnandi verður að virkja hann áður en þú getur skráð þig inn.",
-      "backToSignIn": "Til baka til innskráningar",
-      "signupFailed": "Nýskráning mistókst",
-      "tryAgain": "Nýskráning mistókst. Reyndu aftur.",
-      "usernameRequired": "Notandanafn og lykilorð eru nauðsynleg",
-      "passwordMismatch": "Lykilorðin stemma ekki"
-    },
     "logout": {
       "button": "Skrá út",
       "success": "Útskráning tókst"
-    },
-    "oauth": {
-      "continueWith": "Halda áfram með {{provider}}",
-      "connectingTo": "Tengist {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "Innskráning með OAuth tókst!",
-      "completionFailed": "Ekki tókst að ljúka OAuth-auðkenningu",
-      "verificationFailed": "Staðfesting OAuth-auðkenningar mistókst",
-      "authenticationFailed": "OAuth-auðkenning mistókst",
-      "googleFailed": "Google sign-in failed. Please try again.",
-      "googleLoading": "Signing in with Google..."
-    },
-    "checkingAuth": "Athugar auðkenningu...",
-    "welcome": "Velkomin",
-    "noEmail": "Ekkert netfang gefið",
-    "role": "Hlutverk",
-    "id": "ID",
-    "userId": "Notanda-ID",
-    "signInDescription": "Skráðu þig inn með GitHub reikningnum þínum til að halda áfram",
-    "signInWithGitHub": "Skrá inn með GitHub",
-    "jwtActive": "JWT auðkenning virk",
-    "jwtDescription": "JWT-auðkenning með GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Veitandi",
-    "tagline": "AI-stafli þinn á að svara þér.",
-    "selfHosted": "Sjálvhýst · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Staðvært í fyrsta lagi",
-        "body": "Samtöl og skrár þínar eru á þeirri vél sem þú keyrir þetta á."
-      },
-      "providers": {
-        "title": "Hvaða þjónustuaðili sem er",
-        "body": "Staðbundnar líkanir í gegnum Ollama, auk fjartengdra þjónustuaðila sem þú velur að bæta við."
-      },
-      "work": {
-        "title": "Einangrað vinnusvæði",
-        "body": "Gefðu líkani sandgryfju með skrám, skipanalínu og forskoðun."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Einföld innskráning"
     },
     "mfa": {
       "sectionTitle": "Tveggja þátta auðkenning",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Ég hef vistað endurheimtukóðana mína",
       "recoveryCodesRegenerated": "Nýir endurheimtukóðar búnir til. Þeir gömlu virka ekki lengur."
     },
+    "noEmail": "Ekkert netfang gefið",
+    "oauth": {
+      "continueWith": "Halda áfram með {{provider}}",
+      "connectingTo": "Tengist {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "Innskráning með OAuth tókst!",
+      "completionFailed": "Ekki tókst að ljúka OAuth-auðkenningu",
+      "verificationFailed": "Staðfesting OAuth-auðkenningar mistókst",
+      "authenticationFailed": "OAuth-auðkenning mistókst",
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "googleLoading": "Signing in with Google..."
+    },
+    "oidc": {
+      "defaultProviderName": "Einföld innskráning"
+    },
     "passkeys": {
       "sectionTitle": "Aðgangslyklar",
       "sectionDescription": "Skráðu þig inn án lykilorðs með skjálás tækisins eða öryggislykli.",
@@ -189,7 +168,40 @@
       "removeFailed": "Ekki tókst að fjarlægja aðgangslykilinn.",
       "signInButton": "Skrá inn með aðgangslykli",
       "signInFailed": "Innskráning með aðgangslykli mistókst."
-    }
+    },
+    "provider": "Veitandi",
+    "role": "Hlutverk",
+    "selfHosted": "Sjálvhýst · Apache 2.0",
+    "signInDescription": "Skráðu þig inn með GitHub reikningnum þínum til að halda áfram",
+    "signInWithGitHub": "Skrá inn með GitHub",
+    "signup": {
+      "title": "Stofna reikning",
+      "subtitle": "Nýskráðu þig fyrir nýjan reikning",
+      "username": "Notandanafn",
+      "usernamePlaceholder": "Veldu notandanafn",
+      "email": "Netfang",
+      "emailPlaceholder": "þitt@netfang.is",
+      "password": "Lykilorð",
+      "passwordPlaceholder": "Veldu lykilorð",
+      "confirmPassword": "Staðfesta lykilorð",
+      "confirmPasswordPlaceholder": "Staðfestu lykilorðið þitt",
+      "createAccount": "Stofna reikning",
+      "creatingAccount": "Stofnar reikning...",
+      "hasAccount": "Ertu nú þegar með reikning?",
+      "signInHere": "Skráðu þig inn hér",
+      "signupSuccess": "Reikningur stofnaður!",
+      "approvalPending": "Skráning móttekin. Stjórnandi verður að samþykkja aðganginn þinn.",
+      "awaitingApproval": "Bíður samþykkis",
+      "awaitingApprovalDescription": "Aðgangurinn þinn hefur verið búinn til, en stjórnandi verður að virkja hann áður en þú getur skráð þig inn.",
+      "backToSignIn": "Til baka til innskráningar",
+      "signupFailed": "Nýskráning mistókst",
+      "tryAgain": "Nýskráning mistókst. Reyndu aftur.",
+      "usernameRequired": "Notandanafn og lykilorð eru nauðsynleg",
+      "passwordMismatch": "Lykilorðin stemma ekki"
+    },
+    "tagline": "AI-stafli þinn á að svara þér.",
+    "userId": "Notanda-ID",
+    "welcome": "Velkomin"
   },
   "setup": {
     "welcome": {

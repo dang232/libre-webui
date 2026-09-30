@@ -49,6 +49,37 @@
     "backendConnectionFailed": "Verbindung zum Backend-Dienst fehlgeschlagen"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "Anmeldung konnte nicht abgeschlossen werden",
+      "expired": "Dieser Anmeldelink ist abgelaufen. Bitte versuchen Sie es erneut.",
+      "invalid": "Dieser Anmeldelink ist nicht mehr gültig. Bitte beginnen Sie erneut.",
+      "backToLogin": "Zurück zur Anmeldung",
+      "working": "Sie werden angemeldet…",
+      "workingHint": "Bitte warten, bis wir fertig sind."
+    },
+    "canonical": {
+      "redirecting": "Weiterleitung…",
+      "signIn": "Mit ALcore-Konto fortfahren"
+    },
+    "checkingAuth": "Authentifizierung wird überprüft...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "Lokal zuerst",
+        "body": "Ihre Konversationen und Dateien bleiben auf dem Rechner, auf dem Sie dies ausführen."
+      },
+      "providers": {
+        "title": "Jeder Anbieter",
+        "body": "Lokale Modelle über Ollama, plus die Remote-Anbieter, die Sie hinzufügen möchten."
+      },
+      "work": {
+        "title": "Isolierte Arbeit",
+        "body": "Geben Sie einem Modell eine Sandbox-Arbeitsumgebung mit Dateien, einem Terminal und einer Vorschau."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "JWT-Authentifizierung aktiv",
+    "jwtDescription": "JWT-basierte Authentifizierung mit GitHub OAuth",
     "login": {
       "title": "Willkommen zurück",
       "subtitle": "Melden Sie sich bei Ihrem Konto an, um fortzufahren",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "Überprüfung der GitHub-Authentifizierung fehlgeschlagen",
       "verificationFailed": "Sicherheitsprüfung fehlgeschlagen. Seite neu laden und erneut versuchen."
     },
-    "signup": {
-      "title": "Konto erstellen",
-      "subtitle": "Registrieren Sie sich für ein neues Konto",
-      "username": "Benutzername",
-      "usernamePlaceholder": "Wählen Sie einen Benutzernamen",
-      "email": "E-Mail",
-      "emailPlaceholder": "ihre@email.de",
-      "password": "Passwort",
-      "passwordPlaceholder": "Wählen Sie ein Passwort",
-      "confirmPassword": "Passwort bestätigen",
-      "confirmPasswordPlaceholder": "Bestätigen Sie Ihr Passwort",
-      "createAccount": "Konto erstellen",
-      "creatingAccount": "Konto wird erstellt...",
-      "hasAccount": "Sie haben bereits ein Konto?",
-      "signInHere": "Hier anmelden",
-      "signupSuccess": "Konto erfolgreich erstellt!",
-      "approvalPending": "Registrierung empfangen. Ein Administrator muss Ihr Konto genehmigen.",
-      "awaitingApproval": "Wartet auf Genehmigung",
-      "awaitingApprovalDescription": "Ihr Konto wurde erstellt, aber ein Administrator muss es aktivieren, bevor Sie sich anmelden können.",
-      "backToSignIn": "Zurück zur Anmeldung",
-      "signupFailed": "Registrierung fehlgeschlagen",
-      "tryAgain": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
-      "usernameRequired": "Benutzername und Passwort sind erforderlich",
-      "passwordMismatch": "Passwörter stimmen nicht überein"
-    },
     "logout": {
       "button": "Abmelden",
       "success": "Erfolgreich abgemeldet"
-    },
-    "oauth": {
-      "continueWith": "Weiter mit {{provider}}",
-      "connectingTo": "Verbindung zu {{provider}}...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "OAuth-Anmeldung erfolgreich!",
-      "completionFailed": "OAuth-Authentifizierung konnte nicht abgeschlossen werden",
-      "verificationFailed": "Überprüfung der OAuth-Authentifizierung fehlgeschlagen",
-      "authenticationFailed": "OAuth-Authentifizierung fehlgeschlagen",
-      "googleFailed": "Google-Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.",
-      "googleLoading": "Anmeldung mit Google läuft..."
-    },
-    "checkingAuth": "Authentifizierung wird überprüft...",
-    "welcome": "Willkommen",
-    "noEmail": "Keine E-Mail angegeben",
-    "role": "Rolle",
-    "id": "ID",
-    "userId": "Benutzer-ID",
-    "signInDescription": "Melden Sie sich mit Ihrem GitHub-Konto an, um fortzufahren",
-    "signInWithGitHub": "Mit GitHub anmelden",
-    "jwtActive": "JWT-Authentifizierung aktiv",
-    "jwtDescription": "JWT-basierte Authentifizierung mit GitHub OAuth",
-    "github": "GitHub",
-    "provider": "Anbieter",
-    "tagline": "Ihr AI-Stack sollte Ihnen antworten.",
-    "selfHosted": "Selbst gehostet · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "Lokal zuerst",
-        "body": "Ihre Konversationen und Dateien bleiben auf dem Rechner, auf dem Sie dies ausführen."
-      },
-      "providers": {
-        "title": "Jeder Anbieter",
-        "body": "Lokale Modelle über Ollama, plus die Remote-Anbieter, die Sie hinzufügen möchten."
-      },
-      "work": {
-        "title": "Isolierte Arbeit",
-        "body": "Geben Sie einem Modell eine Sandbox-Arbeitsumgebung mit Dateien, einem Terminal und einer Vorschau."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "Single Sign-On"
     },
     "mfa": {
       "sectionTitle": "Zwei-Faktor-Authentifizierung",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "Ich habe meine Wiederherstellungscodes gespeichert",
       "recoveryCodesRegenerated": "Neue Wiederherstellungscodes erstellt. Die alten funktionieren nicht mehr."
     },
+    "noEmail": "Keine E-Mail angegeben",
+    "oauth": {
+      "continueWith": "Weiter mit {{provider}}",
+      "connectingTo": "Verbindung zu {{provider}}...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "OAuth-Anmeldung erfolgreich!",
+      "completionFailed": "OAuth-Authentifizierung konnte nicht abgeschlossen werden",
+      "verificationFailed": "Überprüfung der OAuth-Authentifizierung fehlgeschlagen",
+      "authenticationFailed": "OAuth-Authentifizierung fehlgeschlagen",
+      "googleFailed": "Google-Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "googleLoading": "Anmeldung mit Google läuft..."
+    },
+    "oidc": {
+      "defaultProviderName": "Single Sign-On"
+    },
     "passkeys": {
       "sectionTitle": "Passkeys",
       "sectionDescription": "Melde dich ohne Passwort an – mit der Displaysperre deines Geräts oder einem Sicherheitsschlüssel.",
@@ -189,7 +168,40 @@
       "removeFailed": "Der Passkey konnte nicht entfernt werden.",
       "signInButton": "Mit Passkey anmelden",
       "signInFailed": "Passkey-Anmeldung fehlgeschlagen."
-    }
+    },
+    "provider": "Anbieter",
+    "role": "Rolle",
+    "selfHosted": "Selbst gehostet · Apache 2.0",
+    "signInDescription": "Melden Sie sich mit Ihrem GitHub-Konto an, um fortzufahren",
+    "signInWithGitHub": "Mit GitHub anmelden",
+    "signup": {
+      "title": "Konto erstellen",
+      "subtitle": "Registrieren Sie sich für ein neues Konto",
+      "username": "Benutzername",
+      "usernamePlaceholder": "Wählen Sie einen Benutzernamen",
+      "email": "E-Mail",
+      "emailPlaceholder": "ihre@email.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "Wählen Sie ein Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "confirmPasswordPlaceholder": "Bestätigen Sie Ihr Passwort",
+      "createAccount": "Konto erstellen",
+      "creatingAccount": "Konto wird erstellt...",
+      "hasAccount": "Sie haben bereits ein Konto?",
+      "signInHere": "Hier anmelden",
+      "signupSuccess": "Konto erfolgreich erstellt!",
+      "approvalPending": "Registrierung empfangen. Ein Administrator muss Ihr Konto genehmigen.",
+      "awaitingApproval": "Wartet auf Genehmigung",
+      "awaitingApprovalDescription": "Ihr Konto wurde erstellt, aber ein Administrator muss es aktivieren, bevor Sie sich anmelden können.",
+      "backToSignIn": "Zurück zur Anmeldung",
+      "signupFailed": "Registrierung fehlgeschlagen",
+      "tryAgain": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "usernameRequired": "Benutzername und Passwort sind erforderlich",
+      "passwordMismatch": "Passwörter stimmen nicht überein"
+    },
+    "tagline": "Ihr AI-Stack sollte Ihnen antworten.",
+    "userId": "Benutzer-ID",
+    "welcome": "Willkommen"
   },
   "setup": {
     "welcome": {

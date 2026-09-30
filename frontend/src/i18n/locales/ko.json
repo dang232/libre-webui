@@ -49,6 +49,37 @@
     "backendConnectionFailed": "백엔드 서비스에 연결하지 못했습니다"
   },
   "auth": {
+    "callback": {
+      "failedTitle": "로그인을 완료할 수 없습니다",
+      "expired": "이 로그인 링크가 만료되었습니다. 다시 시도해 주세요.",
+      "invalid": "이 로그인 링크는 더 이상 유효하지 않습니다. 처음부터 다시 시도해 주세요.",
+      "backToLogin": "로그인으로 돌아가기",
+      "working": "로그인 중입니다…",
+      "workingHint": "잠시 기다려 주세요."
+    },
+    "canonical": {
+      "redirecting": "리디렉션 중…",
+      "signIn": "ALcore 계정으로 계속"
+    },
+    "checkingAuth": "인증 확인 중...",
+    "github": "GitHub",
+    "highlights": {
+      "local": {
+        "title": "로컬 우선",
+        "body": "대화와 파일은 이 앱을 실행하는 기기에 그대로 보관됩니다."
+      },
+      "providers": {
+        "title": "모든 프로바이더",
+        "body": "Ollama를 통한 로컬 모델과 추가하기로 선택한 원격 프로바이더를 지원합니다."
+      },
+      "work": {
+        "title": "격리된 작업 환경",
+        "body": "모델에 파일, 터미널, 미리보기가 있는 샌드박스 작업 공간을 제공하세요."
+      }
+    },
+    "id": "ID",
+    "jwtActive": "JWT 인증 활성",
+    "jwtDescription": "GitHub OAuth 기반 JWT 인증",
     "login": {
       "title": "다시 오신 것을 환영합니다",
       "subtitle": "계속하려면 계정에 로그인하세요",
@@ -70,77 +101,9 @@
       "githubVerifyFailed": "GitHub 인증 확인 실패",
       "verificationFailed": "보안 확인에 실패했습니다. 페이지를 새로 고친 뒤 다시 시도하세요."
     },
-    "signup": {
-      "title": "계정 만들기",
-      "subtitle": "새 계정을 등록하세요",
-      "username": "사용자 이름",
-      "usernamePlaceholder": "사용자 이름을 선택하세요",
-      "email": "이메일",
-      "emailPlaceholder": "your@email.com",
-      "password": "비밀번호",
-      "passwordPlaceholder": "비밀번호를 선택하세요",
-      "confirmPassword": "비밀번호 확인",
-      "confirmPasswordPlaceholder": "비밀번호를 다시 입력하세요",
-      "createAccount": "계정 만들기",
-      "creatingAccount": "계정 생성 중...",
-      "hasAccount": "이미 계정이 있으신가요?",
-      "signInHere": "여기서 로그인하세요",
-      "signupSuccess": "계정이 성공적으로 생성되었습니다!",
-      "approvalPending": "가입이 완료되었습니다. 관리자가 계정을 승인해야 합니다.",
-      "awaitingApproval": "승인 대기 중",
-      "awaitingApprovalDescription": "계정이 생성되었지만, 로그인하려면 관리자가 계정을 활성화해야 합니다.",
-      "backToSignIn": "로그인으로 돌아가기",
-      "signupFailed": "가입 실패",
-      "tryAgain": "가입 실패. 다시 시도해주세요.",
-      "usernameRequired": "사용자 이름과 비밀번호가 필요합니다",
-      "passwordMismatch": "비밀번호가 일치하지 않습니다"
-    },
     "logout": {
       "button": "로그아웃",
       "success": "성공적으로 로그아웃되었습니다"
-    },
-    "oauth": {
-      "continueWith": "{{provider}}로 계속하기",
-      "connectingTo": "{{provider}}에 연결 중...",
-      "github": "GitHub",
-      "huggingFace": "Hugging Face",
-      "loginSuccess": "OAuth 로그인에 성공했습니다!",
-      "completionFailed": "OAuth 인증을 완료하지 못했습니다",
-      "verificationFailed": "OAuth 인증 확인에 실패했습니다",
-      "authenticationFailed": "OAuth 인증에 실패했습니다",
-      "googleFailed": "Google 로그인에 실패했습니다. 다시 시도해 주세요.",
-      "googleLoading": "Google 로그인 중..."
-    },
-    "checkingAuth": "인증 확인 중...",
-    "welcome": "환영합니다",
-    "noEmail": "이메일 없음",
-    "role": "역할",
-    "id": "ID",
-    "userId": "사용자 ID",
-    "signInDescription": "계속하려면 GitHub 계정으로 로그인하세요",
-    "signInWithGitHub": "GitHub로 로그인",
-    "jwtActive": "JWT 인증 활성",
-    "jwtDescription": "GitHub OAuth 기반 JWT 인증",
-    "github": "GitHub",
-    "provider": "제공자",
-    "tagline": "당신의 AI 스택은 당신이 통제해야 합니다.",
-    "selfHosted": "자체 호스팅 · Apache 2.0",
-    "highlights": {
-      "local": {
-        "title": "로컬 우선",
-        "body": "대화와 파일은 이 앱을 실행하는 기기에 그대로 보관됩니다."
-      },
-      "providers": {
-        "title": "모든 프로바이더",
-        "body": "Ollama를 통한 로컬 모델과 추가하기로 선택한 원격 프로바이더를 지원합니다."
-      },
-      "work": {
-        "title": "격리된 작업 환경",
-        "body": "모델에 파일, 터미널, 미리보기가 있는 샌드박스 작업 공간을 제공하세요."
-      }
-    },
-    "oidc": {
-      "defaultProviderName": "통합 로그인"
     },
     "mfa": {
       "sectionTitle": "2단계 인증",
@@ -174,6 +137,22 @@
       "recoveryCodesSaved": "복구 코드를 저장했습니다",
       "recoveryCodesRegenerated": "새 복구 코드가 생성되었습니다. 이전 코드는 더 이상 사용할 수 없습니다."
     },
+    "noEmail": "이메일 없음",
+    "oauth": {
+      "continueWith": "{{provider}}로 계속하기",
+      "connectingTo": "{{provider}}에 연결 중...",
+      "github": "GitHub",
+      "huggingFace": "Hugging Face",
+      "loginSuccess": "OAuth 로그인에 성공했습니다!",
+      "completionFailed": "OAuth 인증을 완료하지 못했습니다",
+      "verificationFailed": "OAuth 인증 확인에 실패했습니다",
+      "authenticationFailed": "OAuth 인증에 실패했습니다",
+      "googleFailed": "Google 로그인에 실패했습니다. 다시 시도해 주세요.",
+      "googleLoading": "Google 로그인 중..."
+    },
+    "oidc": {
+      "defaultProviderName": "통합 로그인"
+    },
     "passkeys": {
       "sectionTitle": "패스키",
       "sectionDescription": "기기의 화면 잠금 또는 보안 키로 비밀번호 없이 로그인하세요.",
@@ -189,7 +168,40 @@
       "removeFailed": "패스키를 삭제할 수 없습니다.",
       "signInButton": "패스키로 로그인",
       "signInFailed": "패스키 로그인에 실패했습니다."
-    }
+    },
+    "provider": "제공자",
+    "role": "역할",
+    "selfHosted": "자체 호스팅 · Apache 2.0",
+    "signInDescription": "계속하려면 GitHub 계정으로 로그인하세요",
+    "signInWithGitHub": "GitHub로 로그인",
+    "signup": {
+      "title": "계정 만들기",
+      "subtitle": "새 계정을 등록하세요",
+      "username": "사용자 이름",
+      "usernamePlaceholder": "사용자 이름을 선택하세요",
+      "email": "이메일",
+      "emailPlaceholder": "your@email.com",
+      "password": "비밀번호",
+      "passwordPlaceholder": "비밀번호를 선택하세요",
+      "confirmPassword": "비밀번호 확인",
+      "confirmPasswordPlaceholder": "비밀번호를 다시 입력하세요",
+      "createAccount": "계정 만들기",
+      "creatingAccount": "계정 생성 중...",
+      "hasAccount": "이미 계정이 있으신가요?",
+      "signInHere": "여기서 로그인하세요",
+      "signupSuccess": "계정이 성공적으로 생성되었습니다!",
+      "approvalPending": "가입이 완료되었습니다. 관리자가 계정을 승인해야 합니다.",
+      "awaitingApproval": "승인 대기 중",
+      "awaitingApprovalDescription": "계정이 생성되었지만, 로그인하려면 관리자가 계정을 활성화해야 합니다.",
+      "backToSignIn": "로그인으로 돌아가기",
+      "signupFailed": "가입 실패",
+      "tryAgain": "가입 실패. 다시 시도해주세요.",
+      "usernameRequired": "사용자 이름과 비밀번호가 필요합니다",
+      "passwordMismatch": "비밀번호가 일치하지 않습니다"
+    },
+    "tagline": "당신의 AI 스택은 당신이 통제해야 합니다.",
+    "userId": "사용자 ID",
+    "welcome": "환영합니다"
   },
   "setup": {
     "welcome": {
