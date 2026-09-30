@@ -167,7 +167,10 @@ test('Given the canonical account, when password login succeeds or fails, then i
   });
   assert.equal(login.status, 200, await login.clone().text());
   const loggedIn = await login.json();
-  assert.equal(loggedIn.data.user.id, canonicalUserId);
+  assert.equal(
+    loggedIn.data.user.id,
+    requirePrereq(canonicalUserId, 'canonicalUserId from the signup test')
+  );
   assert.equal(loggedIn.data.user.email, email);
   const wrong = await postLibre('/api/auth/canonical-password', {
     email,
@@ -226,6 +229,7 @@ const decodeJwtPayload = token =>
   JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
 
 test('Given an Auth session, when exchanging for Libre, then the assertion carries sub/aud/intent/email and the code is single-use', async () => {
+  requirePrereq(secondAuthToken, 'secondAuthToken from the register test');
   const me = await fetch(`${authBase}/auth/me`, {
     headers: { authorization: `Bearer ${secondAuthToken}` },
   });
@@ -285,11 +289,15 @@ test('Given the canonical profile row, when read from Libre storage, then it lin
     readonly: true,
   });
   try {
+    const profileId = requirePrereq(
+      canonicalUserId,
+      'canonicalUserId from the signup test'
+    );
     const row = database
       .prepare(
         'SELECT id, username, email, canonical_user_id FROM users WHERE id = ?'
       )
-      .get(canonicalUserId);
+      .get(profileId);
     assert.ok(row, 'canonical profile row must exist');
     assert.equal(typeof row.canonical_user_id, 'string');
     assert.ok(row.canonical_user_id.length > 0);
