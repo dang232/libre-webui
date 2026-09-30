@@ -22,18 +22,32 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          port: ${{ secrets.VPS_SSH_PORT }}
-          command_timeout: 15m
+          # Hardcoded: an unset VPS_SSH_PORT resolves to an empty string and
+          # the action cannot negotiate a session.
+          port: 22
+          command_timeout: 25m
           script: |
             set -euo pipefail
             cd "${{ secrets.VPS_PROJECT_DIR }}"
             test -d .git || { echo "VPS_PROJECT_DIR is not a Git checkout." >&2; exit 1; }
+            # Guard before rebuilding. `docker compose up -d` recreates the
+            # container from compose state alone, so a secret that only ever
+            # existed as a shell export is dropped and the app fails closed on
+            # boot. Refuse to deploy rather than take production down.
+            for key in JWT_SECRET ENCRYPTION_KEY AUTH_JWT_SECRET; do
+              if ! grep -qE "^${key}=.+" .env 2>/dev/null; then
+                echo "Refusing to deploy: ${key} is not set in ${PWD}/.env." >&2
+                exit 1
+              fi
+            done
             timeout 2m git fetch origin main
             git reset --hard origin/main
-            docker image inspect alcore/alcore:latest >/dev/null
-            timeout 2m docker compose up -d --no-build --pull never
-            docker image prune -f
+            # Build here: no CI image exists for this app, so --no-build/--pull
+            # never would report success while continuing to run the previous
+            # image — exactly the silent no-op this replaced.
+            timeout 20m docker compose up -d --build
             timeout 30s docker compose ps
+            docker image prune -f
             PORT=$(awk -F= '$1 == "WEBUI_PORT" { print $2; exit }' .env 2>/dev/null || true)
             PORT=${PORT:-8080}
             for attempt in $(seq 1 36); do
