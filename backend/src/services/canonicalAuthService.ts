@@ -16,6 +16,9 @@ export interface ProductAssertion {
   readonly aud: string;
   readonly exp: number;
   readonly intent: string;
+  // Verified address supplied by Auth for profile provisioning. Optional so
+  // assertions minted before this claim existed still verify.
+  readonly email?: string;
 }
 
 export interface CanonicalCredentialInput {
@@ -108,6 +111,9 @@ export const verifyProductAssertion = (
       aud: LIBRE_AUDIENCE,
       exp: claims.exp,
       intent: PRODUCT_EXCHANGE_INTENT,
+      ...(typeof claims.email === 'string' && claims.email.trim() !== ''
+        ? { email: claims.email }
+        : {}),
     };
   } catch (error) {
     if (error instanceof SyntaxError || error instanceof TypeError) return null;

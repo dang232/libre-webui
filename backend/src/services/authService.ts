@@ -231,14 +231,18 @@ export class AuthService {
     assertion: ProductAssertion,
     metadata: SessionMetadata
   ): Promise<AuthResult | null> {
-    return this.loginWithCanonicalId(assertion.sub, metadata);
+    return this.loginWithCanonicalId(assertion.sub, metadata, assertion.email);
   }
 
   async loginWithCanonicalId(
     canonicalUserId: string,
-    metadata: SessionMetadata
+    metadata: SessionMetadata,
+    canonicalEmail?: string
   ): Promise<AuthResult | null> {
-    const user = await userModel.getOrCreateCanonicalUser(canonicalUserId);
+    const user = await userModel.getOrCreateCanonicalUser(
+      canonicalUserId,
+      canonicalEmail
+    );
     if (user.status !== 'active') return { status: 'pending', user };
     return {
       status: 'authenticated',

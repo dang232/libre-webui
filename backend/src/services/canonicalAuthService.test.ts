@@ -46,6 +46,28 @@ test('Given valid Auth assertion, when verified, then returns canonical subject'
   );
 });
 
+test('Given a verified address, when verified, then the assertion carries it for provisioning', () => {
+  assert.equal(
+    verifyProductAssertion(
+      assertion({ ...validClaims, email: 'Person@Example.test' }),
+      'auth-test-secret',
+      'auth.alcore.io.vn',
+      100
+    )?.email,
+    'Person@Example.test'
+  );
+});
+
+test('Given an assertion without an address, when verified, then no address is invented', () => {
+  const verified = verifyProductAssertion(
+    assertion(validClaims),
+    'auth-test-secret',
+    'auth.alcore.io.vn',
+    100
+  );
+  assert.equal(verified?.email, undefined);
+});
+
 test('Given another audience, when verified, then rejects assertion', () => {
   assert.equal(
     verifyProductAssertion(

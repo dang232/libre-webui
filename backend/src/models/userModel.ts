@@ -114,7 +114,10 @@ export class UserModel {
     );
   }
 
-  async getOrCreateCanonicalUser(canonicalUserId: string): Promise<UserPublic> {
+  async getOrCreateCanonicalUser(
+    canonicalUserId: string,
+    canonicalEmail?: string
+  ): Promise<UserPublic> {
     const identity = this.persistenceProvider().repositories.identity;
     if (await identity.canonicalIdentityCollision(canonicalUserId)) {
       await identity.queueCanonicalIdentityConflict(canonicalUserId);
@@ -129,11 +132,19 @@ export class UserModel {
       await identity.queueCanonicalIdentityConflict(canonicalUserId);
       throw new Error('Canonical identity username collision requires review');
     }
+    // The canonical address is only adopted when it is still free. When a
+    // local account already owns it, the profile stays separate with no
+    // address: identities are never merged by email.
+    const normalizedEmail = canonicalEmail?.trim().toLowerCase() || undefined;
+    const email =
+      normalizedEmail && !(await identity.emailExists(normalizedEmail))
+        ? normalizedEmail
+        : null;
     const now = Date.now();
     const user: User = {
       id: randomUUID(),
       username,
-      email: null,
+      email,
       password_hash: await bcrypt.hash(randomUUID(), 12),
       role: 'user',
       account_status: 'active',
