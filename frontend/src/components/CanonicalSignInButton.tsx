@@ -7,19 +7,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AUTH_BASE_URL } from '@/utils/config';
-import { startAuthHandoff } from '@/utils/canonicalHandoff';
-
-/**
- * Cutover switch for the Auth browser handoff.
- *
- * Defaults OFF: while it is off the legacy local password form is the only way
- * in, so enabling this cannot strand an account whose Libre user has no
- * `canonical_user_id` yet. Flip it only after the migration census shows the
- * population is mapped or deliberately flagged.
- */
-export function isAuthBrowserHandoffEnabled(): boolean {
-  return import.meta.env?.VITE_AUTH_BROWSER_HANDOFF === 'true';
-}
+import {
+  isAuthBrowserHandoffEnabled,
+  startAuthHandoff,
+} from '@/utils/canonicalHandoff';
 
 export interface CanonicalSignInButtonProps {
   readonly onError?: (error: unknown) => void;

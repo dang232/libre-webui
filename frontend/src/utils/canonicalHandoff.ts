@@ -42,7 +42,23 @@ interface StoredState {
   readonly createdAt: number;
 }
 
-/** Web Crypto randomness; falls back only where the API is unavailable. */
+/**
+ * Cutover switch for the Auth browser handoff.
+ *
+ * Defaults OFF: while it is off the legacy local password form is the only way
+ * in, so enabling this cannot strand a Libre user that has no
+ * `canonical_user_id` yet. Flip it only after the migration census shows the
+ * population is mapped or deliberately flagged.
+ *
+ * Lives here rather than beside the button so that component module exports only
+ * components; a component file that also exports a plain function disables React
+ * Fast Refresh for everything in it.
+ */
+export function isAuthBrowserHandoffEnabled(): boolean {
+  return import.meta.env?.VITE_AUTH_BROWSER_HANDOFF === 'true';
+}
+
+/** Web Crypto randomness; fails closed rather than falling back to Math.random. */
 export function generateState(randomSource?: {
   getRandomValues?: (a: Uint8Array) => Uint8Array;
 }): string {

@@ -34,10 +34,8 @@ import {
 import { getPasskeyAssertion, passkeysSupported } from '@/utils/webauthnClient';
 import { GitHubAuthButton } from '@/components/GitHubAuthButton';
 import { CanonicalGoogleButton } from '@/components/CanonicalGoogleButton';
-import {
-  CanonicalSignInButton,
-  isAuthBrowserHandoffEnabled,
-} from '@/components/CanonicalSignInButton';
+import { CanonicalSignInButton } from '@/components/CanonicalSignInButton';
+import { isAuthBrowserHandoffEnabled } from '@/utils/canonicalHandoff';
 import { HuggingFaceAuthButton } from '@/components/HuggingFaceAuthButton';
 import { OidcAuthButton } from '@/components/OidcAuthButton';
 import { isDemoMode } from '@/utils/demoMode';
