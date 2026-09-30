@@ -155,6 +155,24 @@ export const authApi = {
   canonicalGoogle: (idToken: string): Promise<ApiResponse<LoginResponse>> =>
     api.post('/auth/canonical-google', { idToken }).then(res => res.data),
 
+  /**
+   * Redeems the one-time code Auth issued via GET /oidc/exchange/redirect.
+   * `redirectUri` and `state` must be the exact values Auth bound the code to;
+   * Auth rejects redemption when either is missing or does not match.
+   */
+  canonicalExchange: (
+    code: string,
+    redirectUri: string,
+    state: string
+  ): Promise<ApiResponse<LoginResponse>> =>
+    api
+      .post('/auth/canonical-exchange', {
+        code,
+        redirect_uri: redirectUri,
+        state,
+      })
+      .then(res => res.data),
+
   signup: (credentials: {
     username: string;
     password: string;

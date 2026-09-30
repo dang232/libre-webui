@@ -1,0 +1,191 @@
+/*
+ * Alcore
+ * Copyright (C) 2025 Kroonen AI, Inc.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ */
+
+/**
+ * The handoff's security property is that a callback can only be completed by
+ * the same browser tab that started it. That rests entirely on `state`, so the
+ * cases below cover both directions: a genuine callback succeeds, and every
+ * shape of forged or stale callback fails closed.
+ */
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+
+import {
+  buildAuthRedirectUrl,
+  canonicalCallbackUrl,
+  consumeHandoffState,
+  generateState,
+  HANDSOFF_STATE_TTL_MS,
+  rememberHandoffState,
+} from './canonicalHandoff.ts';
+
+/** Minimal in-memory Storage stand-in. */
+function fakeStorage() {
+  const map = new Map<string, string>();
+  return {
+    getItem: (k: string) => map.get(k) ?? null,
+    setItem: (k: string, v: string) => void map.set(k, v),
+    removeItem: (k: string) => void map.delete(k),
+    raw: map,
+  };
+}
+
+describe('canonical handoff state', () => {
+  it('generates 256 bits of hex state', () => {
+    const state = generateState();
+    assert.equal(state.length, 64);
+    assert.match(state, /^[0-9a-f]{64}$/);
+  });
+
+  it('generates a distinct state per invocation', () => {
+    const seen = new Set(Array.from({ length: 50 }, () => generateState()));
+    assert.equal(seen.size, 50);
+  });
+
+  it('refuses to fall back to insecure randomness', () => {
+    assert.throws(() => generateState({}), /secure random unavailable/);
+  });
+
+  it('accepts a matching state and consumes it', () => {
+    const storage = fakeStorage();
+    rememberHandoffState('st-good', storage, 1_000);
+    const result = consumeHandoffState('st-good', storage, 1_100);
+    assert.equal(result.ok, true);
+    assert.equal(result.reason, undefined);
+  });
+
+  it('rejects a replayed callback after the state is consumed', () => {
+    const storage = fakeStorage();
+    rememberHandoffState('st-once', storage, 1_000);
+    assert.equal(consumeHandoffState('st-once', storage, 1_100).ok, true);
+    const replay = consumeHandoffState('st-once', storage, 1_200);
+    assert.equal(replay.ok, false);
+    assert.equal(replay.reason, 'state_mismatch');
+  });
+
+  it('rejects a missing or empty state', () => {
+    const storage = fakeStorage();
+    rememberHandoffState('st-x', storage, 1_000);
+    assert.equal(
+      consumeHandoffState(null, storage, 1_100).reason,
+      'missing_state'
+    );
+    assert.equal(
+      consumeHandoffState('', storage, 1_100).reason,
+      'missing_state'
+    );
+  });
+
+  it("rejects an attacker's state when none was stored", () => {
+    const storage = fakeStorage();
+    assert.equal(
+      consumeHandoffState('st-forged', storage, 1_100).reason,
+      'state_mismatch'
+    );
+  });
+
+  it('rejects a forged state when one was stored', () => {
+    const storage = fakeStorage();
+    rememberHandoffState('st-real', storage, 1_000);
+    assert.equal(
+      consumeHandoffState('st-forged', storage, 1_100).reason,
+      'state_mismatch'
+    );
+  });
+
+  it('rejects a state older than the browser-side TTL', () => {
+    const storage = fakeStorage();
+    rememberHandoffState('st-old', storage, 1_000);
+    const result = consumeHandoffState(
+      'st-old',
+      storage,
+      1_000 + HANDSOFF_STATE_TTL_MS + 1
+    );
+    assert.equal(result.ok, false);
+    assert.equal(result.reason, 'state_expired');
+  });
+
+  it('accepts a state exactly at the TTL boundary', () => {
+    const storage = fakeStorage();
+    rememberHandoffState('st-edge', storage, 1_000);
+    assert.equal(
+      consumeHandoffState('st-edge', storage, 1_000 + HANDSOFF_STATE_TTL_MS).ok,
+      true
+    );
+  });
+
+  it('rejects a corrupted stored entry rather than trusting it', () => {
+    const storage = fakeStorage();
+    storage.setItem('alcore.canonical.handoff', 'not-json');
+    assert.equal(
+      consumeHandoffState('st-any', storage, 1_100).reason,
+      'state_mismatch'
+    );
+  });
+
+  it('rejects a stored entry with the wrong shape', () => {
+    const storage = fakeStorage();
+    storage.setItem('alcore.canonical.handoff', JSON.stringify({ value: 42 }));
+    assert.equal(
+      consumeHandoffState('st-any', storage, 1_100).reason,
+      'state_mismatch'
+    );
+  });
+});
+
+describe('canonical handoff URLs', () => {
+  it('builds the callback URL without a query or fragment', () => {
+    assert.equal(
+      canonicalCallbackUrl('https://web.alcore.io.vn'),
+      'https://web.alcore.io.vn/auth/callback'
+    );
+    assert.equal(
+      canonicalCallbackUrl('https://web.alcore.io.vn/'),
+      'https://web.alcore.io.vn/auth/callback'
+    );
+  });
+
+  it('targets the Auth redirect endpoint with audience, redirect_uri and state', () => {
+    const url = new URL(
+      buildAuthRedirectUrl(
+        'https://auth.alcore.io.vn',
+        'st-1',
+        'https://web.alcore.io.vn/auth/callback'
+      )
+    );
+    assert.equal(url.origin, 'https://auth.alcore.io.vn');
+    assert.equal(url.pathname, '/oidc/exchange/redirect');
+    assert.equal(url.searchParams.get('audience'), 'libre');
+    assert.equal(
+      url.searchParams.get('redirect_uri'),
+      'https://web.alcore.io.vn/auth/callback'
+    );
+    assert.equal(url.searchParams.get('state'), 'st-1');
+  });
+
+  it('tolerates a trailing slash on the Auth base URL', () => {
+    const url = new URL(
+      buildAuthRedirectUrl(
+        'https://auth.alcore.io.vn/',
+        'st-2',
+        'https://web.alcore.io.vn/auth/callback'
+      )
+    );
+    assert.equal(url.pathname, '/oidc/exchange/redirect');
+  });
+
+  it('escapes a state containing URL-significant characters', () => {
+    const hostile = 'a&b=c#d e';
+    const url = new URL(
+      buildAuthRedirectUrl(
+        'https://auth.alcore.io.vn',
+        hostile,
+        'https://web.alcore.io.vn/auth/callback'
+      )
+    );
+    assert.equal(url.searchParams.get('state'), hostile);
+  });
+});

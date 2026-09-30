@@ -119,6 +119,9 @@ const FirstTimeSetup = React.lazy(() =>
 
 // Import LoginPage directly (not lazy) to avoid suspense issues during auth redirects
 import { LoginPage } from '@/pages/LoginPage';
+// The Auth handoff callback is also eager: it is the return leg of a redirect
+// login and must render even while the app is still deciding what is mounted.
+import { CanonicalCallbackPage } from '@/pages/CanonicalCallbackPage';
 
 // Loading component
 const PageLoader = () => {
@@ -601,12 +604,14 @@ const AppContent: React.FC = () => {
               }
             />
             <Route path='/login' element={<LoginPage />} />
+            <Route path='/auth/callback' element={<CanonicalCallbackPage />} />
           </Routes>
         </ShellLayout>
       ) : (
         // Auth required - show routes without main layout constraining login
         <Routes>
           <Route path='/login' element={<LoginPage />} />
+          <Route path='/auth/callback' element={<CanonicalCallbackPage />} />
           <Route
             path='/*'
             element={

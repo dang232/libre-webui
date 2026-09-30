@@ -34,6 +34,10 @@ import {
 import { getPasskeyAssertion, passkeysSupported } from '@/utils/webauthnClient';
 import { GitHubAuthButton } from '@/components/GitHubAuthButton';
 import { CanonicalGoogleButton } from '@/components/CanonicalGoogleButton';
+import {
+  CanonicalSignInButton,
+  isAuthBrowserHandoffEnabled,
+} from '@/components/CanonicalSignInButton';
 import { HuggingFaceAuthButton } from '@/components/HuggingFaceAuthButton';
 import { OidcAuthButton } from '@/components/OidcAuthButton';
 import { isDemoMode } from '@/utils/demoMode';
@@ -546,7 +550,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
       {!isDemo && <CanonicalGoogleButton onSuccess={onLogin} />}
 
+      {/* Cutover: with the Auth browser handoff enabled, Libre must not handle a
+          password at all, so the password-posting canonical button below is
+          withdrawn and replaced by a redirect to Auth. */}
       {!isDemo && (
+        <CanonicalSignInButton
+          onError={() => toast.error(t('auth.login.checkCredentials'))}
+        />
+      )}
+
+      {!isDemo && !isAuthBrowserHandoffEnabled() && (
         <button
           type='button'
           disabled={isLoading || !username.includes('@') || !password}
