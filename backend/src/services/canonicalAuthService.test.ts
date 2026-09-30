@@ -148,7 +148,8 @@ test('Given valid canonical credentials, when exchanged, then returns the verifi
     transport,
     AbortSignal.timeout(1000)
   );
-  assert.equal(result, 'one-use-code');
+  assert.equal(result.ok, true);
+  assert.equal(result.ok && result.code, 'one-use-code');
   assert.deepEqual(
     calls.map(call => call.path),
     ['/auth/login', '/oidc/exchange']
@@ -160,6 +161,96 @@ test('Given valid canonical credentials, when exchanged, then returns the verifi
     `Bearer ${authBearer}`
   );
   assert.equal(calls[1]?.init.body?.toString().includes(authBearer), false);
+});
+
+test('Given Auth rejects the password, when exchanged, then reports invalid_credentials rather than a generic failure', async () => {
+  const transport = {
+    request: async (): Promise<Response> =>
+      Response.json({ error: 'invalid_credentials' }, { status: 401 }),
+  };
+  const result = await exchangeCanonicalCredentials(
+    {
+      email: 'user@example.com',
+      password: 'wrong-password-value',
+      signup: false,
+    },
+    transport,
+    AbortSignal.timeout(1000)
+  );
+  assert.equal(result.ok, false);
+  assert.equal(!result.ok && result.reason, 'invalid_credentials');
+});
+
+test('Given Auth rate-limits the login, when exchanged, then reports rate_limited instead of invalid_credentials', async () => {
+  const transport = {
+    request: async (): Promise<Response> => new Response(null, { status: 429 }),
+  };
+  const result = await exchangeCanonicalCredentials(
+    { email: 'user@example.com', password: 'private-password', signup: false },
+    transport,
+    AbortSignal.timeout(1000)
+  );
+  assert.equal(result.ok, false);
+  assert.equal(!result.ok && result.reason, 'rate_limited');
+});
+
+test('Given Auth is unavailable, when exchanged, then reports unavailable instead of invalid_credentials', async () => {
+  const transport = {
+    request: async (): Promise<Response> => new Response(null, { status: 503 }),
+  };
+  const result = await exchangeCanonicalCredentials(
+    { email: 'user@example.com', password: 'private-password', signup: false },
+    transport,
+    AbortSignal.timeout(1000)
+  );
+  assert.equal(result.ok, false);
+  assert.equal(!result.ok && result.reason, 'unavailable');
+});
+
+test('Given an unknown email, when exchanged, then reports the same reason as a wrong password', async () => {
+  const unknownEmail = {
+    request: async (): Promise<Response> =>
+      Response.json({ error: 'invalid_credentials' }, { status: 401 }),
+  };
+  const wrongPassword = {
+    request: async (): Promise<Response> =>
+      Response.json({ error: 'invalid_credentials' }, { status: 401 }),
+  };
+  const a = await exchangeCanonicalCredentials(
+    {
+      email: 'nobody@example.com',
+      password: 'private-password',
+      signup: false,
+    },
+    unknownEmail,
+    AbortSignal.timeout(1000)
+  );
+  const b = await exchangeCanonicalCredentials(
+    {
+      email: 'user@example.com',
+      password: 'wrong-password-value',
+      signup: false,
+    },
+    wrongPassword,
+    AbortSignal.timeout(1000)
+  );
+  assert.equal(a.ok, false);
+  assert.equal(b.ok, false);
+  assert.equal(!a.ok && a.reason, !b.ok && b.reason);
+});
+
+test('Given a duplicate email on register, when exchanged, then reports email_taken', async () => {
+  const transport = {
+    request: async (): Promise<Response> =>
+      Response.json({ error: 'email_taken' }, { status: 409 }),
+  };
+  const result = await exchangeCanonicalCredentials(
+    { email: 'taken@example.com', password: 'private-password', signup: true },
+    transport,
+    AbortSignal.timeout(1000)
+  );
+  assert.equal(result.ok, false);
+  assert.equal(!result.ok && result.reason, 'email_taken');
 });
 
 test('Given a Google ID token, when forwarded to Auth, then exchanges the returned session for a Libre code', async () => {

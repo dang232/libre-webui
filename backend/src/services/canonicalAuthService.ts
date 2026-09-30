@@ -136,11 +136,41 @@ const parseJson = async (
     : null;
 };
 
+/**
+ * Why an exchange failed, so 401 means bad credentials rather than also
+ * covering rate limits and Auth outages. Anti-enumeration invariant: never add
+ * a reason that separates unknown-email from wrong-password — Auth answers both
+ * with `invalid_credentials`, and that collapse is what prevents account
+ * enumeration.
+ */
+export type CanonicalAuthFailure =
+  | 'invalid_credentials'
+  | 'email_taken'
+  | 'rate_limited'
+  | 'unavailable'
+  | 'invalid_response';
+
+export type CanonicalExchangeResult =
+  | { readonly ok: true; readonly code: string }
+  | { readonly ok: false; readonly reason: CanonicalAuthFailure };
+
+export type CanonicalAssertionResult =
+  | { readonly ok: true; readonly assertion: ProductAssertion }
+  | { readonly ok: false; readonly reason: CanonicalAuthFailure };
+
+const classifyFailure = (status: number): CanonicalAuthFailure => {
+  if (status === 429) return 'rate_limited';
+  if (status === 409) return 'email_taken';
+  if (status === 400 || status === 401) return 'invalid_credentials';
+  if (status >= 500) return 'unavailable';
+  return 'invalid_response';
+};
+
 export const exchangeCanonicalCredentials = async (
   credentials: CanonicalCredentialInput,
   transport: AuthTransport,
   signal: AbortSignal
-): Promise<string | null> => {
+): Promise<CanonicalExchangeResult> => {
   let authBearer = '';
   let password = credentials.password;
   try {
@@ -151,9 +181,12 @@ export const exchangeCanonicalCredentials = async (
       body: JSON.stringify({ email: credentials.email, password }),
       signal,
     });
-    if (!response.ok) return null;
+    if (!response.ok)
+      return { ok: false, reason: classifyFailure(response.status) };
     const body = await parseJson(response);
-    if (typeof body?.['access_token'] !== 'string') return null;
+    if (typeof body?.['access_token'] !== 'string') {
+      return { ok: false, reason: 'invalid_response' };
+    }
     authBearer = body['access_token'];
     const exchange = await transport.request('/oidc/exchange', {
       method: 'POST',
@@ -167,11 +200,14 @@ export const exchangeCanonicalCredentials = async (
       }),
       signal,
     });
-    if (!exchange.ok) return null;
+    if (!exchange.ok)
+      return { ok: false, reason: classifyFailure(exchange.status) };
     const codeBody = await parseJson(exchange);
-    if (typeof codeBody?.['code'] !== 'string') return null;
+    if (typeof codeBody?.['code'] !== 'string') {
+      return { ok: false, reason: 'invalid_response' };
+    }
     authBearer = '';
-    return codeBody['code'];
+    return { ok: true, code: codeBody['code'] };
   } finally {
     authBearer = '';
     password = '';
@@ -291,17 +327,17 @@ export const forwardAlcoreGoogle = async (
 export const authenticateCanonicalPassword = async (
   credentials: CanonicalCredentialInput,
   signal: AbortSignal = AbortSignal.timeout(10_000)
-): Promise<ProductAssertion | null> => {
+): Promise<CanonicalAssertionResult> => {
   const base = authBaseUrl();
-  const code = await exchangeCanonicalCredentials(
+  const exchanged = await exchangeCanonicalCredentials(
     credentials,
     {
       request: (path, init) => fetch(`${base}${path}`, init),
     },
     signal
   );
-  if (!code) return null;
-  return consumeLibreExchangeCode(code, signal);
+  if (!exchanged.ok) return exchanged;
+  return consumeLibreExchangeCode(exchanged.code, signal);
 };
 
 export const exchangeCanonicalGoogleToken = async (
@@ -354,7 +390,7 @@ export const getCanonicalGoogleStatus = async (
 export const consumeLibreExchangeCode = async (
   code: string,
   timeoutSignal: AbortSignal = AbortSignal.timeout(10_000)
-): Promise<ProductAssertion | null> => {
+): Promise<CanonicalAssertionResult> => {
   const response = await fetch(`${authBaseUrl()}/oidc/exchange/token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -365,14 +401,25 @@ export const consumeLibreExchangeCode = async (
     }),
     signal: timeoutSignal,
   });
-  if (!response.ok) return null;
+  if (!response.ok)
+    return { ok: false, reason: classifyFailure(response.status) };
   const body = await parseJson(response);
-  if (typeof body?.['access_token'] !== 'string') return null;
+  if (typeof body?.['access_token'] !== 'string') {
+    return { ok: false, reason: 'invalid_response' };
+  }
   const secret = process.env.AUTH_JWT_SECRET || '';
-  if (secret.length === 0) return null;
-  return verifyProductAssertion(
-    body['access_token'],
-    secret,
-    process.env.AUTH_ISSUER || 'auth.alcore.io.vn'
-  );
+  if (secret.length === 0) return { ok: false, reason: 'unavailable' };
+  try {
+    const assertion = verifyProductAssertion(
+      body['access_token'],
+      secret,
+      process.env.AUTH_ISSUER || 'auth.alcore.io.vn'
+    );
+    // A signature/claim failure from our own trusted Auth is an integrity or
+    // clock/config fault, never a user credential fault.
+    if (assertion === null) return { ok: false, reason: 'invalid_response' };
+    return { ok: true, assertion };
+  } catch {
+    return { ok: false, reason: 'invalid_response' };
+  }
 };

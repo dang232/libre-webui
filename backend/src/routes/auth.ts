@@ -98,7 +98,10 @@ import {
   forwardAlcoreGoogle,
   forwardAlcorePassword,
 } from '../services/canonicalAuthService.js';
-import type { ProductAssertion } from '../services/canonicalAuthService.js';
+import type {
+  ProductAssertion,
+  CanonicalAuthFailure,
+} from '../services/canonicalAuthService.js';
 
 const router = express.Router();
 const logger = createLogger('auth-routes');
@@ -186,6 +189,34 @@ const generalAuthRateLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const canonicalFailureStatus = (
+  reason: CanonicalAuthFailure,
+  mode: 'login' | 'signup'
+): { status: number; message: string } => {
+  switch (reason) {
+    case 'invalid_credentials':
+      return mode === 'signup'
+        ? { status: 400, message: 'Email or password is not acceptable' }
+        : { status: 401, message: 'Invalid credentials' };
+    case 'email_taken':
+      return {
+        status: 409,
+        message: 'An account already exists for this email',
+      };
+    case 'rate_limited':
+      return {
+        status: 429,
+        message: 'Too many authentication attempts, please try again later',
+      };
+    case 'unavailable':
+    case 'invalid_response':
+      return {
+        status: 502,
+        message: 'Authentication service is temporarily unavailable',
+      };
+  }
+};
+
 router.post('/canonical-password', loginRateLimiter, async (req, res) => {
   res.set('Cache-Control', 'no-store');
   const body = req.body ?? {};
@@ -215,15 +246,18 @@ router.post('/canonical-password', loginRateLimiter, async (req, res) => {
     // authenticateCanonicalPassword already consumed the one-use code and
     // verified the assertion, so the session is completed from the assertion.
     // Re-entering the code exchange here would hand it a non-string body.
-    const assertion = await authenticateCanonicalPassword(credentials);
-    if (!assertion) {
-      res.status(401).json({
-        success: false,
-        message: 'Invalid credentials or canonical authentication unavailable',
-      });
+    const exchanged = await authenticateCanonicalPassword(credentials);
+    if (!exchanged.ok) {
+      const mapped = canonicalFailureStatus(exchanged.reason, 'login');
+      if (mapped.status >= 500) {
+        logger.error('Canonical login upstream failure', exchanged.reason);
+      }
+      res
+        .status(mapped.status)
+        .json({ success: false, message: mapped.message });
       return;
     }
-    await respondWithCanonicalSession(assertion, req, res);
+    await respondWithCanonicalSession(exchanged.assertion, req, res);
   } catch (error) {
     logger.error(
       'Canonical password authentication failed',
@@ -316,15 +350,18 @@ router.post('/canonical-signup', signupRateLimiter, async (req, res) => {
     }
     const credentials = { email: email.trim(), password, signup: true };
     password = '';
-    const assertion = await authenticateCanonicalPassword(credentials);
-    if (!assertion) {
-      res.status(409).json({
-        success: false,
-        message: 'Canonical account could not be created',
-      });
+    const exchanged = await authenticateCanonicalPassword(credentials);
+    if (!exchanged.ok) {
+      const mapped = canonicalFailureStatus(exchanged.reason, 'signup');
+      if (mapped.status >= 500) {
+        logger.error('Canonical signup upstream failure', exchanged.reason);
+      }
+      res
+        .status(mapped.status)
+        .json({ success: false, message: mapped.message });
       return;
     }
-    await respondWithCanonicalSession(assertion, req, res);
+    await respondWithCanonicalSession(exchanged.assertion, req, res);
   } catch (error) {
     logger.error(
       'Canonical signup failed',
@@ -389,14 +426,22 @@ const handleCanonicalExchange = async (
     return;
   }
   try {
-    const assertion = await consumeLibreExchangeCode(code);
-    if (!assertion) {
-      res
-        .status(401)
-        .json({ success: false, message: 'Invalid or expired exchange code' });
+    const exchanged = await consumeLibreExchangeCode(code);
+    if (!exchanged.ok) {
+      const upstream =
+        exchanged.reason === 'unavailable' ||
+        exchanged.reason === 'invalid_response';
+      if (upstream)
+        logger.error('Canonical exchange upstream failure', exchanged.reason);
+      res.status(upstream ? 502 : 401).json({
+        success: false,
+        message: upstream
+          ? 'Authentication service is temporarily unavailable'
+          : 'Invalid or expired exchange code',
+      });
       return;
     }
-    await respondWithCanonicalSession(assertion, req, res);
+    await respondWithCanonicalSession(exchanged.assertion, req, res);
   } catch (error) {
     logger.error('Canonical authentication exchange failed', error);
     res.status(502).json({
