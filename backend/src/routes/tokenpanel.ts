@@ -45,6 +45,10 @@ import {
   recordAuditEvent,
 } from '../services/securityAuditService.js';
 import { forwardOrMintIdempotencyKey } from '../utils/idempotencyKey.js';
+import {
+  requireBffAuthSession,
+  sessionBearerOf,
+} from '../services/tokenpanelAuthSessionService.js';
 import { createLogger } from '../utils/logger.js';
 
 const logger = createLogger('routes:tokenpanel');
@@ -62,7 +66,7 @@ const tokenpanelRateLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-router.use(tokenpanelRateLimiter, authenticate);
+router.use(tokenpanelRateLimiter, authenticate, requireBffAuthSession);
 
 // Secret-adjacent surface: nothing here may be cached or stored.
 router.use((_req, res, next) => {
@@ -83,6 +87,14 @@ const getClientIp = (req: express.Request): string | undefined => {
 };
 
 const KEY_ID_PATTERN = /^[0-9a-fA-F]{24}$/;
+
+/**
+ * Caller session bearer for the Auth-session upstream path (gap2-bff).
+ * Null in local mode callers without session auth; services ignore it in
+ * local mode, so local behavior is byte-identical.
+ */
+const sessionTokenOf = (req: AuthenticatedRequest): string | undefined =>
+  sessionBearerOf(req) ?? undefined;
 
 const fail = (res: express.Response, error: unknown): void => {
   if (error instanceof TokenpanelCustomerError) {
@@ -317,6 +329,7 @@ router.get('/keys', async (req: AuthenticatedRequest, res) => {
     const upstream = await callTokenpanelAsCustomer(userId, '/keys', {
       method: 'GET',
       ...(query !== '' ? { query } : {}),
+      sessionToken: sessionTokenOf(req),
     });
     passThrough(res, upstream);
   } catch (error) {
@@ -347,6 +360,7 @@ router.post('/keys', async (req: AuthenticatedRequest, res) => {
       method: 'POST',
       body,
       idempotencyKey: keyOr.key,
+      sessionToken: sessionTokenOf(req),
     });
     if (upstream.status >= 200 && upstream.status < 300) {
       auditKeyOp(req, 'tokenpanel.key.create', 'success', {});
@@ -385,7 +399,11 @@ router.post('/keys/:id/reveal', async (req: AuthenticatedRequest, res) => {
     const upstream = await callTokenpanelAsCustomer(
       userId,
       `/keys/${keyId}/reveal`,
-      { method: 'POST', idempotencyKey: keyOr.key }
+      {
+        method: 'POST',
+        idempotencyKey: keyOr.key,
+        sessionToken: sessionTokenOf(req),
+      }
     );
     if (upstream.status >= 200 && upstream.status < 300) {
       auditKeyOp(req, 'tokenpanel.key.reveal', 'success', { keyId });
@@ -431,6 +449,7 @@ router.patch('/keys/:id', async (req: AuthenticatedRequest, res) => {
       method: 'PATCH',
       body,
       idempotencyKey: keyOr.key,
+      sessionToken: sessionTokenOf(req),
     });
     passThrough(res, upstream);
   } catch (error) {
@@ -468,6 +487,7 @@ router.delete('/keys/:id', async (req: AuthenticatedRequest, res) => {
       {
         method: 'DELETE',
         idempotencyKey: keyOr.key,
+        sessionToken: sessionTokenOf(req),
       }
     );
     if (upstream.status >= 200 && upstream.status < 300) {
@@ -513,6 +533,7 @@ router.post('/keys/:id/rotate', async (req: AuthenticatedRequest, res) => {
       {
         method: 'POST',
         idempotencyKey: keyOr.key,
+        sessionToken: sessionTokenOf(req),
       }
     );
     if (upstream.status >= 200 && upstream.status < 300) {
@@ -542,6 +563,7 @@ router.get('/projects', async (req: AuthenticatedRequest, res) => {
   try {
     const upstream = await callTokenpanelAsCustomer(userId, '/me/projects', {
       method: 'GET',
+      sessionToken: sessionTokenOf(req),
     });
     passThrough(res, upstream);
   } catch (error) {

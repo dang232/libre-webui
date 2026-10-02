@@ -158,6 +158,9 @@ const encryptLegacyText = (plaintext, keyHex) => {
 
 const removeDurableJobsMigration = database => {
   database.exec(`
+    DELETE FROM _libre_schema_migrations WHERE version = 32;
+    DROP INDEX IF EXISTS idx_users_auth_subject;
+    ALTER TABLE users DROP COLUMN auth_subject;
     DELETE FROM _libre_schema_migrations WHERE version = 31;
     DROP INDEX idx_users_canonical_user_id;
     DROP TABLE canonical_identity_conflicts;
@@ -1125,7 +1128,7 @@ test('released v0.21.3 main SQLite state upgrades through startup', t => {
     );
     assert.deepEqual(
       firstLedger.map(row => row.version),
-      Array.from({ length: 31 }, (_, index) => index + 1),
+      Array.from({ length: 32 }, (_, index) => index + 1),
       'the adopted ledger must be canonical, contiguous, and complete'
     );
     assert.ok(
@@ -1136,8 +1139,8 @@ test('released v0.21.3 main SQLite state upgrades through startup', t => {
     assert.deepEqual(migrations.preflightSQLiteMigrationLedger(upgraded), {
       dialect: 'sqlite',
       status: 'compatible',
-      currentVersion: 31,
-      targetVersion: 31,
+      currentVersion: 32,
+      targetVersion: 32,
       minimumSupportedVersion: 1,
     });
   } finally {
@@ -1180,8 +1183,8 @@ test('released v0.21.3 main SQLite state upgrades through startup', t => {
     assert.deepEqual(migrations.preflightSQLiteMigrationLedger(reopened), {
       dialect: 'sqlite',
       status: 'compatible',
-      currentVersion: 31,
-      targetVersion: 31,
+      currentVersion: 32,
+      targetVersion: 32,
       minimumSupportedVersion: 1,
     });
   } finally {
@@ -1336,7 +1339,7 @@ test('legacy SQLite schema is adopted into immutable checksummed migrations', t 
     'released migration v18 DDL and checksum must stay immutable'
   );
 
-  assert.equal(migrations.getSchemaCompatibilityState().targetVersion, 31);
+  assert.equal(migrations.getSchemaCompatibilityState().targetVersion, 32);
   assert.deepEqual(
     migrations.inspectSQLiteSchema(database).appliedMigrations.map(row => ({
       version: row.version,
@@ -1562,6 +1565,13 @@ test('legacy SQLite schema is adopted into immutable checksummed migrations', t 
           '71afc7d24fa960eb174c2f5cfd948bb545cd6de2b44b53933a671d8fbc8d79b4',
         checksumMatches: true,
       },
+      {
+        version: 32,
+        name: 'alcore-auth-subject',
+        checksum:
+          '764b126abe8d77d8b29e616d2f2e9da1ed3ec39c4a120797fed9ccddc48df001',
+        checksumMatches: true,
+      },
     ]
   );
   assert.deepEqual(
@@ -1576,15 +1586,15 @@ test('legacy SQLite schema is adopted into immutable checksummed migrations', t 
   assert.deepEqual(migrations.runSQLiteMigrationCoordinator(database), {
     dialect: 'sqlite',
     status: 'compatible',
-    currentVersion: 31,
-    targetVersion: 31,
+    currentVersion: 32,
+    targetVersion: 32,
     minimumSupportedVersion: 1,
   });
   assert.equal(
     database
       .prepare('SELECT COUNT(*) AS count FROM _libre_schema_migrations')
       .get().count,
-    31
+    32
   );
 
   migrations.runSQLiteMigrationCoordinator(database);
@@ -1592,7 +1602,7 @@ test('legacy SQLite schema is adopted into immutable checksummed migrations', t 
     database
       .prepare('SELECT COUNT(*) AS count FROM _libre_schema_migrations')
       .get().count,
-    31
+    32
   );
 });
 
@@ -1605,6 +1615,9 @@ test('v13 installs and inspects the subject-filtered event replay index', t => {
   t.after(() => database.close());
 
   database.exec(`
+    DELETE FROM _libre_schema_migrations WHERE version = 32;
+    DROP INDEX IF EXISTS idx_users_auth_subject;
+    ALTER TABLE users DROP COLUMN auth_subject;
     DELETE FROM _libre_schema_migrations WHERE version = 31;
     DROP INDEX idx_users_canonical_user_id;
     DROP TABLE canonical_identity_conflicts;
@@ -1703,13 +1716,13 @@ test('v13 installs and inspects the subject-filtered event replay index', t => {
     dialect: 'sqlite',
     status: 'migrating',
     currentVersion: 12,
-    targetVersion: 31,
+    targetVersion: 32,
     minimumSupportedVersion: 1,
   });
 
   assert.equal(
     migrations.runSQLiteMigrationCoordinator(database).currentVersion,
-    31
+    32
   );
   assert.deepEqual(
     database
@@ -1740,6 +1753,9 @@ test('v18 preflight permits the team collaboration migration', t => {
   });
 
   database.exec(`
+    DELETE FROM _libre_schema_migrations WHERE version = 32;
+    DROP INDEX IF EXISTS idx_users_auth_subject;
+    ALTER TABLE users DROP COLUMN auth_subject;
     DELETE FROM _libre_schema_migrations WHERE version = 31;
     DROP INDEX idx_users_canonical_user_id;
     DROP TABLE canonical_identity_conflicts;
@@ -1809,12 +1825,12 @@ test('v18 preflight permits the team collaboration migration', t => {
     dialect: 'sqlite',
     status: 'migrating',
     currentVersion: 18,
-    targetVersion: 31,
+    targetVersion: 32,
     minimumSupportedVersion: 1,
   });
   assert.equal(
     migrations.runSQLiteMigrationCoordinator(database).currentVersion,
-    31
+    32
   );
   assert.deepEqual(
     database
@@ -1863,8 +1879,8 @@ test('historical v13 checksum is repaired only for the canonical replay index', 
   assert.deepEqual(migrations.preflightSQLiteMigrationLedger(database), {
     dialect: 'sqlite',
     status: 'migrating',
-    currentVersion: 31,
-    targetVersion: 31,
+    currentVersion: 32,
+    targetVersion: 32,
     minimumSupportedVersion: 1,
   });
   assert.deepEqual(
@@ -1876,8 +1892,8 @@ test('historical v13 checksum is repaired only for the canonical replay index', 
   assert.deepEqual(migrations.runSQLiteMigrationCoordinator(database), {
     dialect: 'sqlite',
     status: 'compatible',
-    currentVersion: 31,
-    targetVersion: 31,
+    currentVersion: 32,
+    targetVersion: 32,
     minimumSupportedVersion: 1,
   });
   const afterRows = database
@@ -2035,8 +2051,8 @@ test('recognized v2 and v13 checksum repairs commit atomically', t => {
   assert.deepEqual(migrations.runSQLiteMigrationCoordinator(database), {
     dialect: 'sqlite',
     status: 'compatible',
-    currentVersion: 31,
-    targetVersion: 31,
+    currentVersion: 32,
+    targetVersion: 32,
     minimumSupportedVersion: 1,
   });
   const repaired = database
@@ -2069,7 +2085,7 @@ test('v8 startup preserves user-owned and durable state through v9-v14', t => {
     dialect: 'sqlite',
     status: 'migrating',
     currentVersion: 8,
-    targetVersion: 31,
+    targetVersion: 32,
     minimumSupportedVersion: 1,
   });
 
@@ -2346,8 +2362,8 @@ test('v8 startup preserves user-owned and durable state through v9-v14', t => {
   assert.deepEqual(migrations.preflightSQLiteMigrationLedger(migrated), {
     dialect: 'sqlite',
     status: 'compatible',
-    currentVersion: 31,
-    targetVersion: 31,
+    currentVersion: 32,
+    targetVersion: 32,
     minimumSupportedVersion: 1,
   });
 });
@@ -2371,11 +2387,11 @@ test('vector schema is installed only through checksummed migration v2', t => {
   assert.equal(before.currentVersion, 1);
   assert.equal(before.status, 'migrating');
   assert.equal(before.compatible, false);
-  assert.match(before.reason, /requires migration to version 31/);
+  assert.match(before.reason, /requires migration to version 32/);
   assert.ok(before.missing.includes('platform_vector_entries (table)'));
 
   const migrated = migrations.runSQLiteMigrationCoordinator(database);
-  assert.equal(migrated.currentVersion, 31);
+  assert.equal(migrated.currentVersion, 32);
   assert.equal(migrated.status, 'compatible');
   assert.equal(migrations.inspectSQLiteSchema(database).missing.length, 0);
 });
@@ -2410,7 +2426,7 @@ test('historical vector checksum is repaired only in the atomic live coordinator
     dialect: 'sqlite',
     status: 'migrating',
     currentVersion: 2,
-    targetVersion: 31,
+    targetVersion: 32,
     minimumSupportedVersion: 1,
   });
   assert.deepEqual(
@@ -2422,8 +2438,8 @@ test('historical vector checksum is repaired only in the atomic live coordinator
   assert.deepEqual(migrations.runSQLiteMigrationCoordinator(database), {
     dialect: 'sqlite',
     status: 'compatible',
-    currentVersion: 31,
-    targetVersion: 31,
+    currentVersion: 32,
+    targetVersion: 32,
     minimumSupportedVersion: 1,
   });
   const repaired = database
@@ -2433,7 +2449,7 @@ test('historical vector checksum is repaired only in the atomic live coordinator
         ORDER BY version`
     )
     .all();
-  assert.equal(repaired.length, 31);
+  assert.equal(repaired.length, 32);
   assert.equal(repaired[1].checksum, migrationChecksum(2));
   assert.equal(repaired[1].applied_at, appliedAt);
   assert.equal(
@@ -2470,8 +2486,8 @@ test('historical vector checksum repairs under coherent later ledger rows', t =>
   assert.deepEqual(migrations.preflightSQLiteMigrationLedger(database), {
     dialect: 'sqlite',
     status: 'migrating',
-    currentVersion: 31,
-    targetVersion: 31,
+    currentVersion: 32,
+    targetVersion: 32,
     minimumSupportedVersion: 1,
   });
   assert.deepEqual(fs.readFileSync(databasePath), beforeBytes);

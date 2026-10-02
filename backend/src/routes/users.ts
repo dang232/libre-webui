@@ -24,10 +24,35 @@ import {
   AuthenticatedRequest,
 } from '../middleware/auth.js';
 import workAgentService from '../services/workAgentService.js';
+import { rejectLocalAuthInAlcoreMode } from '../config/authMode.js';
 import { createLogger } from '../utils/logger.js';
 import { validatePasswordStrength } from '../utils/hash.js';
 
 const logger = createLogger('routes:users');
+
+/**
+ * Self-hosted vs Alcore-managed auth boundary (todo 41). In Alcore mode the
+ * local password-issuance admin routes below return the same identical 404
+ * as the /api/auth local routes (no oracle); product profile administration
+ * (list, approve, avatar, role, delete) is unaffected. Mounted per-route so
+ * non-credential admin work keeps working in both modes.
+ */
+const rejectPasswordWriteInAlcoreMode: express.RequestHandler = (
+  req,
+  res,
+  next
+) => {
+  if (
+    req.body &&
+    typeof req.body === 'object' &&
+    'password' in req.body &&
+    (req.body as { password?: unknown }).password !== undefined
+  ) {
+    rejectLocalAuthInAlcoreMode(req, res, next);
+    return;
+  }
+  next();
+};
 
 const router = express.Router();
 
@@ -99,6 +124,7 @@ router.get(
 router.post(
   '/',
   userRateLimiter,
+  rejectLocalAuthInAlcoreMode,
   authenticate,
   requireAdmin,
   async (req: AuthenticatedRequest, res) => {
@@ -278,6 +304,7 @@ router.patch(
 router.post(
   '/:id/mfa/reset',
   userRateLimiter,
+  rejectLocalAuthInAlcoreMode,
   authenticate,
   requireAdmin,
   async (req: AuthenticatedRequest, res) => {
@@ -319,6 +346,7 @@ router.post(
 router.patch(
   '/:id',
   userRateLimiter,
+  rejectPasswordWriteInAlcoreMode,
   authenticate,
   requireAdmin,
   async (req: AuthenticatedRequest, res) => {

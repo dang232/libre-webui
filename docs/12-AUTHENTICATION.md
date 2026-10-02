@@ -40,6 +40,28 @@ Local signup requires:
 
 Passwords are hashed with bcrypt before storage. Login and signup routes are rate-limited.
 
+## Alcore Auth Mode
+
+Set `ALCORE_AUTH_MODE=alcore` to delegate sign-in to the canonical Auth
+service. Local password, signup, OAuth, MFA, and passkey issuance routes
+return `404 LOCAL_AUTH_DISABLED`; already-minted product sessions keep
+working. Generic self-hosted installs stay on `local` (the default), where
+the Auth relying-party routes answer `404 ALCORE_AUTH_ONLY`.
+
+Auth verifies passwords directly; Libre never sees them. The sign-in panel
+posts the email and password browser→Auth, fetches the opaque single-use
+product code, discards the Auth access token, and hands only the code to the
+BFF. The BFF redeems the opaque single-use product code server-to-server
+(`POST /api/auth/alcore/exchange`), loads or creates the local profile by
+the canonical Auth subject, and mints only a Libre product session.
+`lwk_*` product tokens never sign in, and Auth refresh credentials never
+reach Libre. Point the BFF at Auth with:
+
+```env
+ALCORE_AUTH_URL=https://auth.alcore.io.vn
+ALCORE_AUTH_ISSUER=https://auth.alcore.io.vn
+```
+
 ## Managing Users
 
 Administrators open **Settings → User Management** to manage the instance.

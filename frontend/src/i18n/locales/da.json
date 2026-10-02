@@ -189,6 +189,23 @@
       "removeFailed": "Adgangsnøglen kunne ikke fjernes.",
       "signInButton": "Log ind med en adgangsnøgle",
       "signInFailed": "Login med adgangsnøgle mislykkedes."
+    },
+    "alcore": {
+      "title": "This server uses Alcore Auth for sign-in.",
+      "body": "Local username, password, and social sign-in are disabled here. Auth sign-in is wired up separately.",
+      "continue": "Continue with Auth",
+      "pending": "Auth sign-in arrives separately (todo 45).",
+      "signIn": "Sign in with Auth",
+      "signUp": "Sign up with Auth",
+      "sendReset": "Send reset link",
+      "backToLogin": "Back to sign in",
+      "haveAccount": "Have an account? Sign in",
+      "needAccount": "New here? Create an account",
+      "forgot": "Forgot password?",
+      "resetSent": "If the address exists, a reset link is on its way.",
+      "email": "Email",
+      "password": "Password",
+      "completing": "Completing Auth sign-in…"
     }
   },
   "setup": {

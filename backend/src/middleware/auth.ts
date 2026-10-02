@@ -145,6 +145,12 @@ const authenticateWithApiToken = async (
 /**
  * Authentication middleware. Accepts a session-bound JWT or a scoped
  * personal API token (prefix `lwk_`).
+ *
+ * Product-only boundary (todo 41): `lwk_*` tokens authorize product routes
+ * only and are rejected on `/api/auth` (see FORBIDDEN_PREFIXES in
+ * apiTokenService). An Auth identity alone never yields product
+ * authorization — every request here still requires a valid Libre session
+ * JWT (bound to a server-side auth session) or a scoped API token.
  */
 export const authenticate = async (
   req: AuthenticatedRequest,

@@ -25,6 +25,7 @@ import { Clock3, Eye, EyeOff, UserPlus } from 'lucide-react';
 import { GitHubAuthButton } from '@/components/GitHubAuthButton';
 import { CanonicalGoogleButton } from '@/components/CanonicalGoogleButton';
 import { TurnstileWidget } from '@/components/TurnstileWidget';
+import { AlcoreAuthNotice } from '@/components/AlcoreAuthNotice';
 import { cn } from '@/utils';
 import { createLogger } from '@/utils/logger';
 import { getPasswordPolicyError } from '@/utils/passwordPolicy';
@@ -37,12 +38,14 @@ interface SignupFormProps {
   onBackToLogin?: () => void;
   /** Drops the card chrome so a page can supply its own framing. */
   bare?: boolean;
+  alcoreMode?: boolean;
 }
 
 export const SignupForm: React.FC<SignupFormProps> = ({
   onSignup,
   onBackToLogin,
   bare = false,
+  alcoreMode = false,
 }) => {
   const { t } = useTranslation();
   const [username, setUsername] = useState('');
@@ -141,6 +144,8 @@ export const SignupForm: React.FC<SignupFormProps> = ({
       }
     }
   };
+
+  if (alcoreMode) return <AlcoreAuthNotice />;
 
   if (approvalPending) {
     return (

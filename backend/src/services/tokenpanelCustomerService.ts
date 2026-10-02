@@ -32,6 +32,7 @@ import {
   TokenpanelBridgeError,
   exchangePortalToken,
 } from './tokenpanelBridgeService.js';
+import { isAlcoreAuthMode } from '../config/authMode.js';
 import { createLogger } from '../utils/logger.js';
 
 const logger = createLogger('services:tokenpanel-customer');
@@ -60,6 +61,13 @@ export interface CustomerCallOptions {
   query?: string;
   /** Client replay key, forwarded as Idempotency-Key (todo 23 owns E2E). */
   idempotencyKey?: string;
+  /**
+   * Caller Auth-derived Libre session JWT (gap2-bff, R-BFF1). In Alcore mode
+   * the BFF tries this bearer upstream first (zero bridge calls on success)
+   * and falls back to the bridge mint on upstream 401. Ignored in local
+   * mode, where the bridge path below runs byte-identically to today.
+   */
+  sessionToken?: string;
 }
 
 export interface CustomerCallResult {
@@ -78,12 +86,39 @@ const asRecord = (body: unknown): Record<string, unknown> =>
  * statuses are returned (never thrown) so routes can pass 404/409/422/429
  * through; upstream 401 means the customer grant is invalid and is thrown
  * so the route answers 401 and the browser invalidates the session.
+ *
+ * Gap2-bff (R-BFF1): in Alcore mode with `options.sessionToken`, the
+ * caller's Auth-derived session is tried upstream first (zero bridge calls
+ * on success); on upstream 401 the bridge mint below runs as flag-gated
+ * fallback and the retry result stands. Local mode always takes the bridge
+ * path byte-identically to today.
  */
 export const callTokenpanelAsCustomer = async (
   userId: string,
   path: string,
   options?: CustomerCallOptions
 ): Promise<CustomerCallResult> => {
+  const authBearer =
+    isAlcoreAuthMode() &&
+    typeof options?.sessionToken === 'string' &&
+    options.sessionToken.length > 0
+      ? options.sessionToken
+      : null;
+  if (authBearer !== null) {
+    try {
+      return await customerCall(authBearer, path, options);
+    } catch (error) {
+      if (!(error instanceof TokenpanelCustomerError) || error.status !== 401) {
+        throw error;
+      }
+      logger.warn(
+        'TokenPanel Auth-session upstream denied, using bridge fallback',
+        {
+          path,
+        }
+      );
+    }
+  }
   let customerToken: string;
   try {
     const grant = await exchangePortalToken(
@@ -105,6 +140,19 @@ export const callTokenpanelAsCustomer = async (
     );
   }
 
+  return customerCall(customerToken, path, options);
+};
+
+/**
+ * One upstream `/public/customers/*` call with an already-resolved bearer.
+ * The bearer is either the caller's Auth-derived session (Alcore mode) or
+ * the bridge-minted customer JWT; the management key never appears here.
+ */
+const customerCall = async (
+  customerToken: string,
+  path: string,
+  options?: CustomerCallOptions
+): Promise<CustomerCallResult> => {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15_000);
   try {

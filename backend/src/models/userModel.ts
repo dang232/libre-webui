@@ -17,6 +17,7 @@
 
 import bcrypt from 'bcryptjs';
 import { getPersistence } from '../persistence/index.js';
+import { normalizeAuthSubject } from '../config/authMode.js';
 import { encryptionService } from '../services/encryptionService.js';
 import { transactionalIdentityDeletionEnqueuer } from '../platform/jobs/identityDeletionEnqueuer.js';
 import type {
@@ -26,6 +27,7 @@ import type {
   IdentityUserRecord,
   Persistence,
 } from '../persistence/index.js';
+import { isPublicRegistrationEnabled } from '../services/registrationPolicy.js';
 import { randomUUID } from 'node:crypto';
 
 export type AccountStatus = IdentityAccountStatus;
@@ -38,6 +40,7 @@ export interface UserCreateData {
   role: 'admin' | 'user';
   accountStatus?: AccountStatus;
   avatar?: string | null;
+  authSubject?: string | null;
 }
 
 export interface UserUpdateData {
@@ -101,6 +104,95 @@ export class UserModel {
     return this.persistenceProvider().repositories.identity.findByUsername(
       username
     );
+  }
+
+  getUserByAuthSubject(subject: string): Promise<User | null> {
+    const canonical = normalizeAuthSubject(subject);
+    if (!canonical) return Promise.resolve(null);
+    const repositories = this.persistenceProvider().repositories;
+    if (typeof repositories.identity.findByAuthSubject !== 'function') {
+      return Promise.resolve(null);
+    }
+    return repositories.identity.findByAuthSubject(canonical);
+  }
+
+  /**
+   * Resolve an Alcore Auth subject to its Libre user, creating an
+   * Auth-provisioned account on first sight. The join key is the canonical
+   * issuer-plus-subject pair (`issuer|subject`); malformed keys throw
+   * fail-closed and never fall back to email. The Libre `id` stays a fresh
+   * randomUUID and every conversation/setting keyed by it is preserved.
+   * Email-only merge is forbidden: when another account already owns the
+   * email the call throws instead of linking (simpleOidcOAuth email-in-use
+   * precedent). The provisioned password is an unusable random secret —
+   * Libre keeps bcryptjs cost 12 and never rehashes on login.
+   */
+  async findOrCreateByAuthSubject(input: {
+    subject: string;
+    username: string;
+    email?: string | null;
+  }): Promise<UserPublic> {
+    const canonical = normalizeAuthSubject(input.subject);
+    if (!canonical) throw new Error('An Auth issuer and subject are required');
+    const existing = await this.getUserByAuthSubject(canonical);
+    if (existing) {
+      const publicUser = await this.getUserById(existing.id);
+      if (!publicUser) throw new Error('The linked account no longer exists');
+      return publicUser;
+    }
+    const email =
+      input.email === undefined || input.email === null
+        ? null
+        : input.email.trim() || null;
+    if (email && (await this.emailExists(email))) {
+      throw new Error('An account with this email already exists');
+    }
+    let username = input.username.trim() || `alcore_${canonical.slice(0, 24)}`;
+    username = username.replace(/[^A-Za-z0-9._-]/g, '_').slice(0, 48);
+    let candidate = username;
+    let counter = 1;
+    while (await this.usernameExists(candidate)) {
+      candidate = `${username}_${counter}`;
+      counter += 1;
+    }
+    const created = await this.createPublicUser(
+      {
+        username: candidate,
+        email,
+        password: `alcore:${randomUUID()}:${randomUUID()}`,
+      },
+      isPublicRegistrationEnabled()
+    );
+    if (!created) throw new Error('Account creation failed');
+    await this.persistenceProvider().repositories.identity.update(created.id, {
+      authSubject: canonical,
+      updatedAt: Date.now(),
+    });
+    const linked = await this.getUserById(created.id);
+    if (!linked) throw new Error('The linked account no longer exists');
+    return linked;
+  }
+
+  /**
+   * Attach an Auth subject to an existing user. The key must be the
+   * canonical issuer-plus-subject pair; malformed keys throw fail-closed.
+   * Throws when the subject is already mapped to a different user;
+   * re-attaching to the same user is a no-op. Never merges by email.
+   */
+  async linkAuthSubject(userId: string, subject: string): Promise<void> {
+    const canonical = normalizeAuthSubject(subject);
+    if (!canonical) throw new Error('An Auth issuer and subject are required');
+    const existing = await this.getUserByAuthSubject(canonical);
+    if (existing) {
+      if (existing.id === userId) return;
+      throw new Error('This Auth identity is already linked to an account');
+    }
+    const updated =
+      await this.persistenceProvider().repositories.identity.update(userId, {
+        authSubject: canonical,
+        updatedAt: Date.now(),
+      });
+    if (!updated) throw new Error('The account to link no longer exists');
   }
 
   async createUser(userData: UserCreateData): Promise<UserPublic> {
@@ -273,6 +365,7 @@ export class UserModel {
       canonical_user_id: null,
       created_at: now,
       updated_at: now,
+      auth_subject: userData.authSubject ?? null,
     };
 
     return user;

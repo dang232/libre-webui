@@ -173,14 +173,12 @@ export interface SystemInfo {
   userCount: number;
   signupEnabled: boolean;
   agentsEnabled: boolean;
-  /** True when at least one passkey is registered system-wide. */
   passkeysInUse: boolean;
-  /** False when the admin disabled the Ollama provider entirely. */
   ollamaEnabled: boolean;
   version?: string;
   turnstile: TurnstilePublicConfig;
-  /** Administrator-chosen theme for the sign-in page and new accounts. */
   defaultTheme: ThemePreference;
+  authMode: 'local' | 'alcore';
 }
 
 export class AuthService {
@@ -314,6 +312,7 @@ export class AuthService {
    */
   async getSystemInfo(): Promise<SystemInfo> {
     const userCount = await userModel.getUserCount();
+    const { getAuthMode } = await import('../config/authMode.js');
 
     return {
       requiresAuth: true, // For now, always require auth
@@ -326,6 +325,7 @@ export class AuthService {
       version: packageVersion,
       turnstile: turnstileService.getPublicConfig(),
       defaultTheme: await getDefaultTheme(),
+      authMode: getAuthMode(),
     };
   }
 
