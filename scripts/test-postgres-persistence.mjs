@@ -231,7 +231,7 @@ assert.equal(POSTGRES_MIGRATIONS.at(-1)?.version, 31);
 assert.equal(POSTGRES_MIGRATIONS.at(-1)?.name, 'alcore-auth-subject');
 assert.match(
   POSTGRES_MIGRATIONS.at(-1)?.sql ?? '',
-  /ALTER TABLE users ADD COLUMN IF NOT EXISTS auth_subject text;/
+  /ALTER TABLE users ADD COLUMN auth_subject text;/
 );
 assert.match(
   POSTGRES_MIGRATIONS.at(-1)?.sql ?? '',

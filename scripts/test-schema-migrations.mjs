@@ -1128,7 +1128,7 @@ test('released v0.21.3 main SQLite state upgrades through startup', t => {
     );
     assert.deepEqual(
       firstLedger.map(row => row.version),
-      Array.from({ length: 31 }, (_, index) => index + 1),
+      Array.from({ length: 32 }, (_, index) => index + 1),
       'the adopted ledger must be canonical, contiguous, and complete'
     );
     assert.ok(
@@ -1339,7 +1339,7 @@ test('legacy SQLite schema is adopted into immutable checksummed migrations', t 
     'released migration v18 DDL and checksum must stay immutable'
   );
 
-  assert.equal(migrations.getSchemaCompatibilityState().targetVersion, 31);
+  assert.equal(migrations.getSchemaCompatibilityState().targetVersion, 32);
   assert.deepEqual(
     migrations.inspectSQLiteSchema(database).appliedMigrations.map(row => ({
       version: row.version,
@@ -1722,7 +1722,7 @@ test('v13 installs and inspects the subject-filtered event replay index', t => {
 
   assert.equal(
     migrations.runSQLiteMigrationCoordinator(database).currentVersion,
-    31
+    32
   );
   assert.deepEqual(
     database
@@ -1830,7 +1830,7 @@ test('v18 preflight permits the team collaboration migration', t => {
   });
   assert.equal(
     migrations.runSQLiteMigrationCoordinator(database).currentVersion,
-    31
+    32
   );
   assert.deepEqual(
     database
@@ -2387,11 +2387,11 @@ test('vector schema is installed only through checksummed migration v2', t => {
   assert.equal(before.currentVersion, 1);
   assert.equal(before.status, 'migrating');
   assert.equal(before.compatible, false);
-  assert.match(before.reason, /requires migration to version 31/);
+  assert.match(before.reason, /requires migration to version 32/);
   assert.ok(before.missing.includes('platform_vector_entries (table)'));
 
   const migrated = migrations.runSQLiteMigrationCoordinator(database);
-  assert.equal(migrated.currentVersion, 31);
+  assert.equal(migrated.currentVersion, 32);
   assert.equal(migrated.status, 'compatible');
   assert.equal(migrations.inspectSQLiteSchema(database).missing.length, 0);
 });
@@ -2449,7 +2449,7 @@ test('historical vector checksum is repaired only in the atomic live coordinator
         ORDER BY version`
     )
     .all();
-  assert.equal(repaired.length, 31);
+  assert.equal(repaired.length, 32);
   assert.equal(repaired[1].checksum, migrationChecksum(2));
   assert.equal(repaired[1].applied_at, appliedAt);
   assert.equal(

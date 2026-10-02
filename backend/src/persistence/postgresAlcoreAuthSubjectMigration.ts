@@ -14,7 +14,7 @@ import type { PostgresMigration } from './postgresMigrationTypes.js';
  * unique index allows any number of unmapped rows while rejecting duplicate
  * non-null subjects.
  */
-export const POSTGRES_ALCORE_AUTH_SUBJECT_SQL = `ALTER TABLE users ADD COLUMN IF NOT EXISTS auth_subject text;
+export const POSTGRES_ALCORE_AUTH_SUBJECT_SQL = `ALTER TABLE users ADD COLUMN auth_subject text;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_users_auth_subject ON users(auth_subject) WHERE auth_subject IS NOT NULL;`;
 
 const version = 31;
