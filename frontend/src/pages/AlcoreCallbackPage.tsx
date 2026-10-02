@@ -45,7 +45,7 @@ export const AlcoreCallbackPage: React.FC = () => {
     const finish = async (): Promise<void> => {
       const authError = params.get('error');
       if (authError) {
-        setError('Auth sign-in failed; try again.');
+        setError('Sign-in failed. Please try again.');
         return;
       }
       const code = params.get('code') ?? '';
@@ -58,7 +58,7 @@ export const AlcoreCallbackPage: React.FC = () => {
         expected = null;
       }
       if (!code || !state || expected === null || state !== expected) {
-        setError('Auth sign-in failed; try again.');
+        setError('Sign-in failed. Please try again.');
         return;
       }
       try {
@@ -77,7 +77,7 @@ export const AlcoreCallbackPage: React.FC = () => {
         );
         navigate('/', { replace: true });
       } catch {
-        setError('Auth sign-in failed; try again.');
+        setError('Sign-in failed. Please try again.');
       }
     };
     void finish().finally(() => {
@@ -102,9 +102,7 @@ export const AlcoreCallbackPage: React.FC = () => {
             </button>
           </>
         ) : (
-          <p className='text-sm text-ink-muted'>
-            {t('auth.alcore.completing', 'Completing Auth sign-in…')}
-          </p>
+          <p className='text-sm text-ink-muted'>{t('auth.login.signingIn')}</p>
         )}
       </div>
     </div>

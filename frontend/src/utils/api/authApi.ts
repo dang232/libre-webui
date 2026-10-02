@@ -477,7 +477,7 @@ const alcoreAuthErrorMessage = (code: unknown): string => {
     case 'upstream_unavailable':
       return 'The sign-in provider is unavailable; try again shortly.';
     default:
-      return 'Auth sign-in failed; try again.';
+      return 'Sign-in failed. Please try again.';
   }
 };
 
@@ -551,7 +551,7 @@ export const alcoreDirectProductCode = async (
     authAccessToken
   );
   if (!ok || typeof data.code !== 'string' || !data.code) {
-    throw new Error('Auth sign-in failed; try again.');
+    throw new Error('Sign-in failed. Please try again.');
   }
   return data.code;
 };
