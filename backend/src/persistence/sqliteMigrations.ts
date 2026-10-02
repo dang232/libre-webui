@@ -3900,7 +3900,11 @@ function collectMissingSchemaAtVersion(
     ...(version >= 28 ? collectMissingWorkApprovalsSchema(database) : []),
     ...(version >= 29 ? collectMissingAutomationWebhooksSchema(database) : []),
     ...(version >= 30 ? collectMissingWorkRunResultsSchema(database) : []),
-    ...(version >= 31 ? collectMissingAlcoreAuthSubjectSchema(database) : []),
+    // auth_subject belongs to v32 alcore-auth-subject, NOT v31: main
+    // released v31 as canonical-auth-identity first, so databases at ledger
+    // 31 legitimately lack this column until v32 applies it. Gating here on
+    // 31 crash-looped those upgrades in preflight before the migrator ran.
+    ...(version >= 32 ? collectMissingAlcoreAuthSubjectSchema(database) : []),
   ];
 }
 
