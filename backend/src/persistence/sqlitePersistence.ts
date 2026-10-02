@@ -348,7 +348,7 @@ class SQLiteIdentitySyncRepository implements IdentitySyncRepository {
       .all<IdentityPublicUserRecord>(
         `
       SELECT id, username, email, role, account_status, approved_at, approved_by,
-              avatar, created_at, updated_at, auth_subject
+              avatar, auth_subject, canonical_user_id, created_at, updated_at
       FROM users
       WHERE id != 'default'
       ORDER BY created_at DESC
@@ -357,11 +357,55 @@ class SQLiteIdentitySyncRepository implements IdentitySyncRepository {
       .map(user => decodeIdentityRecord(this.emailCodec, user));
   }
 
+  findByCanonicalUserId(id: string): IdentityUserRecord | null {
+    const user =
+      this.executor.get<IdentityUserRecord>(
+        `SELECT id, username, email, password_hash, role, account_status,
+               approved_at, approved_by, avatar, auth_subject, canonical_user_id, created_at, updated_at
+          FROM users WHERE canonical_user_id = ?`,
+        [id]
+      ) ?? null;
+    return user ? decodeIdentityRecord(this.emailCodec, user) : null;
+  }
+
+  createCanonicalUser(user: IdentityUserRecord): IdentityUserRecord {
+    try {
+      this.insert(user);
+    } catch (error) {
+      if (
+        !(error instanceof Error) ||
+        !/unique constraint/i.test(error.message)
+      )
+        throw error;
+      const raced = this.findByCanonicalUserId(user.canonical_user_id ?? '');
+      if (!raced) throw error;
+      return raced;
+    }
+    return user;
+  }
+
+  canonicalIdentityCollision(id: string): boolean {
+    return Boolean(
+      this.executor.get(
+        `SELECT 1 FROM users WHERE canonical_user_id IS NULL AND username = ?`,
+        [`auth_${Buffer.from(id, 'utf8').toString('hex').slice(0, 48)}`]
+      )
+    );
+  }
+
+  queueCanonicalIdentityConflict(id: string): void {
+    this.executor.run(
+      `INSERT OR IGNORE INTO canonical_identity_conflicts (canonical_user_id, queued_at)
+       VALUES (?, ?)`,
+      [id, Date.now()]
+    );
+  }
+
   findPublicById(id: string): IdentityPublicUserRecord | null {
     const user =
       this.executor.get<IdentityPublicUserRecord>(
         `SELECT id, username, email, role, account_status, approved_at,
-                 approved_by, avatar, created_at, updated_at, auth_subject
+                 approved_by, avatar, auth_subject, canonical_user_id, created_at, updated_at
           FROM users WHERE id = ?`,
         [id]
       ) ?? null;
@@ -381,8 +425,7 @@ class SQLiteIdentitySyncRepository implements IdentitySyncRepository {
     const user =
       this.executor.get<IdentityUserRecord>(
         `SELECT id, username, email, password_hash, role, account_status,
-                 approved_at, approved_by, avatar, created_at, updated_at,
-                 auth_subject
+                 approved_at, approved_by, avatar, auth_subject, canonical_user_id, created_at, updated_at
           FROM users WHERE username = ?`,
         [username]
       ) ?? null;
@@ -394,8 +437,7 @@ class SQLiteIdentitySyncRepository implements IdentitySyncRepository {
     const user =
       this.executor.get<IdentityUserRecord>(
         `SELECT id, username, email, password_hash, role, account_status,
-                 approved_at, approved_by, avatar, created_at, updated_at,
-                 auth_subject
+                 approved_at, approved_by, avatar, auth_subject, canonical_user_id, created_at, updated_at
           FROM users WHERE auth_subject = ?`,
         [subject]
       ) ?? null;
@@ -406,8 +448,8 @@ class SQLiteIdentitySyncRepository implements IdentitySyncRepository {
     this.executor.run(
       `INSERT INTO users (
           id, username, email, email_lookup, password_hash, role, account_status,
-          approved_at, approved_by, avatar, created_at, updated_at, auth_subject
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          approved_at, approved_by, avatar, auth_subject, canonical_user_id, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING`,
       [
         user.id,
         user.username,
@@ -419,9 +461,10 @@ class SQLiteIdentitySyncRepository implements IdentitySyncRepository {
         user.approved_at,
         user.approved_by,
         user.avatar,
+        user.auth_subject ?? null,
+        user.canonical_user_id ?? null,
         user.created_at,
         user.updated_at,
-        user.auth_subject ?? null,
       ]
     );
   }
@@ -541,7 +584,7 @@ class SQLiteIdentityRepository implements IdentityRepository {
       .all<IdentityPublicUserRecord>(
         `
       SELECT id, username, email, role, account_status, approved_at, approved_by,
-              avatar, created_at, updated_at, auth_subject
+              avatar, auth_subject, canonical_user_id, created_at, updated_at
       FROM users
       WHERE id != 'default'
       ORDER BY created_at DESC
@@ -552,11 +595,58 @@ class SQLiteIdentityRepository implements IdentityRepository {
       );
   }
 
+  async findByCanonicalUserId(id: string): Promise<IdentityUserRecord | null> {
+    const user = await this.executor.get<IdentityUserRecord>(
+      `SELECT id, username, email, password_hash, role, account_status,
+              approved_at, approved_by, avatar, auth_subject, canonical_user_id, created_at, updated_at
+          FROM users WHERE canonical_user_id = ?`,
+      [id]
+    );
+    return user ? decodeIdentityRecord(this.emailCodec, user) : null;
+  }
+
+  async createCanonicalUser(
+    user: IdentityUserRecord
+  ): Promise<IdentityUserRecord> {
+    try {
+      await this.insert(user);
+    } catch (error) {
+      if (
+        !(error instanceof Error) ||
+        !/unique constraint/i.test(error.message)
+      )
+        throw error;
+      const raced = await this.findByCanonicalUserId(
+        user.canonical_user_id ?? ''
+      );
+      if (!raced) throw error;
+      return raced;
+    }
+    return user;
+  }
+
+  async canonicalIdentityCollision(id: string): Promise<boolean> {
+    return Boolean(
+      await this.executor.get(
+        `SELECT 1 FROM users WHERE canonical_user_id IS NULL AND username = ?`,
+        [`auth_${Buffer.from(id, 'utf8').toString('hex').slice(0, 48)}`]
+      )
+    );
+  }
+
+  async queueCanonicalIdentityConflict(id: string): Promise<void> {
+    await this.executor.run(
+      `INSERT OR IGNORE INTO canonical_identity_conflicts (canonical_user_id, queued_at)
+       VALUES (?, ?)`,
+      [id, Date.now()]
+    );
+  }
+
   findPublicById(id: string): Promise<IdentityPublicUserRecord | null> {
     return this.executor
       .get<IdentityPublicUserRecord>(
         `SELECT id, username, email, role, account_status, approved_at,
-                 approved_by, avatar, created_at, updated_at, auth_subject
+                 approved_by, avatar, auth_subject, canonical_user_id, created_at, updated_at
           FROM users
           WHERE id = ?`,
         [id]
@@ -579,8 +669,7 @@ class SQLiteIdentityRepository implements IdentityRepository {
     return this.executor
       .get<IdentityUserRecord>(
         `SELECT id, username, email, password_hash, role, account_status,
-                 approved_at, approved_by, avatar, created_at, updated_at,
-                 auth_subject
+                 approved_at, approved_by, avatar, auth_subject, canonical_user_id, created_at, updated_at
           FROM users WHERE username = ?`,
         [username]
       )
@@ -594,8 +683,7 @@ class SQLiteIdentityRepository implements IdentityRepository {
     return this.executor
       .get<IdentityUserRecord>(
         `SELECT id, username, email, password_hash, role, account_status,
-                 approved_at, approved_by, avatar, created_at, updated_at,
-                 auth_subject
+                 approved_at, approved_by, avatar, auth_subject, canonical_user_id, created_at, updated_at
           FROM users WHERE auth_subject = ?`,
         [subject]
       )
@@ -609,8 +697,8 @@ class SQLiteIdentityRepository implements IdentityRepository {
       .run(
         `INSERT INTO users (
           id, username, email, email_lookup, password_hash, role, account_status,
-          approved_at, approved_by, avatar, created_at, updated_at, auth_subject
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          approved_at, approved_by, avatar, auth_subject, canonical_user_id, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING`,
         [
           user.id,
           user.username,
@@ -622,9 +710,10 @@ class SQLiteIdentityRepository implements IdentityRepository {
           user.approved_at,
           user.approved_by,
           user.avatar,
+          user.auth_subject ?? null,
+          user.canonical_user_id ?? null,
           user.created_at,
           user.updated_at,
-          user.auth_subject ?? null,
         ]
       )
       .then(() => undefined);

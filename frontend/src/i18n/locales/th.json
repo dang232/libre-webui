@@ -107,7 +107,9 @@
       "loginSuccess": "เข้าสู่ระบบ OAuth สำเร็จ!",
       "completionFailed": "ไม่สามารถดำเนินการยืนยันตัวตน OAuth ให้เสร็จสิ้นได้",
       "verificationFailed": "การตรวจสอบการยืนยันตัวตน OAuth ล้มเหลว",
-      "authenticationFailed": "การยืนยันตัวตน OAuth ล้มเหลว"
+      "authenticationFailed": "การยืนยันตัวตน OAuth ล้มเหลว",
+      "googleFailed": "เข้าสู่ระบบด้วย Google ไม่สำเร็จ โปรดลองอีกครั้ง",
+      "googleLoading": "กำลังเข้าสู่ระบบด้วย Google..."
     },
     "checkingAuth": "กำลังตรวจสอบการยืนยันตัวตน...",
     "welcome": "ยินดีต้อนรับ",

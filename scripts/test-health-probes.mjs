@@ -152,6 +152,7 @@ test('readiness fails closed while a valid older schema awaits migration', async
       FROM users;
     DROP TABLE users;
     ALTER TABLE users__health_v2 RENAME TO users;
+    DROP TABLE canonical_identity_conflicts;
     DROP INDEX idx_plugin_definitions_updated;
     DROP TABLE plugin_definitions;
     DROP INDEX idx_voice_profiles_name_lookup;
@@ -233,6 +234,7 @@ test('readiness fails closed while a valid older schema awaits migration', async
     DROP TABLE resource_grants;
     DROP TABLE user_group_members;
     DROP TABLE user_groups;
+    DELETE FROM _libre_schema_migrations WHERE version = 31;
     DELETE FROM _libre_schema_migrations WHERE version = 30;
     DELETE FROM _libre_schema_migrations WHERE version = 29;
     DELETE FROM _libre_schema_migrations WHERE version = 28;

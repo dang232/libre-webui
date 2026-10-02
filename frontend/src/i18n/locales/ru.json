@@ -107,7 +107,9 @@
       "loginSuccess": "Вход через OAuth выполнен!",
       "completionFailed": "Не удалось завершить аутентификацию OAuth",
       "verificationFailed": "Не удалось проверить аутентификацию OAuth",
-      "authenticationFailed": "Сбой аутентификации OAuth"
+      "authenticationFailed": "Сбой аутентификации OAuth",
+      "googleFailed": "Не удалось войти через Google. Попробуйте ещё раз.",
+      "googleLoading": "Вход через Google..."
     },
     "checkingAuth": "Проверка аутентификации...",
     "welcome": "Добро пожаловать",

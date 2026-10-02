@@ -17,7 +17,7 @@ import type { PostgresMigration } from './postgresMigrationTypes.js';
 export const POSTGRES_ALCORE_AUTH_SUBJECT_SQL = `ALTER TABLE users ADD COLUMN IF NOT EXISTS auth_subject text;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_users_auth_subject ON users(auth_subject) WHERE auth_subject IS NOT NULL;`;
 
-const version = 30;
+const version = 31;
 const name = 'alcore-auth-subject';
 
 export const POSTGRES_ALCORE_AUTH_SUBJECT_MIGRATION: PostgresMigration =
@@ -31,7 +31,7 @@ export const POSTGRES_ALCORE_AUTH_SUBJECT_MIGRATION: PostgresMigration =
     rollbackPlan:
       'DROP INDEX IF EXISTS idx_users_auth_subject; ' +
       'ALTER TABLE users DROP COLUMN IF EXISTS auth_subject; ' +
-      'delete ledger row 30. Product sessions keep working on users.id; ' +
+      'delete ledger row 31. Product sessions keep working on users.id; ' +
       'Auth-linked sign-in (todo 45) stops resolving until re-migrated, ' +
       'the pre-migration behavior.',
     minimumCompatibleVersion: 30,

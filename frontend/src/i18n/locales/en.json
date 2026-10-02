@@ -107,7 +107,9 @@
       "loginSuccess": "OAuth login successful!",
       "completionFailed": "Failed to complete OAuth authentication",
       "verificationFailed": "OAuth authentication verification failed",
-      "authenticationFailed": "OAuth authentication failed"
+      "authenticationFailed": "OAuth authentication failed",
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "googleLoading": "Signing in with Google..."
     },
     "checkingAuth": "Checking authentication...",
     "welcome": "Welcome",

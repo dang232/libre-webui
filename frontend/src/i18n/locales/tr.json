@@ -107,7 +107,9 @@
       "loginSuccess": "OAuth ile giriş başarılı!",
       "completionFailed": "OAuth kimlik doğrulaması tamamlanamadı",
       "verificationFailed": "OAuth kimlik doğrulaması doğrulanamadı",
-      "authenticationFailed": "OAuth kimlik doğrulaması başarısız oldu"
+      "authenticationFailed": "OAuth kimlik doğrulaması başarısız oldu",
+      "googleFailed": "Google ile oturum açılamadı. Lütfen tekrar deneyin.",
+      "googleLoading": "Google ile oturum açılıyor..."
     },
     "checkingAuth": "Kimlik doğrulama kontrol ediliyor...",
     "welcome": "Hoş geldiniz",

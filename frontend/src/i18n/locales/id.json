@@ -107,7 +107,9 @@
       "loginSuccess": "Login OAuth berhasil!",
       "completionFailed": "Gagal menyelesaikan autentikasi OAuth",
       "verificationFailed": "Verifikasi autentikasi OAuth gagal",
-      "authenticationFailed": "Autentikasi OAuth gagal"
+      "authenticationFailed": "Autentikasi OAuth gagal",
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "googleLoading": "Signing in with Google..."
     },
     "checkingAuth": "Memeriksa autentikasi...",
     "welcome": "Selamat datang",

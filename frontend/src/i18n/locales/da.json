@@ -107,7 +107,9 @@
       "loginSuccess": "OAuth-login lykkedes!",
       "completionFailed": "Kunne ikke fuldføre OAuth-godkendelsen",
       "verificationFailed": "Bekræftelse af OAuth-godkendelsen mislykkedes",
-      "authenticationFailed": "OAuth-godkendelsen mislykkedes"
+      "authenticationFailed": "OAuth-godkendelsen mislykkedes",
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "googleLoading": "Signing in with Google..."
     },
     "checkingAuth": "Kontrollerer godkendelse...",
     "welcome": "Velkommen",

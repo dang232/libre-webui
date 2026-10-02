@@ -107,7 +107,9 @@
       "loginSuccess": "Login OAuth realizado com sucesso!",
       "completionFailed": "Falha ao concluir a autenticação OAuth",
       "verificationFailed": "Falha na verificação da autenticação OAuth",
-      "authenticationFailed": "Falha na autenticação OAuth"
+      "authenticationFailed": "Falha na autenticação OAuth",
+      "googleFailed": "Falha ao iniciar sessão com o Google. Tente novamente.",
+      "googleLoading": "A iniciar sessão com o Google..."
     },
     "checkingAuth": "Verificando autenticação...",
     "welcome": "Bem-vindo",

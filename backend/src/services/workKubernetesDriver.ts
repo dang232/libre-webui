@@ -16,7 +16,7 @@
  */
 
 import { Duplex, PassThrough, Readable, Writable } from 'node:stream';
-
+import type { V1Pod } from '@kubernetes/client-node/dist/gen/models/V1Pod.js';
 import type { WorkTaskRecord } from '../types/work.js';
 import { createLogger } from '../utils/logger.js';
 import type {
@@ -84,6 +84,27 @@ const FATAL_WAITING_REASONS = new Set([
 ]);
 
 type KubernetesLib = typeof import('@kubernetes/client-node');
+
+type KubernetesMetadata = {
+  annotations?: Record<string, string>;
+  labels?: Record<string, string>;
+  name?: string;
+};
+
+type KubernetesPersistentVolumeClaim = {
+  metadata?: KubernetesMetadata;
+  spec?: {
+    accessModes?: string[];
+    resources?: { requests?: Record<string, string> };
+    storageClassName?: string;
+  };
+};
+
+type KubernetesStatus = {
+  details?: { causes?: { message?: string; reason?: string }[] };
+  message?: string;
+  status?: string;
+};
 
 interface KubernetesClient {
   lib: KubernetesLib;
@@ -337,7 +358,7 @@ export class KubernetesWorkRuntimeDriver implements WorkRuntimeDriver {
       namespace: this.namespace,
       labelSelector: `${MANAGED_LABEL}=true`,
     });
-    return (pods.items ?? []).map(pod => ({
+    return (pods.items ?? []).map((pod: V1Pod) => ({
       name: pod.metadata?.name ?? '',
       taskId: pod.metadata?.labels?.[TASK_LABEL] ?? '',
       running: mapPodPhase(pod.status?.phase) === 'running',
@@ -354,10 +375,12 @@ export class KubernetesWorkRuntimeDriver implements WorkRuntimeDriver {
       namespace: this.namespace,
       labelSelector: `${MANAGED_LABEL}=true`,
     });
-    return (claims.items ?? []).map(claim => ({
-      name: claim.metadata?.name ?? '',
-      taskId: claim.metadata?.labels?.[TASK_LABEL] ?? '',
-    }));
+    return (claims.items ?? []).map(
+      (claim: KubernetesPersistentVolumeClaim) => ({
+        name: claim.metadata?.name ?? '',
+        taskId: claim.metadata?.labels?.[TASK_LABEL] ?? '',
+      })
+    );
   }
 
   terminalUnavailableReason(): null {
@@ -548,7 +571,7 @@ export class KubernetesWorkRuntimeDriver implements WorkRuntimeDriver {
     return new Promise<ProcessResult>((resolve, reject) => {
       let settled = false;
       let socket: import('isomorphic-ws').WebSocket | undefined;
-      let status: import('@kubernetes/client-node').V1Status | undefined;
+      let status: KubernetesStatus | undefined;
       const claimSettlement = (): boolean => {
         if (settled) return false;
         settled = true;
@@ -655,7 +678,7 @@ export class KubernetesWorkRuntimeDriver implements WorkRuntimeDriver {
 export function buildWorkspaceClaimManifest(
   task: WorkTaskRecord,
   workspaceSize?: string
-): import('@kubernetes/client-node').V1PersistentVolumeClaim {
+): KubernetesPersistentVolumeClaim {
   return {
     metadata: {
       name: task.volumeName,
@@ -679,7 +702,7 @@ export function buildWorkspaceClaimManifest(
 export function buildWorkPodManifest(
   task: WorkTaskRecord,
   policy: ResolvedWorkRuntimePolicy = defaultRuntimePolicy
-): import('@kubernetes/client-node').V1Pod {
+): V1Pod {
   assertNoHostWorkspace(task);
   return {
     metadata: {
@@ -795,9 +818,7 @@ export function mapPodPhase(phase: string | undefined): WorkRuntimeState {
   return 'absent';
 }
 
-export function statusToExitCode(
-  status: import('@kubernetes/client-node').V1Status | undefined
-): number {
+export function statusToExitCode(status: KubernetesStatus | undefined): number {
   if (!status) return -1;
   if (status.status === 'Success') return 0;
   const cause = status.details?.causes?.find(

@@ -107,7 +107,9 @@
       "loginSuccess": "OAuth-aanmelding geslaagd!",
       "completionFailed": "OAuth-authenticatie kon niet worden voltooid",
       "verificationFailed": "Verificatie van OAuth-authenticatie mislukt",
-      "authenticationFailed": "OAuth-authenticatie mislukt"
+      "authenticationFailed": "OAuth-authenticatie mislukt",
+      "googleFailed": "Inloggen met Google is mislukt. Probeer het opnieuw.",
+      "googleLoading": "Inloggen met Google..."
     },
     "checkingAuth": "Authenticatie controleren...",
     "welcome": "Welkom",

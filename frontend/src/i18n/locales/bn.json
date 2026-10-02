@@ -107,7 +107,9 @@
       "loginSuccess": "OAuth লগইন সফল হয়েছে!",
       "completionFailed": "OAuth প্রমাণীকরণ সম্পন্ন করা যায়নি",
       "verificationFailed": "OAuth প্রমাণীকরণ যাচাই করা যায়নি",
-      "authenticationFailed": "OAuth প্রমাণীকরণ ব্যর্থ হয়েছে"
+      "authenticationFailed": "OAuth প্রমাণীকরণ ব্যর্থ হয়েছে",
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "googleLoading": "Signing in with Google..."
     },
     "checkingAuth": "প্রমাণীকরণ যাচাই হচ্ছে...",
     "welcome": "স্বাগতম",

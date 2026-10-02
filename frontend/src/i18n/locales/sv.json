@@ -107,7 +107,9 @@
       "loginSuccess": "OAuth-inloggningen lyckades!",
       "completionFailed": "Det gick inte att slutföra OAuth-autentiseringen",
       "verificationFailed": "Verifieringen av OAuth-autentiseringen misslyckades",
-      "authenticationFailed": "OAuth-autentiseringen misslyckades"
+      "authenticationFailed": "OAuth-autentiseringen misslyckades",
+      "googleFailed": "Google-inloggningen misslyckades. Försök igen.",
+      "googleLoading": "Loggar in med Google..."
     },
     "checkingAuth": "Kontrollerar autentisering...",
     "welcome": "Välkommen",

@@ -107,7 +107,9 @@
       "loginSuccess": "Connexion OAuth réussie !",
       "completionFailed": "Échec de la finalisation de l’authentification OAuth",
       "verificationFailed": "Échec de la vérification de l’authentification OAuth",
-      "authenticationFailed": "Échec de l’authentification OAuth"
+      "authenticationFailed": "Échec de l’authentification OAuth",
+      "googleFailed": "La connexion Google a échoué. Veuillez réessayer.",
+      "googleLoading": "Connexion avec Google..."
     },
     "checkingAuth": "Vérification de l'authentification...",
     "welcome": "Bienvenue",

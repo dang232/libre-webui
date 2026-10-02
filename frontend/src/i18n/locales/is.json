@@ -107,7 +107,9 @@
       "loginSuccess": "Innskráning með OAuth tókst!",
       "completionFailed": "Ekki tókst að ljúka OAuth-auðkenningu",
       "verificationFailed": "Staðfesting OAuth-auðkenningar mistókst",
-      "authenticationFailed": "OAuth-auðkenning mistókst"
+      "authenticationFailed": "OAuth-auðkenning mistókst",
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "googleLoading": "Signing in with Google..."
     },
     "checkingAuth": "Athugar auðkenningu...",
     "welcome": "Velkomin",
