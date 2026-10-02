@@ -107,6 +107,35 @@ export const getAuthBaseUrl = (): string => {
  */
 export const AUTH_BASE_URL = getAuthBaseUrl();
 
+export type AlcoreAuthMode = 'local' | 'alcore';
+
+export interface AuthModeEnvironment {
+  authMode?: string;
+  systemInfo?: { authMode?: string } | null;
+}
+
+export function resolveAlcoreAuthMode(
+  environment: AuthModeEnvironment
+): AlcoreAuthMode {
+  const fromServer = environment.systemInfo?.authMode?.trim().toLowerCase();
+  if (fromServer === 'alcore' || fromServer === 'local') return fromServer;
+  return environment.authMode?.trim().toLowerCase() === 'alcore'
+    ? 'alcore'
+    : 'local';
+}
+
+export const getAlcoreAuthMode = (
+  systemInfo?: { authMode?: string } | null
+): AlcoreAuthMode =>
+  resolveAlcoreAuthMode({
+    authMode: import.meta.env?.VITE_ALCORE_AUTH_MODE,
+    systemInfo,
+  });
+
+export const isAlcoreAuthMode = (
+  systemInfo?: { authMode?: string } | null
+): boolean => getAlcoreAuthMode(systemInfo) === 'alcore';
+
 /** Portal deep-link carrying a one-time SSO token in the URL fragment. */
 export function portalSectionUrl(
   baseUrl: string,

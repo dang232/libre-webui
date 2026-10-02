@@ -72,6 +72,14 @@ export interface IdentityUserRecord {
   avatar: string | null;
   created_at: number;
   updated_at: number;
+  /**
+   * Canonical Alcore Auth subject mapped beside the unchanged Libre `id`
+   * (todo 41). Nullable additive column: existing rows stay NULL, `id`
+   * generation and every `REFERENCES users(id)` foreign key are untouched.
+   * A non-null value is globally unique (sparse unique index); Auth identity
+   * alone never yields product authorization — sessions still gate access.
+   */
+  auth_subject?: string | null;
 }
 
 export type IdentityPublicUserRecord = Omit<
@@ -86,6 +94,7 @@ export interface IdentityUserUpdate {
   role?: IdentityRole;
   avatar?: string | null;
   updatedAt: number;
+  authSubject?: string | null;
 }
 
 export interface PendingApprovalRecord {
@@ -98,6 +107,7 @@ export interface IdentityRepository {
   findPublicById(id: string): Promise<IdentityPublicUserRecord | null>;
   findAccountStatusById(id: string): Promise<IdentityAccountStatus | null>;
   findByUsername(username: string): Promise<IdentityUserRecord | null>;
+  findByAuthSubject(subject: string): Promise<IdentityUserRecord | null>;
   insert(user: IdentityUserRecord): Promise<void>;
   approve(id: string, approvedBy: string, approvedAt: number): Promise<boolean>;
   /** Idempotently fences an active identity before cross-domain cleanup. */
@@ -120,6 +130,7 @@ export interface IdentitySyncRepository {
   findPublicById(id: string): IdentityPublicUserRecord | null;
   findAccountStatusById(id: string): IdentityAccountStatus | null;
   findByUsername(username: string): IdentityUserRecord | null;
+  findByAuthSubject(subject: string): IdentityUserRecord | null;
   insert(user: IdentityUserRecord): void;
   approve(id: string, approvedBy: string, approvedAt: number): boolean;
   beginRetirement(id: string, updatedAt: number): boolean;

@@ -509,8 +509,13 @@ export class WorkPreviewProxyService {
       );
     }
     response.setHeader('Cache-Control', 'no-store');
-    // A sandboxed preview has an opaque browser origin. Wildcard CORS lets its
-    // modules and requests reach only this uncredentialed capability URL.
+    // BFF EXCEPTION (documented, owner: work-platform lane): a sandboxed
+    // preview has an opaque browser origin (`Origin: null`), so an exact echo
+    // cannot name it and a wildcard is the only grant that lets its modules
+    // and requests reach this uncredentialed capability URL. Safe because the
+    // proxy strips Authorization/Cookie/Set-Cookie upstream and downstream
+    // and never sets Access-Control-Allow-Credentials here. Sunset: switch to
+    // an exact-origin echo if this proxy ever forwards credentials.
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.setHeader('Referrer-Policy', 'no-referrer');
     response.setHeader('X-Content-Type-Options', 'nosniff');
@@ -542,6 +547,10 @@ export class WorkPreviewProxyService {
       request.headers['access-control-request-method']
     ) {
       response.status(204);
+      // BFF EXCEPTION (documented, owner: work-platform lane): preflight for
+      // the same uncredentialed sandboxed-preview capability URL as above.
+      // Never paired with Access-Control-Allow-Credentials. Sunset: exact
+      // echo if credentialed preview traffic is ever introduced.
       response.setHeader('Access-Control-Allow-Origin', '*');
       response.setHeader(
         'Access-Control-Allow-Methods',

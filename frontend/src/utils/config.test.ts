@@ -29,8 +29,12 @@ Object.defineProperty(globalThis, 'window', {
   },
 });
 
-const { resolveApiBaseUrl, resolveAuthBaseUrl, resolveTokenPanelBaseUrl } =
-  await import('./config');
+const {
+  resolveApiBaseUrl,
+  resolveAuthBaseUrl,
+  resolveTokenPanelBaseUrl,
+  resolveAlcoreAuthMode,
+} = await import('./config');
 
 test('uses the browser origin for development API proxying', () => {
   assert.equal(
@@ -77,5 +81,22 @@ test('tokenpanel base falls back to production and honors overrides', () => {
   assert.equal(
     resolveTokenPanelBaseUrl({ tokenpanelUrl: '   ' }),
     'https://alcore.io.vn'
+  );
+});
+
+test('alcore auth mode defaults to local and honors explicit alcore', () => {
+  assert.equal(resolveAlcoreAuthMode({}), 'local');
+  assert.equal(resolveAlcoreAuthMode({ authMode: 'true' }), 'local');
+  assert.equal(resolveAlcoreAuthMode({ authMode: '  Alcore ' }), 'alcore');
+  assert.equal(
+    resolveAlcoreAuthMode({ systemInfo: { authMode: 'alcore' } }),
+    'alcore'
+  );
+  assert.equal(
+    resolveAlcoreAuthMode({
+      authMode: 'alcore',
+      systemInfo: { authMode: 'local' },
+    }),
+    'local'
   );
 });

@@ -19,6 +19,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, SystemInfo } from '@/types';
 import type { WorkAccess } from '@/types/work';
+import { getAlcoreAuthMode } from '@/utils/config';
 import { useChatStore } from '@/store/chatStore';
 import { useAppStore } from '@/store/appStore';
 import { usePluginStore } from '@/store/pluginStore';
@@ -45,6 +46,8 @@ interface AuthState {
   setLoading: (loading: boolean) => void;
   isAdmin: () => boolean;
   requiresAuth: () => boolean;
+  /** True when the server runs Auth-only mode (local forms hidden). */
+  isAlcoreMode: () => boolean;
   canUseWork: () => boolean;
   canUseAgents: () => boolean;
   refreshWorkAccess: () => Promise<void>;
@@ -198,6 +201,11 @@ export const useAuthStore = create<AuthState>()(
       requiresAuth: () => {
         const { systemInfo } = get();
         return systemInfo?.requiresAuth ?? false;
+      },
+
+      isAlcoreMode: () => {
+        const { systemInfo } = get();
+        return getAlcoreAuthMode(systemInfo) === 'alcore';
       },
 
       // Whether the interface should offer Work. Administrators always may;

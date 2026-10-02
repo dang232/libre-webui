@@ -34,6 +34,10 @@ import {
   getUsageRecords,
   getUsageSummary,
 } from '../services/tokenpanelUsageService.js';
+import {
+  requireBffAuthSession,
+  sessionBearerOf,
+} from '../services/tokenpanelAuthSessionService.js';
 import { createLogger } from '../utils/logger.js';
 
 const logger = createLogger('routes:tokenpanel-usage');
@@ -53,7 +57,7 @@ const usageReadLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-router.use(usageReadLimiter, authenticate);
+router.use(usageReadLimiter, authenticate, requireBffAuthSession);
 
 const fail = (
   res: express.Response,
@@ -74,6 +78,9 @@ const fail = (
 const userIdOf = (req: AuthenticatedRequest): string | null =>
   req.user?.userId ?? null;
 
+const sessionTokenOf = (req: AuthenticatedRequest): string | undefined =>
+  sessionBearerOf(req) ?? undefined;
+
 /** GET /api/tokenpanel/usage/summary[?from=&to=] — totals verbatim. */
 router.get('/usage/summary', async (req: AuthenticatedRequest, res) => {
   res.set('Cache-Control', 'no-store');
@@ -85,10 +92,14 @@ router.get('/usage/summary', async (req: AuthenticatedRequest, res) => {
   try {
     res.json({
       success: true,
-      data: await getUsageSummary(userId, {
-        from: req.query.from,
-        to: req.query.to,
-      }),
+      data: await getUsageSummary(
+        userId,
+        {
+          from: req.query.from,
+          to: req.query.to,
+        },
+        sessionTokenOf(req)
+      ),
     });
   } catch (error) {
     fail(res, error, 'Failed to load usage summary');
@@ -106,10 +117,14 @@ router.get('/usage/daily', async (req: AuthenticatedRequest, res) => {
   try {
     res.json({
       success: true,
-      data: await getUsageDaily(userId, {
-        from: req.query.from,
-        to: req.query.to,
-      }),
+      data: await getUsageDaily(
+        userId,
+        {
+          from: req.query.from,
+          to: req.query.to,
+        },
+        sessionTokenOf(req)
+      ),
     });
   } catch (error) {
     fail(res, error, 'Failed to load daily usage');
@@ -130,13 +145,17 @@ router.get('/usage/records', async (req: AuthenticatedRequest, res) => {
   try {
     res.json({
       success: true,
-      data: await getUsageRecords(userId, {
-        limit: req.query.limit,
-        model: req.query.model,
-        key: req.query.key,
-        from: req.query.from,
-        to: req.query.to,
-      }),
+      data: await getUsageRecords(
+        userId,
+        {
+          limit: req.query.limit,
+          model: req.query.model,
+          key: req.query.key,
+          from: req.query.from,
+          to: req.query.to,
+        },
+        sessionTokenOf(req)
+      ),
     });
   } catch (error) {
     fail(res, error, 'Failed to load usage records');

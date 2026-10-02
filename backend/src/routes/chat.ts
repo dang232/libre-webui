@@ -1306,11 +1306,12 @@ router.post(
         return;
       }
 
-      // Set up SSE headers
+      // Set up SSE headers. CORS is handled by the global exact-origin echo
+      // middleware (backend/src/index.ts); no per-route ACAO header here so
+      // an authenticated stream is never served with a wildcard origin.
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
       res.setHeader('Connection', 'keep-alive');
-      res.setHeader('Access-Control-Allow-Origin', '*');
 
       // Event identity is a per-request nonce plus a monotonic sequence.
       // Deriving it from payload content silently deduplicated repeated

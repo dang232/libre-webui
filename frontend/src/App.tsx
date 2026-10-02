@@ -47,7 +47,7 @@ import { Toaster } from 'react-hot-toast';
 import { Sidebar } from '@/components/Sidebar';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { ErrorBoundary, RouteErrorScreen } from '@/components/ErrorBoundary';
-import { API_BASE_URL } from '@/utils/config';
+import { API_BASE_URL, isAlcoreAuthMode } from '@/utils/config';
 import { useWhatsNew } from '@/hooks/useWhatsNew';
 import { DemoModeBanner } from '@/components/DemoModeBanner';
 import { BackgroundRenderer } from '@/components/BackgroundRenderer';
@@ -119,6 +119,11 @@ const FirstTimeSetup = React.lazy(() =>
 
 // Import LoginPage directly (not lazy) to avoid suspense issues during auth redirects
 import { LoginPage } from '@/pages/LoginPage';
+
+// The Auth redirect-handoff callback must resolve without workspace state.
+const AlcoreCallbackPage = React.lazy(
+  () => import('@/pages/AlcoreCallbackPage')
+);
 
 // Loading component
 const PageLoader = () => {
@@ -466,11 +471,15 @@ const AppContent: React.FC = () => {
     }
   }, [systemInfo, authLoading, retryCount]);
 
-  // Enter first-time setup mode when conditions are met (derived from auth/system state)
+  // Enter first-time setup mode when conditions are met (derived from auth/system state).
+  // Alcore mode is exempt: local bootstrap is disabled there, and the first
+  // Auth sign-in claims the bootstrap administrator slot through the same
+  // first-account rule (todo 45).
   const inFirstTimeSetup =
     !setupComplete &&
     systemInfo?.requiresAuth === true &&
-    systemInfo?.hasUsers === false;
+    systemInfo?.hasUsers === false &&
+    !isAlcoreAuthMode(systemInfo);
 
   // Show loading spinner while initializing auth
   if (authLoading) {
@@ -601,12 +610,28 @@ const AppContent: React.FC = () => {
               }
             />
             <Route path='/login' element={<LoginPage />} />
+            <Route
+              path='/auth/alcore/callback'
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <AlcoreCallbackPage />
+                </Suspense>
+              }
+            />
           </Routes>
         </ShellLayout>
       ) : (
         // Auth required - show routes without main layout constraining login
         <Routes>
           <Route path='/login' element={<LoginPage />} />
+          <Route
+            path='/auth/alcore/callback'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <AlcoreCallbackPage />
+              </Suspense>
+            }
+          />
           <Route
             path='/*'
             element={

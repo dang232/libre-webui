@@ -40,6 +40,7 @@ import { useOAuthProviders } from '@/hooks/useOAuthProviders';
 import { cn } from '@/utils';
 import { createLogger } from '@/utils/logger';
 import { TurnstileWidget } from '@/components/TurnstileWidget';
+import { AlcoreAuthNotice } from '@/components/AlcoreAuthNotice';
 
 const logger = createLogger('components:login-form');
 
@@ -49,6 +50,8 @@ interface LoginFormProps {
   initialApprovalPending?: boolean;
   /** Drops the card chrome so a page can supply its own framing. */
   bare?: boolean;
+  /** Alcore mode hides local credentials; renders the Auth stub instead. */
+  alcoreMode?: boolean;
 }
 
 const DEMO_CREDENTIALS = {
@@ -61,6 +64,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   onShowSignup,
   initialApprovalPending = false,
   bare = false,
+  alcoreMode = false,
 }) => {
   const { t } = useTranslation();
   const isDemo = isDemoMode();
@@ -421,6 +425,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       </div>
     );
   }
+
+  if (alcoreMode) return <AlcoreAuthNotice />;
 
   return (
     <div

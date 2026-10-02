@@ -49,6 +49,7 @@ import {
   TokenpanelBridgeError,
   exchangePortalToken,
 } from './tokenpanelBridgeService.js';
+import { callUpstreamWithAuthFallback } from './tokenpanelAuthSessionService.js';
 
 const logger = createLogger('services:tokenpanel-account');
 
@@ -148,7 +149,7 @@ const toAccountError = (
   );
 };
 
-/** Resolve the caller's portal token (mgmt key stays server-side). */
+/** Resolve the caller's portal token (mgmt key stays server-side). Bridge path: kept for local mode and Alcore fallback. */
 const portalTokenFor = async (
   userId: string,
   idempotencyKey?: string
@@ -170,12 +171,18 @@ const portalTokenFor = async (
 const forwardGet = async (
   userId: string,
   path: string,
-  context: string
+  context: string,
+  sessionToken?: string
 ): Promise<unknown> => {
-  const token = await portalTokenFor(userId);
-  const result = await customerFetch(path, {
-    method: 'GET',
-    portalToken: token,
+  const result = await callUpstreamWithAuthFallback({
+    sessionToken,
+    bridgeMint: () => portalTokenFor(userId),
+    call: token =>
+      customerFetch(path, {
+        method: 'GET',
+        portalToken: token,
+      }),
+    context: `account-${context}`,
   });
   if (result.status !== 200) {
     logger.warn('TokenPanel account read denied', {
@@ -203,8 +210,16 @@ const resolveIdempotencyKey = (provided: unknown): string => {
 };
 
 /** Active subscription + plan — passthrough of `GET /me/subscription`. */
-export const getSubscription = (userId: string): Promise<unknown> =>
-  forwardGet(userId, '/public/customers/me/subscription', 'subscription');
+export const getSubscription = (
+  userId: string,
+  sessionToken?: string
+): Promise<unknown> =>
+  forwardGet(
+    userId,
+    '/public/customers/me/subscription',
+    'subscription',
+    sessionToken
+  );
 
 /**
  * Buy a plan from existing balance — forwards `{planId, billing?}` only.
@@ -215,7 +230,8 @@ export const getSubscription = (userId: string): Promise<unknown> =>
 export const subscribePlan = async (
   userId: string,
   input: { planId: unknown; billing?: unknown },
-  idempotencyKey?: unknown
+  idempotencyKey?: unknown,
+  sessionToken?: string
 ): Promise<unknown> => {
   const planId = typeof input.planId === 'string' ? input.planId : '';
   if (!OBJECT_ID_PATTERN.test(planId)) {
@@ -229,12 +245,17 @@ export const subscribePlan = async (
     body.billing = input.billing;
   }
   const key = resolveIdempotencyKey(idempotencyKey);
-  const token = await portalTokenFor(userId, key);
-  const result = await customerFetch('/public/customers/me/subscriptions', {
-    method: 'POST',
-    portalToken: token,
-    idempotencyKey: key,
-    body: JSON.stringify(body),
+  const result = await callUpstreamWithAuthFallback({
+    sessionToken,
+    bridgeMint: () => portalTokenFor(userId, key),
+    call: token =>
+      customerFetch('/public/customers/me/subscriptions', {
+        method: 'POST',
+        portalToken: token,
+        idempotencyKey: key,
+        body: JSON.stringify(body),
+      }),
+    context: 'account-subscribe',
   });
   if (result.status !== 201) {
     logger.warn('TokenPanel subscribe denied', { status: result.status });
@@ -260,8 +281,11 @@ export const listPlans = async (): Promise<unknown> => {
 };
 
 /** Budgets — passthrough of `GET /me/budgets` (micros-exact, verbatim). */
-export const getBudgets = (userId: string): Promise<unknown> =>
-  forwardGet(userId, '/public/customers/me/budgets', 'budgets');
+export const getBudgets = (
+  userId: string,
+  sessionToken?: string
+): Promise<unknown> =>
+  forwardGet(userId, '/public/customers/me/budgets', 'budgets', sessionToken);
 
 /**
  * Update one budget — forwards `{amountMicros?, alertThresholds?}` only.
@@ -273,7 +297,8 @@ export const updateBudget = async (
   userId: string,
   budgetId: string,
   input: { amountMicros?: unknown; alertThresholds?: unknown },
-  idempotencyKey?: unknown
+  idempotencyKey?: unknown,
+  sessionToken?: string
 ): Promise<unknown> => {
   if (!OBJECT_ID_PATTERN.test(budgetId)) {
     throw new TokenpanelAccountError('Budget not found', 404);
@@ -304,16 +329,18 @@ export const updateBudget = async (
     patch.alertThresholds = input.alertThresholds;
   }
   const key = resolveIdempotencyKey(idempotencyKey);
-  const token = await portalTokenFor(userId);
-  const result = await customerFetch(
-    `/public/customers/me/budgets/${budgetId}`,
-    {
-      method: 'PATCH',
-      portalToken: token,
-      idempotencyKey: key,
-      body: JSON.stringify(patch),
-    }
-  );
+  const result = await callUpstreamWithAuthFallback({
+    sessionToken,
+    bridgeMint: () => portalTokenFor(userId),
+    call: token =>
+      customerFetch(`/public/customers/me/budgets/${budgetId}`, {
+        method: 'PATCH',
+        portalToken: token,
+        idempotencyKey: key,
+        body: JSON.stringify(patch),
+      }),
+    context: 'account-budget',
+  });
   if (result.status !== 200) {
     logger.warn('TokenPanel budget update denied', { status: result.status });
     throw toAccountError(result, 'budget');
@@ -322,8 +349,11 @@ export const updateBudget = async (
 };
 
 /** Limits — passthrough of `GET /me/limits` (rules + spendingCap verbatim). */
-export const getLimits = (userId: string): Promise<unknown> =>
-  forwardGet(userId, '/public/customers/me/limits', 'limits');
+export const getLimits = (
+  userId: string,
+  sessionToken?: string
+): Promise<unknown> =>
+  forwardGet(userId, '/public/customers/me/limits', 'limits', sessionToken);
 
 /**
  * Upsert the spending cap — forwards `{spendingCap}` only, where spendingCap
@@ -334,7 +364,8 @@ export const getLimits = (userId: string): Promise<unknown> =>
 export const updateLimits = async (
   userId: string,
   input: { spendingCap?: unknown },
-  idempotencyKey?: unknown
+  idempotencyKey?: unknown,
+  sessionToken?: string
 ): Promise<unknown> => {
   if (!('spendingCap' in input)) {
     throw new TokenpanelAccountError('Missing spendingCap', 400);
@@ -357,12 +388,17 @@ export const updateLimits = async (
     }
   }
   const key = resolveIdempotencyKey(idempotencyKey);
-  const token = await portalTokenFor(userId);
-  const result = await customerFetch('/public/customers/me/limits', {
-    method: 'PATCH',
-    portalToken: token,
-    idempotencyKey: key,
-    body: JSON.stringify({ spendingCap }),
+  const result = await callUpstreamWithAuthFallback({
+    sessionToken,
+    bridgeMint: () => portalTokenFor(userId),
+    call: token =>
+      customerFetch('/public/customers/me/limits', {
+        method: 'PATCH',
+        portalToken: token,
+        idempotencyKey: key,
+        body: JSON.stringify({ spendingCap }),
+      }),
+    context: 'account-limits',
   });
   if (result.status !== 200) {
     logger.warn('TokenPanel limits update denied', { status: result.status });
@@ -372,8 +408,11 @@ export const updateLimits = async (
 };
 
 /** Profile — passthrough of `GET /me` (never includes passwordHash). */
-export const getProfile = (userId: string): Promise<unknown> =>
-  forwardGet(userId, '/public/customers/me', 'profile');
+export const getProfile = (
+  userId: string,
+  sessionToken?: string
+): Promise<unknown> =>
+  forwardGet(userId, '/public/customers/me', 'profile', sessionToken);
 
 /**
  * Update the profile — forwards `{name?, email?}` only (mirrors upstream
@@ -383,7 +422,8 @@ export const getProfile = (userId: string): Promise<unknown> =>
 export const updateProfile = async (
   userId: string,
   input: { name?: unknown; email?: unknown },
-  idempotencyKey?: unknown
+  idempotencyKey?: unknown,
+  sessionToken?: string
 ): Promise<unknown> => {
   const patch: Record<string, unknown> = {};
   if (input.name !== undefined) {
@@ -404,12 +444,17 @@ export const updateProfile = async (
     throw new TokenpanelAccountError('Nothing to update', 400);
   }
   const key = resolveIdempotencyKey(idempotencyKey);
-  const token = await portalTokenFor(userId);
-  const result = await customerFetch('/public/customers/me', {
-    method: 'PATCH',
-    portalToken: token,
-    idempotencyKey: key,
-    body: JSON.stringify(patch),
+  const result = await callUpstreamWithAuthFallback({
+    sessionToken,
+    bridgeMint: () => portalTokenFor(userId),
+    call: token =>
+      customerFetch('/public/customers/me', {
+        method: 'PATCH',
+        portalToken: token,
+        idempotencyKey: key,
+        body: JSON.stringify(patch),
+      }),
+    context: 'account-profile',
   });
   if (result.status !== 200) {
     logger.warn('TokenPanel profile update denied', { status: result.status });

@@ -348,7 +348,7 @@ class SQLiteIdentitySyncRepository implements IdentitySyncRepository {
       .all<IdentityPublicUserRecord>(
         `
       SELECT id, username, email, role, account_status, approved_at, approved_by,
-             avatar, created_at, updated_at
+              avatar, created_at, updated_at, auth_subject
       FROM users
       WHERE id != 'default'
       ORDER BY created_at DESC
@@ -361,8 +361,8 @@ class SQLiteIdentitySyncRepository implements IdentitySyncRepository {
     const user =
       this.executor.get<IdentityPublicUserRecord>(
         `SELECT id, username, email, role, account_status, approved_at,
-                approved_by, avatar, created_at, updated_at
-         FROM users WHERE id = ?`,
+                 approved_by, avatar, created_at, updated_at, auth_subject
+          FROM users WHERE id = ?`,
         [id]
       ) ?? null;
     return user ? decodeIdentityRecord(this.emailCodec, user) : null;
@@ -381,9 +381,23 @@ class SQLiteIdentitySyncRepository implements IdentitySyncRepository {
     const user =
       this.executor.get<IdentityUserRecord>(
         `SELECT id, username, email, password_hash, role, account_status,
-                approved_at, approved_by, avatar, created_at, updated_at
-         FROM users WHERE username = ?`,
+                 approved_at, approved_by, avatar, created_at, updated_at,
+                 auth_subject
+          FROM users WHERE username = ?`,
         [username]
+      ) ?? null;
+    return user ? decodeIdentityRecord(this.emailCodec, user) : null;
+  }
+
+  findByAuthSubject(subject: string): IdentityUserRecord | null {
+    if (!subject) return null;
+    const user =
+      this.executor.get<IdentityUserRecord>(
+        `SELECT id, username, email, password_hash, role, account_status,
+                 approved_at, approved_by, avatar, created_at, updated_at,
+                 auth_subject
+          FROM users WHERE auth_subject = ?`,
+        [subject]
       ) ?? null;
     return user ? decodeIdentityRecord(this.emailCodec, user) : null;
   }
@@ -391,9 +405,9 @@ class SQLiteIdentitySyncRepository implements IdentitySyncRepository {
   insert(user: IdentityUserRecord): void {
     this.executor.run(
       `INSERT INTO users (
-         id, username, email, email_lookup, password_hash, role, account_status,
-         approved_at, approved_by, avatar, created_at, updated_at
-       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          id, username, email, email_lookup, password_hash, role, account_status,
+          approved_at, approved_by, avatar, created_at, updated_at, auth_subject
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         user.id,
         user.username,
@@ -407,6 +421,7 @@ class SQLiteIdentitySyncRepository implements IdentitySyncRepository {
         user.avatar,
         user.created_at,
         user.updated_at,
+        user.auth_subject ?? null,
       ]
     );
   }
@@ -464,6 +479,7 @@ class SQLiteIdentitySyncRepository implements IdentitySyncRepository {
       ['password_hash', update.passwordHash],
       ['role', update.role],
       ['avatar', update.avatar],
+      ['auth_subject', update.authSubject],
     ] as const) {
       if (value !== undefined) {
         assignments.push(`${column} = ?`);
@@ -525,7 +541,7 @@ class SQLiteIdentityRepository implements IdentityRepository {
       .all<IdentityPublicUserRecord>(
         `
       SELECT id, username, email, role, account_status, approved_at, approved_by,
-             avatar, created_at, updated_at
+              avatar, created_at, updated_at, auth_subject
       FROM users
       WHERE id != 'default'
       ORDER BY created_at DESC
@@ -540,9 +556,9 @@ class SQLiteIdentityRepository implements IdentityRepository {
     return this.executor
       .get<IdentityPublicUserRecord>(
         `SELECT id, username, email, role, account_status, approved_at,
-                approved_by, avatar, created_at, updated_at
-         FROM users
-         WHERE id = ?`,
+                 approved_by, avatar, created_at, updated_at, auth_subject
+          FROM users
+          WHERE id = ?`,
         [id]
       )
       .then(user =>
@@ -563,9 +579,25 @@ class SQLiteIdentityRepository implements IdentityRepository {
     return this.executor
       .get<IdentityUserRecord>(
         `SELECT id, username, email, password_hash, role, account_status,
-                approved_at, approved_by, avatar, created_at, updated_at
-         FROM users WHERE username = ?`,
+                 approved_at, approved_by, avatar, created_at, updated_at,
+                 auth_subject
+          FROM users WHERE username = ?`,
         [username]
+      )
+      .then(user =>
+        user ? decodeIdentityRecord(this.emailCodec, user) : null
+      );
+  }
+
+  findByAuthSubject(subject: string): Promise<IdentityUserRecord | null> {
+    if (!subject) return Promise.resolve(null);
+    return this.executor
+      .get<IdentityUserRecord>(
+        `SELECT id, username, email, password_hash, role, account_status,
+                 approved_at, approved_by, avatar, created_at, updated_at,
+                 auth_subject
+          FROM users WHERE auth_subject = ?`,
+        [subject]
       )
       .then(user =>
         user ? decodeIdentityRecord(this.emailCodec, user) : null
@@ -576,9 +608,9 @@ class SQLiteIdentityRepository implements IdentityRepository {
     return this.executor
       .run(
         `INSERT INTO users (
-         id, username, email, email_lookup, password_hash, role, account_status,
-         approved_at, approved_by, avatar, created_at, updated_at
-       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          id, username, email, email_lookup, password_hash, role, account_status,
+          approved_at, approved_by, avatar, created_at, updated_at, auth_subject
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           user.id,
           user.username,
@@ -592,6 +624,7 @@ class SQLiteIdentityRepository implements IdentityRepository {
           user.avatar,
           user.created_at,
           user.updated_at,
+          user.auth_subject ?? null,
         ]
       )
       .then(() => undefined);
@@ -663,6 +696,7 @@ class SQLiteIdentityRepository implements IdentityRepository {
       ['password_hash', update.passwordHash],
       ['role', update.role],
       ['avatar', update.avatar],
+      ['auth_subject', update.authSubject],
     ] as const) {
       if (value !== undefined) {
         assignments.push(`${column} = ?`);

@@ -39,6 +39,7 @@ import {
   TokenpanelBridgeError,
   exchangePortalToken,
 } from './tokenpanelBridgeService.js';
+import { callUpstreamWithAuthFallback } from './tokenpanelAuthSessionService.js';
 
 const logger = createLogger('services:tokenpanel-billing');
 
@@ -126,7 +127,7 @@ const toBillingError = (result: UpstreamResult): TokenpanelBillingError => {
   return new TokenpanelBillingError(message, status);
 };
 
-/** Resolve the caller's portal token (mgmt key stays server-side). */
+/** Resolve the caller's portal token (mgmt key stays server-side). Bridge path: kept for local mode and Alcore fallback. */
 const portalTokenFor = async (
   userId: string,
   idempotencyKey?: string
@@ -145,9 +146,17 @@ const portalTokenFor = async (
   }
 };
 
-const forwardGet = async (userId: string, path: string): Promise<unknown> => {
-  const token = await portalTokenFor(userId);
-  const result = await customerFetch(token, path, { method: 'GET' });
+const forwardGet = async (
+  userId: string,
+  path: string,
+  sessionToken?: string
+): Promise<unknown> => {
+  const result = await callUpstreamWithAuthFallback({
+    sessionToken,
+    bridgeMint: () => portalTokenFor(userId),
+    call: token => customerFetch(token, path, { method: 'GET' }),
+    context: 'billing',
+  });
   if (result.status !== 200) {
     logger.warn('TokenPanel billing read denied', {
       status: result.status,
@@ -184,33 +193,53 @@ const withPage = (
 /** Billing history — read-only passthrough of `GET /me/billing`. */
 export const getBillingHistory = (
   userId: string,
-  query: { limit?: unknown; skip?: unknown }
+  query: { limit?: unknown; skip?: unknown },
+  sessionToken?: string
 ): Promise<unknown> =>
-  forwardGet(userId, withPage('/public/customers/me/billing', query));
+  forwardGet(
+    userId,
+    withPage('/public/customers/me/billing', query),
+    sessionToken
+  );
 
 /** Invoices — read-only passthrough of `GET /me/invoices`. */
 export const listInvoices = (
   userId: string,
-  query: { limit?: unknown; skip?: unknown }
+  query: { limit?: unknown; skip?: unknown },
+  sessionToken?: string
 ): Promise<unknown> =>
-  forwardGet(userId, withPage('/public/customers/me/invoices', query));
+  forwardGet(
+    userId,
+    withPage('/public/customers/me/invoices', query),
+    sessionToken
+  );
 
 /** Top-up intents — read-only passthrough of `GET /me/topup-intents`. */
 export const listTopupIntents = (
   userId: string,
-  query: { limit?: unknown; skip?: unknown }
+  query: { limit?: unknown; skip?: unknown },
+  sessionToken?: string
 ): Promise<unknown> =>
-  forwardGet(userId, withPage('/public/customers/me/topup-intents', query));
+  forwardGet(
+    userId,
+    withPage('/public/customers/me/topup-intents', query),
+    sessionToken
+  );
 
 /** One pending intent — read-only passthrough of `GET /me/topup-intents/:id`. */
 export const getTopupIntent = (
   userId: string,
-  intentId: string
+  intentId: string,
+  sessionToken?: string
 ): Promise<unknown> => {
   if (!/^[0-9a-fA-F]{24}$/.test(intentId)) {
     throw new TokenpanelBillingError('Top-up intent not found', 404);
   }
-  return forwardGet(userId, `/public/customers/me/topup-intents/${intentId}`);
+  return forwardGet(
+    userId,
+    `/public/customers/me/topup-intents/${intentId}`,
+    sessionToken
+  );
 };
 
 const resolveIdempotencyKey = (provided: unknown): string => {
@@ -228,7 +257,8 @@ const resolveIdempotencyKey = (provided: unknown): string => {
  */
 export const createTopupIntent = async (
   userId: string,
-  input: { amountMicros: unknown; idempotencyKey?: unknown }
+  input: { amountMicros: unknown; idempotencyKey?: unknown },
+  sessionToken?: string
 ): Promise<unknown> => {
   const amountMicros = input.amountMicros;
   if (
@@ -244,16 +274,17 @@ export const createTopupIntent = async (
   const idempotencyKey = resolveIdempotencyKey(input.idempotencyKey);
   // The bridge resolve is bound to the same replay key so a retried create
   // converges on one customer before the intent write (todo 23).
-  const token = await portalTokenFor(userId, idempotencyKey);
-  const result = await customerFetch(
-    token,
-    '/public/customers/me/topup-intents',
-    {
-      method: 'POST',
-      idempotencyKey,
-      body: JSON.stringify({ amountMicros }),
-    }
-  );
+  const result = await callUpstreamWithAuthFallback({
+    sessionToken,
+    bridgeMint: () => portalTokenFor(userId, idempotencyKey),
+    call: token =>
+      customerFetch(token, '/public/customers/me/topup-intents', {
+        method: 'POST',
+        idempotencyKey,
+        body: JSON.stringify({ amountMicros }),
+      }),
+    context: 'billing-create-intent',
+  });
   if (result.status !== 201) {
     logger.warn('TokenPanel intent create denied', { status: result.status });
     throw toBillingError(result);
@@ -265,22 +296,28 @@ export const createTopupIntent = async (
 export const cancelTopupIntent = async (
   userId: string,
   intentId: string,
-  idempotencyKey?: unknown
+  idempotencyKey?: unknown,
+  sessionToken?: string
 ): Promise<unknown> => {
   if (!/^[0-9a-fA-F]{24}$/.test(intentId)) {
     throw new TokenpanelBillingError('Top-up intent not found', 404);
   }
   const resolvedKey = resolveIdempotencyKey(idempotencyKey);
-  const token = await portalTokenFor(userId);
-  const result = await customerFetch(
-    token,
-    `/public/customers/me/topup-intents/${intentId}/cancel`,
-    {
-      method: 'POST',
-      idempotencyKey: resolvedKey,
-      body: JSON.stringify({}),
-    }
-  );
+  const result = await callUpstreamWithAuthFallback({
+    sessionToken,
+    bridgeMint: () => portalTokenFor(userId),
+    call: token =>
+      customerFetch(
+        token,
+        `/public/customers/me/topup-intents/${intentId}/cancel`,
+        {
+          method: 'POST',
+          idempotencyKey: resolvedKey,
+          body: JSON.stringify({}),
+        }
+      ),
+    context: 'billing-cancel-intent',
+  });
   if (result.status !== 200) {
     logger.warn('TokenPanel intent cancel denied', { status: result.status });
     throw toBillingError(result);
@@ -296,18 +333,24 @@ export const cancelTopupIntent = async (
  */
 export const redeemVoucher = async (
   userId: string,
-  input: { code: unknown; idempotencyKey?: unknown }
+  input: { code: unknown; idempotencyKey?: unknown },
+  sessionToken?: string
 ): Promise<unknown> => {
   const code = typeof input.code === 'string' ? input.code.trim() : '';
   if (code.length < 4 || code.length > 64) {
     throw new TokenpanelBillingError('Invalid or already redeemed code', 400);
   }
   const resolvedKey = resolveIdempotencyKey(input.idempotencyKey);
-  const token = await portalTokenFor(userId);
-  const result = await customerFetch(token, '/public/customers/me/redeem', {
-    method: 'POST',
-    idempotencyKey: resolvedKey,
-    body: JSON.stringify({ code }),
+  const result = await callUpstreamWithAuthFallback({
+    sessionToken,
+    bridgeMint: () => portalTokenFor(userId),
+    call: token =>
+      customerFetch(token, '/public/customers/me/redeem', {
+        method: 'POST',
+        idempotencyKey: resolvedKey,
+        body: JSON.stringify({ code }),
+      }),
+    context: 'billing-redeem',
   });
   if (result.status !== 200) {
     logger.warn('TokenPanel redeem denied', { status: result.status });

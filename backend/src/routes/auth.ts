@@ -86,9 +86,18 @@ import {
 } from '../services/webauthnService.js';
 import { userModel } from '../models/userModel.js';
 import {
+  isAlcoreAuthMode,
+  rejectLocalAuthInAlcoreMode,
+} from '../config/authMode.js';
+import {
   TokenpanelBridgeError,
   exchangePortalToken,
 } from '../services/tokenpanelBridgeService.js';
+import {
+  isAuthDerivedSession,
+  requireBffAuthSession,
+  sessionBearerOf,
+} from '../services/tokenpanelAuthSessionService.js';
 
 const router = express.Router();
 const logger = createLogger('auth-routes');
@@ -175,6 +184,17 @@ const generalAuthRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+// Self-hosted vs Alcore-managed auth boundary (todo 41). In Alcore mode the
+// local password, signup, OAuth, MFA, and passkey routes below return an
+// identical 404 (no existent/nonexistent oracle); product session, token,
+// bridge, and ticket routes are unaffected. Prefix mounting guarantees no
+// local-auth route is missed; the bridge route stays until sunset (todo 29).
+router.use('/login', rejectLocalAuthInAlcoreMode);
+router.use('/signup', rejectLocalAuthInAlcoreMode);
+router.use('/oauth', rejectLocalAuthInAlcoreMode);
+router.use('/mfa', rejectLocalAuthInAlcoreMode);
+router.use('/passkeys', rejectLocalAuthInAlcoreMode);
 
 // WebSocket tickets get their own bucket: every chat reconnect consumes one,
 // and a reconnect storm competing with sign-in traffic must not lock either
@@ -272,6 +292,10 @@ const tokenpanelRateLimiter = rateLimit({
  * match, collision → 409, never first-row-wins). The browser receives the
  * token only to place it in a one-time URL fragment the portal consumes and
  * strips; the management key authorizing the mint never leaves the server.
+ *
+ * Gap2-bff (R-BFF1): in Alcore mode with an Auth-derived session, the grant
+ * is the caller's own Auth session (zero bridge calls, bridge JWT not
+ * required); otherwise the bridge mint below runs as flag-gated fallback.
  * TODO(bridge-sunset,todo29): temporary bridge — remove with the Phase 8
  * sunset. Grep marker: bridge-sunset.
  */
@@ -279,11 +303,36 @@ router.post(
   '/tokenpanel/portal-token',
   tokenpanelRateLimiter,
   authenticate,
+  requireBffAuthSession,
   async (req: AuthenticatedRequest, res) => {
     res.set('Cache-Control', 'no-store');
     const userId = req.user?.userId;
     if (!userId) {
       res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+    if (
+      isAlcoreAuthMode() &&
+      (await isAuthDerivedSession(req).catch(() => false))
+    ) {
+      const token = sessionBearerOf(req) ?? '';
+      const expSeconds =
+        typeof req.user?.exp === 'number' ? req.user.exp : null;
+      const expiresAt =
+        expSeconds !== null
+          ? new Date(expSeconds * 1000).toISOString()
+          : new Date(Date.now() + 60 * 60 * 1000).toISOString();
+      void recordAuditEvent({
+        action: 'auth.tokenpanel-bridge',
+        result: 'success',
+        actorUserId: userId,
+        ipHash: hashClientIp(getClientIp(req)),
+        details: { via: 'auth-session', customerId: userId },
+      });
+      res.json({
+        success: true,
+        data: { token, expiresAt, customerId: userId, linked: 'existing' },
+      });
       return;
     }
     const idempotencyKey =
@@ -1132,7 +1181,9 @@ router.delete(
 );
 
 /**
- * Verify token endpoint
+ * Verify token endpoint (todo 45: session-aware — a revoked/logout session
+ * 401s here instead of lingering until JWT expiry, so revocation clears
+ * state on this route too).
  */
 router.get(
   '/verify',
@@ -1143,7 +1194,7 @@ router.get(
       const user = await authService.getUserFromToken(
         req.headers.authorization!.substring(7)
       );
-      if (!user) {
+      if (!user || user.id !== req.user?.userId) {
         res.status(401).json({
           success: false,
           message: 'Invalid token',
@@ -1678,28 +1729,19 @@ router.post('/oauth/exchange', generalAuthRateLimiter, async (req, res) => {
 });
 
 /**
- * Get current user info (works with both regular JWT and GitHub OAuth JWT)
+ * Get current user info (works with both regular JWT and GitHub OAuth JWT).
+ * Todo 45: session-aware like /verify — revoked sessions 401 here.
  */
 router.get(
   '/me',
   generalAuthRateLimiter,
-  // We can't use the existing authenticate middleware due to type conflicts
-  // So we'll do manual JWT verification
-  async (req, res) => {
+  authenticate,
+  async (req: AuthenticatedRequest, res) => {
     try {
-      const token = req.headers.authorization?.startsWith('Bearer ')
-        ? req.headers.authorization.substring(7)
-        : null;
-
-      if (!token) {
-        return res.status(401).json({
-          success: false,
-          message: 'No token provided',
-        });
-      }
-
-      const user = await authService.getUserFromToken(token);
-      if (!user) {
+      const user = await authService.getUserFromToken(
+        req.headers.authorization!.substring(7)
+      );
+      if (!user || user.id !== req.user?.userId) {
         return res.status(401).json({
           success: false,
           message: 'Invalid token',

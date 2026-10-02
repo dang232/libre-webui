@@ -3439,7 +3439,7 @@
     {
       "id": "authentication",
       "title": "Authentication",
-      "uiRoutes": ["/login"],
+      "uiRoutes": ["/login", "/auth/alcore/callback"],
       "documentation": [
         {
           "file": "docs/12-AUTHENTICATION.md",
@@ -3467,6 +3467,13 @@
           "patterns": [
             "Settings → API Platform mints a 120s portal token",
             "first-login link creates the TokenPanel"
+          ]
+        },
+        {
+          "file": "docs/12-AUTHENTICATION.md",
+          "patterns": [
+            "redeems the opaque single-use product code server-to-server",
+            "Auth verifies passwords directly; Libre never sees them"
           ]
         }
       ],
@@ -3529,10 +3536,13 @@
           "file": "scripts/test-tokenpanel-bridge.mjs",
           "runner": "test:package",
           "name": "bridge resolves through bridge-resolve with identity + idempotency key",
-          "behaviorPatterns": [
-            "exchangePortalToken",
-            "Idempotency-Key"
-          ]
+          "behaviorPatterns": ["exchangePortalToken", "Idempotency-Key"]
+        },
+        {
+          "file": "scripts/test-alcore-auth-exchange.mjs",
+          "runner": "test:package",
+          "name": "approved profile signs in and converges on repeat codes",
+          "behaviorPatterns": ["good-code-2", "prove@example.com"]
         }
       ],
       "backendRoutes": [
@@ -3937,6 +3947,18 @@
           "mount": "/api/tokenpanel",
           "method": "GET",
           "path": "/usage/summary"
+        },
+        {
+          "file": "backend/src/routes/alcoreAuth.ts",
+          "mount": "/api/auth/alcore",
+          "method": "GET",
+          "path": "/config"
+        },
+        {
+          "file": "backend/src/routes/alcoreAuth.ts",
+          "mount": "/api/auth/alcore",
+          "method": "POST",
+          "path": "/exchange"
         }
       ],
       "contractSurfaces": {

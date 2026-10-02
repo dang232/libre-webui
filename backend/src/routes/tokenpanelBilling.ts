@@ -39,6 +39,10 @@ import {
   listTopupIntents,
   redeemVoucher,
 } from '../services/tokenpanelBillingService.js';
+import {
+  requireBffAuthSession,
+  sessionBearerOf,
+} from '../services/tokenpanelAuthSessionService.js';
 import { createLogger } from '../utils/logger.js';
 
 const logger = createLogger('routes:tokenpanel-billing');
@@ -70,7 +74,7 @@ const billingWriteLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-router.use(billingReadLimiter, authenticate);
+router.use(billingReadLimiter, authenticate, requireBffAuthSession);
 
 const fail = (
   res: express.Response,
@@ -97,6 +101,9 @@ const fail = (
 const userIdOf = (req: AuthenticatedRequest): string | null =>
   req.user?.userId ?? null;
 
+const sessionTokenOf = (req: AuthenticatedRequest): string | undefined =>
+  sessionBearerOf(req) ?? undefined;
+
 /** GET /api/tokenpanel/billing/history — balance history, newest first. */
 router.get('/billing/history', async (req: AuthenticatedRequest, res) => {
   res.set('Cache-Control', 'no-store');
@@ -106,10 +113,14 @@ router.get('/billing/history', async (req: AuthenticatedRequest, res) => {
     return;
   }
   try {
-    const data = await getBillingHistory(userId, {
-      limit: req.query.limit,
-      skip: req.query.skip,
-    });
+    const data = await getBillingHistory(
+      userId,
+      {
+        limit: req.query.limit,
+        skip: req.query.skip,
+      },
+      sessionTokenOf(req)
+    );
     res.json({ success: true, data });
   } catch (error) {
     fail(res, error, 'Failed to load billing history');
@@ -125,10 +136,14 @@ router.get('/billing/invoices', async (req: AuthenticatedRequest, res) => {
     return;
   }
   try {
-    const data = await listInvoices(userId, {
-      limit: req.query.limit,
-      skip: req.query.skip,
-    });
+    const data = await listInvoices(
+      userId,
+      {
+        limit: req.query.limit,
+        skip: req.query.skip,
+      },
+      sessionTokenOf(req)
+    );
     res.json({ success: true, data });
   } catch (error) {
     fail(res, error, 'Failed to load invoices');
@@ -144,10 +159,14 @@ router.get('/billing/topup-intents', async (req: AuthenticatedRequest, res) => {
     return;
   }
   try {
-    const data = await listTopupIntents(userId, {
-      limit: req.query.limit,
-      skip: req.query.skip,
-    });
+    const data = await listTopupIntents(
+      userId,
+      {
+        limit: req.query.limit,
+        skip: req.query.skip,
+      },
+      sessionTokenOf(req)
+    );
     res.json({ success: true, data });
   } catch (error) {
     fail(res, error, 'Failed to load top-up intents');
@@ -165,7 +184,11 @@ router.get(
       return;
     }
     try {
-      const data = await getTopupIntent(userId, String(req.params.id));
+      const data = await getTopupIntent(
+        userId,
+        String(req.params.id),
+        sessionTokenOf(req)
+      );
       res.json({ success: true, data });
     } catch (error) {
       fail(res, error, 'Failed to load top-up intent');
@@ -189,12 +212,16 @@ router.post(
       return;
     }
     try {
-      const data = await createTopupIntent(userId, {
-        amountMicros: req.body?.amountMicros,
-        ...(typeof req.headers['idempotency-key'] === 'string'
-          ? { idempotencyKey: req.headers['idempotency-key'] }
-          : {}),
-      });
+      const data = await createTopupIntent(
+        userId,
+        {
+          amountMicros: req.body?.amountMicros,
+          ...(typeof req.headers['idempotency-key'] === 'string'
+            ? { idempotencyKey: req.headers['idempotency-key'] }
+            : {}),
+        },
+        sessionTokenOf(req)
+      );
       res.status(201).json({ success: true, data });
     } catch (error) {
       fail(res, error, 'Failed to create top-up intent');
@@ -219,7 +246,8 @@ router.post(
         String(req.params.id),
         typeof req.headers['idempotency-key'] === 'string'
           ? req.headers['idempotency-key']
-          : undefined
+          : undefined,
+        sessionTokenOf(req)
       );
       res.json({ success: true, data });
     } catch (error) {
@@ -244,12 +272,16 @@ router.post(
       return;
     }
     try {
-      const data = await redeemVoucher(userId, {
-        code: req.body?.code,
-        ...(typeof req.headers['idempotency-key'] === 'string'
-          ? { idempotencyKey: req.headers['idempotency-key'] }
-          : {}),
-      });
+      const data = await redeemVoucher(
+        userId,
+        {
+          code: req.body?.code,
+          ...(typeof req.headers['idempotency-key'] === 'string'
+            ? { idempotencyKey: req.headers['idempotency-key'] }
+            : {}),
+        },
+        sessionTokenOf(req)
+      );
       res.json({ success: true, data });
     } catch (error) {
       fail(res, error, 'Failed to redeem code');

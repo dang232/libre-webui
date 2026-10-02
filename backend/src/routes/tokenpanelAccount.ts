@@ -46,6 +46,10 @@ import {
   updateProfile,
 } from '../services/tokenpanelAccountService.js';
 import { createLogger } from '../utils/logger.js';
+import {
+  requireBffAuthSession,
+  sessionBearerOf,
+} from '../services/tokenpanelAuthSessionService.js';
 
 const logger = createLogger('routes:tokenpanel-account');
 const router = express.Router();
@@ -74,7 +78,7 @@ const accountWriteLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-router.use(accountReadLimiter, authenticate);
+router.use(accountReadLimiter, authenticate, requireBffAuthSession);
 
 const fail = (
   res: express.Response,
@@ -112,13 +116,16 @@ const idempotencyKeyOf = (req: AuthenticatedRequest): string | undefined => {
   return typeof raw === 'string' ? raw : undefined;
 };
 
+const sessionTokenOf = (req: AuthenticatedRequest): string | undefined =>
+  sessionBearerOf(req) ?? undefined;
+
 /** GET /api/tokenpanel/account/subscription — active subscription + plan. */
 router.get('/account/subscription', async (req: AuthenticatedRequest, res) => {
   res.set('Cache-Control', 'no-store');
   const userId = requireUserId(req, res);
   if (!userId) return;
   try {
-    const data = await getSubscription(userId);
+    const data = await getSubscription(userId, sessionTokenOf(req));
     res.json({ success: true, data });
   } catch (error) {
     fail(res, error, 'Failed to load subscription');
@@ -147,7 +154,8 @@ router.post(
             ? { billing: req.body.billing }
             : {}),
         },
-        idempotencyKeyOf(req)
+        idempotencyKeyOf(req),
+        sessionTokenOf(req)
       );
       res.status(201).json({ success: true, data });
     } catch (error) {
@@ -175,7 +183,7 @@ router.get('/account/budgets', async (req: AuthenticatedRequest, res) => {
   const userId = requireUserId(req, res);
   if (!userId) return;
   try {
-    const data = await getBudgets(userId);
+    const data = await getBudgets(userId, sessionTokenOf(req));
     res.json({ success: true, data });
   } catch (error) {
     fail(res, error, 'Failed to load budgets');
@@ -205,7 +213,8 @@ router.patch(
             ? { alertThresholds: req.body.alertThresholds }
             : {}),
         },
-        idempotencyKeyOf(req)
+        idempotencyKeyOf(req),
+        sessionTokenOf(req)
       );
       res.json({ success: true, data });
     } catch (error) {
@@ -220,7 +229,7 @@ router.get('/account/limits', async (req: AuthenticatedRequest, res) => {
   const userId = requireUserId(req, res);
   if (!userId) return;
   try {
-    const data = await getLimits(userId);
+    const data = await getLimits(userId, sessionTokenOf(req));
     res.json({ success: true, data });
   } catch (error) {
     fail(res, error, 'Failed to load limits');
@@ -245,7 +254,8 @@ router.patch(
         {
           spendingCap: req.body?.spendingCap,
         },
-        idempotencyKeyOf(req)
+        idempotencyKeyOf(req),
+        sessionTokenOf(req)
       );
       res.json({ success: true, data });
     } catch (error) {
@@ -260,7 +270,7 @@ router.get('/account/profile', async (req: AuthenticatedRequest, res) => {
   const userId = requireUserId(req, res);
   if (!userId) return;
   try {
-    const data = await getProfile(userId);
+    const data = await getProfile(userId, sessionTokenOf(req));
     res.json({ success: true, data });
   } catch (error) {
     fail(res, error, 'Failed to load profile');
@@ -286,7 +296,8 @@ router.patch(
           ...(req.body?.name !== undefined ? { name: req.body.name } : {}),
           ...(req.body?.email !== undefined ? { email: req.body.email } : {}),
         },
-        idempotencyKeyOf(req)
+        idempotencyKeyOf(req),
+        sessionTokenOf(req)
       );
       res.json({ success: true, data });
     } catch (error) {

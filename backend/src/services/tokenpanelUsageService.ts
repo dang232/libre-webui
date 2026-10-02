@@ -40,6 +40,7 @@ import {
   TokenpanelBridgeError,
   exchangePortalToken,
 } from './tokenpanelBridgeService.js';
+import { callUpstreamWithAuthFallback } from './tokenpanelAuthSessionService.js';
 
 const logger = createLogger('services:tokenpanel-usage');
 
@@ -118,7 +119,7 @@ const toUsageError = (result: UpstreamResult): TokenpanelUsageError => {
   return new TokenpanelUsageError(message, status);
 };
 
-/** Resolve the caller's portal token (mgmt key stays server-side). */
+/** Resolve the caller's portal token (mgmt key stays server-side). Bridge path: kept for local mode and Alcore fallback. */
 const portalTokenFor = async (userId: string): Promise<string> => {
   try {
     const grant = await exchangePortalToken(userId);
@@ -131,9 +132,17 @@ const portalTokenFor = async (userId: string): Promise<string> => {
   }
 };
 
-const forwardGet = async (userId: string, path: string): Promise<unknown> => {
-  const token = await portalTokenFor(userId);
-  const result = await customerFetch(token, path);
+const forwardGet = async (
+  userId: string,
+  path: string,
+  sessionToken?: string
+): Promise<unknown> => {
+  const result = await callUpstreamWithAuthFallback({
+    sessionToken,
+    bridgeMint: () => portalTokenFor(userId),
+    call: token => customerFetch(token, path),
+    context: 'usage',
+  });
   if (result.status !== 200) {
     logger.warn('TokenPanel usage read denied', {
       status: result.status,
@@ -175,16 +184,26 @@ const withWindow = (
 /** Totals — read-only passthrough of `GET /me/usage`. */
 export const getUsageSummary = (
   userId: string,
-  query: { from?: unknown; to?: unknown }
+  query: { from?: unknown; to?: unknown },
+  sessionToken?: string
 ): Promise<unknown> =>
-  forwardGet(userId, withWindow('/public/customers/me/usage', query));
+  forwardGet(
+    userId,
+    withWindow('/public/customers/me/usage', query),
+    sessionToken
+  );
 
 /** Daily buckets — read-only passthrough of `GET /me/usage/daily`. */
 export const getUsageDaily = (
   userId: string,
-  query: { from?: unknown; to?: unknown }
+  query: { from?: unknown; to?: unknown },
+  sessionToken?: string
 ): Promise<unknown> =>
-  forwardGet(userId, withWindow('/public/customers/me/usage/daily', query));
+  forwardGet(
+    userId,
+    withWindow('/public/customers/me/usage/daily', query),
+    sessionToken
+  );
 
 export interface UsageRecordsQuery {
   limit?: unknown;
@@ -203,7 +222,8 @@ export interface UsageRecordsQuery {
  */
 export const getUsageRecords = (
   userId: string,
-  query: UsageRecordsQuery
+  query: UsageRecordsQuery,
+  sessionToken?: string
 ): Promise<unknown> => {
   const params = new URLSearchParams();
   if (query.limit !== undefined && query.limit !== null && query.limit !== '') {
@@ -231,5 +251,5 @@ export const getUsageRecords = (
   const path = suffix
     ? `/public/customers/me/usage/records?${suffix}`
     : '/public/customers/me/usage/records';
-  return forwardGet(userId, path);
+  return forwardGet(userId, path, sessionToken);
 };

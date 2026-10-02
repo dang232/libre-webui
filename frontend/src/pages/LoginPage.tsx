@@ -28,6 +28,8 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { CelestialSky } from '@/components/CelestialSky';
 import { resolveAppVersion } from '@/utils/appVersion';
+import { isAlcoreAuthMode } from '@/utils/config';
+import { AlcoreAuthNotice } from '@/components/AlcoreAuthNotice';
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
@@ -39,6 +41,7 @@ export const LoginPage: React.FC = () => {
   const signupEnabled = systemInfo?.signupEnabled ?? true;
   const oauthApprovalPending =
     new URLSearchParams(location.search).get('approval') === 'pending';
+  const alcoreMode = isAlcoreAuthMode(systemInfo);
 
   useEffect(() => {
     // If already authenticated or auth is disabled, redirect to home.
@@ -173,7 +176,9 @@ export const LoginPage: React.FC = () => {
 
         <section className='flex items-center justify-center px-5 pb-12 pt-24 sm:px-8 lg:px-12 lg:py-12'>
           <div className='w-full max-w-sm'>
-            {isSignupMode && signupEnabled ? (
+            {alcoreMode ? (
+              <AlcoreAuthNotice />
+            ) : isSignupMode && signupEnabled ? (
               <SignupForm
                 bare
                 onBackToLogin={() => setIsSignupMode(false)}

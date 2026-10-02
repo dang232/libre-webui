@@ -83,6 +83,7 @@ import promptsRoutes from './routes/prompts.js';
 import skillsRoutes from './routes/skills.js';
 import toolsRoutes from './routes/tools.js';
 import authRoutes from './routes/auth.js';
+import alcoreAuthRoutes from './routes/alcoreAuth.js';
 import tokenpanelBillingRoutes from './routes/tokenpanelBilling.js';
 import tokenpanelAccountRoutes from './routes/tokenpanelAccount.js';
 import tokenpanelUsageRoutes from './routes/tokenpanelUsage.js';
@@ -257,22 +258,36 @@ const corsOrigins = process.env.CORS_ORIGIN?.split(',') || [
 ];
 
 // Multi-user safe CORS configuration: the browser origin must be listed in
-// CORS_ORIGIN (or CORS_ORIGIN must be "*"), with private-network origins
-// accepted outside production or inside Docker so LAN access keeps working.
+// CORS_ORIGIN. A wildcard entry is a development-only escape hatch gated on
+// NODE_ENV (never on an env value an operator could set in production), and
+// the production boot path below refuses to start when CORS_ORIGIN contains
+// one, so the production path always fails closed.
+if (isProduction && corsOrigins.includes('*')) {
+  console.error(
+    'FATAL: CORS_ORIGIN must not contain "*" in production. ' +
+      'Set CORS_ORIGIN to the exact web/apex/auth triangle origins.'
+  );
+  process.exit(1);
+}
 const isOriginAllowed = (origin: string | undefined): boolean => {
   // Requests with no origin (mobile apps, curl, same-origin) are allowed.
   if (!origin) return true;
-  if (corsOrigins.includes('*')) return true;
   if (corsOrigins.indexOf(origin) !== -1) return true;
-  // Allow network access in development mode or Docker environment
-  // This allows access from network IPs like http://192.168.x.x:8080 or http://10.x.x.x:8080
-  const allowNetworkAccess =
-    process.env.NODE_ENV !== 'production' || process.env.DOCKER_ENV === 'true';
+  // Dev-mode escape hatch: a wildcard entry is honored only outside
+  // production. Production refuses to boot with one (see above), so this
+  // branch is unreachable when NODE_ENV=production.
+  if (process.env.NODE_ENV !== 'production' && corsOrigins.includes('*')) {
+    return true;
+  }
+  // Allow network access in development mode only. Docker no longer bypasses
+  // this gate: a production container (DOCKER_ENV=true, NODE_ENV=production)
+  // must serve only its configured CORS_ORIGIN allowlist, so LAN/RFC1918
+  // origins need an explicit CORS_ORIGIN entry in production.
   const isNetworkOrigin =
     /^https?:\/\/(?:192\.168\.|10\.|172\.(?:1[6-9]|2\d|3[01])\.|100\.(?:6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.|127\.|localhost)/.test(
       origin
     );
-  return allowNetworkAccess && isNetworkOrigin;
+  return process.env.NODE_ENV !== 'production' && isNetworkOrigin;
 };
 
 /**
@@ -398,6 +413,11 @@ app.use(
 // in CORS mode, needs an explicit grant. This is mounted ahead of the
 // application CORS gate, which would reject that origin, and serves nothing
 // but uncredentialed static bundles.
+// BFF EXCEPTION (documented, owner: web-platform lane): wildcard ACAO here
+// is safe because this route never sets Access-Control-Allow-Credentials and
+// never reflects Authorization/Cookie material (static files only). Sunset:
+// replace with an exact-origin echo if this route ever serves credentialed
+// or per-user content.
 {
   const runtimeRoot = resolveFrontendDist(import.meta.url);
   if (runtimeRoot) {
@@ -637,6 +657,10 @@ const pluginRouteRateLimiter = rateLimit({
 });
 
 // API routes
+// Direct Auth relying party (todo 45). Mounted before /api/auth so the
+// Alcore-mode-only exchange/config routes resolve first; the local router
+// has no overlapping paths and falls through untouched.
+app.use('/api/auth/alcore', authRateLimiter, optionalAuth, alcoreAuthRoutes);
 app.use('/api/auth', authRateLimiter, optionalAuth, authRoutes);
 app.use('/api/tokenpanel', tokenpanelBillingRoutes);
 app.use('/api/tokenpanel', tokenpanelAccountRoutes);

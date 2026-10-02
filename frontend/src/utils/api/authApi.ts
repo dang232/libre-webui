@@ -26,7 +26,7 @@ import type {
   UserCreateRequest,
   UserUpdateRequest,
 } from '@/types';
-import { API_BASE_URL } from '@/utils/config';
+import { API_BASE_URL, AUTH_BASE_URL } from '@/utils/config';
 import { isDemoMode } from '@/utils/demoMode';
 import { DEFAULT_DEMO_PREFERENCES } from './demoData';
 import { api, createDemoResponse, logger } from './client';
@@ -411,6 +411,130 @@ export const authApi = {
     credential: unknown;
   }): Promise<ApiResponse<LoginResponse>> =>
     api.post('/auth/passkeys/login', payload).then(res => res.data),
+
+  /**
+   * Direct Auth relying party (todo 45, Alcore mode only).
+   *
+   * The browser redeems an opaque Auth product code (Bearer handoff via
+   * Auth POST /oidc/exchange, or redirect handoff via Auth
+   * GET /oidc/exchange/redirect carrying ?code=&state=) at the Libre BFF,
+   * which validates it server-to-server and returns a Libre product
+   * session. The BFF never sees passwords or Auth refresh credentials.
+   */
+  alcoreConfig: (): Promise<
+    ApiResponse<{ authUrl: string; issuer: string; mode: string }>
+  > => api.get('/auth/alcore/config').then(res => res.data),
+
+  alcoreExchange: (payload: {
+    code: string;
+    redirectUri?: string;
+    state?: string;
+  }): Promise<ApiResponse<LoginResponse>> =>
+    api.post('/auth/alcore/exchange', payload).then(res => res.data),
+};
+
+// ---------------------------------------------------------------------------
+// Browser-direct Auth calls (todo 45).
+//
+// These use plain fetch against the Auth origin — never the Libre `api`
+// client — so no Libre session token is attached and no 401 handler fires.
+// Passwords travel browser→Auth only; Libre (BFF or frontend store) never
+// sees them. The Auth access token is kept in memory just long enough to
+// fetch the opaque product-exchange code, then discarded: Libre never
+// stores Auth refresh credentials anywhere.
+// ---------------------------------------------------------------------------
+
+/** Auth API error codes surfaced as generic, non-enumerating messages. */
+const alcoreAuthErrorMessage = (code: unknown): string => {
+  switch (code) {
+    case 'invalid_credentials':
+      return 'Invalid email or password.';
+    case 'email_taken':
+      return 'An account with this email already exists.';
+    case 'weak_password':
+      return 'The password must be at least 8 characters.';
+    case 'invalid_email':
+      return 'Enter a valid email address.';
+    case 'upstream_unavailable':
+      return 'The sign-in provider is unavailable; try again shortly.';
+    default:
+      return 'Auth sign-in failed; try again.';
+  }
+};
+
+const alcoreFetch = async (
+  path: string,
+  body: unknown,
+  accessToken?: string
+): Promise<{ ok: boolean; status: number; data: Record<string, unknown> }> => {
+  const response = await fetch(`${AUTH_BASE_URL}${path}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+    },
+    body: JSON.stringify(body),
+  });
+  const data = (await response.json().catch(() => null)) as Record<
+    string,
+    unknown
+  > | null;
+  return { ok: response.ok, status: response.status, data: data ?? {} };
+};
+
+export interface AlcoreDirectSignIn {
+  authAccessToken: string;
+  authUserId: string;
+}
+
+/** Password register/login directly against Auth. Throws Error on failure. */
+export const alcoreDirectPassword = async (
+  mode: 'login' | 'register',
+  email: string,
+  password: string
+): Promise<AlcoreDirectSignIn> => {
+  const { ok, data } = await alcoreFetch(
+    mode === 'login' ? '/auth/login' : '/auth/register',
+    { email, password }
+  );
+  const accessToken = data.access_token;
+  // Register returns a flat `{id, ...pair}`; login nests `{...pair, user}`.
+  const nestedUser = data.user as { id?: unknown } | undefined;
+  const userId =
+    typeof nestedUser?.id === 'string'
+      ? nestedUser.id
+      : typeof data.id === 'string'
+        ? data.id
+        : null;
+  if (!ok || typeof accessToken !== 'string' || userId === null) {
+    throw new Error(alcoreAuthErrorMessage(data.error));
+  }
+  return { authAccessToken: accessToken, authUserId: userId };
+};
+
+/** Password-reset request directly against Auth (always-200, non-enumerating). */
+export const alcoreDirectResetRequest = async (
+  email: string
+): Promise<void> => {
+  await alcoreFetch('/auth/reset/request', { email });
+};
+
+/**
+ * Redeem an Auth session for the opaque single-use Libre product code.
+ * The access token is used once here and must be discarded by the caller.
+ */
+export const alcoreDirectProductCode = async (
+  authAccessToken: string
+): Promise<string> => {
+  const { ok, data } = await alcoreFetch(
+    '/oidc/exchange',
+    { audience: 'libre', intent: 'product_exchange' },
+    authAccessToken
+  );
+  if (!ok || typeof data.code !== 'string' || !data.code) {
+    throw new Error('Auth sign-in failed; try again.');
+  }
+  return data.code;
 };
 
 // Users API

@@ -1123,6 +1123,10 @@ const WORK_RUN_RESULTS_REQUIRED_SCHEMA = {
   skills: ['approval_policy', 'approval_tools'],
 } as const;
 
+const ALCORE_AUTH_SUBJECT_REQUIRED_SCHEMA = {
+  users: ['auth_subject'],
+} as const;
+
 const WORK_APPROVALS_REQUIRED_SCHEMA = {
   work_policies: ['approvals_required'],
   work_tasks: ['approvals_enabled'],
@@ -2770,6 +2774,13 @@ const REQUIRED_INDEXES: readonly RequiredIndex[] = [
     sqlFragment: 'WHERE email_lookup IS NOT NULL',
   },
   {
+    name: 'idx_users_auth_subject',
+    table: 'users',
+    columns: ['auth_subject'],
+    unique: true,
+    sqlFragment: 'WHERE auth_subject IS NOT NULL',
+  },
+  {
     name: 'idx_voice_profiles_name_lookup',
     table: 'voice_profiles',
     columns: ['user_id', 'plugin_id', 'model', 'name_lookup'],
@@ -3571,6 +3582,7 @@ const collectMissingLegacySchema = (database: Database.Database): string[] => [
     item =>
       !item.includes('platform_') &&
       !item.includes('idx_users_email_lookup') &&
+      !item.includes('idx_users_auth_subject') &&
       !item.includes('idx_voice_profiles_name_lookup') &&
       !item.includes('idx_calendar_scoped_events')
   ),
@@ -3805,6 +3817,15 @@ const collectMissingWorkRunResultsSchema = (
 ): string[] =>
   collectMissingColumns(database, WORK_RUN_RESULTS_REQUIRED_SCHEMA);
 
+const collectMissingAlcoreAuthSubjectSchema = (
+  database: Database.Database
+): string[] => [
+  ...collectMissingColumns(database, ALCORE_AUTH_SUBJECT_REQUIRED_SCHEMA),
+  ...collectMissingStructuralInvariants(database).filter(item =>
+    item.includes('idx_users_auth_subject')
+  ),
+];
+
 const collectMissingWorkApprovalsSchema = (
   database: Database.Database
 ): string[] => [
@@ -3878,6 +3899,8 @@ function collectMissingSchemaAtVersion(
     ...(version >= 27 ? collectMissingAgentSeenSchema(database) : []),
     ...(version >= 28 ? collectMissingWorkApprovalsSchema(database) : []),
     ...(version >= 29 ? collectMissingAutomationWebhooksSchema(database) : []),
+    ...(version >= 30 ? collectMissingWorkRunResultsSchema(database) : []),
+    ...(version >= 31 ? collectMissingAlcoreAuthSubjectSchema(database) : []),
   ];
 }
 
@@ -3993,6 +4016,8 @@ const AUTOMATION_WEBHOOKS_MIGRATION_CHECKSUM =
   'a136ac591774852516f4de5c4f97d607259d57aa7d16db37249bc1c3e2dcd776';
 const WORK_RUN_RESULTS_MIGRATION_CHECKSUM =
   '0eee2956bbe4af84715660e9a01cb8bf1303b0c9ff8cb90050ee5c919badec08';
+const ALCORE_AUTH_SUBJECT_MIGRATION_CHECKSUM =
+  '764b126abe8d77d8b29e616d2f2e9da1ed3ec39c4a120797fed9ccddc48df001';
 
 const MIGRATIONS: readonly SQLiteMigration[] = [
   {
@@ -4539,6 +4564,25 @@ const MIGRATIONS: readonly SQLiteMigration[] = [
       if (missing.length > 0) {
         throw new Error(
           `SQLite work run results schema is incomplete; missing ${missing.join(', ')}`
+        );
+      }
+    },
+  },
+  {
+    version: 31,
+    name: 'alcore-auth-subject',
+    checksum: ALCORE_AUTH_SUBJECT_MIGRATION_CHECKSUM,
+    apply(database) {
+      addColumnIfMissing(database, 'users', 'auth_subject', 'TEXT');
+      database.exec(`
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_users_auth_subject
+          ON users(auth_subject)
+          WHERE auth_subject IS NOT NULL;
+      `);
+      const missing = collectMissingAlcoreAuthSubjectSchema(database);
+      if (missing.length > 0) {
+        throw new Error(
+          `SQLite Alcore auth subject schema is incomplete; missing ${missing.join(', ')}`
         );
       }
     },

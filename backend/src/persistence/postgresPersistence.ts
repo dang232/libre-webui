@@ -58,6 +58,7 @@ type StoredIdentityRecord = QueryResultRow & {
   avatar: string | null;
   created_at: string | number;
   updated_at: string | number;
+  auth_subject?: string | null;
 };
 
 const plausibleEmail = (value: string): boolean =>
@@ -136,6 +137,7 @@ const decodeUser = (
     avatar: row.avatar,
     created_at: safeInteger(row.created_at, 'created_at'),
     updated_at: safeInteger(row.updated_at, 'updated_at'),
+    auth_subject: (row.auth_subject ?? null) as string | null,
   };
   if (!includePassword) return common;
   if (typeof row.password_hash !== 'string') {
@@ -155,10 +157,10 @@ class PostgresIdentityRepository implements IdentityRepository {
   async list(): Promise<IdentityPublicUserRecord[]> {
     const result = await this.executor.query<StoredIdentityRecord>(
       `SELECT id, username, email, role, account_status, approved_at,
-              approved_by, avatar, created_at, updated_at
-         FROM users
-        WHERE id <> 'default'
-        ORDER BY created_at DESC`
+               approved_by, avatar, created_at, updated_at, auth_subject
+          FROM users
+         WHERE id <> 'default'
+         ORDER BY created_at DESC`
     );
     return result.rows.map(row =>
       decodeUser(this.emailCodec, row, false)
@@ -168,8 +170,8 @@ class PostgresIdentityRepository implements IdentityRepository {
   async findPublicById(id: string): Promise<IdentityPublicUserRecord | null> {
     const result = await this.executor.query<StoredIdentityRecord>(
       `SELECT id, username, email, role, account_status, approved_at,
-              approved_by, avatar, created_at, updated_at
-         FROM users WHERE id = $1`,
+               approved_by, avatar, created_at, updated_at, auth_subject
+          FROM users WHERE id = $1`,
       [id]
     );
     return result.rows[0]
@@ -193,9 +195,28 @@ class PostgresIdentityRepository implements IdentityRepository {
   async findByUsername(username: string): Promise<IdentityUserRecord | null> {
     const result = await this.executor.query<StoredIdentityRecord>(
       `SELECT id, username, email, password_hash, role, account_status,
-              approved_at, approved_by, avatar, created_at, updated_at
-         FROM users WHERE username = $1`,
+               approved_at, approved_by, avatar, created_at, updated_at,
+               auth_subject
+          FROM users WHERE username = $1`,
       [username]
+    );
+    return result.rows[0]
+      ? (decodeUser(
+          this.emailCodec,
+          result.rows[0],
+          true
+        ) as IdentityUserRecord)
+      : null;
+  }
+
+  async findByAuthSubject(subject: string): Promise<IdentityUserRecord | null> {
+    if (!subject) return null;
+    const result = await this.executor.query<StoredIdentityRecord>(
+      `SELECT id, username, email, password_hash, role, account_status,
+               approved_at, approved_by, avatar, created_at, updated_at,
+               auth_subject
+          FROM users WHERE auth_subject = $1`,
+      [subject]
     );
     return result.rows[0]
       ? (decodeUser(
@@ -209,10 +230,10 @@ class PostgresIdentityRepository implements IdentityRepository {
   async insert(user: IdentityUserRecord): Promise<void> {
     await this.executor.query(
       `INSERT INTO users
-         (id, username, email, email_lookup, password_hash, role,
-          account_status, approved_at, approved_by, avatar, created_at,
-          updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+          (id, username, email, email_lookup, password_hash, role,
+           account_status, approved_at, approved_by, avatar, created_at,
+           updated_at, auth_subject)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
       [
         user.id,
         user.username,
@@ -226,6 +247,7 @@ class PostgresIdentityRepository implements IdentityRepository {
         user.avatar,
         user.created_at,
         user.updated_at,
+        user.auth_subject ?? null,
       ]
     );
   }
@@ -293,6 +315,9 @@ class PostgresIdentityRepository implements IdentityRepository {
     }
     if (update.passwordHash !== undefined) {
       add('password_hash', update.passwordHash);
+    }
+    if (update.authSubject !== undefined) {
+      add('auth_subject', update.authSubject);
     }
     if (update.role !== undefined) add('role', update.role);
     if (update.avatar !== undefined) add('avatar', update.avatar);

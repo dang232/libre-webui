@@ -863,6 +863,7 @@ export interface SystemInfo {
     siteKey?: string;
   };
   defaultTheme?: Theme; // Administrator-chosen theme for the sign-in page and new accounts
+  authMode?: 'local' | 'alcore'; // Todo 41: alcore hides local forms (Auth sign-in only)
 }
 
 // Embedding system types
