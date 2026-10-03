@@ -216,6 +216,7 @@ router.get('/oauth/google/status', async (_req, res) => {
   try {
     res.json(await getCanonicalGoogleStatus());
   } catch {
+    logger.warn('Google OAuth status unavailable, hiding Google button');
     res.json({ configured: false, clientId: '' });
   }
 });
