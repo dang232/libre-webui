@@ -26,6 +26,7 @@ import type {
   UserCreateRequest,
   UserUpdateRequest,
 } from '@/types';
+import { isAuthBrowserHandoffEnabled } from '@/utils/canonicalHandoff';
 import { API_BASE_URL, AUTH_BASE_URL } from '@/utils/config';
 import { isDemoMode } from '@/utils/demoMode';
 import { DEFAULT_DEMO_PREFERENCES } from './demoData';
@@ -457,10 +458,11 @@ export const authApi = {
 //
 // These use plain fetch against the Auth origin — never the Libre `api`
 // client — so no Libre session token is attached and no 401 handler fires.
-// Passwords travel browser→Auth only; Libre (BFF or frontend store) never
-// sees them. The Auth access token is kept in memory just long enough to
-// fetch the opaque product-exchange code, then discarded: Libre never
-// stores Auth refresh credentials anywhere.
+// Passwords travel browser→Auth only; Libre (BFF/frontend store) never sees
+// them. Legacy flag-OFF holds an Auth access token in memory just long
+// enough to fetch the opaque product code. Flag-ON never reads a token
+// — the response's HttpOnly cookie is the session and the page navigates
+// to the redirect handoff.
 // ---------------------------------------------------------------------------
 
 /** Auth API error codes surfaced as generic, non-enumerating messages. */
@@ -477,7 +479,7 @@ const alcoreAuthErrorMessage = (code: unknown): string => {
     case 'upstream_unavailable':
       return 'The sign-in provider is unavailable; try again shortly.';
     default:
-      return 'Auth sign-in failed; try again.';
+      return 'Sign-in failed. Please try again.';
   }
 };
 
@@ -488,6 +490,9 @@ const alcoreFetch = async (
 ): Promise<{ ok: boolean; status: number; data: Record<string, unknown> }> => {
   const response = await fetch(`${AUTH_BASE_URL}${path}`, {
     method: 'POST',
+    // Store Auth's Set-Cookie (alcore_at / alcore_rt) so the redirect
+    // handoff can authenticate from the HttpOnly cookie alone.
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
@@ -502,7 +507,13 @@ const alcoreFetch = async (
 };
 
 export interface AlcoreDirectSignIn {
-  authAccessToken: string;
+  /**
+   * Auth access token for the legacy Bearer handoff. Present only when
+   * `isAuthBrowserHandoffEnabled()` is false; on the redirect path the
+   * session lives in Auth's HttpOnly cookie and is never read into
+   * JavaScript.
+   */
+  authAccessToken?: string;
   authUserId: string;
 }
 
@@ -516,7 +527,6 @@ export const alcoreDirectPassword = async (
     mode === 'login' ? '/auth/login' : '/auth/register',
     { email, password }
   );
-  const accessToken = data.access_token;
   // Register returns a flat `{id, ...pair}`; login nests `{...pair, user}`.
   const nestedUser = data.user as { id?: unknown } | undefined;
   const userId =
@@ -525,6 +535,18 @@ export const alcoreDirectPassword = async (
       : typeof data.id === 'string'
         ? data.id
         : null;
+
+  if (isAuthBrowserHandoffEnabled()) {
+    // Redirect handoff: the cookie set by this response is the credential.
+    // The token fields in the body are deliberately never read — no
+    // application state, storage, or log ever holds an Auth token here.
+    if (!ok || userId === null) {
+      throw new Error(alcoreAuthErrorMessage(data.error));
+    }
+    return { authUserId: userId };
+  }
+
+  const accessToken = data.access_token;
   if (!ok || typeof accessToken !== 'string' || userId === null) {
     throw new Error(alcoreAuthErrorMessage(data.error));
   }
@@ -551,7 +573,7 @@ export const alcoreDirectProductCode = async (
     authAccessToken
   );
   if (!ok || typeof data.code !== 'string' || !data.code) {
-    throw new Error('Auth sign-in failed; try again.');
+    throw new Error('Sign-in failed. Please try again.');
   }
   return data.code;
 };

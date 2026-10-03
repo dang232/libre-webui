@@ -205,7 +205,8 @@
       "resetSent": "If the address exists, a reset link is on its way.",
       "email": "Email",
       "password": "Password",
-      "completing": "Completing Auth sign-in…"
+      "completing": "Completing Auth sign-in…",
+      "redirecting": "Redirecting to Auth…"
     }
   },
   "setup": {
