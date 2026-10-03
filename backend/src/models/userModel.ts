@@ -63,6 +63,27 @@ export interface UserPublic {
   updatedAt: string;
 }
 
+/**
+ * Cross-store uniqueness (unified-auth-core todo 9): the deterministic
+ * lookup-before-create in findOrCreateByAuthSubject/linkAuthSubject is not
+ * atomic, so a lost race surfaces as a DB unique violation. Both engines
+ * phrase it with "unique constraint" (better-sqlite3: `UNIQUE constraint
+ * failed: users.<column>`; node-postgres: `duplicate key value violates
+ * unique constraint "<index>"`). Anything else is not a race — rethrow.
+ */
+function isUniqueViolation(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return /unique constraint|duplicate key/i.test(message);
+}
+
+/** True when the violation names the email identity (lookup token index).
+ * Subject races re-resolve to the winner; email-twin races keep the
+ * email-collision denial instead. */
+function isEmailViolation(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return /email/i.test(message);
+}
+
 export class UserModel {
   constructor(
     private readonly persistenceProvider: () => Persistence = () =>
@@ -157,19 +178,39 @@ export class UserModel {
     // Auth is the gatekeeper here, not ENABLE_SIGNUP: the subject was verified
     // by Auth (password/Google) before this call, so provisioning must not
     // depend on local public-registration policy. Local signup still gates.
-    const created = await this.createPublicUser(
-      {
-        username: candidate,
-        email,
-        password: `alcore:${randomUUID()}:${randomUUID()}`,
-      },
-      true
-    );
+    //
+    // Cross-store uniqueness (unified-auth-core todo 9): the subject rides
+    // on the INSERT so the sparse `idx_users_auth_subject` unique index is
+    // the atomic backstop — a lost lookup-then-create race surfaces as a
+    // unique violation, never a second row and never an orphan row with a
+    // NULL subject (the old create-then-update left both). On violation the
+    // loser re-resolves to the winner (idempotent converge); an email-twin
+    // race keeps the email-collision denial; anything else rethrows.
+    let created: UserPublic | null;
+    try {
+      created = await this.createPublicUser(
+        {
+          username: candidate,
+          email,
+          password: `alcore:${randomUUID()}:${randomUUID()}`,
+          authSubject: canonical,
+        },
+        true
+      );
+    } catch (error) {
+      if (!isUniqueViolation(error)) throw error;
+      const winner = await this.getUserByAuthSubject(canonical);
+      if (winner) {
+        const publicWinner = await this.getUserById(winner.id);
+        if (!publicWinner)
+          throw new Error('The linked account no longer exists');
+        return publicWinner;
+      }
+      if (isEmailViolation(error))
+        throw new Error('An account with this email already exists');
+      throw error;
+    }
     if (!created) throw new Error('Account creation failed');
-    await this.persistenceProvider().repositories.identity.update(created.id, {
-      authSubject: canonical,
-      updatedAt: Date.now(),
-    });
     const linked = await this.getUserById(created.id);
     if (!linked) throw new Error('The linked account no longer exists');
     return linked;
@@ -189,11 +230,29 @@ export class UserModel {
       if (existing.id === userId) return;
       throw new Error('This Auth identity is already linked to an account');
     }
-    const updated =
-      await this.persistenceProvider().repositories.identity.update(userId, {
-        authSubject: canonical,
-        updatedAt: Date.now(),
-      });
+    // Cross-store uniqueness (unified-auth-core todo 9): the lookup above
+    // and the update below are not atomic, so a lost link race surfaces as
+    // a unique violation from `idx_users_auth_subject`. Re-resolve instead
+    // of leaking the raw DB error: same-user re-attach stays a no-op,
+    // another owner keeps the already-linked denial (409 CONFLICT upstream),
+    // and anything else rethrows.
+    let updated: boolean;
+    try {
+      updated = await this.persistenceProvider().repositories.identity.update(
+        userId,
+        {
+          authSubject: canonical,
+          updatedAt: Date.now(),
+        }
+      );
+    } catch (error) {
+      if (!isUniqueViolation(error)) throw error;
+      const owner = await this.getUserByAuthSubject(canonical);
+      if (owner?.id === userId) return;
+      if (owner)
+        throw new Error('This Auth identity is already linked to an account');
+      throw error;
+    }
     if (!updated) throw new Error('The account to link no longer exists');
   }
 
