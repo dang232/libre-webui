@@ -293,3 +293,142 @@ export const signInWithAuthCode = async (
   });
   return { user, token };
 };
+
+export interface AlcoreClaimInput extends AlcoreExchangeInput {
+  username: string;
+  password: string;
+}
+
+export interface AlcoreClaim {
+  user: UserPublic;
+  token: string;
+  /** True when the row already carried this subject (replay, no write). */
+  replay: boolean;
+}
+
+/**
+ * Incumbent claim flow (unified-auth-core todo 19): a pre-existing
+ * Libre-only row (NULL auth_subject) proves ownership of that row AND
+ * presents a valid Auth assertion for subject S (same S2S exchange +
+ * structural claim checks as signInWithAuthCode, never email alone), then
+ * links via linkAuthSubject(rowId, S). The Libre id is retained and
+ * chats/settings are untouched (the link updates only auth_subject).
+ *
+ * Ownership proof (todo-15 gate-consistent): the row's existing
+ * credential is verified with userModel.verifyPassword WITHOUT minting a
+ * local session — no issueSession(local), no use of the gated /login
+ * route. The only session minted here is kind `alcore-auth` after Auth
+ * proof, so the todo-17 BFF kind gates see a normal Auth-derived session
+ * afterwards. This single password-proof path is the only live ownership
+ * path: it also covers expired sessions, so no second path is needed.
+ *
+ * Fail-closed rules: subject owned by another row → 409 (both rows
+ * untouched); email-mismatch (both addresses set and different) → 409
+ * manual-link signal with NO write; re-claim of an already-linked row →
+ * idempotent success with replay:true, never a duplicate row; no
+ * auto-merge, no history rewrite/delete.
+ */
+export const claimAuthSubjectWithCode = async (
+  input: AlcoreClaimInput,
+  metadata: Omit<SessionMetadata, 'kind'>
+): Promise<AlcoreClaim> => {
+  const username = input.username.trim();
+  if (!username || !input.password) {
+    throw new AlcoreAuthError('This Auth claim is invalid or expired', 401);
+  }
+  // Ownership proof first, minting nothing: unknown user and wrong
+  // password share one generic 401 (same shape as assertion failures).
+  const owner = await userModel.verifyPassword(username, input.password);
+  if (!owner) {
+    throw new AlcoreAuthError('This Auth claim is invalid or expired', 401);
+  }
+  const issuer = getAlcoreAuthIssuer();
+  const assertion = await exchangeCodeForAssertion(input);
+  const claims = validateAssertionClaims(
+    decodeAssertionPayload(assertion),
+    issuer
+  );
+  let subject: string;
+  try {
+    subject = toCanonicalAuthSubject(issuer, claims.sub);
+  } catch {
+    throw new AlcoreAuthError('This Auth claim is invalid or expired', 401);
+  }
+  // Email-mismatch → manual-link signal, NO write (never merge by email).
+  const ownerEmail = (owner.email ?? '').trim().toLowerCase();
+  const claimEmail = (claims.email ?? '').trim().toLowerCase();
+  if (ownerEmail && claimEmail && ownerEmail !== claimEmail) {
+    logger.warn('Auth claim refused by email mismatch');
+    throw new AlcoreAuthError(
+      'This Auth identity matches multiple accounts; contact support to link it',
+      409
+    );
+  }
+  // Already-linked row: same subject → idempotent success (replay, no
+  // write); different subject → conflict, never relink, never duplicate.
+  if (owner.auth_subject) {
+    if (owner.auth_subject === subject) {
+      const user = await ensureClaimUserActive(owner.id);
+      const token = await authService.issueSession(user, {
+        kind: 'alcore-auth',
+        ...metadata,
+      });
+      return { user, token, replay: true };
+    }
+    logger.warn('Auth claim refused: row already linked to another identity');
+    throw new AlcoreAuthError(
+      'This Auth identity matches multiple accounts; contact support to link it',
+      409
+    );
+  }
+  try {
+    await userModel.linkAuthSubject(owner.id, subject);
+  } catch (error) {
+    // Owned-by-other keeps the 409 manual-link shape with both rows
+    // untouched (linkAuthSubject writes nothing on conflict). Anything
+    // else is a local mapping failure: generic 500, never the 409 shape.
+    if (error instanceof Error && /already linked/i.test(error.message)) {
+      logger.warn('Auth claim refused by profile mapping');
+      throw new AlcoreAuthError(
+        'This Auth identity matches multiple accounts; contact support to link it',
+        409
+      );
+    }
+    throw new AlcoreAuthError(
+      'This Auth claim cannot be linked to an account',
+      500
+    );
+  }
+  const user = await ensureClaimUserActive(owner.id);
+  const token = await authService.issueSession(user, {
+    kind: 'alcore-auth',
+    ...metadata,
+  });
+  return { user, token, replay: false };
+};
+
+/**
+ * Resolve a freshly-linked (or replayed) row to its active public
+ * profile. Auth-verified identities are pre-approved like first-exchange
+ * provisioning; a still-pending row surfaces 403, never a session.
+ */
+const ensureClaimUserActive = async (userId: string): Promise<UserPublic> => {
+  const current = await userModel.getUserById(userId);
+  if (!current) {
+    throw new AlcoreAuthError(
+      'This Auth claim cannot be linked to an account',
+      500
+    );
+  }
+  if (current.status === 'active') return current;
+  const approved = await userModel.approveUser(userId, 'alcore-auth');
+  const refreshed = approved ?? (await userModel.getUserById(userId));
+  if (refreshed?.status === 'active') {
+    logger.info('Auto-approved Auth-claimed account');
+    return refreshed;
+  }
+  throw new AlcoreAuthError(
+    'This account is waiting for administrator approval',
+    403
+  );
+};

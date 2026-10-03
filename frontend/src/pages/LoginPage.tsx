@@ -30,6 +30,7 @@ import { CelestialSky } from '@/components/CelestialSky';
 import { resolveAppVersion } from '@/utils/appVersion';
 import { isAlcoreAuthMode } from '@/utils/config';
 import { AlcoreAuthNotice } from '@/components/AlcoreAuthNotice';
+import { AlcoreClaimForm } from '@/components/AlcoreClaimForm';
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
@@ -177,7 +178,10 @@ export const LoginPage: React.FC = () => {
         <section className='flex items-center justify-center px-5 pb-12 pt-24 sm:px-8 lg:px-12 lg:py-12'>
           <div className='w-full max-w-sm'>
             {alcoreMode ? (
-              <AlcoreAuthNotice />
+              <>
+                <AlcoreAuthNotice />
+                <AlcoreClaimForm />
+              </>
             ) : isSignupMode && signupEnabled ? (
               <SignupForm
                 bare

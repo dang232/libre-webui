@@ -22,6 +22,8 @@
  * - POST /exchange: redeems an opaque Auth product code (from the Bearer
  *   handoff `POST /oidc/exchange` or the redirect handoff
  *   `GET /oidc/exchange/redirect`) for a Libre product session.
+ * - POST /claim: links a pre-existing Libre-only row to an Auth subject
+ *   (todo 19 incumbent claim flow).
  *
  * Alcore-mode-only: in local self-hosted mode every route here returns 404
  * ALCORE_AUTH_ONLY (symmetric to the todo-41 local-issuance gate), so local
@@ -38,6 +40,7 @@ import {
 } from '../config/authMode.js';
 import {
   AlcoreAuthError,
+  claimAuthSubjectWithCode,
   getAlcoreAuthIssuer,
   getAlcoreAuthUrl,
   signInWithAuthCode,
@@ -76,6 +79,21 @@ const exchangeRateLimiter = rateLimit({
   message: {
     success: false,
     message: 'Too many Auth sign-in attempts, please try again later',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Claim attempts ride their own bucket so incumbent linking never starves
+// (or trips) the exchange budget, and vice versa. Same posture: strict,
+// no-store, opaque-code surface.
+const claimRateLimiter = rateLimit({
+  keyPrefix: 'auth-alcore-claim',
+  windowMs: 5 * 60 * 1000,
+  max: 30,
+  message: {
+    success: false,
+    message: 'Too many Auth claim attempts, please try again later',
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -217,6 +235,138 @@ router.post('/exchange', exchangeRateLimiter, async (req, res) => {
     if (status === 500) logger.error('Auth exchange failed', error);
     void recordAuditEvent({
       action: 'auth.alcore.login',
+      result: 'denied',
+      ipHash: hashClientIp(getClientIp(req)),
+      details: { status },
+    });
+    res.status(status).json({
+      success: false,
+      ...(status === 409
+        ? { code: 'AUTH_LINK_CONFLICT' }
+        : status === 403
+          ? { code: 'ACCOUNT_PENDING' }
+          : {}),
+      message:
+        error instanceof AlcoreAuthError
+          ? error.message
+          : 'Auth sign-in is temporarily unavailable',
+    });
+  }
+});
+
+const MAX_USERNAME_CHARS = 256;
+const MAX_PASSWORD_CHARS = 1024;
+
+/**
+ * Link a pre-existing Libre-only row to an Auth subject (todo 19).
+ * Body: { username, password, code, redirectUri?, state? }. The Libre
+ * credential proves row ownership WITHOUT minting a local session
+ * (todo-15 gate-consistent); the Auth code proves the subject with the
+ * same S2S exchange + structural checks as /exchange. Same Libre id is
+ * retained; conflicts and email mismatches fail closed with 409
+ * AUTH_LINK_CONFLICT and no write.
+ */
+router.post('/claim', claimRateLimiter, async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const authorization = req.headers.authorization;
+  if (
+    typeof authorization === 'string' &&
+    authorization.startsWith('Bearer ') &&
+    looksLikeApiToken(authorization.substring(7))
+  ) {
+    // Product API tokens never link: a Libre credential + Auth code are
+    // the only proofs accepted here.
+    res.status(403).json({
+      success: false,
+      code: 'TOKEN_SCOPE',
+      message: 'API tokens cannot link an Auth identity',
+    });
+    return;
+  }
+
+  const { username, password, code, redirectUri, state } = req.body ?? {};
+  if (
+    typeof username !== 'string' ||
+    username.trim().length === 0 ||
+    username.length > MAX_USERNAME_CHARS ||
+    typeof password !== 'string' ||
+    password.length === 0 ||
+    password.length > MAX_PASSWORD_CHARS ||
+    typeof code !== 'string' ||
+    code.length === 0 ||
+    code.length > MAX_CODE_CHARS
+  ) {
+    res.status(400).json({
+      success: false,
+      message: 'A Libre account and an Auth code are required',
+    });
+    return;
+  }
+  if (
+    (redirectUri !== undefined &&
+      (typeof redirectUri !== 'string' ||
+        redirectUri.length === 0 ||
+        redirectUri.length > MAX_REDIRECT_URI_CHARS)) ||
+    (state !== undefined &&
+      (typeof state !== 'string' || state.length > MAX_STATE_CHARS))
+  ) {
+    res.status(400).json({
+      success: false,
+      message: 'The Auth handoff binding is invalid',
+    });
+    return;
+  }
+  // Same bound-code guard as /exchange: a redirectUri without its state
+  // must fail closed before any Auth call.
+  if (
+    redirectUri !== undefined &&
+    (typeof state !== 'string' ||
+      state.length === 0 ||
+      state.trim().length === 0 ||
+      state.length > MAX_STATE_CHARS)
+  ) {
+    res.status(400).json({
+      success: false,
+      message: 'The Auth handoff binding is invalid',
+    });
+    return;
+  }
+
+  try {
+    const { user, token, replay } = await claimAuthSubjectWithCode(
+      {
+        username,
+        password,
+        code,
+        ...(redirectUri !== undefined
+          ? { redirectUri, ...(state !== undefined ? { state } : {}) }
+          : {}),
+      },
+      {
+        ip: getClientIp(req),
+        userAgent: req.headers['user-agent'],
+      }
+    );
+    void recordAuditEvent({
+      action: 'auth.alcore.claim',
+      result: 'success',
+      actorUserId: user.id,
+      ipHash: hashClientIp(getClientIp(req)),
+    });
+    res.json({
+      success: true,
+      data: {
+        user,
+        token,
+        replay,
+        systemInfo: await authService.getSystemInfo(),
+      },
+    });
+  } catch (error) {
+    const status = error instanceof AlcoreAuthError ? error.status : 500;
+    if (status === 500) logger.error('Auth claim failed', error);
+    void recordAuditEvent({
+      action: 'auth.alcore.claim',
       result: 'denied',
       ipHash: hashClientIp(getClientIp(req)),
       details: { status },

@@ -451,6 +451,15 @@ export const authApi = {
     state?: string;
   }): Promise<ApiResponse<LoginResponse>> =>
     api.post('/auth/alcore/exchange', payload).then(res => res.data),
+
+  alcoreClaim: (payload: {
+    username: string;
+    password: string;
+    code: string;
+    redirectUri?: string;
+    state?: string;
+  }): Promise<ApiResponse<LoginResponse & { replay: boolean }>> =>
+    api.post('/auth/alcore/claim', payload).then(res => res.data),
 };
 
 // ---------------------------------------------------------------------------

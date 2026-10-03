@@ -10,6 +10,13 @@
  * same-subject exchanges converge on one Libre row (count +1); pending accounts
  * stay 403; local mode isolates with 404 ALCORE_AUTH_ONLY; no-store on
  * every response; zero Auth refresh material anywhere in responses.
+ *
+ * Todo 19 claim coverage (same file, still in-process): POST /claim happy
+ * path keeps the Libre id and sets auth_subject; double-claim replays with
+ * a marker and no second link; mismatched email → 409 manual with zero
+ * writes; already-linked re-claim (same or different subject) never
+ * duplicates; conflicting claim (subject owned by another row) → 409 with
+ * both rows untouched.
  */
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -121,6 +128,14 @@ const codes = new Map([
   ['race-code-1', { sub: 'auth-sub-race', email: 'race@example.com' }],
   ['race-code-2', { sub: 'auth-sub-race', email: 'race@example.com' }],
   ['collision-code-1', { sub: 'auth-sub-new', email: 'taken@example.com' }],
+  // Todo-19 claim codes: one fresh single-use code per claim attempt.
+  ['claim-code-1', { sub: 'auth-sub-claim1', email: 'claim1@example.com' }],
+  ['claim-code-2', { sub: 'auth-sub-claim1', email: 'claim1@example.com' }],
+  ['claim-code-3', { sub: 'auth-sub-claim3', email: 'mismatched@example.com' }],
+  ['claim-code-4', { sub: 'auth-sub-claim1', email: 'conflict@example.com' }],
+  ['claim-code-5', { sub: 'auth-sub-other', email: 'claim1@example.com' }],
+  ['claim-code-6', { sub: 'auth-sub-claim6', email: 'claim1@example.com' }],
+  ['claim-code-7', { sub: 'auth-sub-claim7', email: 'claim1@example.com' }],
   ['wrong-aud-code', { sub: 'auth-sub-1', aud: 'tokenpanel' }],
   ['wrong-iss-code', { sub: 'auth-sub-1', iss: 'https://evil.example.com' }],
   ['expired-code', { sub: 'auth-sub-1', exp: 1 }],
@@ -506,6 +521,186 @@ test('email collision refuses to merge and signals manual link', async () => {
   const holderAfter = await userModel.getUserByUsername('task45_holder');
   assert.equal(holderAfter?.id, holder.user.id);
   assert.equal(holderAfter?.email, 'taken@example.com');
+});
+
+// ---- Todo-19 incumbent claim flow (POST /claim, same in-process harness) ----
+
+const CLAIM_PASSWORD = 'Claim-Proof-Password-1!';
+
+test('claim happy-path keeps the Libre id and sets auth_subject', async () => {
+  const created = await authService.signup(
+    'claim_incumbent',
+    CLAIM_PASSWORD,
+    'claim1@example.com',
+    { kind: 'signup' }
+  );
+  assert.ok(created?.user.id);
+  const before = await userModel.getUserByUsername('claim_incumbent');
+  assert.equal(before?.auth_subject ?? null, null);
+  const countBefore = (await userModel.getAllUsers()).length;
+  const outcome = await call('POST', '/api/auth/alcore/claim', {
+    username: 'claim_incumbent',
+    password: CLAIM_PASSWORD,
+    code: 'claim-code-1',
+  });
+  assert.equal(outcome.status, 200);
+  assert.equal(outcome.body.data.user.id, before.id);
+  assert.equal(outcome.body.data.replay, false);
+  assert.ok(typeof outcome.body.data.token === 'string');
+  assert.ok(noStore(outcome));
+  assert.ok(noRefreshMaterial(outcome));
+  // Same id retained, auth_subject set, no extra row.
+  const after = await userModel.getUserByUsername('claim_incumbent');
+  assert.equal(after?.id, before.id);
+  assert.equal(after?.email, 'claim1@example.com');
+  assert.equal(after?.auth_subject, `${ISSUER}|auth-sub-claim1`);
+  assert.equal((await userModel.getAllUsers()).length, countBefore);
+  // The minted token is a product session resolving to the same profile.
+  const resolved = await authService.getUserFromToken(outcome.body.data.token);
+  assert.equal(resolved?.id, before.id);
+});
+
+test('double-claim replay returns the single link with a replay marker', async () => {
+  const countBefore = (await userModel.getAllUsers()).length;
+  const outcome = await call('POST', '/api/auth/alcore/claim', {
+    username: 'claim_incumbent',
+    password: CLAIM_PASSWORD,
+    code: 'claim-code-2',
+  });
+  assert.equal(outcome.status, 200);
+  assert.equal(outcome.body.data.replay, true);
+  const row = await userModel.getUserByUsername('claim_incumbent');
+  assert.equal(outcome.body.data.user.id, row?.id);
+  assert.equal(row?.auth_subject, `${ISSUER}|auth-sub-claim1`);
+  assert.equal((await userModel.getAllUsers()).length, countBefore);
+});
+
+test('claim with mismatched email signals manual link with zero writes', async () => {
+  const created = await authService.signup(
+    'claim_mismatch',
+    CLAIM_PASSWORD,
+    'row2@example.com',
+    { kind: 'signup' }
+  );
+  assert.ok(created?.user.id);
+  const before = await userModel.getUserByUsername('claim_mismatch');
+  const countBefore = (await userModel.getAllUsers()).length;
+  const outcome = await call('POST', '/api/auth/alcore/claim', {
+    username: 'claim_mismatch',
+    password: CLAIM_PASSWORD,
+    code: 'claim-code-3',
+  });
+  assert.equal(outcome.status, 409);
+  assert.equal(outcome.body.code, 'AUTH_LINK_CONFLICT');
+  // Row dump: byte-untouched (same id, same email, still unlinked).
+  const after = await userModel.getUserByUsername('claim_mismatch');
+  assert.equal(after?.id, before?.id);
+  assert.equal(after?.email, 'row2@example.com');
+  assert.equal(after?.auth_subject ?? null, null);
+  assert.equal((await userModel.getAllUsers()).length, countBefore);
+});
+
+test('claim on an already-linked row never duplicates or relinks', async () => {
+  const before = await userModel.getUserByUsername('claim_incumbent');
+  const countBefore = (await userModel.getAllUsers()).length;
+  // Different subject, matching email: reaches the already-linked guard.
+  const outcome = await call('POST', '/api/auth/alcore/claim', {
+    username: 'claim_incumbent',
+    password: CLAIM_PASSWORD,
+    code: 'claim-code-5',
+  });
+  assert.equal(outcome.status, 409);
+  assert.equal(outcome.body.code, 'AUTH_LINK_CONFLICT');
+  const after = await userModel.getUserByUsername('claim_incumbent');
+  assert.equal(after?.id, before?.id);
+  assert.equal(after?.auth_subject, `${ISSUER}|auth-sub-claim1`);
+  assert.equal((await userModel.getAllUsers()).length, countBefore);
+});
+
+test('conflicting claim leaves both rows untouched', async () => {
+  const created = await authService.signup(
+    'claim_rival',
+    CLAIM_PASSWORD,
+    'conflict@example.com',
+    { kind: 'signup' }
+  );
+  assert.ok(created?.user.id);
+  const rivalBefore = await userModel.getUserByUsername('claim_rival');
+  const ownerBefore = await userModel.getUserByUsername('claim_incumbent');
+  const countBefore = (await userModel.getAllUsers()).length;
+  // auth-sub-claim1 is owned by claim_incumbent; rival email matches the
+  // assertion so the owned-by-other guard (not the email guard) fires.
+  const outcome = await call('POST', '/api/auth/alcore/claim', {
+    username: 'claim_rival',
+    password: CLAIM_PASSWORD,
+    code: 'claim-code-4',
+  });
+  assert.equal(outcome.status, 409);
+  assert.equal(outcome.body.code, 'AUTH_LINK_CONFLICT');
+  const rivalAfter = await userModel.getUserByUsername('claim_rival');
+  const ownerAfter = await userModel.getUserByUsername('claim_incumbent');
+  assert.equal(rivalAfter?.id, rivalBefore?.id);
+  assert.equal(rivalAfter?.email, 'conflict@example.com');
+  assert.equal(rivalAfter?.auth_subject ?? null, null);
+  assert.equal(ownerAfter?.id, ownerBefore?.id);
+  assert.equal(ownerAfter?.auth_subject, `${ISSUER}|auth-sub-claim1`);
+  assert.equal((await userModel.getAllUsers()).length, countBefore);
+});
+
+test('wrong Libre password is a generic 401 that never burns the code', async () => {
+  const before = exchangeHits;
+  const outcome = await call('POST', '/api/auth/alcore/claim', {
+    username: 'claim_incumbent',
+    password: 'wrong-password',
+    code: 'claim-code-6',
+  });
+  assert.equal(outcome.status, 401);
+  assert.deepEqual(Object.keys(outcome.body).sort(), ['message', 'success']);
+  assert.equal(exchangeHits, before);
+  assert.ok(noStore(outcome));
+});
+
+test('claim shapes are 400 without touching Auth', async () => {
+  const before = exchangeHits;
+  for (const body of [
+    {},
+    { username: 'claim_incumbent', code: 'claim-code-7' },
+    { username: 'claim_incumbent', password: '', code: 'claim-code-7' },
+    { username: '', password: CLAIM_PASSWORD, code: 'claim-code-7' },
+    { username: 'claim_incumbent', password: CLAIM_PASSWORD },
+    {
+      username: 'claim_incumbent',
+      password: CLAIM_PASSWORD,
+      code: 'claim-code-7',
+      redirectUri: CALLBACK,
+    },
+  ]) {
+    const outcome = await call('POST', '/api/auth/alcore/claim', body);
+    assert.equal(outcome.status, 400);
+    assert.ok(noStore(outcome));
+  }
+  assert.equal(exchangeHits, before);
+});
+
+test('lwk_* presented to claim is rejected and never a link', async () => {
+  const { createApiToken } = await importBuilt('services/apiTokenService.js');
+  const { token } = await createApiToken(adminId, {
+    name: 'task19-claim-proof',
+    scopes: ['chat'],
+  });
+  assert.ok(token.startsWith('lwk_'));
+  const outcome = await call(
+    'POST',
+    '/api/auth/alcore/claim',
+    {
+      username: 'claim_incumbent',
+      password: CLAIM_PASSWORD,
+      code: 'claim-code-7',
+    },
+    { authorization: `Bearer ${token}` }
+  );
+  assert.equal(outcome.status, 403);
+  assert.equal(outcome.body.code, 'TOKEN_SCOPE');
 });
 
 test('concurrent same-subject exchanges converge on one Libre row', async () => {

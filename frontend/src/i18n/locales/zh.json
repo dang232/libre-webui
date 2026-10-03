@@ -206,7 +206,21 @@
       "email": "Email",
       "password": "Password",
       "completing": "Completing Auth sign-in…",
-      "redirecting": "正在重定向到 Auth…"
+      "redirecting": "正在重定向到 Auth…",
+      "claim": {
+        "title": "Already have a Libre account? Link it to Auth",
+        "body": "Enter your existing Libre username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
+        "libreUsername": "Libre username",
+        "librePassword": "Libre password",
+        "authEmail": "Auth email",
+        "authPassword": "Auth password",
+        "submit": "Link my account",
+        "claiming": "Linking…",
+        "success": "Account linked. Welcome back.",
+        "manual": "This Auth identity matches multiple accounts; contact support to link it",
+        "redirectUnsupported": "Redirect sign-in cannot link here yet; contact support.",
+        "failed": "Claim failed. Please try again."
+      }
     }
   },
   "setup": {
