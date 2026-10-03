@@ -58,6 +58,64 @@ const codes = new Map([
       binding: { redirect_uri: CALLBACK, state: STATE },
     },
   ],
+  // Task-6 binding-contract pins: one fresh bound code per negative case so
+  // single-use consumption never couples the assertions.
+  [
+    'bound-code-task6-noredir',
+    {
+      sub: 'auth-sub-1',
+      email: 'prove@example.com',
+      binding: { redirect_uri: CALLBACK, state: STATE },
+    },
+  ],
+  [
+    'bound-code-task6-diffuri',
+    {
+      sub: 'auth-sub-1',
+      email: 'prove@example.com',
+      binding: { redirect_uri: CALLBACK, state: STATE },
+    },
+  ],
+  [
+    'bound-code-task6-nostate',
+    {
+      sub: 'auth-sub-1',
+      email: 'prove@example.com',
+      binding: { redirect_uri: CALLBACK, state: STATE },
+    },
+  ],
+  [
+    'bound-code-task6-empty',
+    {
+      sub: 'auth-sub-1',
+      email: 'prove@example.com',
+      binding: { redirect_uri: CALLBACK, state: STATE },
+    },
+  ],
+  [
+    'bound-code-task6-ws',
+    {
+      sub: 'auth-sub-1',
+      email: 'prove@example.com',
+      binding: { redirect_uri: CALLBACK, state: STATE },
+    },
+  ],
+  [
+    'bound-code-task6-mismatch',
+    {
+      sub: 'auth-sub-1',
+      email: 'prove@example.com',
+      binding: { redirect_uri: CALLBACK, state: STATE },
+    },
+  ],
+  [
+    'bound-code-task6-once',
+    {
+      sub: 'auth-sub-1',
+      email: 'prove@example.com',
+      binding: { redirect_uri: CALLBACK, state: STATE },
+    },
+  ],
   ['fresh-code-1', { sub: 'auth-sub-fresh', email: null }],
   ['collision-code-1', { sub: 'auth-sub-new', email: 'taken@example.com' }],
   ['wrong-aud-code', { sub: 'auth-sub-1', aud: 'tokenpanel' }],
@@ -83,6 +141,7 @@ const mintAssertion = claims => {
   return `${data}.${sig}`;
 };
 
+let exchangeHits = 0;
 const stub = http.createServer((req, res) => {
   if (req.method !== 'POST' || req.url !== '/oidc/exchange/token') {
     res.writeHead(404).end('{}');
@@ -93,18 +152,24 @@ const stub = http.createServer((req, res) => {
     raw += chunk;
   });
   req.on('end', () => {
+    exchangeHits += 1;
     const body = JSON.parse(raw);
     const entry = codes.get(body.code);
     const bound =
       typeof body.redirect_uri === 'string' && body.redirect_uri !== '';
-    // Mirrors Auth consume/consumeForRedirect: a binding mismatch or an
-    // unknown code never burns the code; only a successful redemption (or a
-    // replay of a consumed code) marks it used.
+    // Mirrors Auth consume/consumeForRedirect (store.ts:418-445), including
+    // the line-433 short-circuit: an empty incoming state skips the hash
+    // check. That is the bypass the Libre-route guard must close: Libre
+    // coerces an omitted state to '' (alcoreAuthService.ts:174-177), so
+    // without the route guard a bound code redeems with redirectUri alone.
+    // A binding mismatch or an unknown code never burns the code; only a
+    // successful redemption (or a replay of a consumed code) marks it used.
+    const incomingState = typeof body.state === 'string' ? body.state : '';
     const bindingOk =
       !entry?.binding ||
       (bound &&
         body.redirect_uri === entry.binding.redirect_uri &&
-        body.state === entry.binding.state);
+        (incomingState === '' || incomingState === entry.binding.state));
     if (
       !entry ||
       seen.has(body.code) ||
@@ -265,6 +330,91 @@ test('bound redirect codes require their exact binding, once', async () => {
     state: STATE,
   });
   assert.equal(replay.status, 401);
+});
+
+test('task6: omitted redirectUri on a bound code fails closed', async () => {
+  const outcome = await call('POST', '/api/auth/alcore/exchange', {
+    code: 'bound-code-task6-noredir',
+  });
+  assert.equal(outcome.status, 401);
+  assert.ok(noStore(outcome));
+});
+
+test('task6: one-char-different redirectUri fails closed', async () => {
+  const outcome = await call('POST', '/api/auth/alcore/exchange', {
+    code: 'bound-code-task6-diffuri',
+    redirectUri: `${CALLBACK}x`,
+    state: STATE,
+  });
+  assert.equal(outcome.status, 401);
+  assert.ok(noStore(outcome));
+});
+
+test('task6: omitted state with redirectUri is 400 without touching Auth', async () => {
+  const before = exchangeHits;
+  const outcome = await call('POST', '/api/auth/alcore/exchange', {
+    code: 'bound-code-task6-nostate',
+    redirectUri: CALLBACK,
+  });
+  assert.equal(outcome.status, 400);
+  assert.equal(exchangeHits, before);
+  assert.ok(noStore(outcome));
+});
+
+test('task6: empty-string state with redirectUri is 400 without touching Auth', async () => {
+  const before = exchangeHits;
+  const outcome = await call('POST', '/api/auth/alcore/exchange', {
+    code: 'bound-code-task6-empty',
+    redirectUri: CALLBACK,
+    state: '',
+  });
+  assert.equal(outcome.status, 400);
+  assert.equal(exchangeHits, before);
+  assert.ok(noStore(outcome));
+});
+
+test('task6: whitespace-only state with redirectUri is 400 without touching Auth', async () => {
+  const before = exchangeHits;
+  const outcome = await call('POST', '/api/auth/alcore/exchange', {
+    code: 'bound-code-task6-ws',
+    redirectUri: CALLBACK,
+    state: '   ',
+  });
+  assert.equal(outcome.status, 400);
+  assert.equal(exchangeHits, before);
+  assert.ok(noStore(outcome));
+});
+
+test('task6: mismatched state with redirectUri fails closed', async () => {
+  const outcome = await call('POST', '/api/auth/alcore/exchange', {
+    code: 'bound-code-task6-mismatch',
+    redirectUri: CALLBACK,
+    state: 'wrong-state-task6',
+  });
+  assert.equal(outcome.status, 401);
+  assert.ok(noStore(outcome));
+});
+
+test('task6: exact binding redeems once (accept-once)', async () => {
+  const outcome = await call('POST', '/api/auth/alcore/exchange', {
+    code: 'bound-code-task6-once',
+    redirectUri: CALLBACK,
+    state: STATE,
+  });
+  assert.equal(outcome.status, 200);
+  assert.ok(typeof outcome.body.data.token === 'string');
+  assert.ok(noStore(outcome));
+  assert.ok(noRefreshMaterial(outcome));
+});
+
+test('task6: replay of the consumed bound code is rejected (replay-reject)', async () => {
+  const outcome = await call('POST', '/api/auth/alcore/exchange', {
+    code: 'bound-code-task6-once',
+    redirectUri: CALLBACK,
+    state: STATE,
+  });
+  assert.equal(outcome.status, 401);
+  assert.ok(noStore(outcome));
 });
 
 test('replayed and unknown codes share one generic 401', async () => {

@@ -167,6 +167,23 @@ router.post('/exchange', exchangeRateLimiter, async (req, res) => {
     });
     return;
   }
+  // Bound (redirect-handoff) codes must carry their state: Auth skips the
+  // state hash check when the incoming state is '' (store.ts:433), and the
+  // service coerces an omitted state to '' — so without this guard a bound
+  // code redeems with redirectUri alone. Fail closed before any Auth call.
+  if (
+    redirectUri !== undefined &&
+    (typeof state !== 'string' ||
+      state.length === 0 ||
+      state.trim().length === 0 ||
+      state.length > MAX_STATE_CHARS)
+  ) {
+    res.status(400).json({
+      success: false,
+      message: 'The Auth handoff binding is invalid',
+    });
+    return;
+  }
 
   try {
     const { user, token } = await signInWithAuthCode(
