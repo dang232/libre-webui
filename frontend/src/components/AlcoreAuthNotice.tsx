@@ -125,12 +125,6 @@ export const AlcoreAuthNotice: React.FC = () => {
   const signingUp = mode === 'signup';
   const resetting = mode === 'reset';
 
-  const handleGoogleViaAuth = (): void => {
-    window.location.assign(
-      startAuthHandoff(AUTH_BASE_URL, window.location.origin)
-    );
-  };
-
   const inputClass =
     'h-11 w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink shadow-subtle outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-line-strong focus:ring-2 focus:ring-primary-500/35 disabled:cursor-not-allowed disabled:bg-surface-subtle disabled:text-ink-muted motion-reduce:transition-none';
 
@@ -260,18 +254,7 @@ export const AlcoreAuthNotice: React.FC = () => {
         </form>
       )}
 
-      {resetting ? null : isAuthBrowserHandoffEnabled() ? (
-        <button
-          type='button'
-          onClick={handleGoogleViaAuth}
-          disabled={busy}
-          className='flex h-11 w-full items-center justify-center rounded-xl border border-line bg-surface px-4 text-sm font-medium text-ink shadow-subtle transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none'
-        >
-          {t('auth.oauth.continueWith', { provider: 'Google' })}
-        </button>
-      ) : (
-        <CanonicalGoogleButton />
-      )}
+      {!resetting && <CanonicalGoogleButton />}
 
       {error && (
         <p role='alert' className='mt-3 text-[13px] text-red-600'>
