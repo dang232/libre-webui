@@ -54,6 +54,25 @@ export const LIBRE_AUTH_PATH_OUTCOME_ACTION: Readonly<
   legacy_fallback: 'auth.legacy_fallback',
 } as const;
 
+/**
+ * Cross-lane provisioning lifecycle naming (unified-auth-core todo 13,
+ * shared with TokenPanel `provision-attempts.ts`). Libre exposes states as
+ * observable equivalents — HTTP status + countable audit rows — never as
+ * literal PENDING/PROVISIONED strings:
+ * - 200 exchange OK <-> PROVISIONED (TokenPanel uses 201 create/replay,
+ *   same 2xx family, same state)
+ * - 409 AUTH_LINK_CONFLICT <-> CONFLICT (twin queued, never merged)
+ * - 500 <-> FAILED (retryable with the same provision key)
+ * PENDING (attempt in flight) + UNPROVISIONED (never-contacted product)
+ * complete the set; neither is stored. 400-range caller errors carry no
+ * lifecycle state (final rejections, nothing to resume).
+ */
+export const LIBRE_PROVISION_HTTP_TO_LIFECYCLE = {
+  200: 'PROVISIONED',
+  409: 'CONFLICT',
+  500: 'FAILED',
+} as const;
+
 /** One-way email digest for audit rows: normalized, never the raw address. */
 export const hashEmailForAudit = (email: string): string =>
   createHash('sha256').update(email.trim().toLowerCase()).digest('hex');
