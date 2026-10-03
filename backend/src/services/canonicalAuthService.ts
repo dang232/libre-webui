@@ -324,55 +324,8 @@ export const forwardAlcoreGoogle = async (
   return parseAlcoreCustomer(payload['customer']);
 };
 
-export const authenticateCanonicalPassword = async (
-  credentials: CanonicalCredentialInput,
-  signal: AbortSignal = AbortSignal.timeout(10_000)
-): Promise<CanonicalAssertionResult> => {
-  const base = authBaseUrl();
-  const exchanged = await exchangeCanonicalCredentials(
-    credentials,
-    {
-      request: (path, init) => fetch(`${base}${path}`, init),
-    },
-    signal
-  );
-  if (!exchanged.ok) return exchanged;
-  return consumeLibreExchangeCode(exchanged.code, signal);
-};
-
-export const exchangeCanonicalGoogleToken = async (
-  idToken: string,
-  signal: AbortSignal = AbortSignal.timeout(10_000)
-): Promise<string | null> => {
-  const base = authBaseUrl();
-  const verified = await fetch(`${base}/auth/google/verify`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ idToken }),
-    signal,
-  });
-  if (verified.status >= 500) {
-    throw new Error('Auth Google verification is unavailable');
-  }
-  if (!verified.ok) return null;
-  const verifiedBody = await parseJson(verified);
-  if (typeof verifiedBody?.['access_token'] !== 'string') return null;
-  const exchanged = await fetch(`${base}/oidc/exchange`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${verifiedBody['access_token']}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      audience: LIBRE_AUDIENCE,
-      intent: PRODUCT_EXCHANGE_INTENT,
-    }),
-    signal,
-  });
-  if (!exchanged.ok) return null;
-  const codeBody = await parseJson(exchanged);
-  return typeof codeBody?.['code'] === 'string' ? codeBody['code'] : null;
-};
+// (unified-auth-core todo 16) The legacy Bearer password client lived here.
+// See the tombstone below: no shared secret may be reintroduced.
 
 type CanonicalGoogleStatus = {
   readonly configured: boolean;
@@ -409,39 +362,12 @@ export const getCanonicalGoogleStatus = async (
   }
 };
 
-export const consumeLibreExchangeCode = async (
-  code: string,
-  timeoutSignal: AbortSignal = AbortSignal.timeout(10_000)
-): Promise<CanonicalAssertionResult> => {
-  const response = await fetch(`${authBaseUrl()}/oidc/exchange/token`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      code,
-      audience: LIBRE_AUDIENCE,
-      intent: PRODUCT_EXCHANGE_INTENT,
-    }),
-    signal: timeoutSignal,
-  });
-  if (!response.ok)
-    return { ok: false, reason: classifyFailure(response.status) };
-  const body = await parseJson(response);
-  if (typeof body?.['access_token'] !== 'string') {
-    return { ok: false, reason: 'invalid_response' };
-  }
-  const secret = process.env.AUTH_JWT_SECRET || '';
-  if (secret.length === 0) return { ok: false, reason: 'unavailable' };
-  try {
-    const assertion = verifyProductAssertion(
-      body['access_token'],
-      secret,
-      process.env.AUTH_ISSUER || 'auth.alcore.io.vn'
-    );
-    // A signature/claim failure from our own trusted Auth is an integrity or
-    // clock/config fault, never a user credential fault.
-    if (assertion === null) return { ok: false, reason: 'invalid_response' };
-    return { ok: true, assertion };
-  } catch {
-    return { ok: false, reason: 'invalid_response' };
-  }
-};
+// REMOVED (unified-auth-core todo 16): legacy Bearer shared-secret bridge.
+// consumeLibreExchangeCode lived here: it exchanged an Auth code at
+// POST /oidc/exchange/token and verified the Auth-minted product assertion
+// against the shared AUTH_JWT_SECRET before a Libre product session could be
+// issued. That path is retired in every mode — the redirect
+// POST /api/auth/alcore/exchange performs S2S-bound verification without any
+// shared secret. AUTH_JWT_SECRET must not be reintroduced: no production code
+// in backend/src may read it (this tombstone plus the removal test are the
+// only allowed mentions).

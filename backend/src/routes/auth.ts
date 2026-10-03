@@ -100,16 +100,9 @@ import {
 } from '../services/tokenpanelAuthSessionService.js';
 import {
   alcoreCustomerAuthEnabled,
-  authenticateCanonicalPassword,
-  exchangeCanonicalGoogleToken,
   getCanonicalGoogleStatus,
-  consumeLibreExchangeCode,
   forwardAlcoreGoogle,
   forwardAlcorePassword,
-} from '../services/canonicalAuthService.js';
-import type {
-  ProductAssertion,
-  CanonicalAuthFailure,
 } from '../services/canonicalAuthService.js';
 
 const router = express.Router();
@@ -202,15 +195,16 @@ const generalAuthRateLimiter = rateLimit({
 // local password, signup, OAuth, MFA, and passkey routes below return an
 // identical 404 (no existent/nonexistent oracle); product session, token,
 // bridge, and ticket routes are unaffected. Prefix mounting guarantees no
-// local-auth route is missed; the bridge route stays until sunset (todo 29).
+// local-auth route is missed. The Bearer bridge routes below are retired 410
+// (unified-auth-core todo 16); redirect POST /api/auth/alcore/exchange is the
+// only Auth-backed sign-in.
 //
 // Exception: GET /oauth/google/status is a read-only provider advertisement
 // (configured flag + public client id, no credential issuance). The
 // Alcore-mode sign-in panel needs it to render its Google button, so it is
 // registered BEFORE the /oauth gate and stays reachable in both modes. The
-// credentialed Google exchange (POST /auth/canonical-google, Auth-backed)
-// was never gated. Local-mode responses are byte-identical: same handler,
-// same shape, only an earlier match in the router.
+// credentialed Bearer exchanges (POST /auth/canonical-*, Auth-backed) are
+// retired 410 in every mode (unified-auth-core todo 16).
 router.get('/oauth/google/status', async (_req, res) => {
   res.set('Cache-Control', 'no-store');
   try {
@@ -225,263 +219,37 @@ router.use('/signup', rejectLocalAuthInAlcoreMode);
 router.use('/oauth', rejectLocalAuthInAlcoreMode);
 router.use('/mfa', rejectLocalAuthInAlcoreMode);
 router.use('/passkeys', rejectLocalAuthInAlcoreMode);
-const canonicalFailureStatus = (
-  reason: CanonicalAuthFailure,
-  mode: 'login' | 'signup'
-): { status: number; message: string } => {
-  switch (reason) {
-    case 'invalid_credentials':
-      return mode === 'signup'
-        ? { status: 400, message: 'Email or password is not acceptable' }
-        : { status: 401, message: 'Invalid credentials' };
-    case 'email_taken':
-      return {
-        status: 409,
-        message: 'An account already exists for this email',
-      };
-    case 'rate_limited':
-      return {
-        status: 429,
-        message: 'Too many authentication attempts, please try again later',
-      };
-    case 'unavailable':
-    case 'invalid_response':
-      return {
-        status: 502,
-        message: 'Authentication service is temporarily unavailable',
-      };
-  }
-};
-
-router.post('/canonical-password', loginRateLimiter, async (req, res) => {
-  res.set('Cache-Control', 'no-store');
-  const body = req.body ?? {};
-  let email = body.email;
-  let password = body.password;
-  try {
-    if (
-      typeof email !== 'string' ||
-      typeof password !== 'string' ||
-      !email.trim() ||
-      !password
-    ) {
-      res
-        .status(400)
-        .json({ success: false, message: 'Email and password are required' });
-      return;
-    }
-    if (!process.env.AUTH_JWT_SECRET?.trim()) {
-      res.status(503).json({
-        success: false,
-        message: 'Canonical authentication is not configured',
-      });
-      return;
-    }
-    const credentials = { email: email.trim(), password, signup: false };
-    password = '';
-    // authenticateCanonicalPassword already consumed the one-use code and
-    // verified the assertion, so the session is completed from the assertion.
-    // Re-entering the code exchange here would hand it a non-string body.
-    const exchanged = await authenticateCanonicalPassword(credentials);
-    if (!exchanged.ok) {
-      const mapped = canonicalFailureStatus(exchanged.reason, 'login');
-      if (mapped.status >= 500) {
-        logger.error('Canonical login upstream failure', exchanged.reason);
-      }
-      res
-        .status(mapped.status)
-        .json({ success: false, message: mapped.message });
-      return;
-    }
-    await respondWithCanonicalSession(exchanged.assertion, req, res);
-  } catch (error) {
-    logger.error(
-      'Canonical password authentication failed',
-      error instanceof Error ? error.message : 'unknown'
-    );
-    res.status(502).json({
-      success: false,
-      message: 'Authentication service is temporarily unavailable',
-    });
-  } finally {
-    password = '';
-    if (typeof body === 'object') body.password = '';
-    if (typeof req.body === 'object' && req.body !== null)
-      req.body.password = '';
-  }
-});
-
-router.post('/canonical-google', loginRateLimiter, async (req, res) => {
-  res.set('Cache-Control', 'no-store');
-  const idToken = req.body?.idToken;
-  if (
-    typeof idToken !== 'string' ||
-    idToken.length === 0 ||
-    Buffer.byteLength(idToken) > 8192
-  ) {
-    res.status(400).json({
-      success: false,
-      message: 'A valid Google credential is required',
-    });
-    return;
-  }
-  if (!process.env.AUTH_JWT_SECRET?.trim()) {
-    res.status(503).json({
-      success: false,
-      message: 'Canonical authentication is not configured',
-    });
-    return;
-  }
-  try {
-    const code = await exchangeCanonicalGoogleToken(idToken);
-    if (!code) {
-      res
-        .status(401)
-        .json({ success: false, message: 'Invalid Google credential' });
-      return;
-    }
-    req.body = { code };
-    await handleCanonicalExchange(req, res);
-  } catch (error) {
-    logger.error('Canonical Google authentication failed', error);
-    res.status(502).json({
-      success: false,
-      message: 'Authentication service is temporarily unavailable',
-    });
-  }
-});
-
-router.post('/canonical-signup', signupRateLimiter, async (req, res) => {
-  res.set('Cache-Control', 'no-store');
-  const body = req.body ?? {};
-  let email = body.email;
-  let password = body.password;
-  try {
-    if (
-      typeof email !== 'string' ||
-      typeof password !== 'string' ||
-      !email.trim() ||
-      !password
-    ) {
-      res
-        .status(400)
-        .json({ success: false, message: 'Email and password are required' });
-      return;
-    }
-    if (!process.env.AUTH_JWT_SECRET?.trim()) {
-      res.status(503).json({
-        success: false,
-        message: 'Canonical authentication is not configured',
-      });
-      return;
-    }
-    const credentials = { email: email.trim(), password, signup: true };
-    password = '';
-    const exchanged = await authenticateCanonicalPassword(credentials);
-    if (!exchanged.ok) {
-      const mapped = canonicalFailureStatus(exchanged.reason, 'signup');
-      if (mapped.status >= 500) {
-        logger.error('Canonical signup upstream failure', exchanged.reason);
-      }
-      res
-        .status(mapped.status)
-        .json({ success: false, message: mapped.message });
-      return;
-    }
-    await respondWithCanonicalSession(exchanged.assertion, req, res);
-  } catch (error) {
-    logger.error(
-      'Canonical signup failed',
-      error instanceof Error ? error.message : 'unknown'
-    );
-    res.status(502).json({
-      success: false,
-      message: 'Authentication service is temporarily unavailable',
-    });
-  } finally {
-    password = '';
-    if (typeof body === 'object') body.password = '';
-    if (typeof req.body === 'object' && req.body !== null)
-      req.body.password = '';
-  }
-});
-
-// Completes sign-in from an already verified product assertion. Both the
-// direct password path and the code exchange end here so a session is only
-// ever issued for an assertion this service verified itself.
-const respondWithCanonicalSession = async (
-  assertion: ProductAssertion,
-  req: express.Request,
+// REMOVED (unified-auth-core todo 16): legacy Bearer shared-secret bridge.
+// POST /canonical-password, /canonical-google, /canonical-signup, and
+// /canonical-exchange used to exchange Auth credentials/codes for a Libre
+// session by verifying an Auth-minted assertion against the shared
+// AUTH_JWT_SECRET. That path is retired in every mode: the redirect
+// POST /api/auth/alcore/exchange (S2S binding, no shared secret) is the only
+// Auth-backed sign-in. The secret must never be reintroduced here — grep
+// AUTH_JWT_SECRET backend/src must show only this tombstone plus the test.
+export const CANONICAL_AUTH_RETIRED_CODE = 'CANONICAL_AUTH_RETIRED';
+const respondBearerRetired = (
+  _req: express.Request,
   res: express.Response
-): Promise<void> => {
-  const result = await authService.loginWithCanonicalUser(assertion, {
-    kind: 'product:libre',
-    ip: getClientIp(req),
-    userAgent: req.headers['user-agent'],
-  });
-  if (!result || result.status !== 'authenticated') {
-    res.status(403).json({ success: false, message: 'Account is not active' });
-    return;
-  }
-  res.json({
-    success: true,
-    data: {
-      user: result.user,
-      token: result.token,
-      systemInfo: await authService.getSystemInfo(),
-    },
+): void => {
+  res.set('Cache-Control', 'no-store');
+  res.status(410).json({
+    success: false,
+    code: CANONICAL_AUTH_RETIRED_CODE,
+    message: 'Legacy shared-secret authentication has been retired',
   });
 };
 
-const handleCanonicalExchange = async (
-  req: express.Request,
-  res: express.Response
-): Promise<void> => {
-  res.set('Cache-Control', 'no-store');
-  const code = req.body?.code;
-  if (typeof code !== 'string' || code.length === 0 || code.length > 512) {
-    res
-      .status(400)
-      .json({ success: false, message: 'A valid exchange code is required' });
-    return;
-  }
-  if (!process.env.AUTH_JWT_SECRET?.trim()) {
-    res.status(503).json({
-      success: false,
-      message: 'Canonical authentication is not configured',
-    });
-    return;
-  }
-  try {
-    const exchanged = await consumeLibreExchangeCode(code);
-    if (!exchanged.ok) {
-      const upstream =
-        exchanged.reason === 'unavailable' ||
-        exchanged.reason === 'invalid_response';
-      if (upstream)
-        logger.error('Canonical exchange upstream failure', exchanged.reason);
-      res.status(upstream ? 502 : 401).json({
-        success: false,
-        message: upstream
-          ? 'Authentication service is temporarily unavailable'
-          : 'Invalid or expired exchange code',
-      });
-      return;
-    }
-    await respondWithCanonicalSession(exchanged.assertion, req, res);
-  } catch (error) {
-    logger.error('Canonical authentication exchange failed', error);
-    res.status(502).json({
-      success: false,
-      message: 'Authentication service is temporarily unavailable',
-    });
-  }
-};
+router.post('/canonical-password', loginRateLimiter, respondBearerRetired);
+
+router.post('/canonical-google', loginRateLimiter, respondBearerRetired);
+
+router.post('/canonical-signup', signupRateLimiter, respondBearerRetired);
 
 router.post(
   '/canonical-exchange',
   generalAuthRateLimiter,
-  handleCanonicalExchange
+  respondBearerRetired
 );
 
 // WebSocket tickets get their own bucket: every chat reconnect consumes one,

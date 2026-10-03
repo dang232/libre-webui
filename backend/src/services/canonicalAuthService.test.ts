@@ -20,12 +20,12 @@ import { createHmac } from 'node:crypto';
 import test from 'node:test';
 import {
   exchangeCanonicalCredentials,
-  exchangeCanonicalGoogleToken,
   getCanonicalGoogleStatus,
   forwardAlcoreGoogle,
   forwardAlcorePassword,
   verifyProductAssertion,
 } from './canonicalAuthService.js';
+import * as canonicalAuthService from './canonicalAuthService.js';
 
 const assertion = (
   claims: Record<string, unknown>,
@@ -158,8 +158,6 @@ test('Given valid canonical credentials, when exchanged, then returns the verifi
       return Response.json({ code: 'one-use-code' });
     },
   };
-  process.env.AUTH_JWT_SECRET = 'auth-test-secret';
-  process.env.AUTH_ISSUER = 'auth.alcore.io.vn';
   const result = await exchangeCanonicalCredentials(
     { email: 'user@example.com', password: 'private-password', signup: false },
     transport,
@@ -270,44 +268,14 @@ test('Given a duplicate email on register, when exchanged, then reports email_ta
   assert.equal(!result.ok && result.reason, 'email_taken');
 });
 
-test('Given a Google ID token, when forwarded to Auth, then exchanges the returned session for a Libre code', async () => {
-  process.env.AUTH_BASE_URL = 'https://auth.example';
-  const calls: Array<{ path: string; init: RequestInit }> = [];
-  const originalFetch = globalThis.fetch;
-  globalThis.fetch = async (input, init) => {
-    const path = String(input);
-    calls.push({ path, init: init ?? {} });
-    if (path.endsWith('/auth/google/verify'))
-      return Response.json({ access_token: 'auth-session' });
-    return Response.json({ code: 'libre-code' });
-  };
-  try {
-    assert.equal(await exchangeCanonicalGoogleToken('gis-token'), 'libre-code');
-    assert.deepEqual(
-      calls.map(call => call.path),
-      [
-        'https://auth.example/auth/google/verify',
-        'https://auth.example/oidc/exchange',
-      ]
-    );
-    assert.equal(JSON.parse(String(calls[0]?.init.body)).idToken, 'gis-token');
-    assert.equal(
-      (calls[1]?.init.headers as Record<string, string>).Authorization,
-      'Bearer auth-session'
-    );
-  } finally {
-    globalThis.fetch = originalFetch;
-  }
-});
-
-test('Given Auth returns a server error, when Google token verification runs, then propagates the upstream failure', async () => {
-  const originalFetch = globalThis.fetch;
-  globalThis.fetch = async () => Response.json({}, { status: 503 });
-  try {
-    await assert.rejects(exchangeCanonicalGoogleToken('gis-token'));
-  } finally {
-    globalThis.fetch = originalFetch;
-  }
+test('Given the retired Bearer bridge, when inspected, then no shared-secret verifier remains', () => {
+  // Tombstone for unified-auth-core todo 16: the legacy Bearer path verified
+  // Auth-minted assertions against the shared AUTH_JWT_SECRET. That secret
+  // must never return to production code: grep AUTH_JWT_SECRET backend/src
+  // allows only the service tombstone plus this test.
+  assert.equal('consumeLibreExchangeCode' in canonicalAuthService, false);
+  assert.equal('authenticateCanonicalPassword' in canonicalAuthService, false);
+  assert.equal('exchangeCanonicalGoogleToken' in canonicalAuthService, false);
 });
 
 test('Given Auth has no public Google client ID, when status is queried, then Google remains unconfigured', async () => {
