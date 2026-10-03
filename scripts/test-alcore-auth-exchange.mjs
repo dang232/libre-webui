@@ -6,7 +6,8 @@
  * assertion → LOCAL profile → Libre product session only; same subject
  * converges on one profile with preserved data; replay/replay-binding and
  * malformed assertions fail closed with one generic 401; lwk_* never yields
- * a session; email collisions queue to manual link (409); pending accounts
+ * a session; email collisions queue to manual link (409); concurrent
+ * same-subject exchanges converge on one Libre row (count +1); pending accounts
  * stay 403; local mode isolates with 404 ALCORE_AUTH_ONLY; no-store on
  * every response; zero Auth refresh material anywhere in responses.
  */
@@ -117,6 +118,8 @@ const codes = new Map([
     },
   ],
   ['fresh-code-1', { sub: 'auth-sub-fresh', email: null }],
+  ['race-code-1', { sub: 'auth-sub-race', email: 'race@example.com' }],
+  ['race-code-2', { sub: 'auth-sub-race', email: 'race@example.com' }],
   ['collision-code-1', { sub: 'auth-sub-new', email: 'taken@example.com' }],
   ['wrong-aud-code', { sub: 'auth-sub-1', aud: 'tokenpanel' }],
   ['wrong-iss-code', { sub: 'auth-sub-1', iss: 'https://evil.example.com' }],
@@ -499,6 +502,28 @@ test('email collision refuses to merge and signals manual link', async () => {
   assert.equal(outcome.status, 409);
   assert.equal(outcome.body.code, 'AUTH_LINK_CONFLICT');
   assert.ok(noRefreshMaterial(outcome));
+  // The holder row is untouched: still owned by its original id and email.
+  const holderAfter = await userModel.getUserByUsername('task45_holder');
+  assert.equal(holderAfter?.id, holder.user.id);
+  assert.equal(holderAfter?.email, 'taken@example.com');
+});
+
+test('concurrent same-subject exchanges converge on one Libre row', async () => {
+  // Rate-limiter budget: this file makes 28 /exchange hits before this
+  // test and the limiter allows 30 per window, so the burst stays at 2.
+  // The invariant under proof is the row-count assertion, not the width.
+  const before = await userModel.getAllUsers();
+  const outcomes = await Promise.all(
+    ['race-code-1', 'race-code-2'].map(code =>
+      call('POST', '/api/auth/alcore/exchange', { code })
+    )
+  );
+  for (const o of outcomes) assert.equal(o.status, 200);
+  const ids = new Set(outcomes.map(o => o.body.data.user.id));
+  assert.equal(ids.size, 1);
+  // Count proof: concurrent provisions grew the user table by one row.
+  const after = await userModel.getAllUsers();
+  assert.equal(after.length, before.length + 1);
 });
 
 test('local mode isolates the relying-party routes with 404', async () => {

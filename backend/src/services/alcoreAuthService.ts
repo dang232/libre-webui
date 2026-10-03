@@ -252,13 +252,22 @@ export const signInWithAuthCode = async (
   } catch (error) {
     // Email-collision (another account owns the address): fail closed with
     // the manual-link signal, never merge. No identity material in the log.
-    logger.warn('Auth subject sign-in refused by profile mapping');
-    throw new AlcoreAuthError(
+    // Anything else is a local mapping failure (FAILED, not CONFLICT): it
+    // must not wear the 409 manual-link shape, so it surfaces as a generic
+    // 500 the route renders without a conflict code.
+    if (
       error instanceof Error &&
-        /already exists|already linked/i.test(error.message)
-        ? 'This Auth identity matches multiple accounts; contact support to link it'
-        : 'This Auth sign-in cannot be linked to an account',
-      409
+      /already exists|already linked/i.test(error.message)
+    ) {
+      logger.warn('Auth subject sign-in refused by profile mapping');
+      throw new AlcoreAuthError(
+        'This Auth identity matches multiple accounts; contact support to link it',
+        409
+      );
+    }
+    throw new AlcoreAuthError(
+      'This Auth sign-in cannot be linked to an account',
+      500
     );
   }
   if (user.status !== 'active') {
