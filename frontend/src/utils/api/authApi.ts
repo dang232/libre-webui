@@ -32,7 +32,7 @@ import { isDemoMode } from '@/utils/demoMode';
 import { DEFAULT_DEMO_PREFERENCES } from './demoData';
 import { api, createDemoResponse, logger } from './client';
 
-const appVersion = import.meta.env.VITE_APP_VERSION || '0.0.0';
+const appVersion = import.meta.env?.VITE_APP_VERSION || '0.0.0';
 
 /** One signed-in session (browser login or OAuth) as reported by the backend. */
 export interface AuthSession {
