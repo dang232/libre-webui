@@ -265,21 +265,29 @@ test('config advertises the Auth endpoint without identity', async () => {
   assert.ok(noStore(outcome));
 });
 
-test('first exchange creates a pending profile, never an active session', async () => {
+test('first exchange auto-approves the Auth-verified profile with an active session', async () => {
   const outcome = await call('POST', '/api/auth/alcore/exchange', {
     code: 'good-code-1',
   });
-  assert.equal(outcome.status, 403);
-  assert.equal(outcome.body.code, 'ACCOUNT_PENDING');
+  assert.equal(outcome.status, 200);
+  assert.equal(outcome.body.data.user.email, 'prove@example.com');
+  assert.ok(typeof outcome.body.data.token === 'string');
   assert.ok(noStore(outcome));
   assert.ok(noRefreshMaterial(outcome));
 });
 
 test('approved profile signs in and converges on repeat codes', async () => {
   const pending = await userModel.getUserByAuthSubject(`${ISSUER}|auth-sub-1`);
-  assert.ok(pending, 'pending profile row exists after first exchange');
-  const approved = await userModel.approveUser(pending.id, adminId);
-  assert.equal(approved?.status, 'active');
+  assert.ok(pending, 'profile row exists after first exchange');
+  const current = await userModel.getUserById(pending.id);
+  const approved =
+    current?.status === 'active'
+      ? current
+      : await userModel.approveUser(pending.id, adminId);
+  assert.equal(
+    (approved ?? (await userModel.getUserById(pending.id)))?.status,
+    'active'
+  );
 
   const first = await call('POST', '/api/auth/alcore/exchange', {
     code: 'good-code-2',
@@ -469,11 +477,12 @@ test('lwk_* presented to exchange is rejected and never a session', async () => 
   assert.equal(outcome.status, 403);
   assert.equal(outcome.body.code, 'TOKEN_SCOPE');
   // The fresh code was NOT consumed: a code-only retry still reaches Auth.
+  // Auth-verified subjects auto-approve, so the retry signs in.
   const retry = await call('POST', '/api/auth/alcore/exchange', {
     code: 'fresh-code-1',
   });
-  assert.equal(retry.status, 403);
-  assert.equal(retry.body.code, 'ACCOUNT_PENDING');
+  assert.equal(retry.status, 200);
+  assert.ok(typeof retry.body.data?.token === 'string');
 });
 
 test('email collision refuses to merge and signals manual link', async () => {

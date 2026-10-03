@@ -27,7 +27,6 @@ import type {
   IdentityUserRecord,
   Persistence,
 } from '../persistence/index.js';
-import { isPublicRegistrationEnabled } from '../services/registrationPolicy.js';
 import { randomUUID } from 'node:crypto';
 
 export type AccountStatus = IdentityAccountStatus;
@@ -155,13 +154,16 @@ export class UserModel {
       candidate = `${username}_${counter}`;
       counter += 1;
     }
+    // Auth is the gatekeeper here, not ENABLE_SIGNUP: the subject was verified
+    // by Auth (password/Google) before this call, so provisioning must not
+    // depend on local public-registration policy. Local signup still gates.
     const created = await this.createPublicUser(
       {
         username: candidate,
         email,
         password: `alcore:${randomUUID()}:${randomUUID()}`,
       },
-      isPublicRegistrationEnabled()
+      true
     );
     if (!created) throw new Error('Account creation failed');
     await this.persistenceProvider().repositories.identity.update(created.id, {

@@ -262,10 +262,21 @@ export const signInWithAuthCode = async (
     );
   }
   if (user.status !== 'active') {
-    throw new AlcoreAuthError(
-      'This account is waiting for administrator approval',
-      403
-    );
+    // Auth-verified identities are pre-approved: Auth owns credential
+    // verification (password/Google JWKS) and the S2S code exchange proves
+    // the subject. Local signup pending policy is untouched — this branch
+    // only runs after a valid Auth assertion for this subject.
+    const approved = await userModel.approveUser(user.id, 'alcore-auth');
+    const refreshed = approved ?? (await userModel.getUserById(user.id));
+    if (refreshed?.status === 'active') {
+      logger.info('Auto-approved Auth-provisioned account on first exchange');
+      user = refreshed;
+    } else {
+      throw new AlcoreAuthError(
+        'This account is waiting for administrator approval',
+        403
+      );
+    }
   }
   const token = await authService.issueSession(user, {
     kind: 'alcore-auth',
