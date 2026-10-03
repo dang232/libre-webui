@@ -273,6 +273,7 @@ export const AlcoreAuthNotice: React.FC = () => {
       {!resetting && (
         <button
           type='button'
+          data-testid='alcore-google-button'
           onClick={handleGoogleViaAuth}
           disabled={busy}
           className='mt-3 flex h-11 w-full items-center justify-center rounded-xl border border-line bg-surface px-4 text-sm font-medium text-ink shadow-subtle transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none'

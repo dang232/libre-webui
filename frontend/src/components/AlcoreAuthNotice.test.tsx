@@ -127,3 +127,58 @@ test('Alcore-mode login carries no interstitial jargon or dead buttons', () => {
   }
   assert.doesNotMatch(html, /disabled=""/, 'no greyed-out dead buttons');
 });
+
+// unified-auth-core todo 18: alcore /login shows ONLY the Auth Google
+// full-page redirect — no product GSI widget runs beside it.
+test('Alcore-mode login exposes exactly one Google entry: the Auth full-page button', () => {
+  const html = renderNotice();
+  const googleButtons = html.match(/data-testid="alcore-google-button"/g) ?? [];
+  assert.equal(
+    googleButtons.length,
+    1,
+    'exactly one Auth Google button is rendered'
+  );
+  assert.match(
+    html,
+    /<button[^>]*data-testid="alcore-google-button"/,
+    'the Auth Google entry is a real full-page button, not a GSI-rendered div'
+  );
+  assert.match(html, /Continue.*Google/, 'button copy names Google');
+});
+
+test('Alcore-mode login mounts no GSI widget state', () => {
+  // renderToStaticMarkup never runs effects, which mirrors the client-side
+  // invariant: nothing in the alcore panel imports window.google or injects
+  // the GSI script — LoginPage branches to this panel before LoginForm (and
+  // its CanonicalGoogleButton) is ever reached.
+  (stubWindow as unknown as Record<string, unknown>)['google'] = {
+    accounts: {
+      id: {
+        initialize: () => {
+          throw new Error('GSI must not initialize in the alcore panel');
+        },
+        renderButton: () => {
+          throw new Error('GSI must not render in the alcore panel');
+        },
+        cancel: () => undefined,
+      },
+    },
+  };
+  try {
+    const html = renderNotice();
+    for (const banned of [
+      'accounts.google',
+      'gsi/client',
+      'data-google-identity',
+      'data-testid="canonical-google-button"',
+    ]) {
+      assert.doesNotMatch(
+        html,
+        new RegExp(banned.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
+        `alcore HTML must not contain ${JSON.stringify(banned)}`
+      );
+    }
+  } finally {
+    delete (stubWindow as unknown as Record<string, unknown>)['google'];
+  }
+});

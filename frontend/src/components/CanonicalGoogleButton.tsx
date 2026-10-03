@@ -83,6 +83,15 @@ function loadGsiScript(src: string): Promise<void> {
 export const CanonicalGoogleButton: React.FC<{ onSuccess?: () => void }> = ({
   onSuccess,
 }) => {
+  // LOCAL-ONLY (unified-auth-core todo 18): this GSI widget must never mount
+  // in the alcore panel. LoginPage branches alcore mode to AlcoreAuthNotice
+  // (Auth full-page Google redirect, same Auth subject) before LoginForm is
+  // reached, and LoginForm/SignupForm early-return to AlcoreAuthNotice on
+  // `alcoreMode` — so this button only renders on the local self-hosted
+  // /login and /signup. Both Google paths converge to the same Auth subject
+  // server-side (POST /auth/canonical-google forwards the ID token to Auth
+  // /auth/google/verify); the consolidation is about never running both
+  // widgets at once, not about two identities.
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { login } = useAuthStore();
@@ -197,7 +206,11 @@ export const CanonicalGoogleButton: React.FC<{ onSuccess?: () => void }> = ({
 
   if (!clientId) return null;
   return (
-    <div aria-busy={loading} className='mt-3'>
+    <div
+      aria-busy={loading}
+      className='mt-3'
+      data-testid='canonical-google-button'
+    >
       {loading && (
         <p role='status' className='mb-2 text-center text-sm text-ink-muted'>
           {t('auth.oauth.googleLoading')}
