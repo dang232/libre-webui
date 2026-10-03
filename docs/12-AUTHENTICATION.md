@@ -62,6 +62,37 @@ ALCORE_AUTH_URL=https://auth.alcore.io.vn
 ALCORE_AUTH_ISSUER=https://auth.alcore.io.vn
 ```
 
+### Browser handoff flag
+
+`VITE_AUTH_BROWSER_HANDOFF` (frontend, build-time) selects how the sign-in
+panel completes an Alcore-mode sign-in. It defaults **off**:
+
+- **Off (default):** the panel posts email and password browser→Auth, then
+  redeems the product code through the legacy Bearer path
+  (`POST /oidc/exchange` → `POST /api/auth/canonical-exchange`).
+- **On (`VITE_AUTH_BROWSER_HANDOFF=true`):** the browser authenticates with
+  Auth's HttpOnly session cookie — no Auth token enters page memory or
+  storage — then navigates the whole page to Auth
+  `GET /oidc/exchange/redirect`, which 302s back to
+  `<origin>/auth/alcore/callback` with an opaque single-use `code` plus a
+  tab-bound `state`. The callback page consumes the stored state
+  (single-use, 5-minute window) and redeems server-to-server at
+  `POST /api/auth/alcore/exchange` with the exact `redirectUri` and `state`.
+
+Turning the flag on requires Auth's `AUTH_OIDC_CLIENTS` to register the
+exact callback for this deployment's origin. Production registers
+`libre=https://web.alcore.io.vn/auth/alcore/callback`
+(evidence: `.omo/research/alcore-auth-browser-handoff/task-1-preconditions.log`,
+verdict `AUTH_OIDC_CLIENTS_OK`); any other `redirect_uri` is answered with
+`invalid_redirect_uri`, so an unregistered origin or path fails closed
+without redirecting. The flag is a frontend build setting only — it writes
+no database row, and turning it off restores the legacy path immediately.
+
+```env
+# frontend/.env.example — default off
+# VITE_AUTH_BROWSER_HANDOFF=true
+```
+
 ## Managing Users
 
 Administrators open **Settings → User Management** to manage the instance.

@@ -338,6 +338,7 @@ app.use(
         scriptSrc: [
           "'self'",
           'https://challenges.cloudflare.com',
+          'https://accounts.google.com',
           // The theme script in index.html, allowed by hash rather than by
           // opening the policy to inline script.
           ...INLINE_SCRIPT_HASHES,
@@ -375,7 +376,11 @@ app.use(
         fontSrc: ["'self'", 'data:'],
         mediaSrc: ["'self'", 'data:', 'blob:'],
         objectSrc: ["'none'"],
-        frameSrc: ["'self'", 'https://challenges.cloudflare.com'],
+        frameSrc: [
+          "'self'",
+          'https://challenges.cloudflare.com',
+          'https://accounts.google.com',
+        ],
         frameAncestors: ["'self'"],
         formAction: ["'self'"],
         // npx desktop mode serves the application and signed preview proxy over

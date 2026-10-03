@@ -259,30 +259,42 @@ enabling it for untrusted users.
 
 ## Privacy and security
 
-### Canonical Auth exchange (backend support; UI handoff pending)
+### Canonical Auth exchange (browser handoff implemented)
 
-Libre has a backend endpoint for exchanging an Auth one-use code at
-`POST /api/auth/canonical-exchange`. It consumes the code server-to-server at
-Auth `/oidc/exchange/token`, verifies the HS256 signature and configured
-issuer, `aud=libre`, future expiry, and `intent=product_exchange`, then issues
-a locally revocable Libre session JWT. Set `AUTH_BASE_URL`, `AUTH_ISSUER`
-(the exact Auth `iss` value), and `AUTH_JWT_SECRET` (the same signing secret
-as Auth) in the Libre backend. Codes are single-use and expire after 60
+Libre has two backend endpoints for exchanging an Auth one-use code:
+`POST /api/auth/canonical-exchange` (Bearer path, `{code}` only) and
+`POST /api/auth/alcore/exchange` (redirect-bound browser path,
+`{code, redirectUri, state}`). Both consume the code server-to-server at Auth
+`/oidc/exchange/token`, verify the HS256 signature and configured issuer,
+`aud=libre`, future expiry, and `intent=product_exchange`, then issue a
+locally revocable Libre session JWT. The Bearer path requires `AUTH_JWT_SECRET`
+(the same signing secret as Auth) and `AUTH_ISSUER` (the exact Auth `iss`
+value); the redirect-bound path validates the `redirect_uri` + `state` binding
+instead and holds no shared secret. Codes are single-use and expire after 60
 seconds. Libre stores the Auth `sub` in the nullable, uniquely indexed
 `users.canonical_user_id`; local ids and existing local passwords remain
 unchanged. Profiles are never merged by email.
 
-The existing Libre login UI is not wired to this endpoint yet, and the Auth
-exchange initiation requires an already-authenticated Auth session. A browser
-session handoff must be added before this is a user-facing login flow.
+The browser handoff exists end to end. In Alcore mode with
+`VITE_AUTH_BROWSER_HANDOFF=true`, the sign-in panel authenticates
+browser→Auth with `credentials: include` (no token enters page memory),
+navigates the whole page to Auth
+`GET /oidc/exchange/redirect?audience=libre&redirect_uri=https://web.alcore.io.vn/auth/alcore/callback&state=<state>`,
+Auth redirects back to Libre
+`/auth/alcore/callback?code=&state=`, and the callback redeems server-to-server
+at `POST /api/auth/alcore/exchange` with the exact `redirectUri` and `state`.
+The registered callback `https://web.alcore.io.vn/auth/alcore/callback` must be
+byte-exact in `AUTH_OIDC_CLIENTS`; Auth answers any other value with
+`invalid_redirect_uri`. Evidence:
+`.omo/research/alcore-auth-browser-handoff/task-1-preconditions.log`
+(`AUTH_OIDC_CLIENTS_OK`) and the census at
+`.omo/research/alcore-auth-browser-handoff/task-1-census.json`.
 
-Backend verification: obtain an authenticated Auth session, POST
-`{"audience":"libre","intent":"product_exchange"}` to Auth
-`/oidc/exchange`, then POST `{"code":"<code>"}` to Libre
-`/api/auth/canonical-exchange`. Configure `AUTH_JWT_SECRET` with the Auth
-signing key and `AUTH_ISSUER` with its exact configured issuer (default
-`auth.alcore.io.vn`). Replaying the code must return 401; the successful
-response contains a Libre token, not the Auth product assertion.
+Browser flow: sign in at Libre, get redirected to Auth, return and land signed
+in. Replaying the code must return 401; the successful response contains a
+Libre token, not the Auth product assertion. With the flag off, the legacy
+Bearer product-code path remains as a sunset-gated rollback and is never used
+by the redirect handoff.
 
 Alcore ships without application telemetry or analytics.
 

@@ -374,17 +374,39 @@ export const exchangeCanonicalGoogleToken = async (
   return typeof codeBody?.['code'] === 'string' ? codeBody['code'] : null;
 };
 
+type CanonicalGoogleStatus = {
+  readonly configured: boolean;
+  readonly clientId: string;
+};
+
+let cachedGoogleStatus: { at: number; value: CanonicalGoogleStatus } | null =
+  null;
+const GOOGLE_STATUS_TTL_MS = 30_000;
+
 export const getCanonicalGoogleStatus = async (
-  signal: AbortSignal = AbortSignal.timeout(5_000)
-): Promise<{ readonly configured: boolean; readonly clientId: string }> => {
-  const response = await fetch(`${authBaseUrl()}/auth/google/config`, {
-    signal,
-  });
-  if (!response.ok) return { configured: false, clientId: '' };
-  const body = await parseJson(response);
-  const clientId =
-    typeof body?.['clientId'] === 'string' ? body['clientId'] : '';
-  return { configured: clientId.length > 0, clientId };
+  signal: AbortSignal = AbortSignal.timeout(2_500)
+): Promise<CanonicalGoogleStatus> => {
+  const cached = cachedGoogleStatus;
+  if (cached && Date.now() - cached.at < GOOGLE_STATUS_TTL_MS)
+    return cached.value;
+  try {
+    const response = await fetch(`${authBaseUrl()}/auth/google/config`, {
+      signal,
+    });
+    if (!response.ok) return { configured: false, clientId: '' };
+    const body = await parseJson(response);
+    const clientId =
+      typeof body?.['clientId'] === 'string' ? body['clientId'] : '';
+    const result: CanonicalGoogleStatus = {
+      configured: clientId.length > 0,
+      clientId,
+    };
+    if (result.configured)
+      cachedGoogleStatus = { at: Date.now(), value: result };
+    return result;
+  } catch {
+    return { configured: false, clientId: '' };
+  }
 };
 
 export const consumeLibreExchangeCode = async (

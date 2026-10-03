@@ -19,11 +19,13 @@ type GoogleIdentity = {
       initialize: (options: {
         client_id: string;
         callback: (response: GoogleCredentialResponse) => void;
+        auto_select?: boolean;
       }) => void;
       renderButton: (
         element: HTMLElement,
         options: { theme: string; size: string; width: number }
       ) => void;
+      cancel: () => void;
     };
   };
 };
@@ -34,6 +36,50 @@ declare global {
   }
 }
 
+const GSI_SRC = 'https://accounts.google.com/gsi/client';
+const gsiLoadPromises = new Map<string, Promise<void>>();
+
+function getOrCreateGsiScript(src: string): HTMLScriptElement {
+  const existing = document.querySelector<HTMLScriptElement>(
+    'script[data-google-identity]'
+  );
+  if (existing) return existing;
+  const script = document.createElement('script');
+  script.src = src;
+  script.async = true;
+  script.defer = true;
+  script.dataset.googleIdentity = 'true';
+  document.head.append(script);
+  return script;
+}
+
+function loadGsiScript(src: string): Promise<void> {
+  const cached = gsiLoadPromises.get(src);
+  if (cached) return cached;
+  const promise = new Promise<void>((resolve, reject) => {
+    if (window.google?.accounts?.id) {
+      resolve();
+      return;
+    }
+    const script = getOrCreateGsiScript(src);
+    const onLoad = () => {
+      script.removeEventListener('load', onLoad);
+      script.removeEventListener('error', onError);
+      resolve();
+    };
+    const onError = () => {
+      script.removeEventListener('load', onLoad);
+      script.removeEventListener('error', onError);
+      gsiLoadPromises.delete(src);
+      reject(new Error(`Failed to load ${src}`));
+    };
+    script.addEventListener('load', onLoad);
+    script.addEventListener('error', onError);
+  });
+  gsiLoadPromises.set(src, promise);
+  return promise;
+}
+
 export const CanonicalGoogleButton: React.FC<{ onSuccess?: () => void }> = ({
   onSuccess,
 }) => {
@@ -41,12 +87,17 @@ export const CanonicalGoogleButton: React.FC<{ onSuccess?: () => void }> = ({
   const navigate = useNavigate();
   const { login } = useAuthStore();
   const container = useRef<HTMLDivElement>(null);
+  const initializedClientIdRef = useRef<string | null>(null);
   const [clientId, setClientId] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
     let active = true;
-    fetch(`${API_BASE_URL}/auth/oauth/google/status`, { cache: 'no-store' })
+    fetch(`${API_BASE_URL}/auth/oauth/google/status`, {
+      cache: 'no-store',
+      signal: controller.signal,
+    })
       .then(response => (response.ok ? response.json() : null))
       .then((status: unknown) => {
         if (
@@ -64,61 +115,84 @@ export const CanonicalGoogleButton: React.FC<{ onSuccess?: () => void }> = ({
       .catch(() => undefined);
     return () => {
       active = false;
+      controller.abort();
     };
   }, []);
 
   useEffect(() => {
     if (!clientId || !container.current) return;
+    const node = container.current;
+    let cancelled = false;
     const render = () => {
-      if (!window.google || !container.current) return;
-      window.google.accounts.id.initialize({
-        client_id: clientId,
-        callback: async response => {
-          if (!response.credential) {
-            toast.error(t('auth.oauth.googleFailed'));
-            return;
-          }
-          setLoading(true);
-          try {
-            const result = await authApi.canonicalGoogle(response.credential);
-            if (!result.success || !result.data) {
-              toast.error(result.message || t('auth.oauth.googleFailed'));
+      if (cancelled || !window.google) return;
+      if (initializedClientIdRef.current !== clientId) {
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: async response => {
+            if (!response.credential) {
+              toast.error(t('auth.oauth.googleFailed'));
               return;
             }
-            login(result.data.user, result.data.token, result.data.systemInfo);
-            toast.success(t('auth.login.loginSuccess'));
-            onSuccess?.();
-            navigate('/');
-          } catch {
-            toast.error(t('auth.oauth.googleFailed'));
-          } finally {
-            setLoading(false);
-          }
-        },
-      });
-      window.google.accounts.id.renderButton(container.current, {
+            setLoading(true);
+            try {
+              const result = await authApi.canonicalGoogle(response.credential);
+              if (!result.success || !result.data) {
+                toast.error(result.message || t('auth.oauth.googleFailed'));
+                return;
+              }
+              login(
+                result.data.user,
+                result.data.token,
+                result.data.systemInfo
+              );
+              toast.success(t('auth.login.loginSuccess'));
+              onSuccess?.();
+              navigate('/');
+            } catch {
+              toast.error(t('auth.oauth.googleFailed'));
+            } finally {
+              setLoading(false);
+            }
+          },
+          auto_select: false,
+        });
+        initializedClientIdRef.current = clientId;
+      }
+      const width = Math.min(node.clientWidth || 320, 400);
+      node.innerHTML = '';
+      window.google.accounts.id.renderButton(node, {
         theme: 'outline',
         size: 'large',
-        width: Math.min(container.current.clientWidth, 400),
+        width,
       });
     };
-    if (window.google) {
+    if (window.google?.accounts?.id) {
       render();
-      return;
+    } else {
+      const script = getOrCreateGsiScript(GSI_SRC);
+      script.onerror = () => {
+        gsiLoadPromises.delete(GSI_SRC);
+        if (!cancelled) setClientId('');
+      };
+      script.addEventListener('load', render);
+      loadGsiScript(GSI_SRC).catch(() => {
+        if (!cancelled) setClientId('');
+      });
     }
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[data-google-identity]'
-    );
-    const script = existing ?? document.createElement('script');
-    if (!existing) {
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.defer = true;
-      script.dataset.googleIdentity = 'true';
-      document.head.append(script);
-    }
-    script.addEventListener('load', render);
-    return () => script.removeEventListener('load', render);
+    return () => {
+      cancelled = true;
+      const script = document.querySelector<HTMLScriptElement>(
+        'script[data-google-identity]'
+      );
+      if (script) script.removeEventListener('load', render);
+      try {
+        if (window.google) window.google.accounts.id.cancel();
+      } catch {
+        // Ignore cleanup errors when GSI is unavailable.
+      }
+      initializedClientIdRef.current = null;
+      node.innerHTML = '';
+    };
   }, [clientId, login, navigate, onSuccess, t]);
 
   if (!clientId) return null;

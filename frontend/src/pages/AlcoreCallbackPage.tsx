@@ -20,7 +20,10 @@ import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
 import { authApi } from '@/utils/api/authApi';
-import { ALCORE_AUTH_STATE_KEY } from '@/components/AlcoreAuthNotice';
+import {
+  completeCanonicalCallback,
+  consumeHandoffState,
+} from '@/utils/canonicalHandoff';
 
 /**
  * Auth redirect-handoff callback (todo 45).
@@ -45,30 +48,30 @@ export const AlcoreCallbackPage: React.FC = () => {
     const finish = async (): Promise<void> => {
       const authError = params.get('error');
       if (authError) {
-        setError('Auth sign-in failed; try again.');
-        return;
-      }
-      const code = params.get('code') ?? '';
-      const state = params.get('state') ?? '';
-      let expected: string | null = null;
-      try {
-        expected = sessionStorage.getItem(ALCORE_AUTH_STATE_KEY);
-        sessionStorage.removeItem(ALCORE_AUTH_STATE_KEY);
-      } catch {
-        expected = null;
-      }
-      if (!code || !state || expected === null || state !== expected) {
-        setError('Auth sign-in failed; try again.');
+        setError('Sign-in failed. Please try again.');
         return;
       }
       try {
-        const response = await authApi.alcoreExchange({
-          code,
-          redirectUri: `${window.location.origin}/auth/alcore/callback`,
-          state,
-        });
+        const code = params.get('code');
+        const state = params.get('state');
+        const outcome = await completeCanonicalCallback(
+          {
+            code,
+            state,
+            origin: window.location.origin,
+            consumeState: consumeHandoffState,
+          },
+          async (c, redirectUri, s) =>
+            authApi.alcoreExchange({ code: c, redirectUri, state: s })
+        );
+        if (!outcome.ok) {
+          setError('Sign-in failed. Please try again.');
+          return;
+        }
+        const response = outcome.data;
         if (!response.success || !response.data) {
-          throw new Error('exchange failed');
+          setError('Sign-in failed. Please try again.');
+          return;
         }
         login(
           response.data.user,
@@ -77,11 +80,17 @@ export const AlcoreCallbackPage: React.FC = () => {
         );
         navigate('/', { replace: true });
       } catch {
-        setError('Auth sign-in failed; try again.');
+        setError('Sign-in failed. Please try again.');
       }
     };
     void finish().finally(() => {
-      window.history.replaceState({}, document.title, location.pathname);
+      // Scrub the code only while this page still owns the address bar:
+      // after a successful navigate('/') the router already replaced the
+      // entry, and a replaceState back to the callback path would stomp
+      // the final URL (the browser proof caught exactly that race).
+      if (window.location.pathname === location.pathname) {
+        window.history.replaceState({}, document.title, location.pathname);
+      }
     });
   }, [location.pathname, location.search, login, navigate, t]);
 
@@ -102,9 +111,7 @@ export const AlcoreCallbackPage: React.FC = () => {
             </button>
           </>
         ) : (
-          <p className='text-sm text-ink-muted'>
-            {t('auth.alcore.completing', 'Completing Auth sign-in…')}
-          </p>
+          <p className='text-sm text-ink-muted'>{t('auth.login.signingIn')}</p>
         )}
       </div>
     </div>
