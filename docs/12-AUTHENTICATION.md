@@ -48,6 +48,31 @@ return `404 LOCAL_AUTH_DISABLED`; already-minted product sessions keep
 working. Generic self-hosted installs stay on `local` (the default), where
 the Auth relying-party routes answer `404 ALCORE_AUTH_ONLY`.
 
+### Production declaration (unified-auth-core todo 14)
+
+The Alcore deployment is Auth-only: it boots with `ALCORE_AUTH_MODE=alcore`
+and startup refuses to serve anything else on an Alcore-managed host. A host
+counts as Alcore-managed when `ALCORE_DEPLOYMENT=alcore` is set or when its
+public identity (`BASE_URL` / `CORS_ORIGIN`) points at the Alcore production
+domains (`alcore.io.vn`). On such a host, booting with `local`, empty, or an
+unrecognized mode throws `FATAL: Alcore-managed host must boot with
+ALCORE_AUTH_MODE=alcore` during startup preflight — before persistence opens
+or the port listens — so a misconfigured Alcore host never issues local
+credentials. The mode is read once at boot and cannot flip under a running
+process.
+
+Generic self-hosted `local` is isolated to generic self-hosted and dev use
+only: never point a local-mode instance at Alcore production origins, and
+never serve `local` on an Alcore-managed host. Gating only — local issuance
+code stays in place (removal is a later cutover step) so self-hosted installs
+keep working byte-identically.
+
+The server advertisement is authoritative: `GET /api/auth/system-info`
+returns `authMode`, and the frontend prefers it over its
+`VITE_ALCORE_AUTH_MODE` build-time hint (which only pre-selects the login
+notice before system-info loads). Alcore production images build with
+`VITE_ALCORE_AUTH_MODE=alcore`; generic self-hosted builds keep `local`.
+
 Auth verifies passwords directly; Libre never sees them. The sign-in panel
 posts the email and password browser→Auth, fetches the opaque single-use
 product code, discards the Auth access token, and hands only the code to the

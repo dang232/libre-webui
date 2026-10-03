@@ -114,6 +114,13 @@ export interface AuthModeEnvironment {
   systemInfo?: { authMode?: string } | null;
 }
 
+/**
+ * Production contract (unified-auth-core todo 14): the server-advertised
+ * `systemInfo.authMode` is authoritative and always wins over the
+ * `VITE_ALCORE_AUTH_MODE` build-time hint, which only pre-selects the login
+ * notice before system-info loads. The Alcore deployment serves
+ * `authMode:alcore`; generic self-hosted installs serve `local`.
+ */
 export function resolveAlcoreAuthMode(
   environment: AuthModeEnvironment
 ): AlcoreAuthMode {

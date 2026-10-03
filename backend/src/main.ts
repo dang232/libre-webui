@@ -59,6 +59,13 @@ if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET?.trim()) {
     'Missing required JWT_SECRET in production: set JWT_SECRET to a stable random value (32+ characters) and restart. Refusing to boot with an ephemeral session secret.'
   );
 }
+// Production-path declaration (unified-auth-core todo 14): an Alcore-managed
+// host must boot with ALCORE_AUTH_MODE=alcore. Fails closed here — before
+// data-directory and persistence preflight — so a misconfigured Alcore host
+// never listens or touches state. Generic self-hosted installs are not
+// Alcore-managed hosts and keep the `local` default untouched.
+const { assertAlcoreHostAuthMode } = await import('./config/authMode.js');
+assertAlcoreHostAuthMode();
 // Preserve the raw relative-path provenance until compatibility checks have
 // run. Source launches historically resolved relative paths from backend/;
 // packaged launchers resolve caller-relative paths once and pass absolutes.

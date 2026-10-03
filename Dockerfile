@@ -100,6 +100,10 @@ ENV VITE_API_URL=""
 
 # Auth handoff defaults OFF - server-advertised systemInfo.authMode wins;
 # turn ON only after census + AUTH_OIDC_CLIENTS registered.
+# Production declaration (unified-auth-core todo 14): Alcore deployment
+# images build with VITE_ALCORE_AUTH_MODE=alcore (a pre-load hint only — the
+# server advertisement stays authoritative). Generic self-hosted images keep
+# the default below: local issuance, isolated dev-only, never Auth-only.
 ARG VITE_AUTH_URL
 ENV VITE_AUTH_URL=${VITE_AUTH_URL:-https://auth.alcore.io.vn}
 ARG VITE_ALCORE_AUTH_MODE

@@ -325,6 +325,9 @@ export class AuthService {
       version: packageVersion,
       turnstile: turnstileService.getPublicConfig(),
       defaultTheme: await getDefaultTheme(),
+      // Production contract (unified-auth-core todo 14): this server-side
+      // advertisement is authoritative — the frontend must prefer it over
+      // its VITE_ALCORE_AUTH_MODE build-time hint (see resolveAlcoreAuthMode).
       authMode: getAuthMode(),
     };
   }

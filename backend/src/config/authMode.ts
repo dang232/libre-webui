@@ -18,15 +18,20 @@
 import type { Request, Response, NextFunction } from 'express';
 
 /**
- * Self-hosted vs Alcore-managed authentication boundary (todo 41).
+ * Self-hosted vs Alcore-managed authentication boundary
+ * (unified-auth-core todo 14 production-path declaration).
  *
- * - `local` (default): the Libre self-hosted password/OAuth/MFA/passkey
- *   routes work exactly as today. This is the fail-closed default when
+ * - `local` (default): generic self-hosted installs. Local password/OAuth/
+ *   MFA/passkey routes work exactly as today. This mode is isolated to
+ *   generic self-hosted and dev use only — it must never serve an
+ *   Alcore-managed host. This is the fail-closed default when
  *   ALCORE_AUTH_MODE is unset, empty, or any unrecognized value.
- * - `alcore`: local credential routes return 404 so the external Auth
- *   service (todo 45 relying party) is the only sign-in path. Product
- *   sessions already minted keep working; only *issuing* local credentials
- *   is disabled.
+ * - `alcore`: the Alcore deployment. Local credential routes return 404 so
+ *   the external Auth service is the only sign-in path. Product sessions
+ *   already minted keep working; only *issuing* local credentials is
+ *   disabled. Every Alcore-managed host must boot in this mode:
+ *   `assertAlcoreHostAuthMode()` (called from `main.ts` preflight)
+ *   refuses to boot otherwise.
  *
  * Alcore mode engages ONLY on the explicit value `alcore` (case- and
  * whitespace-insensitive). The value is read once at boot so the mode
@@ -43,6 +48,58 @@ const normalizeAuthMode = (value: string | undefined): AlcoreAuthMode =>
 export const AUTH_MODE: AlcoreAuthMode = normalizeAuthMode(
   process.env.ALCORE_AUTH_MODE
 );
+
+/**
+ * Production-path declaration (unified-auth-core todo 14): a host is
+ * Alcore-managed when the operator declares it (`ALCORE_DEPLOYMENT=alcore`)
+ * or when its public identity points at the Alcore production domains
+ * (`BASE_URL` / `CORS_ORIGIN` mentioning `alcore.io.vn`). A generic
+ * self-hosted install never matches either signal, so `local` stays its
+ * isolated dev-only default with no new requirement.
+ */
+export const ALCORE_MANAGED_HOST_SUFFIX = 'alcore.io.vn' as const;
+
+export const isAlcoreManagedHost = (
+  env: NodeJS.ProcessEnv = process.env
+): boolean => {
+  if (typeof env.ALCORE_DEPLOYMENT === 'string') {
+    const marker = env.ALCORE_DEPLOYMENT.trim().toLowerCase();
+    if (marker === 'alcore') return true;
+  }
+  for (const key of ['BASE_URL', 'CORS_ORIGIN'] as const) {
+    const value = env[key];
+    if (
+      typeof value === 'string' &&
+      value.toLowerCase().includes(ALCORE_MANAGED_HOST_SUFFIX)
+    ) {
+      return true;
+    }
+  }
+  return false;
+};
+
+/**
+ * Fail-closed production gate: an Alcore-managed host must boot with
+ * `ALCORE_AUTH_MODE=alcore`. Called once during startup preflight
+ * (`main.ts`); it throws before persistence opens or the port listens, so
+ * a misconfigured Alcore host never serves local issuance. The mode itself
+ * stays boot-once (`AUTH_MODE`), so this decision cannot flip under a
+ * running process.
+ */
+export const assertAlcoreHostAuthMode = (
+  env: NodeJS.ProcessEnv = process.env
+): void => {
+  if (
+    isAlcoreManagedHost(env) &&
+    normalizeAuthMode(env.ALCORE_AUTH_MODE) !== 'alcore'
+  ) {
+    throw new Error(
+      'FATAL: Alcore-managed host must boot with ALCORE_AUTH_MODE=alcore ' +
+        `(got ${JSON.stringify(env.ALCORE_AUTH_MODE ?? '')}). Local credential issuance is disabled on Alcore hosts; ` +
+        'set ALCORE_AUTH_MODE=alcore and restart. Refusing to boot.'
+    );
+  }
+};
 
 export const isAlcoreAuthMode = (): boolean => AUTH_MODE === 'alcore';
 
