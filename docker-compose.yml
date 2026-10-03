@@ -60,7 +60,6 @@ services:
       # AUTH_ISSUER must exactly match the Auth service issuer (scheme included).
       - AUTH_BASE_URL=${AUTH_BASE_URL:-https://auth.alcore.io.vn}
       - AUTH_ISSUER=${AUTH_ISSUER:-https://auth.alcore.io.vn}
-      - AUTH_JWT_SECRET=${AUTH_JWT_SECRET:-}
       # Alcore deployment auth mode: alcore = Auth-only login (local issuance 404-gated).
       - ALCORE_AUTH_MODE=${ALCORE_AUTH_MODE:-local}
     volumes:

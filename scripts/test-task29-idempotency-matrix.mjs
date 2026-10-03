@@ -205,6 +205,7 @@ const [
 assert.equal(LIBRE_PROVISION_HTTP_TO_LIFECYCLE[200], 'PROVISIONED');
 assert.equal(LIBRE_PROVISION_HTTP_TO_LIFECYCLE[409], 'CONFLICT');
 assert.equal(LIBRE_PROVISION_HTTP_TO_LIFECYCLE[500], 'FAILED');
+assert.equal(LIBRE_PROVISION_HTTP_TO_LIFECYCLE[503], 'FAILED');
 
 // Test-owned provision ledger: UNPROVISIONED (never contacted) ->
 // PROVISIONED | FAILED | CONFLICT. Replays/rejects are counted on the row.

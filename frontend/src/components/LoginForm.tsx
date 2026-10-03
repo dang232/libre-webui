@@ -33,7 +33,6 @@ import {
 } from 'lucide-react';
 import { getPasskeyAssertion, passkeysSupported } from '@/utils/webauthnClient';
 import { GitHubAuthButton } from '@/components/GitHubAuthButton';
-import { CanonicalGoogleButton } from '@/components/CanonicalGoogleButton';
 import { HuggingFaceAuthButton } from '@/components/HuggingFaceAuthButton';
 import { OidcAuthButton } from '@/components/OidcAuthButton';
 import { isDemoMode } from '@/utils/demoMode';
@@ -549,46 +548,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           )}
         </button>
       </form>
-
-      {!isDemo && <CanonicalGoogleButton onSuccess={onLogin} />}
-
-      {!isDemo && (
-        <button
-          type='button'
-          disabled={isLoading || !username.includes('@') || !password}
-          onClick={async () => {
-            setIsLoading(true);
-            try {
-              const response = await authApi.canonicalLogin(
-                username.trim(),
-                password
-              );
-              if (response.success && response.data) {
-                login(
-                  response.data.user,
-                  response.data.token,
-                  response.data.systemInfo
-                );
-                toast.success(t('auth.login.loginSuccess'));
-                onLogin?.();
-                navigate('/');
-              } else {
-                toast.error(
-                  response.message || t('auth.login.checkCredentials')
-                );
-              }
-            } catch {
-              toast.error(t('auth.login.checkCredentials'));
-            } finally {
-              setPassword('');
-              setIsLoading(false);
-            }
-          }}
-          className='mt-3 flex h-11 w-full items-center justify-center rounded-xl border border-line bg-surface px-4 text-sm font-medium text-ink shadow-subtle disabled:cursor-not-allowed disabled:opacity-40'
-        >
-          Continue with ALcore account
-        </button>
-      )}
 
       {!isDemo && passkeysSupported() && systemInfo?.passkeysInUse && (
         <button

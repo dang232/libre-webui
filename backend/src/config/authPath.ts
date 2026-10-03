@@ -63,6 +63,7 @@ export const LIBRE_AUTH_PATH_OUTCOME_ACTION: Readonly<
  *   same 2xx family, same state)
  * - 409 AUTH_LINK_CONFLICT <-> CONFLICT (twin queued, never merged)
  * - 500 <-> FAILED (retryable with the same provision key)
+ * - 503 <-> FAILED (unreachable Auth, same retryable family as 500)
  * PENDING (attempt in flight) + UNPROVISIONED (never-contacted product)
  * complete the set; neither is stored. 400-range caller errors carry no
  * lifecycle state (final rejections, nothing to resume).
@@ -71,6 +72,7 @@ export const LIBRE_PROVISION_HTTP_TO_LIFECYCLE = {
   200: 'PROVISIONED',
   409: 'CONFLICT',
   500: 'FAILED',
+  503: 'FAILED',
 } as const;
 
 /** One-way email digest for audit rows: normalized, never the raw address. */

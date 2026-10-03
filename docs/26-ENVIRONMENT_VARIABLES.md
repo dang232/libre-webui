@@ -563,7 +563,6 @@ does not follow plugin symlinks.
 | `VITE_APP_VERSION`   | package version injected by Vite config | Displayed app version                                |
 | `VITE_DEMO_MODE`     | `false`                                 | Enables demo-mode mocks when `true`                  |
 | `VITE_API_TIMEOUT`   | `300000`                                | Frontend API timeout in milliseconds                 |
-| `VITE_BACKEND_URL`   | `http://localhost:3001`                 | Used by some auth helper components                  |
 | `VITE_DEBUG_VERBOSE` | unset                                   | Enables verbose frontend debug logs in development   |
 | `VITE_LOG_LEVEL`     | unset                                   | Overrides the frontend log level                     |
 | `ELECTRON_BUILD`     | unset                                   | Enables Electron-specific Vite behavior when `true`  |

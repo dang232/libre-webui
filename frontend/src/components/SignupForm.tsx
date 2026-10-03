@@ -23,7 +23,6 @@ import { useAuthStore } from '@/store/authStore';
 import { authApi } from '@/utils/api';
 import { Clock3, Eye, EyeOff, UserPlus } from 'lucide-react';
 import { GitHubAuthButton } from '@/components/GitHubAuthButton';
-import { CanonicalGoogleButton } from '@/components/CanonicalGoogleButton';
 import { TurnstileWidget } from '@/components/TurnstileWidget';
 import { AlcoreAuthNotice } from '@/components/AlcoreAuthNotice';
 import { cn } from '@/utils';
@@ -335,48 +334,6 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           )}
         </button>
       </form>
-
-      <button
-        type='button'
-        disabled={
-          isLoading ||
-          !email.includes('@') ||
-          !password ||
-          password !== confirmPassword
-        }
-        onClick={async () => {
-          setIsLoading(true);
-          try {
-            const response = await authApi.canonicalSignup(
-              email.trim(),
-              password
-            );
-            if (response.success && response.data) {
-              login(
-                response.data.user,
-                response.data.token,
-                response.data.systemInfo
-              );
-              toast.success(t('auth.signup.signupSuccess'));
-              onSignup?.();
-              navigate('/');
-            } else {
-              toast.error(response.message || t('auth.signup.signupFailed'));
-            }
-          } catch {
-            toast.error(t('auth.signup.tryAgain'));
-          } finally {
-            setPassword('');
-            setConfirmPassword('');
-            setIsLoading(false);
-          }
-        }}
-        className='mt-3 flex h-11 w-full items-center justify-center rounded-xl border border-line bg-surface px-4 text-sm font-medium text-ink shadow-subtle disabled:cursor-not-allowed disabled:opacity-40'
-      >
-        Create ALcore account
-      </button>
-
-      <CanonicalGoogleButton onSuccess={onSignup} />
 
       {/* GitHub OAuth Button */}
       <GitHubAuthButton />

@@ -49,6 +49,7 @@ import {
 import { userModel, type UserPublic } from '../models/userModel.js';
 import { authService } from './authService.js';
 import type { SessionMetadata } from './authService.js';
+import { ALCORE_AUTH_SESSION_KIND } from './tokenpanelAuthSessionService.js';
 import { createLogger } from '../utils/logger.js';
 
 const logger = createLogger('services:alcore-auth');
@@ -275,7 +276,10 @@ export const signInWithAuthCode = async (
     // verification (password/Google JWKS) and the S2S code exchange proves
     // the subject. Local signup pending policy is untouched — this branch
     // only runs after a valid Auth assertion for this subject.
-    const approved = await userModel.approveUser(user.id, 'alcore-auth');
+    const approved = await userModel.approveUser(
+      user.id,
+      ALCORE_AUTH_SESSION_KIND
+    );
     const refreshed = approved ?? (await userModel.getUserById(user.id));
     if (refreshed?.status === 'active') {
       logger.info('Auto-approved Auth-provisioned account on first exchange');
@@ -288,7 +292,7 @@ export const signInWithAuthCode = async (
     }
   }
   const token = await authService.issueSession(user, {
-    kind: 'alcore-auth',
+    kind: ALCORE_AUTH_SESSION_KIND,
     ...metadata,
   });
   return { user, token };
@@ -370,7 +374,7 @@ export const claimAuthSubjectWithCode = async (
     if (owner.auth_subject === subject) {
       const user = await ensureClaimUserActive(owner.id);
       const token = await authService.issueSession(user, {
-        kind: 'alcore-auth',
+        kind: ALCORE_AUTH_SESSION_KIND,
         ...metadata,
       });
       return { user, token, replay: true };
@@ -401,7 +405,7 @@ export const claimAuthSubjectWithCode = async (
   }
   const user = await ensureClaimUserActive(owner.id);
   const token = await authService.issueSession(user, {
-    kind: 'alcore-auth',
+    kind: ALCORE_AUTH_SESSION_KIND,
     ...metadata,
   });
   return { user, token, replay: false };
@@ -421,7 +425,10 @@ const ensureClaimUserActive = async (userId: string): Promise<UserPublic> => {
     );
   }
   if (current.status === 'active') return current;
-  const approved = await userModel.approveUser(userId, 'alcore-auth');
+  const approved = await userModel.approveUser(
+    userId,
+    ALCORE_AUTH_SESSION_KIND
+  );
   const refreshed = approved ?? (await userModel.getUserById(userId));
   if (refreshed?.status === 'active') {
     logger.info('Auto-approved Auth-claimed account');

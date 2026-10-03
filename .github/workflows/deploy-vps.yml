@@ -34,7 +34,7 @@ jobs:
             # container from compose state alone, so a secret that only ever
             # existed as a shell export is dropped and the app fails closed on
             # boot. Refuse to deploy rather than take production down.
-            for key in JWT_SECRET ENCRYPTION_KEY AUTH_JWT_SECRET; do
+            for key in JWT_SECRET ENCRYPTION_KEY; do
               if ! grep -qE "^${key}=.+" .env 2>/dev/null; then
                 echo "Refusing to deploy: ${key} is not set in ${PWD}/.env." >&2
                 exit 1
