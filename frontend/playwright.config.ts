@@ -35,15 +35,22 @@ export default defineConfig({
     baseURL,
     trace: 'on-first-retry',
   },
-  webServer: {
-    command: `npm run dev -- --host 0.0.0.0 --port ${PORT}`,
-    url: baseURL,
-    env: {
-      VITE_APP_VERSION: `${packageVersion}-dev`,
-    },
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  // Specs that drive an externally started stack (e.g. the real Auth+Libre
+  // pair for alcore-auth-handoff) opt out with PLAYWRIGHT_WEBSERVER=off;
+  // every other run keeps the dev server exactly as before.
+  ...(process.env.PLAYWRIGHT_WEBSERVER === 'off'
+    ? {}
+    : {
+        webServer: {
+          command: `npm run dev -- --host 0.0.0.0 --port ${PORT}`,
+          url: baseURL,
+          env: {
+            VITE_APP_VERSION: `${packageVersion}-dev`,
+          },
+          reuseExistingServer: !process.env.CI,
+          timeout: 120_000,
+        },
+      }),
   projects: [
     {
       name: 'chromium',
