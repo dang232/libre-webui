@@ -349,6 +349,7 @@ app.use(
         styleSrc: [
           "'self'",
           "'unsafe-inline'", // Required for styled-components and CSS-in-JS
+          'https://accounts.google.com/gsi/style',
           // No font CDN: Inter is vendored into the frontend bundle, so the
           // browser never needs to reach a third-party host for a stylesheet.
         ],
