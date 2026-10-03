@@ -203,6 +203,22 @@ const generalAuthRateLimiter = rateLimit({
 // identical 404 (no existent/nonexistent oracle); product session, token,
 // bridge, and ticket routes are unaffected. Prefix mounting guarantees no
 // local-auth route is missed; the bridge route stays until sunset (todo 29).
+//
+// Exception: GET /oauth/google/status is a read-only provider advertisement
+// (configured flag + public client id, no credential issuance). The
+// Alcore-mode sign-in panel needs it to render its Google button, so it is
+// registered BEFORE the /oauth gate and stays reachable in both modes. The
+// credentialed Google exchange (POST /auth/canonical-google, Auth-backed)
+// was never gated. Local-mode responses are byte-identical: same handler,
+// same shape, only an earlier match in the router.
+router.get('/oauth/google/status', async (_req, res) => {
+  res.set('Cache-Control', 'no-store');
+  try {
+    res.json(await getCanonicalGoogleStatus());
+  } catch {
+    res.json({ configured: false, clientId: '' });
+  }
+});
 router.use('/login', rejectLocalAuthInAlcoreMode);
 router.use('/signup', rejectLocalAuthInAlcoreMode);
 router.use('/oauth', rejectLocalAuthInAlcoreMode);
@@ -291,15 +307,6 @@ router.post('/canonical-password', loginRateLimiter, async (req, res) => {
     if (typeof body === 'object') body.password = '';
     if (typeof req.body === 'object' && req.body !== null)
       req.body.password = '';
-  }
-});
-
-router.get('/oauth/google/status', async (_req, res) => {
-  res.set('Cache-Control', 'no-store');
-  try {
-    res.json(await getCanonicalGoogleStatus());
-  } catch {
-    res.json({ configured: false, clientId: '' });
   }
 });
 
