@@ -98,6 +98,17 @@ COPY frontend/ ./frontend/
 ENV VITE_API_BASE_URL=""
 ENV VITE_API_URL=""
 
+# Auth handoff defaults OFF - server-advertised systemInfo.authMode wins;
+# turn ON only after census + AUTH_OIDC_CLIENTS registered.
+ARG VITE_AUTH_URL
+ENV VITE_AUTH_URL=${VITE_AUTH_URL:-https://auth.alcore.io.vn}
+ARG VITE_ALCORE_AUTH_MODE
+ENV VITE_ALCORE_AUTH_MODE=${VITE_ALCORE_AUTH_MODE:-local}
+ARG VITE_AUTH_BROWSER_HANDOFF
+ENV VITE_AUTH_BROWSER_HANDOFF=${VITE_AUTH_BROWSER_HANDOFF:-false}
+ARG VITE_TOKENPANEL_URL
+ENV VITE_TOKENPANEL_URL=${VITE_TOKENPANEL_URL:-https://alcore.io.vn}
+
 # Accept version from build arg (set by CI, includes -dev suffix for dev branch)
 ARG APP_VERSION
 ENV VITE_APP_VERSION=${APP_VERSION}
