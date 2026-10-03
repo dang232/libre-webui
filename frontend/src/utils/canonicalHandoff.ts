@@ -107,6 +107,20 @@ export function buildAuthRedirectUrl(
   return `${authBaseUrl.replace(/\/+$/, '')}/oidc/exchange/redirect?${query.toString()}`;
 }
 
+export function buildGoogleStartUrl(
+  authBaseUrl: string,
+  audience: string,
+  redirectUri: string,
+  state: string
+): string {
+  const query = new URLSearchParams({
+    audience,
+    redirect_uri: redirectUri,
+    state,
+  });
+  return `${authBaseUrl.replace(/\/+$/, '')}/auth/google/start?${query.toString()}`;
+}
+
 export function rememberHandoffState(
   state: string,
   storage: Pick<Storage, 'setItem'> & { now?: () => number } = sessionStorage,
