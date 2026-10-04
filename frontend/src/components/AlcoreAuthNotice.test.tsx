@@ -101,20 +101,39 @@ const renderNotice = (): string => {
   );
 };
 
-test('Alcore-mode login renders the normal email/password form', () => {
+// Auth-only login: the alcore panel is a handoff entry, not a password
+// form. Passwords are created and entered at Auth only; no email or
+// password field may render here in any mode of this component (local
+// mode never mounts it — LoginPage branches on systemInfo.authMode).
+test('Alcore-mode login is handoff-only: no password form renders', () => {
   const html = renderNotice();
-  assert.match(html, /type="email"/, 'email field is rendered');
-  assert.match(html, /type="password"/, 'password field is rendered');
+  assert.match(
+    html,
+    /data-testid="alcore-continue-button"/,
+    'the Auth handoff button is rendered'
+  );
+  assert.match(html, /Continue.*Auth/, 'handoff button names Auth');
   assert.match(html, /Welcome Back/, 'neutral heading is rendered');
-  assert.match(html, /Create an account/, 'create-account link is rendered');
-  assert.match(html, /Forgot password\?/, 'forgot-password link is rendered');
+  for (const banned of [
+    'type="password"',
+    'type="email"',
+    '<form',
+    '<input',
+    'alcoreDirectPassword',
+    'submitPassword',
+  ]) {
+    assert.doesNotMatch(
+      html,
+      new RegExp(banned.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
+      `handoff HTML must not contain ${JSON.stringify(banned)}`
+    );
+  }
 });
 
 test('Alcore-mode login carries no interstitial jargon or dead buttons', () => {
   const html = renderNotice();
   for (const banned of [
     'Alcore Auth',
-    'Continue with Auth',
     'wired up separately',
     'disabled here',
     'todo 45',

@@ -101,7 +101,6 @@ import {
 import {
   alcoreCustomerAuthEnabled,
   getCanonicalGoogleStatus,
-  forwardAlcoreGoogle,
   forwardAlcorePassword,
 } from '../services/canonicalAuthService.js';
 
@@ -582,64 +581,6 @@ router.post('/login', loginRateLimiter, async (req, res) => {
     password = '';
     if (typeof req.body === 'object' && req.body !== null)
       req.body.password = '';
-  }
-});
-
-router.post('/oauth/alcore-google', loginRateLimiter, async (req, res) => {
-  res.set('Cache-Control', 'no-store');
-  const body = req.body ?? {};
-  const idToken = body.idToken;
-  try {
-    if (typeof idToken !== 'string' || !idToken || idToken.length > 8192) {
-      res.status(400).json({
-        success: false,
-        message: 'A valid Google ID token is required',
-      });
-      return;
-    }
-    const customer = await forwardAlcoreGoogle(
-      idToken,
-      typeof body.displayName === 'string' ? body.displayName : undefined
-    );
-    if (!customer) {
-      res.status(401).json({ success: false, message: 'Invalid credentials' });
-      return;
-    }
-    const result = await authService.loginWithCanonicalId(
-      customer.canonicalUserId,
-      {
-        kind: 'alcore:customer-google',
-        ip: getClientIp(req),
-        userAgent: req.headers['user-agent'],
-      }
-    );
-    if (!result || result.status !== 'authenticated') {
-      res
-        .status(403)
-        .json({ success: false, message: 'This account is not active' });
-      return;
-    }
-    res.json({
-      success: true,
-      data: {
-        user: result.user,
-        token: result.token,
-        systemInfo: await authService.getSystemInfo(),
-      },
-    });
-  } catch (error) {
-    logger.error(
-      'Alcore Google authentication failed',
-      error instanceof Error ? error.message : 'unknown'
-    );
-    res.status(502).json({
-      success: false,
-      message: 'Authentication service is temporarily unavailable',
-    });
-  } finally {
-    body.idToken = '';
-    if (typeof req.body === 'object' && req.body !== null)
-      req.body.idToken = '';
   }
 });
 

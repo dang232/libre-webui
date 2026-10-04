@@ -3658,12 +3658,6 @@
           "file": "backend/src/routes/auth.ts",
           "mount": "/api/auth",
           "method": "POST",
-          "path": "/oauth/alcore-google"
-        },
-        {
-          "file": "backend/src/routes/auth.ts",
-          "mount": "/api/auth",
-          "method": "POST",
           "path": "/oauth/exchange"
         },
         {
