@@ -113,9 +113,6 @@ export const AlcoreClaimForm: React.FC = () => {
       </button>
       {open && (
         <form onSubmit={submitClaim} className='mt-4 space-y-5'>
-          <p className='text-sm leading-6 text-ink-muted'>
-            {t('auth.alcore.claim.body')}
-          </p>
           <div>
             <label
               htmlFor='alcore-claim-username'

@@ -31,7 +31,6 @@ import { resolveAppVersion } from '@/utils/appVersion';
 import { isAlcoreAuthMode } from '@/utils/config';
 import { AlcoreAuthNotice } from '@/components/AlcoreAuthNotice';
 import { AlcoreClaimForm } from '@/components/AlcoreClaimForm';
-import { AlcoreDirectSignIn } from '@/components/AlcoreDirectSignIn';
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
@@ -194,14 +193,13 @@ export const LoginPage: React.FC = () => {
             {alcoreMode ? (
               <>
                 <AlcoreAuthNotice />
-                <AlcoreDirectSignIn />
-                <AlcoreClaimForm />
                 <Link
                   to='/signup'
                   className='mt-6 block w-full text-center text-sm font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500'
                 >
                   {t('auth.alcore.needAccount')}
                 </Link>
+                <AlcoreClaimForm />
               </>
             ) : isSignupMode && signupEnabled ? (
               <SignupForm

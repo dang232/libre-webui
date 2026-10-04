@@ -101,38 +101,59 @@ const renderNotice = (): string => {
   );
 };
 
-// Auth-only login: the alcore panel is a handoff entry, not a password
-// form. Passwords are created and entered at Auth only; no email or
-// password field may render here in any mode of this component (local
-// mode never mounts it — LoginPage branches on systemInfo.authMode).
-test('Alcore-mode login is handoff-only: no password form renders', () => {
+// Simplified login: exactly one primary sign-in — the inline Auth
+// email+password form, always visible — plus the Google button. No
+// competing "Continue with Auth" path, no collapsed toggles, and the
+// link-existing-account form lives in LoginPage below this panel.
+test('Alcore-mode login shows exactly one primary sign-in form', () => {
   const html = renderNotice();
+  assert.match(html, /Welcome Back/, 'neutral heading is rendered');
   assert.match(
     html,
-    /data-testid="alcore-continue-button"/,
-    'the Auth handoff button is rendered'
+    /Sign in to your account to continue/,
+    'one short helper line is rendered'
   );
-  assert.match(html, /Continue.*Auth/, 'handoff button names Auth');
-  assert.match(html, /Welcome Back/, 'neutral heading is rendered');
+  assert.match(
+    html,
+    /data-testid="alcore-direct-signin"/,
+    'the inline sign-in form is rendered'
+  );
+  assert.match(html, /type="email"/, 'email field is visible');
+  assert.match(html, /type="password"/, 'password field is visible');
+  assert.equal(
+    html.match(/<form/g)?.length ?? 0,
+    1,
+    'exactly one form is rendered'
+  );
+  assert.equal(
+    html.match(/type="submit"/g)?.length ?? 0,
+    1,
+    'exactly one primary submit'
+  );
   for (const banned of [
-    'type="password"',
-    'type="email"',
-    '<form',
-    '<input',
-    'alcoreDirectPassword',
-    'submitPassword',
+    'data-testid="alcore-continue-button"',
+    'Continue with Auth',
+    'Signed out of Auth?',
+    'Hide Auth sign-in',
+    'aria-expanded',
+    'data-testid="alcore-claim-form"',
+    'Link my account',
   ]) {
     assert.doesNotMatch(
       html,
       new RegExp(banned.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
-      `handoff HTML must not contain ${JSON.stringify(banned)}`
+      `simple login must not contain ${JSON.stringify(banned)}`
     );
   }
 });
 
-test('Alcore-mode login carries no interstitial jargon or dead buttons', () => {
+test('Alcore-mode login carries no architecture paragraphs', () => {
   const html = renderNotice();
   for (const banned of [
+    'Auth session',
+    'uses your existing Auth session',
+    'They go directly to Auth',
+    'Libre never sees',
     'Alcore Auth',
     'wired up separately',
     'disabled here',
