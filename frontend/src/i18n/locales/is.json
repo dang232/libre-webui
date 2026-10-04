@@ -220,6 +220,19 @@
         "manual": "This Auth identity matches multiple accounts; contact support to link it",
         "redirectUnsupported": "Redirect sign-in cannot link here yet; contact support.",
         "failed": "Claim failed. Please try again."
+      },
+      "signup": {
+        "title": "Create your account",
+        "subtitle": "One account for Auth and Libre — the same sign-in works on both.",
+        "emailPlaceholder": "you@example.com",
+        "passwordPlaceholder": "Choose a password",
+        "confirmPassword": "Confirm password",
+        "confirmPlaceholder": "Repeat your password",
+        "submitting": "Creating account…",
+        "mismatch": "Passwords do not match.",
+        "invalidEmail": "Enter a valid email address.",
+        "success": "Account created — welcome.",
+        "failed": "Sign-up failed. Please try again."
       }
     }
   },

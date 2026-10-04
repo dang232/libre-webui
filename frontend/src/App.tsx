@@ -125,6 +125,9 @@ const AlcoreCallbackPage = React.lazy(
   () => import('@/pages/AlcoreCallbackPage')
 );
 
+// Public Auth-driven signup resolves without workspace state, like /login.
+const AlcoreSignupPage = React.lazy(() => import('@/pages/AlcoreSignupPage'));
+
 // Loading component
 const PageLoader = () => {
   const { t } = useTranslation();
@@ -610,6 +613,7 @@ const AppContent: React.FC = () => {
               }
             />
             <Route path='/login' element={<LoginPage />} />
+            <Route path='/signup' element={<AlcoreSignupPage />} />
             <Route
               path='/auth/alcore/callback'
               element={
@@ -624,6 +628,7 @@ const AppContent: React.FC = () => {
         // Auth required - show routes without main layout constraining login
         <Routes>
           <Route path='/login' element={<LoginPage />} />
+          <Route path='/signup' element={<AlcoreSignupPage />} />
           <Route
             path='/auth/alcore/callback'
             element={

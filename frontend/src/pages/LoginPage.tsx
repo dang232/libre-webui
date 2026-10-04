@@ -16,7 +16,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Boxes, HardDrive, ShieldCheck } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
@@ -181,6 +181,12 @@ export const LoginPage: React.FC = () => {
               <>
                 <AlcoreAuthNotice />
                 <AlcoreClaimForm />
+                <Link
+                  to='/signup'
+                  className='mt-6 block w-full text-center text-sm font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500'
+                >
+                  {t('auth.alcore.needAccount')}
+                </Link>
               </>
             ) : isSignupMode && signupEnabled ? (
               <SignupForm
