@@ -59,6 +59,46 @@ const DEMO_CREDENTIALS = {
   password: 'demo',
 };
 
+/**
+ * Fetch-level login failure (portal LoginPage mirror): the request never
+ * produced an HTTP response, so this is offline/unreachable — never bad
+ * credentials. Matches the fetch HttpError (ERR_NETWORK, no response),
+ * axios-style request-without-response faults, raw fetch TypeErrors, and
+ * the 'network_error' sentinel. Aborts stay generic: the user dismissed
+ * the attempt, so nothing about the network was learned.
+ */
+export const isOfflineLoginError = (error: unknown): boolean => {
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    return true;
+  }
+  if (error === 'network_error') return true;
+  if (!error || typeof error !== 'object') return false;
+  const candidate = error as {
+    code?: unknown;
+    message?: unknown;
+    name?: unknown;
+    request?: unknown;
+    response?: unknown;
+  };
+  if (candidate.name === 'AbortError' || candidate.code === 'ERR_CANCELED') {
+    return false;
+  }
+  if (candidate.message === 'network_error') return true;
+  if (
+    typeof candidate.message === 'string' &&
+    /failed to fetch|load failed|network error/i.test(candidate.message)
+  ) {
+    return true;
+  }
+  if (candidate.response !== undefined) return false;
+  return (
+    candidate.code === 'ERR_NETWORK' ||
+    candidate.code === 'ECONNABORTED' ||
+    candidate.request !== undefined ||
+    candidate instanceof TypeError
+  );
+};
+
 export const LoginForm: React.FC<LoginFormProps> = ({
   onLogin,
   onShowSignup,
@@ -117,12 +157,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     }
 
     if (isTurnstileEnabled && !turnstileToken) {
-      toast.error(
-        t(
-          'auth.login.verificationFailed',
-          'Security verification failed. Please refresh and try again.'
-        )
-      );
+      toast.error(t('auth.login.verificationFailed'));
       return;
     }
 
@@ -164,6 +199,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         toast.success(t('auth.login.loginSuccess'));
         onLogin?.();
         navigate('/');
+      } else if (response.message === 'network_error') {
+        // A transport failure surfaced as a message is offline, never
+        // bad credentials.
+        toast.error(t('auth.login.offline'));
       } else {
         toast.error(response.message || t('auth.login.loginFailed'));
       }
@@ -175,12 +214,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       if (apiError.response?.data?.code === 'ACCOUNT_PENDING') {
         setApprovalPending(true);
         toast.error(
-          apiError.response.data.message ||
-            t(
-              'auth.login.approvalPending',
-              'Your account is waiting for administrator approval.'
-            )
+          apiError.response.data.message || t('auth.login.approvalPending')
         );
+      } else if (isOfflineLoginError(error)) {
+        toast.error(t('auth.login.offline'));
       } else {
         toast.error(t('auth.login.checkCredentials'));
       }
@@ -457,10 +494,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               className='mt-0.5 h-4 w-4 shrink-0 text-warning-700 dark:text-warning-400'
             />
             <p className='text-xs leading-5 text-ink-muted'>
-              {t(
-                'auth.login.approvalPending',
-                'Your account is waiting for administrator approval.'
-              )}
+              {t('auth.login.approvalPending')}
             </p>
           </div>
         )}
@@ -509,7 +543,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               className='absolute inset-y-0 end-0 flex items-center pe-3 text-ink-muted transition-colors hover:text-ink disabled:cursor-not-allowed disabled:opacity-50'
               disabled={isLoading || isDemo}
               aria-label={
-                showPassword ? 'Hide characters' : 'Reveal characters'
+                showPassword
+                  ? t('auth.login.hideCharacters')
+                  : t('auth.login.revealCharacters')
               }
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -522,10 +558,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             siteKey={turnstileSiteKey}
             action='login'
             disabled={isLoading}
-            errorMessage={t(
-              'auth.login.verificationFailed',
-              'Security verification failed. Please refresh and try again.'
-            )}
+            errorMessage={t('auth.login.verificationFailed')}
             onTokenChange={handleTurnstileTokenChange}
           />
         )}

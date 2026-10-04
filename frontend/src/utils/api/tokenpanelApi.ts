@@ -184,10 +184,27 @@ export interface UpdateKeyInput {
  * management credential server-side. No management credential value is
  * ever present in browser code, requests, or responses here.
  */
+export interface TokenpanelKeysQuery {
+  limit?: number;
+  skip?: number;
+}
+
 export const tokenpanelKeysApi = {
-  list(): Promise<ApiResponse<{ items: TokenpanelKey[]; total: number }>> {
+  /**
+   * Paged native-keys read. `limit` defaults to 100 (backend allows
+   * 1..200); pass `skip` to walk past the first page. The panel pages
+   * with explicit `limit`/`skip` and renders the server `total` so a
+   * long key list is never silently truncated.
+   */
+  list(
+    query?: TokenpanelKeysQuery
+  ): Promise<ApiResponse<{ items: TokenpanelKey[]; total: number }>> {
+    const params: Record<string, number> = {
+      limit: query?.limit ?? 100,
+    };
+    if (query?.skip !== undefined) params.skip = query.skip;
     return api
-      .get('/tokenpanel/keys', { params: { limit: 100 } })
+      .get('/tokenpanel/keys', { params })
       .then(response => response.data);
   },
   create(input: CreateKeyInput): Promise<ApiResponse<TokenpanelKeySecret>> {

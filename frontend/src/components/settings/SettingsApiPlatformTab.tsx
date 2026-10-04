@@ -36,7 +36,8 @@ import {
   type AccountSubscription,
   type BillingPeriod,
 } from '@/utils/api/tokenpanelAccountApi';
-import { formatSpendMicros } from '@/utils/usageMicros';
+import { formatSpendMicros, groupMajorDigits } from '@/utils/usageMicros';
+import { MICROS_PER_MAJOR } from '@/utils/billingMicros';
 import { SettingsBillingTab } from './SettingsBillingTab';
 import { TokenpanelUsagePanel } from './TokenpanelUsagePanel';
 import { SettingsTabHeader } from './SettingsTabHeader';
@@ -72,6 +73,48 @@ const parseThresholds = (raw: string): number[] | null => {
     if (!out.includes(value)) out.push(value);
   }
   return out.sort((a, b) => a - b);
+};
+
+/**
+ * Major-unit money helpers for this tab's editors (budget caps, key
+ * quotas): 1 major = 1,000,000 micros. Integer string ops only — no float
+ * math anywhere on this path, mirroring `@/utils/billingMicros` (which
+ * stays positive-only for recharges, while quotas/caps accept zero, so
+ * this tab carries its own zero-tolerant parser).
+ */
+
+/** Format integer micros as plain major units (`5`, `1.5`) — no currency. */
+export const formatMajorUnits = (amountMicros: number): string => {
+  if (!Number.isSafeInteger(amountMicros)) return '—';
+  const sign = amountMicros < 0 ? '-' : '';
+  const abs = Math.abs(amountMicros);
+  const major = Math.trunc(abs / MICROS_PER_MAJOR);
+  const minor = abs % MICROS_PER_MAJOR;
+  const grouped = groupMajorDigits(String(major));
+  if (minor === 0) return `${sign}${grouped}`;
+  const fraction = String(minor).padStart(6, '0').replace(/0+$/, '');
+  return `${sign}${grouped}.${fraction}`;
+};
+
+/**
+ * Parse a major-unit decimal string to integer micros (up to 6 fraction
+ * digits). `''` means "field left blank" (undefined); anything
+ * unparseable is null. Zero is allowed — callers decide positivity.
+ */
+export const parseMajorUnitsToMicros = (
+  raw: string
+): number | undefined | null => {
+  const trimmed = raw.trim();
+  if (trimmed === '') return undefined;
+  // Accept the grouping commas `formatMajorUnits` emits, so an editor
+  // value round-trips (`2,590` -> 2590000000 micros) and pasted grouped
+  // input parses the way a human wrote it.
+  const match = /^(\d+)(?:\.(\d{1,6}))?$/.exec(trimmed.replace(/,/g, ''));
+  if (!match) return null;
+  const micros =
+    Number(match[1]) * MICROS_PER_MAJOR +
+    Number((match[2] ?? '').padEnd(6, '0'));
+  return Number.isSafeInteger(micros) ? micros : null;
 };
 
 interface AccountSnapshot {
@@ -170,7 +213,8 @@ const AccountPanel: React.FC = () => {
         typeof profile.data?.email === 'string' ? profile.data.email : ''
       );
       const cap = limits.data?.items?.[0]?.spendingCap ?? null;
-      setCapAmount(cap ? String(cap.maxSpendMicros) : '');
+      // The cap editor works in major units; micros cross the BFF only.
+      setCapAmount(cap ? formatMajorUnits(cap.maxSpendMicros) : '');
       setCapWindow(cap ? String(cap.windowSeconds) : '2592000');
     } catch (error) {
       setLoadError(
@@ -242,10 +286,11 @@ const AccountPanel: React.FC = () => {
   };
 
   const onSaveCap = (): Promise<void> => {
-    const amount = parseMicrosInt(capAmount);
+    const amount = parseMajorUnitsToMicros(capAmount);
     const windowSeconds = parseMicrosInt(capWindow);
     if (
       amount === null ||
+      amount === undefined ||
       windowSeconds === null ||
       windowSeconds < 1 ||
       windowSeconds > 31536000
@@ -362,9 +407,15 @@ const AccountPanel: React.FC = () => {
                   }
                   className={inputClassName}
                 >
-                  <option value='month'>month</option>
-                  <option value='quarter'>quarter</option>
-                  <option value='year'>year</option>
+                  <option value='month'>
+                    {t('settings.apiPlatform.billingPeriodMonth')}
+                  </option>
+                  <option value='quarter'>
+                    {t('settings.apiPlatform.billingPeriodQuarter')}
+                  </option>
+                  <option value='year'>
+                    {t('settings.apiPlatform.billingPeriodYear')}
+                  </option>
                 </select>
               </label>
               <button
@@ -385,7 +436,7 @@ const AccountPanel: React.FC = () => {
             </h5>
             {snapshot.budgets.length === 0 && (
               <p className='mt-1 text-sm leading-6 text-gray-600 dark:text-dark-600'>
-                {t('settings.apiPlatform.subscriptionNone')}
+                {t('settings.apiPlatform.budgetsEmpty')}
               </p>
             )}
             {snapshot.budgets.map(budget => {
@@ -564,9 +615,14 @@ const AccountPanel: React.FC = () => {
  * invalid-session path (same contract as the account panel), so mutations
  * report the server message verbatim and never retry.
  */
+/** Page size for the native keys list (the BFF allows 1..200). */
+const KEYS_PAGE_SIZE = 20;
+
 const KeysPanel: React.FC = () => {
   const { t } = useTranslation();
   const [keys, setKeys] = useState<TokenpanelKey[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -583,27 +639,59 @@ const KeysPanel: React.FC = () => {
   const serverMessage = (error: unknown, fallback: string): string =>
     error instanceof Error && error.message ? error.message : fallback;
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setLoadError(null);
-    try {
-      const response = await tokenpanelKeysApi.list();
-      if (!response.success || !response.data) {
-        throw new Error(response.error || 'load failed');
+  const load = useCallback(
+    async (skip: number) => {
+      setLoading(true);
+      setLoadError(null);
+      try {
+        const response = await tokenpanelKeysApi.list({
+          limit: KEYS_PAGE_SIZE,
+          skip,
+        });
+        if (!response.success || !response.data) {
+          throw new Error(response.error || 'load failed');
+        }
+        let items = response.data.items;
+        const serverTotal =
+          typeof response.data.total === 'number'
+            ? response.data.total
+            : items.length;
+        if (items.length === 0 && skip > 0 && serverTotal > 0) {
+          // The last key on this page just went away (e.g. revoked) —
+          // step back one page instead of showing an empty list.
+          const prev = Math.max(0, skip - KEYS_PAGE_SIZE);
+          const retry = await tokenpanelKeysApi.list({
+            limit: KEYS_PAGE_SIZE,
+            skip: prev,
+          });
+          if (!retry.success || !retry.data) {
+            throw new Error(retry.error || 'load failed');
+          }
+          items = retry.data.items;
+          setPage(Math.floor(prev / KEYS_PAGE_SIZE));
+          setTotal(
+            typeof retry.data.total === 'number'
+              ? retry.data.total
+              : items.length
+          );
+        } else {
+          setTotal(serverTotal);
+        }
+        setKeys(items);
+      } catch (error) {
+        setLoadError(
+          serverMessage(error, t('settings.apiPlatform.keysLoadFailed'))
+        );
+      } finally {
+        setLoading(false);
       }
-      setKeys(response.data.items);
-    } catch (error) {
-      setLoadError(
-        serverMessage(error, t('settings.apiPlatform.keysLoadFailed'))
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [t]);
+    },
+    [t]
+  );
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    void load(page * KEYS_PAGE_SIZE);
+  }, [load, page]);
 
   const mutate = async (
     label: string,
@@ -621,7 +709,7 @@ const KeysPanel: React.FC = () => {
         setOnceSecret({ name: minted.name, secret: minted.secret });
         setCopied(false);
       }
-      await load();
+      await load(page * KEYS_PAGE_SIZE);
     } catch (error) {
       setFormError(
         serverMessage(error, t('settings.apiPlatform.actionFailed'))
@@ -631,18 +719,11 @@ const KeysPanel: React.FC = () => {
     }
   };
 
-  const parseQuota = (raw: string): number | undefined | null => {
-    const trimmed = raw.trim();
-    if (trimmed === '') return undefined;
-    if (!/^\d+$/.test(trimmed)) return null;
-    const value = Number(trimmed);
-    return Number.isSafeInteger(value) ? value : null;
-  };
-
   const onCreate = (): Promise<void> =>
     mutate(t('settings.apiPlatform.keyCreate'), async () => {
       const name = newName.trim();
-      const quota = parseQuota(newQuota);
+      // The quota editor works in major units; micros cross the BFF only.
+      const quota = parseMajorUnitsToMicros(newQuota);
       if (name.length < 1 || name.length > 120 || quota === null) {
         throw new Error(t('settings.apiPlatform.actionFailed'));
       }
@@ -696,6 +777,9 @@ const KeysPanel: React.FC = () => {
     }
   };
 
+  // Server-reported total drives paging; at most one page hides controls.
+  const pageCount = Math.max(1, Math.ceil(total / KEYS_PAGE_SIZE));
+
   return (
     <section
       aria-label={t('settings.apiPlatform.keysNativeTitle')}
@@ -722,7 +806,7 @@ const KeysPanel: React.FC = () => {
           </p>
           <button
             type='button'
-            onClick={() => void load()}
+            onClick={() => void load(page * KEYS_PAGE_SIZE)}
             className={secondaryButtonClassName}
           >
             {t('settings.apiPlatform.keysRetry')}
@@ -732,7 +816,7 @@ const KeysPanel: React.FC = () => {
       {!loading && !loadError && (
         <div className='mt-3 flex flex-col gap-3'>
           <p className='text-sm leading-6 text-gray-600 dark:text-dark-600'>
-            {t('settings.apiPlatform.keysCount', { count: keys.length })}
+            {t('settings.apiPlatform.keysCount', { count: total })}
           </p>
           {keys.length === 0 && (
             <p className='text-sm leading-6 text-gray-600 dark:text-dark-600'>
@@ -760,7 +844,8 @@ const KeysPanel: React.FC = () => {
               </span>
               {typeof key.quotaMicros === 'number' && (
                 <span className='text-sm text-gray-600 dark:text-dark-600'>
-                  {t('settings.apiPlatform.quotaLabel')}: {key.quotaMicros}
+                  {t('settings.apiPlatform.quotaLabel')}:{' '}
+                  {formatMajorUnits(key.quotaMicros)}
                 </span>
               )}
               <span className='flex flex-wrap gap-2'>
@@ -797,6 +882,34 @@ const KeysPanel: React.FC = () => {
               </span>
             </div>
           ))}
+          {pageCount > 1 && (
+            <div className='flex flex-wrap items-center gap-2'>
+              <button
+                type='button'
+                disabled={busy !== null || page === 0}
+                onClick={() => setPage(previous => Math.max(0, previous - 1))}
+                className={secondaryButtonClassName}
+              >
+                {t('settings.apiPlatform.keysPrev')}
+              </button>
+              <span className='text-sm text-gray-600 dark:text-dark-600'>
+                {t('settings.apiPlatform.keysPage', {
+                  page: page + 1,
+                  pages: pageCount,
+                })}
+              </span>
+              <button
+                type='button'
+                disabled={busy !== null || page >= pageCount - 1}
+                onClick={() =>
+                  setPage(previous => Math.min(pageCount - 1, previous + 1))
+                }
+                className={secondaryButtonClassName}
+              >
+                {t('settings.apiPlatform.keysNext')}
+              </button>
+            </div>
+          )}
           <div className='flex flex-wrap items-end gap-2'>
             <label className='flex min-w-44 flex-1 flex-col gap-1 text-sm text-gray-600 dark:text-dark-600'>
               {t('settings.apiPlatform.keyNameLabel')}
@@ -1178,14 +1291,23 @@ export const SettingsApiPlatformTab: React.FC = () => {
     tokenpanelApi
       .provisionStatus()
       .then(response => {
-        if (!cancelled && response.success && response.data) {
+        if (cancelled) return;
+        // Never silent: an unreachable status reads as unavailable with
+        // the generic fallback copy instead of hiding the banner.
+        if (response.success && response.data) {
           setProvision({
             provisioned: response.data.provisioned,
             reason: response.data.reason,
           });
+        } else {
+          setProvision({ provisioned: false, reason: 'status-unavailable' });
         }
       })
-      .catch(() => undefined);
+      .catch(() => {
+        if (!cancelled) {
+          setProvision({ provisioned: false, reason: 'status-unavailable' });
+        }
+      });
     return () => {
       cancelled = true;
     };
@@ -1196,6 +1318,10 @@ export const SettingsApiPlatformTab: React.FC = () => {
       return t('settings.apiPlatform.provisionNoEmail');
     if (reason === 'bridge-not-configured')
       return t('settings.apiPlatform.provisionNotConfigured');
+    // Unreachable status or an empty reason carries no server detail —
+    // fall back to generic copy instead of interpolating a blank/code.
+    if (reason === 'status-unavailable' || reason.trim() === '')
+      return t('settings.apiPlatform.provisionUnknown');
     return t('settings.apiPlatform.provisionUnavailable', { reason });
   };
 

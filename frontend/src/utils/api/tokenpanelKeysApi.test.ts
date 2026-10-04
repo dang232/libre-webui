@@ -95,3 +95,16 @@ test('keys/projects BFF calls carry the session only, never mgmt creds', async (
     );
   }
 });
+
+test('keys list pages with explicit limit/skip, defaulting to limit=100', async () => {
+  calls.length = 0;
+  await tokenpanelKeysApi.list();
+  await tokenpanelKeysApi.list({ limit: 20, skip: 40 });
+  await tokenpanelKeysApi.list({ limit: 20, skip: 0 });
+  const urls = calls.map(call => `${call.method} ${call.url}`);
+  assert.deepEqual(urls, [
+    'GET http://localhost:5173/api/tokenpanel/keys?limit=100',
+    'GET http://localhost:5173/api/tokenpanel/keys?limit=20&skip=40',
+    'GET http://localhost:5173/api/tokenpanel/keys?limit=20&skip=0',
+  ]);
+});

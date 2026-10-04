@@ -80,7 +80,7 @@ export const AlcoreAuthNotice: React.FC = () => {
         buildGoogleStartUrl(AUTH_BASE_URL, 'libre', redirectUri, state)
       );
     } catch {
-      setError('Sign-in failed. Please try again.');
+      setError(t('auth.alcore.signin.failed'));
     }
   };
 
