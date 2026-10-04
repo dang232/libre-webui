@@ -26,6 +26,7 @@ import {
   startAuthHandoff,
 } from '@/utils/canonicalHandoff';
 import { AUTH_BASE_URL } from '@/utils/config';
+import { authApi } from '@/utils/api/authApi';
 
 // Re-exported from the leaf-backed handoff module so every existing importer
 // keeps one path to the ONE state key, while the component itself no longer
@@ -51,6 +52,28 @@ export const AlcoreAuthNotice: React.FC = () => {
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [notice, setNotice] = React.useState<string | null>(null);
+  // R18: the Google entry renders only while Auth reports it configured.
+  // Default true so the first paint (and SSR) keeps the working path;
+  // a failed probe fails open rather than stranding the user.
+  const [googleEnabled, setGoogleEnabled] = React.useState(true);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    authApi
+      .googleStatus()
+      .then(response => {
+        if (!cancelled && response.success && response.data) {
+          setGoogleEnabled(response.data.configured === true);
+        }
+      })
+      .catch(() => {
+        // Fail open: a status probe that cannot answer must not remove
+        // the only human-completable path on this panel.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleContinueWithAuth = (): void => {
     try {
@@ -101,15 +124,29 @@ export const AlcoreAuthNotice: React.FC = () => {
         {t('auth.alcore.continue')}
       </button>
 
-      <button
-        type='button'
-        data-testid='alcore-google-button'
-        onClick={handleGoogleViaAuth}
-        disabled={busy}
-        className='mt-3 flex h-11 w-full items-center justify-center rounded-xl border border-line bg-surface px-4 text-sm font-medium text-ink shadow-subtle transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none'
-      >
-        {t('auth.oauth.continueWith', { provider: 'Google' })}
-      </button>
+      {googleEnabled ? (
+        <button
+          type='button'
+          data-testid='alcore-google-button'
+          onClick={handleGoogleViaAuth}
+          disabled={busy}
+          className='mt-3 flex h-11 w-full items-center justify-center rounded-xl border border-line bg-surface px-4 text-sm font-medium text-ink shadow-subtle transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none'
+        >
+          {t('auth.oauth.continueWith', { provider: 'Google' })}
+        </button>
+      ) : (
+        <p
+          role='status'
+          data-testid='alcore-google-unavailable'
+          className='mt-3 text-[13px] leading-6 text-ink-muted'
+        >
+          {t('auth.alcore.googleUnavailable')}
+        </p>
+      )}
+
+      <p className='mt-3 text-[13px] leading-6 text-ink-muted'>
+        {t('auth.alcore.noSessionHint')}
+      </p>
 
       {error && (
         <p role='alert' className='mt-3 text-[13px] text-red-600'>

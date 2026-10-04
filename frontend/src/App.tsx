@@ -614,6 +614,8 @@ const AppContent: React.FC = () => {
             />
             <Route path='/login' element={<LoginPage />} />
             <Route path='/signup' element={<AlcoreSignupPage />} />
+            {/* R25: /register is an alias for the real signup form — never a silent login render. */}
+            <Route path='/register' element={<AlcoreSignupPage />} />
             <Route
               path='/auth/alcore/callback'
               element={
@@ -629,6 +631,8 @@ const AppContent: React.FC = () => {
         <Routes>
           <Route path='/login' element={<LoginPage />} />
           <Route path='/signup' element={<AlcoreSignupPage />} />
+          {/* R25: /register is an alias for the real signup form — never a silent login render. */}
+          <Route path='/register' element={<AlcoreSignupPage />} />
           <Route
             path='/auth/alcore/callback'
             element={

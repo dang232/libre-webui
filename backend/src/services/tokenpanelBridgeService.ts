@@ -63,6 +63,10 @@ const apiBase = (): string =>
     ''
   );
 
+/** R36: read-only advertisement — true when the operator set a key. */
+export const isBridgeConfigured = (): boolean =>
+  (process.env.TOKENPANEL_MGMT_KEY || '').trim().length > 0;
+
 const mgmtKey = (): string => {
   const key = (process.env.TOKENPANEL_MGMT_KEY || '').trim();
   if (!key) {

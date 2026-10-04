@@ -514,6 +514,8 @@ const AccountPanel: React.FC = () => {
               <label className='flex min-w-44 flex-1 flex-col gap-1 text-sm text-gray-600 dark:text-dark-600'>
                 {t('settings.apiPlatform.profileEmail')}
                 <input
+                  id='api-platform-profile-email'
+                  type='email'
                   value={profileEmail}
                   onChange={event => setProfileEmail(event.target.value)}
                   className={inputClassName}
@@ -1122,15 +1124,94 @@ const PlatformDefaultPanel: React.FC = () => {
  * fragment the portal consumes and strips. Both apps keep their own login
  * until the unified identity (auth.alcore.io.vn) lands.
  */
+/** R36/R37: what a failed portal open carries for the retry UI. */
+interface BridgeFailure {
+  message: string;
+  code: string | null;
+  requestId: string | null;
+  retryable: boolean;
+}
+
+const readBridgeFailure = (error: unknown, fallback: string): BridgeFailure => {
+  const response = (
+    error as {
+      response?: {
+        data?: { message?: unknown; code?: unknown; requestId?: unknown };
+      };
+    }
+  )?.response;
+  const data = response?.data;
+  const code = typeof data?.code === 'string' ? data.code : null;
+  const requestId = typeof data?.requestId === 'string' ? data.requestId : null;
+  const message =
+    typeof data?.message === 'string' && data.message ? data.message : fallback;
+  // 409 collisions stay human: the same request must never auto-retry.
+  return { message, code, requestId, retryable: code !== 'BRIDGE_COLLISION' };
+};
+
 export const SettingsApiPlatformTab: React.FC = () => {
   const { t } = useTranslation();
   const [busyPath, setBusyPath] = useState<string | null>(null);
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState<BridgeFailure | null>(null);
+  const [lastPath, setLastPath] = useState<string | null>(null);
+  // R36: null until the BFF advertisement answers; false disables the
+  // portal buttons with a "not configured" tooltip instead of a 503.
+  const [bridgeConfigured, setBridgeConfigured] = useState<boolean | null>(
+    null
+  );
+  // R38: why auto-provisioning did not happen — a banner, never silent.
+  const [provision, setProvision] = useState<{
+    provisioned: boolean;
+    reason: string;
+  } | null>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    tokenpanelApi
+      .bridgeStatus()
+      .then(response => {
+        if (!cancelled && response.success && response.data) {
+          setBridgeConfigured(response.data.configured);
+        }
+      })
+      .catch(() => undefined);
+    tokenpanelApi
+      .provisionStatus()
+      .then(response => {
+        if (!cancelled && response.success && response.data) {
+          setProvision({
+            provisioned: response.data.provisioned,
+            reason: response.data.reason,
+          });
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const provisionText = (reason: string): string => {
+    if (reason === 'no-email')
+      return t('settings.apiPlatform.provisionNoEmail');
+    if (reason === 'bridge-not-configured')
+      return t('settings.apiPlatform.provisionNotConfigured');
+    return t('settings.apiPlatform.provisionUnavailable', { reason });
+  };
+
+  // R38: the account email editor lives in this tab's AccountPanel —
+  // bring it into view and focus it instead of describing where it is.
+  const openProfileSettings = (): void => {
+    const field = document.getElementById('api-platform-profile-email');
+    field?.scrollIntoView({ behavior: 'auto', block: 'center' });
+    (field as HTMLInputElement | null)?.focus?.();
+  };
 
   const openSection = async (path: string): Promise<void> => {
     if (busyPath !== null) return;
     setBusyPath(path);
-    setFailed(false);
+    setLastPath(path);
+    setFailed(null);
     try {
       const response = await tokenpanelApi.exchangePortalToken();
       if (!response.success || !response.data) {
@@ -1141,8 +1222,10 @@ export const SettingsApiPlatformTab: React.FC = () => {
         '_blank',
         'noopener,noreferrer'
       );
-    } catch {
-      setFailed(true);
+    } catch (error) {
+      setFailed(
+        readBridgeFailure(error, t('settings.apiPlatform.bridgeFailed'))
+      );
     } finally {
       setBusyPath(null);
     }
@@ -1214,7 +1297,12 @@ export const SettingsApiPlatformTab: React.FC = () => {
                 <button
                   key={link.path}
                   type='button'
-                  disabled={busyPath !== null}
+                  disabled={busyPath !== null || bridgeConfigured === false}
+                  title={
+                    bridgeConfigured === false
+                      ? t('settings.apiPlatform.bridgeNotConfiguredTip')
+                      : undefined
+                  }
                   onClick={() => void openSection(link.path)}
                   className={
                     link.primary
@@ -1231,13 +1319,59 @@ export const SettingsApiPlatformTab: React.FC = () => {
             </div>
           </section>
         ))}
-        {failed && (
+        {bridgeConfigured === false && (
           <p
+            role='status'
+            data-testid='bridge-not-configured'
+            className='text-sm leading-6 text-gray-600 dark:text-dark-600'
+          >
+            {t('settings.apiPlatform.bridgeNotConfigured')}
+          </p>
+        )}
+        {provision !== null && !provision.provisioned && (
+          <div
+            role='status'
+            data-testid='provision-banner'
+            className='rounded-xl border border-gray-200/70 p-4 dark:border-white/[0.08]'
+          >
+            <p className='text-sm leading-6 text-gray-600 dark:text-dark-600'>
+              {t('settings.apiPlatform.provisionBanner', {
+                reason: provisionText(provision.reason),
+              })}
+            </p>
+            {provision.reason === 'no-email' && (
+              <button
+                type='button'
+                onClick={openProfileSettings}
+                className='mt-2 inline-flex min-h-11 items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-white/10 dark:text-dark-700 dark:hover:bg-white/5'
+              >
+                {t('settings.apiPlatform.provisionAddEmail')}
+              </button>
+            )}
+          </div>
+        )}
+        {failed !== null && (
+          <div
             role='alert'
+            data-testid='bridge-failure'
             className='text-sm leading-6 text-red-600 dark:text-red-400'
           >
-            {t('settings.apiPlatform.bridgeFailed')}
-          </p>
+            <p>{failed.message}</p>
+            {(failed.code !== null || failed.requestId !== null) && (
+              <p className='mt-1 font-mono text-[11px]'>
+                {[failed.code, failed.requestId].filter(Boolean).join(' · ')}
+              </p>
+            )}
+            {failed.retryable && lastPath !== null && (
+              <button
+                type='button'
+                onClick={() => void openSection(lastPath)}
+                className='mt-2 inline-flex min-h-11 items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-white/10 dark:text-dark-700 dark:hover:bg-white/5'
+              >
+                {t('settings.apiPlatform.bridgeRetry')}
+              </button>
+            )}
+          </div>
         )}
         <KeysPanel />
         <ProjectsPanel />

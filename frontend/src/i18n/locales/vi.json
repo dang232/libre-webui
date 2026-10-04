@@ -68,7 +68,8 @@
       "githubSuccess": "Đăng nhập GitHub thành công!",
       "githubFailed": "Xác thực GitHub thất bại",
       "githubVerifyFailed": "Không thể xác minh xác thực GitHub",
-      "verificationFailed": "Xác minh bảo mật thất bại. Hãy tải lại trang và thử lại."
+      "verificationFailed": "Xác minh bảo mật thất bại. Hãy tải lại trang và thử lại.",
+      "sessionExpired": "Phiên của bạn đã hết hạn. Hãy đăng nhập lại để tiếp tục."
     },
     "signup": {
       "title": "Tạo tài khoản",
@@ -233,7 +234,27 @@
         "invalidEmail": "Enter a valid email address.",
         "success": "Account created — welcome.",
         "failed": "Sign-up failed. Please try again."
+      },
+      "noSessionHint": "Tiếp tục với Auth dùng phiên Auth hiện có của bạn. Đã đăng xuất khỏi Auth? Đăng nhập bên dưới bằng email Auth, bạn sẽ được tiếp tục tự động.",
+      "googleUnavailable": "Đăng nhập Google chưa được thiết lập trên máy chủ này. Hãy dùng một tùy chọn khác trên trang này.",
+      "signin": {
+        "toggle": "Đã đăng xuất khỏi Auth? Đăng nhập tại đây",
+        "hide": "Ẩn đăng nhập Auth",
+        "body": "Nhập email và mật khẩu Auth của bạn. Chúng được gửi thẳng tới Auth — Libre không bao giờ thấy chúng. Đăng nhập thành công sẽ tự động tiếp tục vào Libre.",
+        "email": "Email Auth",
+        "password": "Mật khẩu Auth",
+        "submit": "Đăng nhập bằng Auth",
+        "signingIn": "Đang đăng nhập…",
+        "failed": "Đăng nhập thất bại. Vui lòng thử lại."
       }
+    },
+    "callback": {
+      "expiredHelp": "Lần đăng nhập này đã hết hạn hoặc đã được dùng. Không có gì bị thay đổi — hãy bắt đầu lại, chỉ mất vài giây.",
+      "failedHelp": "Không thể hoàn tất đăng nhập. Không có gì bị thay đổi — hãy bắt đầu lại.",
+      "reason": "Lý do: {{reason}}",
+      "tryAgain": "Thử lại",
+      "restart": "Bắt đầu lại đăng nhập",
+      "support": "Cần trợ giúp? Liên hệ quản trị viên máy chủ của bạn hoặc xem"
     }
   },
   "setup": {
@@ -1386,7 +1407,15 @@
       "platformDefaultCurrent": "Chatting via the ALcore API Platform (default-chat).",
       "platformDefaultUnavailable": "The API Platform model isn't ready for this account yet (an email address is required for automatic setup). You can still chat with a local or cloud model.",
       "platformDefaultUse": "Use ALcore API Platform",
-      "platformDefaultUsing": "Switching…"
+      "platformDefaultUsing": "Switching…",
+      "bridgeNotConfigured": "Cổng API Platform chưa được cấu hình trên máy chủ này — hãy liên hệ quản trị viên. Khóa và mức sử dụng bên dưới vẫn hoạt động ở những nơi không cần cổng.",
+      "bridgeNotConfiguredTip": "Chưa cấu hình — liên hệ quản trị viên",
+      "bridgeRetry": "Thử lại",
+      "provisionBanner": "API Platform không khả dụng: {{reason}}",
+      "provisionNoEmail": "không có địa chỉ email trong hồ sơ — chưa có gì được cấp",
+      "provisionNotConfigured": "cầu nối cổng chưa được cấu hình — liên hệ quản trị viên",
+      "provisionUnavailable": "thiết lập tự động thất bại ({{reason}})",
+      "provisionAddEmail": "Thêm email trong cài đặt hồ sơ"
     },
     "billing": {
       "historyTitle": "Billing history",

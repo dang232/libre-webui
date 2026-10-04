@@ -68,7 +68,8 @@
       "githubSuccess": "GitHub-Anmeldung erfolgreich!",
       "githubFailed": "GitHub-Authentifizierung fehlgeschlagen",
       "githubVerifyFailed": "Überprüfung der GitHub-Authentifizierung fehlgeschlagen",
-      "verificationFailed": "Sicherheitsprüfung fehlgeschlagen. Seite neu laden und erneut versuchen."
+      "verificationFailed": "Sicherheitsprüfung fehlgeschlagen. Seite neu laden und erneut versuchen.",
+      "sessionExpired": "Deine Sitzung ist abgelaufen. Melde dich erneut an, um fortzufahren."
     },
     "signup": {
       "title": "Konto erstellen",
@@ -233,7 +234,27 @@
         "invalidEmail": "Enter a valid email address.",
         "success": "Account created — welcome.",
         "failed": "Sign-up failed. Please try again."
+      },
+      "noSessionHint": "„Weiter mit Auth“ nutzt deine bestehende Auth-Sitzung. Bei Auth abgemeldet? Melde dich unten mit deiner Auth-E-Mail an — es geht dann automatisch weiter.",
+      "googleUnavailable": "Die Google-Anmeldung ist auf diesem Server nicht eingerichtet. Nutze stattdessen eine andere Option auf dieser Seite.",
+      "signin": {
+        "toggle": "Bei Auth abgemeldet? Hier anmelden",
+        "hide": "Auth-Anmeldung ausblenden",
+        "body": "Gib deine Auth-E-Mail und dein Passwort ein. Sie gehen direkt an Auth — Libre sieht sie nie. Nach erfolgreicher Anmeldung geht es automatisch in Libre weiter.",
+        "email": "Auth-E-Mail",
+        "password": "Auth-Passwort",
+        "submit": "Mit Auth anmelden",
+        "signingIn": "Anmeldung läuft…",
+        "failed": "Anmeldung fehlgeschlagen. Bitte versuche es erneut."
       }
+    },
+    "callback": {
+      "expiredHelp": "Dieser Anmeldeversuch ist abgelaufen oder wurde bereits verwendet. Es wurde nichts geändert — starte einfach erneut, es dauert nur Sekunden.",
+      "failedHelp": "Die Anmeldung konnte nicht abgeschlossen werden. Es wurde nichts geändert — starte erneut.",
+      "reason": "Grund: {{reason}}",
+      "tryAgain": "Erneut versuchen",
+      "restart": "Anmeldung neu starten",
+      "support": "Hilfe nötig? Wende dich an deinen Server-Admin oder siehe"
     }
   },
   "setup": {
@@ -1386,7 +1407,15 @@
       "platformDefaultCurrent": "Chatting via the ALcore API Platform (default-chat).",
       "platformDefaultUnavailable": "The API Platform model isn't ready for this account yet (an email address is required for automatic setup). You can still chat with a local or cloud model.",
       "platformDefaultUse": "Use ALcore API Platform",
-      "platformDefaultUsing": "Switching…"
+      "platformDefaultUsing": "Switching…",
+      "bridgeNotConfigured": "Das API-Platform-Portal ist auf diesem Server nicht konfiguriert — wende dich an deinen Admin. Schlüssel und Nutzung unten funktionieren weiterhin, wo sie das Portal nicht brauchen.",
+      "bridgeNotConfiguredTip": "Nicht konfiguriert — Admin kontaktieren",
+      "bridgeRetry": "Erneut versuchen",
+      "provisionBanner": "API Platform nicht verfügbar: {{reason}}",
+      "provisionNoEmail": "keine E-Mail-Adresse im Profil — nichts wurde bereitgestellt",
+      "provisionNotConfigured": "die Portal-Anbindung ist nicht konfiguriert — Admin kontaktieren",
+      "provisionUnavailable": "automatische Einrichtung fehlgeschlagen ({{reason}})",
+      "provisionAddEmail": "E-Mail in den Profileinstellungen ergänzen"
     },
     "billing": {
       "historyTitle": "Billing history",

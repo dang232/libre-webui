@@ -31,6 +31,7 @@ import { resolveAppVersion } from '@/utils/appVersion';
 import { isAlcoreAuthMode } from '@/utils/config';
 import { AlcoreAuthNotice } from '@/components/AlcoreAuthNotice';
 import { AlcoreClaimForm } from '@/components/AlcoreClaimForm';
+import { AlcoreDirectSignIn } from '@/components/AlcoreDirectSignIn';
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
@@ -42,6 +43,10 @@ export const LoginPage: React.FC = () => {
   const signupEnabled = systemInfo?.signupEnabled ?? true;
   const oauthApprovalPending =
     new URLSearchParams(location.search).get('approval') === 'pending';
+  // R21: expired/revoked sessions (and forwarded upstream 401s) land here
+  // with ?expired=1 so the copy says "sign in again", not generic failure.
+  const sessionExpired =
+    new URLSearchParams(location.search).get('expired') === '1';
   const alcoreMode = isAlcoreAuthMode(systemInfo);
 
   useEffect(() => {
@@ -177,9 +182,19 @@ export const LoginPage: React.FC = () => {
 
         <section className='flex items-center justify-center px-5 pb-12 pt-24 sm:px-8 lg:px-12 lg:py-12'>
           <div className='w-full max-w-sm'>
+            {sessionExpired && (
+              <p
+                role='status'
+                data-testid='session-expired-notice'
+                className='mb-4 rounded-xl border border-line bg-surface px-4 py-3 text-sm leading-6 text-ink'
+              >
+                {t('auth.login.sessionExpired')}
+              </p>
+            )}
             {alcoreMode ? (
               <>
                 <AlcoreAuthNotice />
+                <AlcoreDirectSignIn />
                 <AlcoreClaimForm />
                 <Link
                   to='/signup'

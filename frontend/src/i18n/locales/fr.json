@@ -68,7 +68,8 @@
       "githubSuccess": "Connexion GitHub réussie !",
       "githubFailed": "Échec de l'authentification GitHub",
       "githubVerifyFailed": "Échec de la vérification de l'authentification GitHub",
-      "verificationFailed": "La vérification de sécurité a échoué. Actualisez la page et réessayez."
+      "verificationFailed": "La vérification de sécurité a échoué. Actualisez la page et réessayez.",
+      "sessionExpired": "Votre session a expiré. Connectez-vous à nouveau pour continuer."
     },
     "signup": {
       "title": "Créer un compte",
@@ -233,7 +234,27 @@
         "invalidEmail": "Enter a valid email address.",
         "success": "Account created — welcome.",
         "failed": "Sign-up failed. Please try again."
+      },
+      "noSessionHint": "Continuer avec Auth utilise votre session Auth existante. Déconnecté d’Auth ? Connectez-vous ci-dessous avec votre e-mail Auth, la suite est automatique.",
+      "googleUnavailable": "La connexion Google n’est pas configurée sur ce serveur. Utilisez une autre option de cette page.",
+      "signin": {
+        "toggle": "Déconnecté d’Auth ? Connectez-vous ici",
+        "hide": "Masquer la connexion Auth",
+        "body": "Saisissez votre e-mail et votre mot de passe Auth. Ils vont directement à Auth — Libre ne les voit jamais. Après une connexion réussie, vous arrivez automatiquement dans Libre.",
+        "email": "E-mail Auth",
+        "password": "Mot de passe Auth",
+        "submit": "Se connecter avec Auth",
+        "signingIn": "Connexion en cours…",
+        "failed": "Échec de la connexion. Veuillez réessayer."
       }
+    },
+    "callback": {
+      "expiredHelp": "Cette tentative de connexion a expiré ou a déjà été utilisée. Rien n’a été modifié — recommencez, cela prend quelques secondes.",
+      "failedHelp": "La connexion n’a pas pu aboutir. Rien n’a été modifié — recommencez.",
+      "reason": "Motif : {{reason}}",
+      "tryAgain": "Réessayer",
+      "restart": "Recommencer la connexion",
+      "support": "Besoin d’aide ? Contactez votre administrateur serveur ou consultez"
     }
   },
   "setup": {
@@ -1386,7 +1407,15 @@
       "platformDefaultCurrent": "Chatting via the ALcore API Platform (default-chat).",
       "platformDefaultUnavailable": "The API Platform model isn't ready for this account yet (an email address is required for automatic setup). You can still chat with a local or cloud model.",
       "platformDefaultUse": "Use ALcore API Platform",
-      "platformDefaultUsing": "Switching…"
+      "platformDefaultUsing": "Switching…",
+      "bridgeNotConfigured": "Le portail API Platform n’est pas configuré sur ce serveur — contactez votre administrateur. Les clés et l’usage ci-dessous restent disponibles là où le portail n’est pas requis.",
+      "bridgeNotConfiguredTip": "Non configuré — contactez votre administrateur",
+      "bridgeRetry": "Réessayer",
+      "provisionBanner": "API Platform indisponible : {{reason}}",
+      "provisionNoEmail": "aucune adresse e-mail sur votre profil — rien n’a été provisionné",
+      "provisionNotConfigured": "la liaison du portail n’est pas configurée — contactez votre administrateur",
+      "provisionUnavailable": "échec de la configuration automatique ({{reason}})",
+      "provisionAddEmail": "Ajouter un e-mail dans les paramètres du profil"
     },
     "billing": {
       "historyTitle": "Billing history",

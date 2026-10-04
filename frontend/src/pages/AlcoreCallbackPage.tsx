@@ -23,7 +23,9 @@ import { authApi } from '@/utils/api/authApi';
 import {
   completeCanonicalCallback,
   consumeHandoffState,
+  startAuthHandoff,
 } from '@/utils/canonicalHandoff';
+import { AUTH_BASE_URL } from '@/utils/config';
 
 /**
  * Auth redirect-handoff callback (todo 45).
@@ -38,8 +40,16 @@ export const AlcoreCallbackPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const login = useAuthStore(state => state.login);
-  const [error, setError] = React.useState<string | null>(null);
+  const [failureReason, setFailureReason] = React.useState<string | null>(null);
   const done = React.useRef(false);
+
+  // R9: an expired, consumed, or absent handoff binding is restartable in
+  // place — no manual URL surgery. Anything else restarts from login.
+  const handleTryAgain = (): void => {
+    window.location.assign(
+      startAuthHandoff(AUTH_BASE_URL, window.location.origin)
+    );
+  };
 
   React.useEffect(() => {
     if (done.current) return;
@@ -48,7 +58,7 @@ export const AlcoreCallbackPage: React.FC = () => {
     const finish = async (): Promise<void> => {
       const authError = params.get('error');
       if (authError) {
-        setError('Sign-in failed. Please try again.');
+        setFailureReason('auth_error');
         return;
       }
       try {
@@ -62,15 +72,18 @@ export const AlcoreCallbackPage: React.FC = () => {
             consumeState: consumeHandoffState,
           },
           async (c, redirectUri, s) =>
-            authApi.alcoreExchange({ code: c, redirectUri, state: s })
+            authApi.alcoreExchange({ code: c, redirectUri, state: s }),
+          // R7: one automatic re-redemption inside the handoff TTL; the
+          // server answer stays one generic message either way.
+          { retryExchangeOnce: true }
         );
         if (!outcome.ok) {
-          setError('Sign-in failed. Please try again.');
+          setFailureReason(outcome.reason);
           return;
         }
         const response = outcome.data;
         if (!response.success || !response.data) {
-          setError('Sign-in failed. Please try again.');
+          setFailureReason('exchange_failed');
           return;
         }
         login(
@@ -80,7 +93,7 @@ export const AlcoreCallbackPage: React.FC = () => {
         );
         navigate('/', { replace: true });
       } catch {
-        setError('Sign-in failed. Please try again.');
+        setFailureReason('exchange_failed');
       }
     };
     void finish().finally(() => {
@@ -97,18 +110,51 @@ export const AlcoreCallbackPage: React.FC = () => {
   return (
     <div className='flex min-h-screen items-center justify-center bg-canvas px-5 text-ink'>
       <div className='w-full max-w-sm rounded-2xl border border-line bg-surface p-6 text-center'>
-        {error ? (
+        {failureReason ? (
           <>
             <p role='alert' className='text-sm text-red-600'>
-              {error}
+              {failureReason === 'state_expired' ||
+              failureReason === 'missing_code' ||
+              failureReason === 'missing_state'
+                ? t('auth.callback.expiredHelp')
+                : t('auth.callback.failedHelp')}
             </p>
-            <button
-              type='button'
-              onClick={() => navigate('/login', { replace: true })}
-              className='mt-4 w-full rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-canvas'
+            <p
+              data-testid='callback-failure-reason'
+              className='mt-2 font-mono text-[11px] text-ink-muted'
             >
-              {t('auth.alcore.backToLogin')}
-            </button>
+              {t('auth.callback.reason', { reason: failureReason })}
+            </p>
+            {failureReason === 'state_expired' ||
+            failureReason === 'missing_code' ||
+            failureReason === 'missing_state' ? (
+              <button
+                type='button'
+                onClick={handleTryAgain}
+                className='mt-4 w-full rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-canvas'
+              >
+                {t('auth.callback.tryAgain')}
+              </button>
+            ) : (
+              <button
+                type='button'
+                onClick={() => navigate('/login', { replace: true })}
+                className='mt-4 w-full rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-canvas'
+              >
+                {t('auth.callback.restart')}
+              </button>
+            )}
+            <p className='mt-3 text-[13px] leading-6 text-ink-muted'>
+              {t('auth.callback.support')}{' '}
+              <a
+                href='https://docs.librewebui.org'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='underline'
+              >
+                docs.librewebui.org
+              </a>
+            </p>
           </>
         ) : (
           <p className='text-sm text-ink-muted'>{t('auth.login.signingIn')}</p>

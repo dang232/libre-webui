@@ -41,6 +41,26 @@ export const tokenpanelApi = {
       .post('/auth/tokenpanel/portal-token', {})
       .then(response => response.data);
   },
+  /**
+   * R36: read-only bridge advertisement. `configured: false` means the
+   * operator never set a management key (contact admin) — distinct from a
+   * configured bridge that is down right now (retry).
+   */
+  bridgeStatus(): Promise<ApiResponse<{ configured: boolean }>> {
+    return api.get('/auth/tokenpanel/status').then(response => response.data);
+  },
+  /**
+   * R38: why automatic API Platform provisioning did (or did not) happen.
+   * Never throws into auth; a `provisioned: false` reason renders as a
+   * banner instead of a silent skip.
+   */
+  provisionStatus(): Promise<
+    ApiResponse<{ provisioned: boolean; reason: string }>
+  > {
+    return api
+      .get('/auth/tokenpanel/provision-status')
+      .then(response => response.data);
+  },
 };
 
 export interface BillingPageQuery {

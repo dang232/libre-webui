@@ -68,7 +68,8 @@
       "githubSuccess": "Berjaya log masuk melalui GitHub!",
       "githubFailed": "Pengesahan GitHub gagal",
       "githubVerifyFailed": "Gagal mengesahkan pengesahan GitHub",
-      "verificationFailed": "Pengesahan keselamatan gagal. Muat semula halaman dan cuba lagi."
+      "verificationFailed": "Pengesahan keselamatan gagal. Muat semula halaman dan cuba lagi.",
+      "sessionExpired": "Your session expired. Sign in again to continue."
     },
     "signup": {
       "title": "Cipta Akaun",
@@ -233,7 +234,27 @@
         "invalidEmail": "Enter a valid email address.",
         "success": "Account created — welcome.",
         "failed": "Sign-up failed. Please try again."
+      },
+      "noSessionHint": "Continue with Auth uses your existing Auth session. Signed out of Auth? Sign in with your Auth email below and you will continue automatically.",
+      "googleUnavailable": "Google sign-in is not set up on this server. Use another option on this page instead.",
+      "signin": {
+        "toggle": "Signed out of Auth? Sign in with your Auth email",
+        "hide": "Hide Auth sign-in",
+        "body": "Enter your Auth email and password. They go directly to Auth — Libre never sees them. A successful sign-in continues into Libre automatically.",
+        "email": "Auth email",
+        "password": "Auth password",
+        "submit": "Sign in with Auth",
+        "signingIn": "Signing in…",
+        "failed": "Sign-in failed. Please try again."
       }
+    },
+    "callback": {
+      "expiredHelp": "This sign-in attempt expired or was already used. Nothing was changed — start again, it takes a few seconds.",
+      "failedHelp": "The sign-in could not be completed. Nothing was changed — start again.",
+      "reason": "Reason: {{reason}}",
+      "tryAgain": "Try again",
+      "restart": "Restart sign-in",
+      "support": "Need help? Contact your server admin or see"
     }
   },
   "setup": {
@@ -1386,7 +1407,15 @@
       "platformDefaultCurrent": "Chatting via the ALcore API Platform (default-chat).",
       "platformDefaultUnavailable": "The API Platform model isn't ready for this account yet (an email address is required for automatic setup). You can still chat with a local or cloud model.",
       "platformDefaultUse": "Use ALcore API Platform",
-      "platformDefaultUsing": "Switching…"
+      "platformDefaultUsing": "Switching…",
+      "bridgeNotConfigured": "The API Platform portal is not configured on this server — contact your admin. Keys and usage below still work where they do not need the portal.",
+      "bridgeNotConfiguredTip": "Not configured — contact your admin",
+      "bridgeRetry": "Retry",
+      "provisionBanner": "API Platform unavailable: {{reason}}",
+      "provisionNoEmail": "no email address on your profile — nothing was provisioned",
+      "provisionNotConfigured": "the portal bridge is not configured — contact your admin",
+      "provisionUnavailable": "automatic setup failed ({{reason}})",
+      "provisionAddEmail": "Add email in profile settings"
     },
     "billing": {
       "historyTitle": "Billing history",

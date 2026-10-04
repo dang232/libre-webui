@@ -414,6 +414,16 @@ export const authApi = {
     api.post('/auth/passkeys/login', payload).then(res => res.data),
 
   /**
+   * R18: read-only provider advertisement backing the sign-in panel's
+   * Google button. Served by the BFF in every auth mode; when
+   * `configured` is false the panel hides the button instead of sending
+   * the user down a path the operator never set up.
+   */
+  googleStatus: (): Promise<
+    ApiResponse<{ configured: boolean; clientId: string }>
+  > => api.get('/auth/oauth/google/status').then(res => res.data),
+
+  /**
    * Direct Auth relying party (todo 45, Alcore mode only).
    *
    * The browser redeems an opaque Auth product code (Bearer handoff via

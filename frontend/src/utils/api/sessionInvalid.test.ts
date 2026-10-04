@@ -89,7 +89,7 @@ test('first invalid session clears the token and fires exactly one event', () =>
   assert.deepEqual(removedKeys, [AUTH_TOKEN_STORAGE_KEY]);
   assert.deepEqual(events, [AUTH_INVALIDATED_EVENT]);
   assert.equal(isSessionInvalidated(), true);
-  assert.equal(currentHref, '/login');
+  assert.equal(currentHref, '/login?expired=1');
   assert.equal(hrefWrites, 1);
 });
 

@@ -192,6 +192,19 @@ export interface CallbackExchangeResult {
   readonly success: boolean;
 }
 
+/** Options for {@link completeCanonicalCallback}. */
+export interface CallbackOptions {
+  /**
+   * Redeem the code twice before reporting `exchange_failed` (R7). The
+   * single-use code fails closed server-side with one generic message, so
+   * a second attempt can only rescue a redemption lost to a transient
+   * network or 5xx failure inside the handoff TTL — it can never turn a
+   * consumed or invalid code into a session, and the user-visible message
+   * stays generic (no oracle).
+   */
+  readonly retryExchangeOnce?: boolean;
+}
+
 /**
  * The whole callback decision, free of React and of the network.
  *
@@ -209,7 +222,8 @@ export async function completeCanonicalCallback<
     readonly origin: string;
     readonly consumeState?: typeof consumeHandoffState;
   },
-  exchange?: (code: string, redirectUri: string, state: string) => Promise<T>
+  exchange?: (code: string, redirectUri: string, state: string) => Promise<T>,
+  options?: CallbackOptions
 ): Promise<CallbackOutcome<T>> {
   const consumeState = params.consumeState ?? consumeHandoffState;
 
@@ -225,11 +239,11 @@ export async function completeCanonicalCallback<
     // Fail closed rather than treating "no transport wired up" as success.
     return { ok: false, reason: 'exchange_failed' };
   }
-  const result = await exchange(
-    code,
-    canonicalCallbackUrl(params.origin),
-    state
-  );
+  const redirectUri = canonicalCallbackUrl(params.origin);
+  let result = await exchange(code, redirectUri, state);
+  if (!result.success && options?.retryExchangeOnce === true) {
+    result = await exchange(code, redirectUri, state);
+  }
   if (!result.success) return { ok: false, reason: 'exchange_failed' };
   return { ok: true, data: result };
 }

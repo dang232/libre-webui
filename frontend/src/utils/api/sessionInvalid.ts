@@ -91,7 +91,10 @@ const redirectToLoginOnce = (): void => {
     ? String(w.location.hash || '')
     : String(w.location.pathname || '');
   if (currentPath.includes('/login')) return;
-  w.location.href = isElectron ? '#/login' : '/login';
+  // R21: carry ?expired=1 so the login page says "session expired, sign in
+  // again" instead of a generic failure. Hash-router (Electron) keeps the
+  // query inside the fragment, where the router still parses it.
+  w.location.href = isElectron ? '#/login?expired=1' : '/login?expired=1';
 };
 
 /**

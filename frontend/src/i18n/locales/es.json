@@ -68,7 +68,8 @@
       "githubSuccess": "¡Inicio de sesión con GitHub exitoso!",
       "githubFailed": "Autenticación de GitHub fallida",
       "githubVerifyFailed": "Error al verificar autenticación de GitHub",
-      "verificationFailed": "La verificación de seguridad falló. Actualiza la página e inténtalo de nuevo."
+      "verificationFailed": "La verificación de seguridad falló. Actualiza la página e inténtalo de nuevo.",
+      "sessionExpired": "Tu sesión ha caducado. Inicia sesión de nuevo para continuar."
     },
     "signup": {
       "title": "Crear cuenta",
@@ -233,7 +234,27 @@
         "invalidEmail": "Enter a valid email address.",
         "success": "Account created — welcome.",
         "failed": "Sign-up failed. Please try again."
+      },
+      "noSessionHint": "Continuar con Auth usa tu sesión existente de Auth. ¿Sesión cerrada? Inicia sesión abajo con tu correo de Auth y continuarás automáticamente.",
+      "googleUnavailable": "El inicio de sesión con Google no está configurado en este servidor. Usa otra opción de esta página.",
+      "signin": {
+        "toggle": "¿Sesión de Auth cerrada? Inicia sesión aquí",
+        "hide": "Ocultar el inicio de sesión",
+        "body": "Introduce tu correo y tu contraseña de Auth. Van directamente a Auth — Libre nunca los ve. Tras iniciar sesión, continuarás en Libre automáticamente.",
+        "email": "Correo de Auth",
+        "password": "Contraseña de Auth",
+        "submit": "Iniciar sesión con Auth",
+        "signingIn": "Iniciando sesión…",
+        "failed": "Error al iniciar sesión. Inténtalo de nuevo."
       }
+    },
+    "callback": {
+      "expiredHelp": "Este intento de inicio de sesión caducó o ya se usó. No se cambió nada — empieza de nuevo, solo tarda unos segundos.",
+      "failedHelp": "No se pudo completar el inicio de sesión. No se cambió nada — empieza de nuevo.",
+      "reason": "Motivo: {{reason}}",
+      "tryAgain": "Reintentar",
+      "restart": "Reiniciar el inicio de sesión",
+      "support": "¿Necesitas ayuda? Contacta con el administrador del servidor o consulta"
     }
   },
   "setup": {
@@ -1386,7 +1407,15 @@
       "platformDefaultCurrent": "Chatting via the ALcore API Platform (default-chat).",
       "platformDefaultUnavailable": "The API Platform model isn't ready for this account yet (an email address is required for automatic setup). You can still chat with a local or cloud model.",
       "platformDefaultUse": "Use ALcore API Platform",
-      "platformDefaultUsing": "Switching…"
+      "platformDefaultUsing": "Switching…",
+      "bridgeNotConfigured": "El portal de API Platform no está configurado en este servidor — contacta con tu administrador. Las claves y el uso de abajo siguen funcionando donde no necesiten el portal.",
+      "bridgeNotConfiguredTip": "No configurado — contacta con tu administrador",
+      "bridgeRetry": "Reintentar",
+      "provisionBanner": "API Platform no disponible: {{reason}}",
+      "provisionNoEmail": "sin dirección de correo en tu perfil — no se ha aprovisionado nada",
+      "provisionNotConfigured": "la conexión del portal no está configurada — contacta con tu administrador",
+      "provisionUnavailable": "error en la configuración automática ({{reason}})",
+      "provisionAddEmail": "Añadir el correo en los ajustes del perfil"
     },
     "billing": {
       "historyTitle": "Billing history",

@@ -16,6 +16,7 @@
  */
 
 import express from 'express';
+import { randomUUID } from 'node:crypto';
 import rateLimit from '../middleware/sharedRateLimit.js';
 import { githubOAuthService } from '../services/simpleGitHubOAuth.js';
 import { huggingFaceOAuthService } from '../services/simpleHuggingFaceOAuth.js';
@@ -92,6 +93,7 @@ import {
 import {
   TokenpanelBridgeError,
   exchangePortalToken,
+  isBridgeConfigured,
 } from '../services/tokenpanelBridgeService.js';
 import {
   isAuthDerivedSession,
@@ -341,6 +343,25 @@ const tokenpanelRateLimiter = rateLimit({
 });
 
 /**
+ * R36: stable reason code for a bridge failure, mirroring the
+ * TokenpanelBridgeError copy without leaking internals. Callers switch
+ * retry UI on this: every code retries except BRIDGE_COLLISION.
+ */
+const bridgeFailureCode = (status: number, message: string): string => {
+  if (status === 409 || /matches multiple accounts/i.test(message))
+    return 'BRIDGE_COLLISION';
+  if (status === 400 || /add an email address/i.test(message))
+    return 'BRIDGE_NEEDS_EMAIL';
+  if (/not configured correctly/i.test(message)) return 'BRIDGE_MISCONFIGURED';
+  if (/not configured/i.test(message)) return 'BRIDGE_NOT_CONFIGURED';
+  if (/unreachable/i.test(message)) return 'BRIDGE_UNREACHABLE';
+  if (/minting/i.test(message)) return 'BRIDGE_MINT_FAILED';
+  if (/linking/i.test(message)) return 'BRIDGE_LINK_FAILED';
+  if (status >= 500) return 'BRIDGE_UNAVAILABLE';
+  return 'BRIDGE_LINK_FAILED';
+};
+
+/**
  * Single-login bridge into the TokenPanel portal (plan §5).
  * Mints a 120s viewer JWT for the caller's linked TokenPanel customer
  * (resolved fail-closed server-side: exact identity or exact single email
@@ -354,6 +375,51 @@ const tokenpanelRateLimiter = rateLimit({
  * TODO(bridge-sunset,todo29): temporary bridge — remove with the Phase 8
  * sunset. Grep marker: bridge-sunset.
  */
+/**
+ * R36/R37: read-only bridge + provisioning advertisements for the
+ * Settings → API Platform tab. No identity, no secrets: `configured`
+ * tells the panel whether the operator set a management key (contact
+ * admin) vs the bridge being down right now (retry), and
+ * `provision-status` surfaces the auto-provisioning reason instead of a
+ * silent skip. `ensureApiPlatformProvision` is idempotent and cheap for
+ * already-provisioned users, so polling it here changes no login path.
+ */
+router.get('/tokenpanel/status', authenticate, async (_req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({
+    success: true,
+    data: {
+      configured: isBridgeConfigured(),
+    },
+  });
+});
+
+router.get(
+  '/tokenpanel/provision-status',
+  authenticate,
+  async (req: AuthenticatedRequest, res) => {
+    res.set('Cache-Control', 'no-store');
+    const userId = req.user?.userId;
+    if (!userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+    try {
+      const { ensureApiPlatformProvision } =
+        await import('../services/apiPlatformProvisionService.js');
+      res.json({
+        success: true,
+        data: await ensureApiPlatformProvision(userId),
+      });
+    } catch {
+      res.json({
+        success: true,
+        data: { provisioned: false, reason: 'unexpected' },
+      });
+    }
+  }
+);
+
 router.post(
   '/tokenpanel/portal-token',
   tokenpanelRateLimiter,
@@ -410,7 +476,18 @@ router.post(
     } catch (error) {
       const status =
         error instanceof TokenpanelBridgeError ? error.status : 500;
-      if (status === 500) logger.error('TokenPanel bridge failed', error);
+      const requestId = randomUUID();
+      const message =
+        error instanceof TokenpanelBridgeError
+          ? error.message
+          : 'TokenPanel bridge is temporarily unavailable';
+      // R36/R37: machine-readable reason + support request id on every
+      // bridge failure. Copy stays distinct per cause (not configured vs
+      // unreachable vs needs-email); 409 collisions stay human-only with
+      // no retry affordance; 502/503 carry Retry-After for the retry UI.
+      const code = bridgeFailureCode(status, message);
+      if (status === 500)
+        logger.error('TokenPanel bridge failed', { requestId, error });
       void recordAuditEvent({
         action: 'auth.tokenpanel-bridge',
         result: 'denied',
@@ -419,14 +496,16 @@ router.post(
         details: {
           reason: error instanceof Error ? error.message : 'unknown',
           status,
+          requestId,
+          code,
         },
       });
+      if (status === 502 || status === 503) res.set('Retry-After', '30');
       res.status(status).json({
         success: false,
-        message:
-          error instanceof TokenpanelBridgeError
-            ? error.message
-            : 'TokenPanel bridge is temporarily unavailable',
+        code,
+        requestId,
+        message,
       });
     }
   }
