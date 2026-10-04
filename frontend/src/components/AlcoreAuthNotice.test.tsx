@@ -147,6 +147,39 @@ test('Alcore-mode login shows exactly one primary sign-in form', () => {
   }
 });
 
+// ux-fix-no-through-auth: the primary sign-in reads "Sign in" with plain
+// "Email"/"Password" labels — no through/via/with-Auth qualifiers.
+test('Alcore-mode login carries no through-Auth qualifiers', () => {
+  const html = renderNotice();
+  assert.match(html, />Sign in</, 'primary submit reads "Sign in"');
+  assert.match(html, />Email</, 'email label reads "Email"');
+  assert.match(html, />Password</, 'password label reads "Password"');
+  assert.match(
+    html,
+    /Continue.*Google/,
+    'Google entry names Google without a qualifier'
+  );
+  for (const banned of [
+    'Sign in with Auth',
+    'Auth email',
+    'Auth password',
+    'Continue with Auth',
+    'through Auth',
+    'via Auth',
+    'qua Auth',
+    'with Auth',
+    'Email Auth',
+    'tài khoản Auth',
+    'bằng Auth',
+  ]) {
+    assert.doesNotMatch(
+      html,
+      new RegExp(banned.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
+      `login must not render ${JSON.stringify(banned)}`
+    );
+  }
+});
+
 test('Alcore-mode login carries no architecture paragraphs', () => {
   const html = renderNotice();
   for (const banned of [

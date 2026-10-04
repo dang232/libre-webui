@@ -241,9 +241,9 @@
         "toggle": "Đã đăng xuất khỏi Auth? Đăng nhập tại đây",
         "hide": "Ẩn đăng nhập Auth",
         "body": "Nhập email và mật khẩu Auth của bạn. Chúng được gửi thẳng tới Auth — Libre không bao giờ thấy chúng. Đăng nhập thành công sẽ tự động tiếp tục vào Libre.",
-        "email": "Email Auth",
-        "password": "Mật khẩu Auth",
-        "submit": "Đăng nhập bằng Auth",
+        "email": "Email",
+        "password": "Mật khẩu",
+        "submit": "Đăng nhập",
         "signingIn": "Đang đăng nhập…",
         "failed": "Đăng nhập thất bại. Vui lòng thử lại."
       }

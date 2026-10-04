@@ -241,9 +241,9 @@
         "toggle": "Signed out of Auth? Sign in with your Auth email",
         "hide": "Hide Auth sign-in",
         "body": "Enter your Auth email and password. They go directly to Auth — Libre never sees them. A successful sign-in continues into Libre automatically.",
-        "email": "Auth email",
-        "password": "Auth password",
-        "submit": "Sign in with Auth",
+        "email": "Email",
+        "password": "Password",
+        "submit": "Sign in",
         "signingIn": "Signing in…",
         "failed": "Sign-in failed. Please try again."
       }
