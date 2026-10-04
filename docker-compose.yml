@@ -22,6 +22,10 @@ services:
       - ENABLE_SIGNUP=${ENABLE_SIGNUP:-false}
       # JWT_SECRET: Generate with 'openssl rand -hex 64' and set via .env file or environment
       - JWT_SECRET=${JWT_SECRET:-}
+      # TokenPanel bridge: tp_mgmt_* key (customers:write) for the Libre BFF
+      # portal-token bridge (local-mode users + Alcore fallback). Set via .env;
+      # never commit the value. Missing key => BFF TokenPanel calls 503.
+      - TOKENPANEL_MGMT_KEY=${TOKENPANEL_MGMT_KEY:-}
       - JWT_EXPIRES_IN=7d
       # Encryption: Optional 64-character hex key. If not provided, one will be auto-generated
       # and stored in the persistent data volume for security across container restarts
