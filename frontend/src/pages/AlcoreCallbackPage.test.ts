@@ -103,6 +103,13 @@ const {
   rememberHandoffState,
 } = await import('../utils/canonicalHandoff.ts');
 
+// The Auth-error helpers live in the page module next to the component that
+// renders them (locale files are owned by a sibling lane, so the copy stays
+// inline). Imported dynamically after the browser stubs above, like the
+// handoff module — same hermetic harness.
+const { parseCallbackAuthError, callbackAuthErrorGuidance } =
+  await import('./AlcoreCallbackPage.tsx');
+
 /** Minimal in-memory Storage stand-in; one instance per simulated tab. */
 function fakeStorage() {
   const map = new Map<string, string>();
@@ -263,5 +270,37 @@ describe('AlcoreCallbackPage callback decision tree', () => {
     );
     assertOpaqueFailure(replayed, 'state_mismatch');
     assert.equal(calls.length, 1, 'replayed callback must not reach exchange');
+  });
+});
+
+describe('AlcoreCallbackPage Auth error return (?error=)', () => {
+  it('parseCallbackAuthError reads error + description', () => {
+    // Mirrors the portal's parseAuthErrorSearch contract: the Auth error
+    // code survives intact so the page can render matching recovery copy.
+    assert.deepEqual(parseCallbackAuthError('?error=invalid_request'), {
+      error: 'invalid_request',
+      errorDescription: null,
+    });
+    assert.deepEqual(
+      parseCallbackAuthError('?error=access_denied&error_description=off'),
+      { error: 'access_denied', errorDescription: 'off' }
+    );
+    // No error present: the normal code/state path runs.
+    assert.equal(parseCallbackAuthError('?code=c&state=s'), null);
+    assert.equal(parseCallbackAuthError('?error=&code=c'), null);
+    assert.equal(parseCallbackAuthError(''), null);
+  });
+
+  it('guidance covers invalid_request as operator misconfiguration', () => {
+    // Every branch points back at login — Google availability depends on
+    // Auth-side config this page cannot see, so it never promises a Google
+    // retry that may not exist.
+    const misconfigured = callbackAuthErrorGuidance('invalid_request');
+    assert.match(misconfigured, /misconfiguration/);
+    assert.match(misconfigured, /login/);
+    assert.match(callbackAuthErrorGuidance('access_denied'), /cancelled/);
+    const unknown = callbackAuthErrorGuidance('weird_code');
+    assert.match(unknown, /weird_code/);
+    assert.match(unknown, /login/);
   });
 });

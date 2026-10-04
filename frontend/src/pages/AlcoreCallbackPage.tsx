@@ -33,8 +33,60 @@ import { AUTH_BASE_URL } from '@/utils/config';
  * Auth 302s here with an opaque ?code=&state=. The state must match the tab
  * binding stored before the redirect (CSRF); the code is redeemed once at
  * the BFF and the URL is cleaned immediately so the code never lingers in
- * history. Auth error responses (?error=) fail closed with a retry link.
+ * history. Auth error returns (?error=, e.g. invalid_request when Auth-side
+ * OIDC config rejects the handoff) fail closed: the page parses the error
+ * below (mirroring the portal's parseAuthErrorSearch/authErrorGuidance
+ * pattern) and renders recovery copy with a back-to-login button instead
+ * of stranding the user.
  */
+export interface CallbackAuthError {
+  readonly error: string;
+  readonly errorDescription: string | null;
+}
+
+/**
+ * Parse an Auth OAuth error return (`?error=...`). Null when no error is
+ * present so the normal code/state path runs. Mirrors the portal's
+ * `parseAuthErrorSearch` (AlRepo/apps/portal/src/api/authExchange.ts).
+ * NOTE: user-visible strings in this file stay inline literals — the
+ * locale files are owned by a sibling copy-scrub lane right now.
+ */
+export function parseCallbackAuthError(
+  search: string
+): CallbackAuthError | null {
+  const query = search.startsWith('?') ? search.slice(1) : search;
+  const params = new URLSearchParams(query);
+  const error = (params.get('error') ?? '').trim();
+  if (error === '') return null;
+  const description = (params.get('error_description') ?? '').trim();
+  return { error, errorDescription: description === '' ? null : description };
+}
+
+/**
+ * Recovery copy for an Auth error return. Every branch points back at
+ * /login: Google availability depends on Auth-side config this page cannot
+ * see, so it never promises a Google retry that may not exist.
+ * `invalid_request` is covered explicitly as operator misconfiguration
+ * (redirect/audience mismatch on the Auth service).
+ */
+export function callbackAuthErrorGuidance(error: string): string {
+  switch (error) {
+    case 'invalid_request':
+      return (
+        'Google sign-in was rejected by the Auth server (sign-in request ' +
+        'invalid — operator-side redirect or audience misconfiguration). ' +
+        'Go back to login and sign in another way, or contact your ' +
+        'administrator.'
+      );
+    case 'access_denied':
+      return 'You cancelled Google sign-in. Go back to login and try again.';
+    default:
+      return (
+        `The Auth server refused the request (${error}). ` +
+        'Go back to login and try again.'
+      );
+  }
+}
 export const AlcoreCallbackPage: React.FC = () => {
   const { t } = useTranslation();
   const location = useLocation();
@@ -56,9 +108,11 @@ export const AlcoreCallbackPage: React.FC = () => {
     done.current = true;
     const params = new URLSearchParams(location.search);
     const finish = async (): Promise<void> => {
-      const authError = params.get('error');
+      const authError = parseCallbackAuthError(location.search);
       if (authError) {
-        setFailureReason('auth_error');
+        // Keep the Auth error code in the reason (portal parity) so the
+        // page can render the matching recovery copy below.
+        setFailureReason(`auth_error:${authError.error}`);
         return;
       }
       try {
@@ -119,6 +173,16 @@ export const AlcoreCallbackPage: React.FC = () => {
                 ? t('auth.callback.expiredHelp')
                 : t('auth.callback.failedHelp')}
             </p>
+            {failureReason.startsWith('auth_error:') ? (
+              <p
+                data-testid='callback-auth-error-guidance'
+                className='mt-2 text-[13px] leading-6 text-ink-muted'
+              >
+                {callbackAuthErrorGuidance(
+                  failureReason.slice('auth_error:'.length)
+                )}
+              </p>
+            ) : null}
             <p
               data-testid='callback-failure-reason'
               className='mt-2 font-mono text-[11px] text-ink-muted'
