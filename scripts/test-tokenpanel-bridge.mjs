@@ -28,10 +28,11 @@ process.env.TOKENPANEL_MGMT_KEY = 'tp_mgmt_testkey';
 
 const importBuilt = file =>
   import(pathToFileURL(path.resolve('backend/dist', file)).href);
-const [{ authService }, bridge, database] = await Promise.all([
+const [{ authService }, bridge, database, { userModel }] = await Promise.all([
   importBuilt('services/authService.js'),
   importBuilt('services/tokenpanelBridgeService.js'),
   importBuilt('db.js'),
+  importBuilt('models/userModel.js'),
 ]);
 
 test.after(() => {
@@ -135,6 +136,42 @@ test('bridge resolves through bridge-resolve with identity + idempotency key', a
   assert.equal(linked.linked, 'existing');
   assert.equal(linked.customerId, 'cust-1');
   assert.equal(stub.rows.length, 1);
+});
+
+test('bridge passes the Auth subject for Auth-linked users', async () => {
+  const created = await signup('bridge_linked', 'linked@example.test');
+  const userId = created.user.id;
+  const authSub = '38048ba7-0667-4f0a-bd07-5cfe35148d80';
+  await userModel.linkAuthSubject(
+    userId,
+    `https://auth.alcore.io.vn|${authSub}`
+  );
+  const stub = makeResolveStub();
+  let resolveBody;
+  const inner = stub.responder;
+  stubFetch((url, init) => {
+    if (url.endsWith('/bridge-resolve')) {
+      resolveBody = JSON.parse(init.body);
+    }
+    return inner(url, init);
+  });
+
+  const grant = await bridge.exchangePortalToken(userId, {
+    idempotencyKey: 'linked-key-1',
+  });
+  // The resolve call carries the bare Auth sub (the suffix of the stored
+  // `issuer|sub` pair), so a row the bridge auto-creates converges with
+  // the later real Auth callback instead of 409-colliding on email.
+  assert.equal(resolveBody.authUserId, authSub);
+  assert.equal(resolveBody.email, 'linked@example.test');
+  assert.equal(grant.customerId, 'cust-1');
+
+  // A repeat exchange converges on the same Auth-keyed customer: no
+  // Libre-id-keyed duplicate row is ever created.
+  const again = await bridge.exchangePortalToken(userId);
+  assert.equal(again.customerId, 'cust-1');
+  assert.equal(stub.rows.length, 1);
+  assert.equal(stub.rows[0].authUserId, authSub);
 });
 
 test('bridge collision denies with 409 and is auditable by status', async () => {

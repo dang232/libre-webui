@@ -35,6 +35,10 @@
  */
 
 import { randomUUID } from 'node:crypto';
+import {
+  AUTH_SUBJECT_SEPARATOR,
+  normalizeAuthSubject,
+} from '../config/authMode.js';
 import { createLogger } from '../utils/logger.js';
 import { isValidIdempotencyKey } from '../utils/idempotencyKey.js';
 import { userModel } from '../models/userModel.js';
@@ -145,6 +149,19 @@ export const exchangePortalToken = async (
     throw new TokenpanelBridgeError('Invalid idempotency key', 400);
   }
 
+  // Libre-first identity (auth-only bridge finding): an Auth-linked row
+  // stores `auth_subject` as `issuer|sub` while TokenPanel keys customers
+  // by the bare Auth `sub`. Send the subject suffix when linked so a row
+  // the bridge auto-creates converges with the later real Auth callback
+  // instead of 409-colliding on email. Pure-local rows (NULL subject, or
+  // a malformed value) keep sending the Libre id, exactly as before.
+  const full = await userModel.getUserByUsername(user.username);
+  const canonical = normalizeAuthSubject((full?.auth_subject ?? '').trim());
+  const bridgeIdentity =
+    canonical === null
+      ? userId
+      : canonical.slice(canonical.lastIndexOf(AUTH_SUBJECT_SEPARATOR) + 1);
+
   const resolved = await tokenpanelFetch(
     '/api/management/customers/bridge-resolve',
     {
@@ -152,7 +169,7 @@ export const exchangePortalToken = async (
       auth: key,
       headers: { 'Idempotency-Key': idempotencyKey },
       body: JSON.stringify({
-        authUserId: userId,
+        authUserId: bridgeIdentity,
         email,
         name: user.username || email,
       }),
