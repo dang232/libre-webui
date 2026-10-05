@@ -39,10 +39,6 @@ x-libre-team-environment: &libre-team-environment
   # One trusted gateway hop; Express then derives the real peer consistently
   # for shared security rate limiting. Do not use `true` on public deployments.
   TRUST_PROXY: '1'
-  OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
-  OLLAMA_TIMEOUT: ${OLLAMA_TIMEOUT:-300000}
-  OLLAMA_LONG_OPERATION_TIMEOUT: ${OLLAMA_LONG_OPERATION_TIMEOUT:-900000}
-  OLLAMA_MAX_CONTEXT: ${OLLAMA_MAX_CONTEXT:-32768}
   # Durable chat execution happens in the external worker. Node-local agent
   # binaries and Codex auth files cannot be advertised safely in this profile.
   AGENT_CLI_MODELS_ENABLED: 'false'

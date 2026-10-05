@@ -62,8 +62,19 @@ import {
   SKILL_APPROVAL_TOOLS,
   type Skill,
 } from './skillService.js';
-import type { OllamaChatStreamGenerator } from '../utils/ollamaStreaming.js';
 import { randomUUID } from 'node:crypto';
+
+/** Minimal stream-source contract for the tool-loop bridge. */
+type OllamaChatStreamGenerator = {
+  generateChatStreamResponse(
+    request: OllamaChatRequest,
+    onChunk: (chunk: OllamaChatResponse) => void,
+    onError: (error: Error) => void,
+    onComplete: () => void,
+    signal?: AbortSignal,
+    usage?: { userId?: string }
+  ): Promise<void>;
+};
 
 export const MAX_TOOL_ROUNDS = 8;
 export const MAX_TOOL_CALLS_PER_ROUND = 8;

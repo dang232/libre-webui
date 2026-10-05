@@ -20,7 +20,6 @@ import { randomUUID } from 'node:crypto';
 import rateLimit from '../middleware/sharedRateLimit.js';
 import { isChatCancellationSafetyRequest } from '../middleware/chatCancellationAdmission.js';
 import chatService from '../services/chatService.js';
-import ollamaService from '../services/ollamaService.js';
 import pluginService from '../services/pluginService.js';
 import { personaService } from '../services/personaService.js';
 import {
@@ -161,13 +160,11 @@ const titleGenerationService = new TitleGenerationService({
   chatService,
   chatGenerationService,
   pluginService,
-  ollamaService,
 });
 const thinkingSummaryService = new ThinkingSummaryService({
   chatService,
   chatGenerationService,
   pluginService,
-  ollamaService,
 });
 const chatRequestService = new ChatRequestService({
   chatGenerationService,
@@ -178,7 +175,6 @@ const followUpService = new FollowUpService({
   chatService,
   chatGenerationService,
   pluginService,
-  ollamaService,
 });
 
 // Rate limiter for chat routes: 60 requests per minute (reasonable for chat)
@@ -672,13 +668,6 @@ router.post(
       });
 
       throwIfChatGenerationCancelled(signal);
-
-      if (generationResult.pluginError) {
-        logger.error(
-          'Plugin failed, falling back to Ollama:',
-          generationResult.pluginError
-        );
-      }
 
       // Add assistant response to session with statistics
       const statistics = extractStatistics(generationResult.response);
@@ -1494,13 +1483,6 @@ router.post(
         shouldStreamPlugin,
       } = preparedGeneration;
 
-      const chatRequest = {
-        model: actualModelName,
-        messages: ollamaMessages,
-        stream: true,
-        options: mergedOptions as Record<string, unknown>,
-      };
-
       let fullResponse = '';
       let fullThinking = '';
       let assistantProviderMetadata: Record<string, unknown> | undefined;
@@ -1732,73 +1714,14 @@ router.post(
         return;
       }
 
-      // Generate streaming response using Ollama
-      await ollamaService.generateChatStreamResponse(
-        chatRequest,
-        chunk => {
-          const thinkingDelta = chunk.message.thinking || '';
-          if (thinkingDelta) {
-            fullThinking += thinkingDelta;
-            void emitDurable!({
-              type: 'reasoning',
-              content: thinkingDelta,
-              done: false,
-            }).catch(() => controller.abort());
-          }
-
-          void emitDurable!({
-            type: 'chunk',
-            content: chunk.message.content || '',
-            done: chunk.done,
-          }).catch(() => controller.abort());
-
-          // Accumulate response content
-          if (chunk.message.content) {
-            fullResponse += chunk.message.content;
-          }
-        },
-        error => {
-          if (signal.aborted || res.writableEnded) return;
-          void emitDurable!({ type: 'error', error: error.message })
-            .catch(() => undefined)
-            .finally(() => res.end());
-        },
-        () => {
-          if (signal.aborted || res.writableEnded) return;
-          void (async () => {
-            if (fullResponse || fullThinking) {
-              await chatService.addMessage(
-                sessionId,
-                {
-                  role: 'assistant',
-                  content: fullResponse,
-                  thinking: fullThinking || undefined,
-                  model: session.model,
-                  providerMetadata: withSearchSources(undefined),
-                },
-                userId,
-                {
-                  assertPersistenceAllowed: () =>
-                    throwIfChatGenerationCancelled(signal),
-                }
-              );
-            }
-            if (signal.aborted || res.writableEnded) return;
-            await emitDurable!({ type: 'done' });
-            res.end();
-          })().catch(error => {
-            if (signal.aborted || res.writableEnded) return;
-            void emitDurable!({
-              type: 'error',
-              error: getErrorMessage(error, 'Failed to save response'),
-            })
-              .catch(() => undefined)
-              .finally(() => res.end());
-          });
-        },
-        signal,
-        { userId }
-      );
+      // No local provider remains: without an active plugin the model
+      // cannot be served. Fail before streaming starts so the client
+      // gets a JSON error instead of a hung stream.
+      res.status(400).json({
+        success: false,
+        error: `No chat provider available for model "${actualModelName}"`,
+      });
+      return;
     } catch (error: unknown) {
       if (isChatGenerationCancelled(error, signal)) {
         if (!res.writableEnded) res.end();
@@ -1834,7 +1757,7 @@ router.post(
     res: Response<
       ApiResponse<{
         title: string;
-        source: 'plugin' | 'ollama' | 'fallback';
+        source: 'plugin' | 'fallback';
         updatedAt: number;
       }>
     >

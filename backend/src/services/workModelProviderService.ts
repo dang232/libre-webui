@@ -62,7 +62,6 @@ import { AGENT_CLI_DEFINITIONS } from './agentCliService.js';
 import codexOAuthService, {
   CODEX_OAUTH_PLUGIN_ID,
 } from './codexOAuthService.js';
-import ollamaService from './ollamaService.js';
 import pluginService from './pluginService.js';
 import pluginUsageService, {
   normalizeProviderTokenUsage,
@@ -113,11 +112,6 @@ export interface WorkProviderAvailability {
 }
 
 interface WorkModelProviderDependencies {
-  ollama: Pick<
-    typeof ollamaService,
-    'isHealthy' | 'showModel' | 'generateChatResponse'
-  > &
-    Partial<Pick<typeof ollamaService, 'generateChatStreamResponse'>>;
   plugins: Pick<
     typeof pluginService,
     'getActivePlugins' | 'getPlugin' | 'getApiKey' | 'getPluginVariables'
@@ -147,7 +141,6 @@ export class WorkModelProviderError extends Error {
 export class WorkModelProviderService {
   constructor(
     private readonly dependencies: WorkModelProviderDependencies = {
-      ollama: ollamaService,
       plugins: pluginService,
       post: defaultProviderPost,
       recordPluginUsage: usage => pluginUsageService.record(usage),
@@ -155,11 +148,8 @@ export class WorkModelProviderService {
   ) {}
 
   async availability(userId: string): Promise<WorkProviderAvailability> {
-    const [ollamaAvailable, pluginAvailable] = await Promise.all([
-      this.dependencies.ollama.isHealthy(),
-      this.hasConfiguredPlugin(userId),
-    ]);
-    return { ollamaAvailable, pluginAvailable };
+    const pluginAvailable = await this.hasConfiguredPlugin(userId);
+    return { ollamaAvailable: false, pluginAvailable };
   }
 
   async assertModelSupportsTools(
@@ -186,33 +176,16 @@ export class WorkModelProviderService {
       )
     ) {
       throw new WorkModelProviderError(
-        'Agent CLI models are chat-only: they run on the host, outside the Work sandbox. Pick an Ollama or provider model for Work.',
+        'Agent CLI models are chat-only: they run on the host, outside the Work sandbox. Pick a provider model for Work.',
         422,
         'WORK_MODEL_TOOLS_UNSUPPORTED'
       );
     }
-    assertOllamaProvider(provider);
-
-    let details: JsonObject;
-    try {
-      details = await this.dependencies.ollama.showModel(cleaned, false);
-    } catch (error) {
-      throw new WorkModelProviderError(
-        error instanceof Error ? error.message : 'Could not inspect model.',
-        503,
-        'WORK_MODEL_UNAVAILABLE'
-      );
-    }
-    const capabilities = Array.isArray(details.capabilities)
-      ? details.capabilities.map(value => String(value).toLowerCase())
-      : [];
-    if (!capabilities.includes('tools')) {
-      throw new WorkModelProviderError(
-        `Model "${cleaned}" does not advertise tool support.`,
-        422,
-        'WORK_MODEL_TOOLS_UNSUPPORTED'
-      );
-    }
+    throw new WorkModelProviderError(
+      'The Ollama provider has been removed. Pick a provider model for Work.',
+      422,
+      'WORK_MODEL_UNAVAILABLE'
+    );
   }
 
   async getResponsesStateScope(
@@ -253,16 +226,11 @@ export class WorkModelProviderService {
     userId: string
   ): Promise<string> {
     if (provider.providerType === 'ollama') {
-      assertOllamaProvider(provider);
-      return createHash('sha256')
-        .update(
-          JSON.stringify({
-            version: 1,
-            providerType: 'ollama',
-            model,
-          })
-        )
-        .digest('hex');
+      throw new WorkModelProviderError(
+        'The Ollama provider has been removed.',
+        422,
+        'WORK_MODEL_UNAVAILABLE'
+      );
     }
 
     const plugin = await this.requireExactPlugin(
@@ -300,10 +268,11 @@ export class WorkModelProviderService {
     signal?: AbortSignal
   ): Promise<OllamaChatResponse> {
     if (provider.providerType === 'ollama') {
-      assertOllamaProvider(provider);
-      return this.dependencies.ollama.generateChatResponse(request, signal, {
-        userId,
-      });
+      throw new WorkModelProviderError(
+        'The Ollama provider has been removed.',
+        422,
+        'WORK_MODEL_UNAVAILABLE'
+      );
     }
     const plugin = await this.requireExactPlugin(
       provider.providerId,
@@ -322,8 +291,11 @@ export class WorkModelProviderService {
   ): Promise<OllamaChatResponse> {
     const streamRequest = { ...request, stream: true };
     if (provider.providerType === 'ollama') {
-      assertOllamaProvider(provider);
-      return this.generateOllamaStream(streamRequest, userId, observer, signal);
+      throw new WorkModelProviderError(
+        'The Ollama provider has been removed.',
+        422,
+        'WORK_MODEL_UNAVAILABLE'
+      );
     }
     const plugin = await this.requireExactPlugin(
       provider.providerId,
@@ -502,95 +474,6 @@ export class WorkModelProviderService {
         'WORK_PLUGIN_REQUEST_FAILED'
       );
     }
-  }
-
-  private async generateOllamaStream(
-    request: OllamaChatRequest,
-    userId: string,
-    observer: WorkModelStreamObserver,
-    signal?: AbortSignal
-  ): Promise<OllamaChatResponse> {
-    const stream = this.dependencies.ollama.generateChatStreamResponse;
-    if (!stream) {
-      const response = await this.dependencies.ollama.generateChatResponse(
-        { ...request, stream: false },
-        signal,
-        { userId }
-      );
-      if (response.message?.thinking) {
-        observer.onReasoning?.(response.message.thinking);
-      }
-      if (response.message?.content) {
-        observer.onContent?.(response.message.content);
-      }
-      observer.onUsage?.(ollamaUsage(response));
-      return response;
-    }
-
-    return new Promise<OllamaChatResponse>((resolve, reject) => {
-      let settled = false;
-      let content = '';
-      let reasoning = '';
-      let latest: OllamaChatResponse | undefined;
-      const toolCalls: Record<string, unknown>[] = [];
-
-      const finish = (error?: Error) => {
-        if (settled) return;
-        settled = true;
-        if (error) {
-          reject(error);
-          return;
-        }
-        const response: OllamaChatResponse = {
-          ...(latest || {
-            model: request.model,
-            created_at: new Date().toISOString(),
-            done: true,
-          }),
-          message: {
-            role: 'assistant',
-            content,
-            ...(reasoning ? { thinking: reasoning } : {}),
-            ...(toolCalls.length ? { tool_calls: toolCalls } : {}),
-          },
-          done: true,
-        };
-        observer.onUsage?.(ollamaUsage(response));
-        resolve(response);
-      };
-
-      void stream
-        .call(
-          this.dependencies.ollama,
-          request,
-          chunk => {
-            latest = chunk;
-            const contentDelta = chunk.message?.content || '';
-            const reasoningDelta = chunk.message?.thinking || '';
-            if (contentDelta) {
-              content += contentDelta;
-              observer.onContent?.(contentDelta);
-            }
-            if (reasoningDelta) {
-              reasoning += reasoningDelta;
-              observer.onReasoning?.(reasoningDelta);
-            }
-            if (Array.isArray(chunk.message?.tool_calls)) {
-              for (const call of chunk.message.tool_calls) {
-                toolCalls.push(call);
-              }
-            }
-            if (chunk.done) finish();
-          },
-          error => finish(error),
-          () => finish(),
-          signal,
-          { userId }
-        )
-        .catch(error =>
-          finish(error instanceof Error ? error : new Error(String(error)))
-        );
-    });
   }
 
   private async generatePluginStream(
@@ -1286,7 +1169,7 @@ function buildGeminiWorkPayload(
   };
 }
 
-// Work tool screenshots are raw base64 PNG (Ollama's wire convention); a
+// Work tool screenshots are raw base64 PNG (the shared wire convention); a
 // data: URL is accepted too and split where a provider needs the parts.
 function workImageDataUrl(image: string): string {
   return image.startsWith('data:') ? image : `data:image/png;base64,${image}`;
@@ -1579,18 +1462,6 @@ async function collectPluginWorkStream(
   };
 }
 
-function ollamaUsage(response: OllamaChatResponse): PluginStreamUsage {
-  return {
-    promptTokens: response.prompt_eval_count,
-    completionTokens: response.eval_count,
-    totalTokens:
-      response.prompt_eval_count !== undefined ||
-      response.eval_count !== undefined
-        ? (response.prompt_eval_count || 0) + (response.eval_count || 0)
-        : undefined,
-  };
-}
-
 function geminiStreamingEndpoint(endpoint: string): string {
   const url = new URL(endpoint);
   url.pathname = url.pathname.replace(
@@ -1866,16 +1737,6 @@ function assertWorkPluginType(plugin: Plugin): void {
       `Plugin "${plugin.name}" does not provide chat completions.`,
       422,
       'WORK_PLUGIN_TOOLS_UNSUPPORTED'
-    );
-  }
-}
-
-function assertOllamaProvider(provider: WorkProviderSelection): void {
-  if (provider.providerType !== 'ollama' || provider.providerId) {
-    throw new WorkModelProviderError(
-      'Invalid Ollama provider selection.',
-      400,
-      'WORK_PROVIDER_INVALID'
     );
   }
 }

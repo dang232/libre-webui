@@ -24,10 +24,6 @@ import {
   resolvePlatformRuntimeConfig,
 } from './platform/runtimeConfig.js';
 import {
-  getOllamaRuntimeConfig,
-  normalizeOllamaRuntimeEnvironment,
-} from './platform/ollamaRuntimeConfig.js';
-import {
   assertNoLegacyDataDirectoryConflict,
   assertPreflightDirectoryOutsideDataDirectory,
   ensurePrivateRuntimeDirectory,
@@ -45,7 +41,6 @@ import {
 import { createLogger } from './utils/logger.js';
 
 const logger = createLogger('durable-worker');
-normalizeOllamaRuntimeEnvironment(getOllamaRuntimeConfig());
 const config = assertPlatformRuntimeConfig(resolvePlatformRuntimeConfig());
 if (config.jobs.workerMode !== 'external') {
   throw new Error('The standalone worker requires JOB_WORKER_MODE=external.');

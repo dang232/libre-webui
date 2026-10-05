@@ -14,10 +14,6 @@ import {
   resolvePlatformRuntimeConfig,
 } from './platform/runtimeConfig.js';
 import {
-  getOllamaRuntimeConfig,
-  normalizeOllamaRuntimeEnvironment,
-} from './platform/ollamaRuntimeConfig.js';
-import {
   inspectStorageKeyConfiguration,
   provisionLegacyEncryptionKey,
 } from './platform/storage/storageFactory.js';
@@ -44,9 +40,6 @@ import {
 import path from 'node:path';
 import fs from 'node:fs';
 
-// Provider limits are pure configuration. Reject malformed values before
-// resolving data paths, provisioning keys, or opening persistence.
-normalizeOllamaRuntimeEnvironment(getOllamaRuntimeConfig());
 const platformConfig = assertPlatformRuntimeConfig(
   resolvePlatformRuntimeConfig()
 );

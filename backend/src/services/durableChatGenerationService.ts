@@ -41,7 +41,6 @@ import { assertDurableChatCompletionEvent } from './durableChatCompletion.js';
 import chatService from './chatService.js';
 import { personaService } from './personaService.js';
 import preferencesService from './preferencesService.js';
-import ollamaService from './ollamaService.js';
 import pluginService from './pluginService.js';
 import {
   buildWebSearchEnhancedContent,
@@ -202,7 +201,6 @@ const streamGeneratedAssistant = async (
   let content = '';
   let thinking = '';
   let providerMetadata: Record<string, unknown> | undefined;
-  let finalResponse: OllamaChatResponse | undefined;
   let streamEventSequence = 0;
   let toolEventSequence = 0;
   const toolSink: ToolLoopEventSink = {
@@ -499,46 +497,9 @@ const streamGeneratedAssistant = async (
     };
   }
 
-  let streamError: Error | undefined;
-  await ollamaService.generateChatStreamResponse(
-    {
-      model: prepared.target.actualModelName,
-      messages: prepared.ollamaMessages,
-      stream: true,
-      options: prepared.target.mergedOptions as Record<string, unknown>,
-    },
-    chunk => {
-      const contentDelta = chunk.message.content || '';
-      const thinkingDelta = chunk.message.thinking || '';
-      content += contentDelta;
-      thinking += thinkingDelta;
-      finalResponse = chunk;
-      if (contentDelta || thinkingDelta) {
-        queuePublish(contentDelta, thinkingDelta);
-      }
-    },
-    error => {
-      streamError = error;
-    },
-    () => undefined,
-    context.signal,
-    { userId: input.actorUserId }
+  throw new Error(
+    `No chat provider available for model "${prepared.target.actualModelName}"`
   );
-  await streamPublisher.drain();
-  if (streamError) throw streamError;
-  if (!finalResponse) throw new Error('Provider stream produced no response');
-  return {
-    response: {
-      ...finalResponse,
-      message: {
-        ...finalResponse.message,
-        content,
-        ...(thinking ? { thinking } : {}),
-      },
-    },
-    content,
-    ...(thinking ? { thinking } : {}),
-  };
 };
 
 class DurableChatGenerationService {

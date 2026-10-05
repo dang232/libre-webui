@@ -24,7 +24,6 @@ import {
 } from './workScreenServer.js';
 import { WebSocketServer, type RawData } from 'ws';
 
-import ollamaService from './services/ollamaService.js';
 import chatService from './services/chatService.js';
 import pluginService from './services/pluginService.js';
 import agentCliService from './services/agentCliService.js';
@@ -43,7 +42,6 @@ import preferencesService from './services/preferencesService.js';
 import assistantCompletionService from './services/assistantCompletionService.js';
 import { personaService } from './services/personaService.js';
 import { ChatRequestService } from './services/chatRequestService.js';
-import { streamOllamaChatResponse } from './utils/ollamaStreaming.js';
 import { streamPluginResponse } from './utils/pluginStreaming.js';
 import { createLogger } from './utils/logger.js';
 import {
@@ -63,9 +61,7 @@ import {
   streamAssistantFakeChunks,
 } from './utils/websocketMessages.js';
 import {
-  ollamaStreamAsPluginChunks,
   runPluginToolLoop,
-  toOllamaExtensionMessages,
   type ToolLoopEventSink,
 } from './services/chatToolRuntimeService.js';
 import {
@@ -76,17 +72,11 @@ import {
   type ToolCatalog,
 } from './services/toolGatewayService.js';
 import type { AuthzActor } from './services/authorizationService.js';
-import { toOpenAICompatibleTools } from './utils/pluginChatAdapter.js';
-import { extractStatistics } from './utils/generationUtils.js';
-import type {
-  GenerationStatistics,
-  OllamaChatResponse,
-} from './types/index.js';
 import {
   createWorkTerminalServer,
   WORK_TERMINAL_WS_PATH,
 } from './workTerminalServer.js';
-import { OllamaChatRequest, ChatSession } from './types/index.js';
+import { ChatSession } from './types/index.js';
 import { normalizeChatProviderSelection } from './utils/chatProviderSelection.js';
 import workPreviewProxyService from './services/workPreviewProxyService.js';
 import { userModel } from './models/userModel.js';
@@ -938,8 +928,7 @@ export function registerWebSocketServer(
                   (err as { cause: unknown }).cause
                 );
               }
-              // If a plugin/agent was matched but failed, don't fall through
-              // to Ollama with a model name it cannot serve.
+              // If a plugin/agent was matched but failed, report it.
               if (activePlugin || agentProviderId) {
                 logger.error(
                   `[WebSocket] ${
@@ -955,179 +944,17 @@ export function registerWebSocketServer(
                 });
                 return;
               }
-              // Continue to Ollama fallback below (no plugin was matched)
+              // No plugin was matched; the no-provider error below ends it.
             }
           }
 
           logger.debug(
-            `[WebSocket] No plugin found, using Ollama for model: ${actualModelName}`
+            `[WebSocket] No plugin matched for model: ${actualModelName}`
           );
-
-          // Reuse the actualModelName variable that was already resolved above
-          // If we're here, it means either there was no plugin or plugin failed
-          // The actualModelName was already resolved in the earlier code block
-
-          let ollamaStatistics: GenerationStatistics | undefined;
-          let ollamaToolMetadata: Record<string, unknown> | undefined;
-          if (toolCatalog) {
-            const bridgeState: { finalChunk?: OllamaChatResponse } = {};
-            const loop = runPluginToolLoop({
-              actor: toolActor,
-              sessionId,
-              assistantMessageId,
-              catalog: toolCatalog,
-              skillIds: toolSkillIds,
-              sink: toolSink,
-              signal: generationSignal,
-              startRound: (extension, tools) =>
-                ollamaStreamAsPluginChunks(
-                  {
-                    model: actualModelName,
-                    messages: [
-                      ...ollamaMessages,
-                      ...toOllamaExtensionMessages(extension),
-                    ],
-                    stream: true,
-                    options: mergedOptions as Record<string, unknown>,
-                    ...(tools.length > 0
-                      ? { tools: toOpenAICompatibleTools([...tools]) }
-                      : {}),
-                    ...(format ? { format } : {}),
-                  },
-                  ollamaService,
-                  bridgeState,
-                  generationSignal,
-                  { userId }
-                ),
-            });
-            const streamResult = await streamPluginResponse({
-              ws,
-              chunks: loop.chunks,
-              messageId: assistantMessageId,
-              signal: generationSignal,
-            });
-            assistantContent = streamResult.content;
-            assistantThinking = streamResult.thinking || '';
-            ollamaStatistics = bridgeState.finalChunk
-              ? extractStatistics(bridgeState.finalChunk)
-              : undefined;
-            if (loop.state.toolCalls.length > 0) {
-              ollamaToolMetadata = { toolCalls: loop.state.toolCalls };
-            }
-            throwIfChatGenerationCancelled(generationSignal);
-          } else {
-            // Create chat request with advanced features
-            const chatRequest: OllamaChatRequest = {
-              model: actualModelName,
-              messages: ollamaMessages,
-              stream: true,
-              options: mergedOptions as Record<string, unknown>,
-            };
-
-            // Add structured output format if specified
-            if (format) {
-              chatRequest.format = format;
-            }
-
-            const ollamaStream = await streamOllamaChatResponse({
-              ws,
-              request: chatRequest,
-              streamSource: ollamaService,
-              messageId: assistantMessageId,
-              userId,
-              signal: generationSignal,
-            });
-
-            assistantContent = ollamaStream.content;
-            assistantThinking = ollamaStream.thinking || '';
-            ollamaStatistics = ollamaStream.statistics;
-
-            throwIfChatGenerationCancelled(generationSignal);
-
-            if (!ollamaStream.completed) {
-              return;
-            }
-          }
-
-          // Save the complete assistant message with the provided ID (skip for private sessions)
-          if ((assistantContent || assistantThinking) && assistantMessageId) {
-            const completion =
-              await assistantCompletionService.completeAssistantMessage({
-                sessionId,
-                session,
-                content: assistantContent,
-                thinking: assistantThinking || undefined,
-                model: session.model,
-                messageId: assistantMessageId,
-                userId,
-                isPrivate,
-                regenerate,
-                originalMessageId,
-                statistics: ollamaStatistics,
-                providerMetadata: withContextSources(ollamaToolMetadata),
-                signal: generationSignal,
-              });
-
-            if (isPrivate) {
-              // For private sessions, just send completion without saving
-              logger.debug(
-                'Backend: Private session - skipping Ollama message save'
-              );
-              sendAssistantComplete(ws, {
-                ...completion.privateMessage,
-                messageId: assistantMessageId,
-                statistics: ollamaStatistics,
-              });
-            } else {
-              logger.debug(
-                'Backend: Saving complete assistant message with ID:',
-                assistantMessageId,
-                'regenerate:',
-                !!regenerate
-              );
-
-              if (Object.keys(completion.branchingFields).length > 0) {
-                logger.debug(
-                  'Backend: Setting branching fields:',
-                  completion.branchingFields
-                );
-              }
-
-              logger.debug('Backend: About to save assistant message:', {
-                sessionId,
-                messageId: assistantMessageId,
-                contentLength: assistantContent.length,
-                hasBranchingFields:
-                  Object.keys(completion.branchingFields).length > 0,
-                branchingFields: completion.branchingFields,
-              });
-
-              logger.debug(
-                'Backend: Assistant message saved:',
-                !!completion.assistantMessage,
-                completion.assistantMessage
-                  ? {
-                      id: completion.assistantMessage.id,
-                      contentLength: completion.assistantMessage.content.length,
-                    }
-                  : 'FAILED TO SAVE'
-              );
-
-              // Send completion signal with statistics
-              sendAssistantComplete(ws, {
-                content: assistantContent,
-                thinking: assistantThinking || undefined,
-                role: 'assistant',
-                timestamp: Date.now(),
-                messageId: assistantMessageId,
-                statistics: ollamaStatistics,
-                ...(withContextSources(ollamaToolMetadata)
-                  ? { providerMetadata: withContextSources(ollamaToolMetadata) }
-                  : {}),
-                ...completion.branchingFields,
-              });
-            }
-          }
+          sendError(ws, {
+            error: `No chat provider available for model "${actualModelName}"`,
+          });
+          return;
         }
       } catch (error: unknown) {
         if (

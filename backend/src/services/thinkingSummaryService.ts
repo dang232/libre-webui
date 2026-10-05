@@ -22,8 +22,6 @@ import type {
   ChatProviderSelection,
   ChatSession,
   GenerationOptions,
-  OllamaChatRequest,
-  OllamaChatResponse,
   PluginResponse,
 } from '../types/index.js';
 import {
@@ -86,7 +84,7 @@ export function parseThinkingSummaryRequest(
   const provider = normalizeChatProviderSelection({ providerType, providerId });
   if (provider?.providerType === 'agent') {
     throw new ChatProviderSelectionError(
-      'Thinking summaries require an Ollama or plugin model.'
+      'Thinking summaries require a plugin model.'
     );
   }
   return { model: model.trim(), thinking: thinking.trim(), ...provider };
@@ -144,13 +142,6 @@ interface ThinkingSummaryDependencies {
       pluginId?: string,
       signal?: AbortSignal
     ): Promise<PluginResponse>;
-  };
-  ollamaService: {
-    generateChatResponse(
-      request: OllamaChatRequest,
-      signal?: AbortSignal,
-      usage?: { userId?: string }
-    ): Promise<OllamaChatResponse>;
   };
   timeoutMs?: number;
 }
@@ -210,12 +201,8 @@ export class ThinkingSummaryService {
       return abortable(operation(), signal);
     };
     try {
-      const {
-        chatService,
-        chatGenerationService,
-        pluginService,
-        ollamaService,
-      } = this.dependencies;
+      const { chatService, chatGenerationService, pluginService } =
+        this.dependencies;
       const session = await wait(() =>
         chatService.getSession(sessionId, userId)
       );
@@ -234,7 +221,7 @@ export class ThinkingSummaryService {
         : normalizeChatProviderSelection(request);
       if (provider?.providerType === 'agent') {
         throw new ChatProviderSelectionError(
-          'Thinking summaries require an Ollama or plugin model.'
+          'Thinking summaries require a plugin model.'
         );
       }
       const options: GenerationOptions = {
@@ -279,21 +266,9 @@ export class ThinkingSummaryService {
         );
         raw = chatGenerationService.extractPluginAssistantContent(response);
       } else {
-        const { think: _think, ...ollamaOptions } = target.mergedOptions;
-        const response = await wait(() =>
-          ollamaService.generateChatResponse(
-            {
-              model: target.actualModelName,
-              messages: [{ role: 'user', content: prompt }],
-              stream: false,
-              think: false,
-              options: { ...ollamaOptions, temperature: 0.2, num_predict: 64 },
-            },
-            signal,
-            { userId }
-          )
+        throw new Error(
+          `No summary provider available for model "${target.actualModelName}"`
         );
-        raw = response.message?.content ?? '';
       }
       signal.throwIfAborted();
       return { summary: sanitizeSummary(raw) };

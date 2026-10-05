@@ -21,8 +21,6 @@ import type {
   ChatProviderSelection,
   ChatSession,
   GenerationOptions,
-  OllamaGenerateRequest,
-  OllamaGenerateResponse,
   PluginResponse,
 } from '../types/index.js';
 import {
@@ -38,8 +36,8 @@ const TITLE_GENERATION_OPTIONS: GenerationOptions = {
 };
 
 /**
- * Providers reached over the plugin path cannot be told to skip reasoning the
- * way a local Ollama call can (`think: false`). A reasoning model spends the
+ * Providers reached over the plugin path cannot be told to skip reasoning.
+ * A reasoning model spends the
  * whole budget thinking and returns empty content, which used to surface as
  * "could not generate a title", so give that path room to think and still
  * answer. Only the visible content is read, and the result is trimmed to a
@@ -52,8 +50,6 @@ const PLUGIN_TITLE_GENERATION_OPTIONS: GenerationOptions = {
   // itself is set to.
   think: false,
 };
-
-const TITLE_STOP_SEQUENCES = ['\n', '.', '!', '?'];
 
 export interface GenerateTitleForSessionOptions {
   sessionId: string;
@@ -68,7 +64,7 @@ export interface GenerateTitleForSessionResult {
   title: string;
   session: ChatSession;
   model: string;
-  source: 'plugin' | 'ollama' | 'fallback';
+  source: 'plugin' | 'fallback';
 }
 
 export interface SanitizedGeneratedTitle {
@@ -112,17 +108,10 @@ interface PluginServiceDependency {
   ): Promise<PluginResponse>;
 }
 
-interface OllamaServiceDependency {
-  generateResponse(
-    request: OllamaGenerateRequest
-  ): Promise<OllamaGenerateResponse>;
-}
-
 export interface TitleGenerationServiceDependencies {
   chatService: ChatServiceDependency;
   chatGenerationService: ChatGenerationServiceDependency;
   pluginService: PluginServiceDependency;
-  ollamaService: OllamaServiceDependency;
   now?: () => number;
   logger?: Pick<Console, 'error'>;
 }
@@ -206,7 +195,6 @@ export class TitleGenerationService {
   private chatService: ChatServiceDependency;
   private chatGenerationService: ChatGenerationServiceDependency;
   private pluginService: PluginServiceDependency;
-  private ollamaService: OllamaServiceDependency;
   private now: () => number;
   private logger: Pick<Console, 'error'>;
 
@@ -214,14 +202,12 @@ export class TitleGenerationService {
     chatService,
     chatGenerationService,
     pluginService,
-    ollamaService,
     now = Date.now,
     logger = console,
   }: TitleGenerationServiceDependencies) {
     this.chatService = chatService;
     this.chatGenerationService = chatGenerationService;
     this.pluginService = pluginService;
-    this.ollamaService = ollamaService;
     this.now = now;
     this.logger = logger;
   }
@@ -313,7 +299,7 @@ export class TitleGenerationService {
     message: string,
     userId: string,
     providerSelection?: QualifiedChatProviderSelection
-  ): Promise<{ title: string; source: 'plugin' | 'ollama' }> {
+  ): Promise<{ title: string; source: 'plugin' | 'fallback' }> {
     const target = await this.chatGenerationService.prepareGenerationTarget(
       model,
       userId,
@@ -347,26 +333,9 @@ export class TitleGenerationService {
       };
     }
 
-    // Ollama takes the thinking setting beside the options, never inside
-    // them, and this call answers it for itself below.
-    const { think: _think, ...ollamaOptions } = target.mergedOptions;
-
-    const response = await this.ollamaService.generateResponse({
-      model: target.actualModelName,
-      prompt,
-      stream: false,
-      think: false,
-      options: {
-        ...ollamaOptions,
-        temperature: TITLE_GENERATION_OPTIONS.temperature,
-        num_predict: TITLE_GENERATION_OPTIONS.num_predict,
-        stop: TITLE_STOP_SEQUENCES,
-      },
-    });
-
     return {
-      title: response.response,
-      source: 'ollama',
+      title: buildFallbackTitle(message),
+      source: 'fallback',
     };
   }
 }

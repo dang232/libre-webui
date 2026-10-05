@@ -18,9 +18,9 @@
 /**
  * One provider round for the native tool loop, in the plugin chunk
  * vocabulary. Both transports that run tools — the durable chat turn and a
- * channel @model mention — need the same plugin-or-Ollama branch, so it
- * lives here once: a prepared target plus the turn's base messages becomes
- * the `startRound` the loop calls each round.
+ * channel @model mention — need the same plugin branch, so it lives here
+ * once: a prepared target plus the turn's base messages becomes the
+ * `startRound` the loop calls each round.
  */
 
 import type {
@@ -29,14 +29,8 @@ import type {
   OllamaChatResponse,
   ProviderToolSpec,
 } from '../types/index.js';
-import { toOpenAICompatibleTools } from '../utils/pluginChatAdapter.js';
 import type { PluginStreamChunk } from '../utils/pluginStreamAdapter.js';
 import type { GenerationTarget } from './chatGenerationService.js';
-import {
-  ollamaStreamAsPluginChunks,
-  toOllamaExtensionMessages,
-} from './chatToolRuntimeService.js';
-import ollamaService from './ollamaService.js';
 import pluginService from './pluginService.js';
 
 export interface ToolRoundStarterOptions {
@@ -71,23 +65,16 @@ export const createToolRoundStarter = (
         options.signal
       );
   }
-  return (extension, tools) =>
-    ollamaStreamAsPluginChunks(
-      {
-        model: options.target.actualModelName,
-        messages: [
-          ...options.ollamaMessages,
-          ...toOllamaExtensionMessages(extension),
-        ],
-        stream: true,
-        options: options.target.mergedOptions as Record<string, unknown>,
-        ...(tools.length > 0
-          ? { tools: toOpenAICompatibleTools([...tools]) }
-          : {}),
-      },
-      ollamaService,
-      options.ollamaState,
-      options.signal,
-      { userId: options.userId }
-    );
+  return () => ({
+    [Symbol.asyncIterator](): AsyncIterator<PluginStreamChunk> {
+      return {
+        next: () =>
+          Promise.reject<IteratorResult<PluginStreamChunk>>(
+            new Error(
+              `No chat provider available for model "${options.target.actualModelName}"`
+            )
+          ),
+      };
+    },
+  });
 };

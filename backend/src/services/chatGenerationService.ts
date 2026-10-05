@@ -22,7 +22,6 @@ import {
   extractPluginAssistantThinking,
 } from '../utils/pluginResponse.js';
 import agentCliService from './agentCliService.js';
-import ollamaService from './ollamaService.js';
 import { personaService } from './personaService.js';
 import pluginService from './pluginService.js';
 import preferencesService from './preferencesService.js';
@@ -66,7 +65,7 @@ export interface NonStreamingExecutionResult {
   response: OllamaChatResponse;
   assistantContent: string;
   assistantThinking?: string;
-  source: 'plugin' | 'ollama';
+  source: 'plugin';
   pluginError?: Error;
 }
 
@@ -123,27 +122,15 @@ class ChatGenerationService {
   async mergeOptionsForModel(
     model: string,
     userId: string,
-    options: GenerationOptions = {},
-    signal?: AbortSignal,
-    includeOllamaDefaults = true
+    options: GenerationOptions = {}
   ): Promise<GenerationOptions> {
     const [global, pinned] = await Promise.all([
       preferencesService.getGenerationOptions(userId),
       preferencesService.getModelGenerationOptions(model, userId),
     ]);
 
-    // Only ask the model when the user has not already answered for it.
-    const recommended =
-      !includeOllamaDefaults ||
-      (Object.keys(pinned).length > 0 && pinned.num_ctx !== undefined)
-        ? {}
-        : (await ollamaService.getModelDefaults(model, signal)).options;
-
     return mergeGenerationOptions(
-      mergeGenerationOptions(
-        mergeGenerationOptions(global, recommended as GenerationOptions),
-        pinned as GenerationOptions
-      ),
+      mergeGenerationOptions(global, pinned as GenerationOptions),
       options
     );
   }
@@ -167,21 +154,17 @@ class ChatGenerationService {
       userId
     );
     const activePlugin =
-      provider?.providerType === 'ollama' || provider?.providerType === 'agent'
+      provider?.providerType === 'agent'
         ? null
         : await pluginService.getActivePluginForModel(
             actualModelName,
             userId,
             provider?.providerId
           );
-    const includeOllamaDefaults =
-      provider?.providerType === 'ollama' || (!provider && !activePlugin);
     const mergedOptions = await this.mergeOptionsForModel(
       actualModelName,
       userId,
-      options,
-      signal,
-      includeOllamaDefaults
+      options
     );
     const pluginVariables = activePlugin
       ? await pluginService.getPluginVariables(activePlugin, userId)
@@ -250,19 +233,12 @@ class ChatGenerationService {
 
   async executeNonStreaming({
     target,
-    ollamaMessages,
     pluginMessages,
     userId,
     pluginFallbackPolicy = 'disabled',
     signal,
   }: NonStreamingExecutionOptions): Promise<NonStreamingExecutionResult> {
     throwIfChatGenerationCancelled(signal);
-    const chatRequest = {
-      model: target.actualModelName,
-      messages: ollamaMessages,
-      stream: false,
-      options: target.mergedOptions as Record<string, unknown>,
-    };
 
     if (target.providerType === 'agent' && target.providerId) {
       let assistantContent = '';
@@ -342,36 +318,13 @@ class ChatGenerationService {
           throw pluginError;
         }
 
-        const response = await ollamaService.generateChatResponse(
-          chatRequest,
-          signal,
-          { userId }
-        );
-        return {
-          response,
-          assistantContent: response.message.content,
-          ...(response.message.thinking
-            ? { assistantThinking: response.message.thinking }
-            : {}),
-          source: 'ollama',
-          pluginError,
-        };
+        throw pluginError;
       }
     }
 
-    const response = await ollamaService.generateChatResponse(
-      chatRequest,
-      signal,
-      { userId }
+    throw new Error(
+      `No chat provider available for model "${target.actualModelName}"`
     );
-    return {
-      response,
-      assistantContent: response.message.content,
-      ...(response.message.thinking
-        ? { assistantThinking: response.message.thinking }
-        : {}),
-      source: 'ollama',
-    };
   }
 }
 

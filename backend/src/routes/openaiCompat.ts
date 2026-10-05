@@ -29,7 +29,6 @@ import { randomUUID } from 'node:crypto';
 import { authenticate, AuthenticatedRequest } from '../middleware/auth.js';
 import { budgetGuard } from '../middleware/index.js';
 import chatGenerationService from '../services/chatGenerationService.js';
-import ollamaService from '../services/ollamaService.js';
 import pluginService from '../services/pluginService.js';
 import type {
   ChatMessage,
@@ -62,13 +61,6 @@ router.get('/models', async (req: AuthenticatedRequest, res) => {
   try {
     const userId = userIdOf(req);
     const models: Array<{ id: string; owned_by: string }> = [];
-    try {
-      for (const model of await ollamaService.getModels()) {
-        models.push({ id: model.name, owned_by: 'ollama' });
-      }
-    } catch {
-      // A missing local Ollama simply contributes no models.
-    }
     for (const plugin of await pluginService.getActivePlugins(userId)) {
       if (plugin.type !== 'chat' && plugin.type !== 'completion') continue;
       for (const model of plugin.model_map) {
@@ -310,24 +302,8 @@ router.post(
             }
           }
         } else {
-          await ollamaService.generateChatStreamResponse(
-            {
-              model: target.actualModelName,
-              messages: ollamaMessages,
-              stream: true,
-              options: target.mergedOptions as Record<string, unknown>,
-            },
-            chunk => {
-              if (chunk.message?.content) {
-                writeChunk({ content: chunk.message.content });
-              }
-            },
-            error => {
-              throw error;
-            },
-            () => undefined,
-            controller.signal,
-            { userId }
+          throw new Error(
+            `No chat provider available for model "${target.actualModelName}"`
           );
         }
         writeChunk({}, 'stop');

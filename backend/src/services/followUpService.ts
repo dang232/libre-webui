@@ -20,8 +20,6 @@ import type {
   ChatMessage,
   ChatSession,
   GenerationOptions,
-  OllamaGenerateRequest,
-  OllamaGenerateResponse,
   PluginResponse,
 } from '../types/index.js';
 import { normalizeChatProviderSelection } from '../utils/chatProviderSelection.js';
@@ -99,17 +97,10 @@ interface PluginServiceDependency {
   ): Promise<PluginResponse>;
 }
 
-interface OllamaServiceDependency {
-  generateResponse(
-    request: OllamaGenerateRequest
-  ): Promise<OllamaGenerateResponse>;
-}
-
-export interface FollowUpServiceDependencies {
+interface FollowUpServiceDependencies {
   chatService: ChatServiceDependency;
   chatGenerationService: ChatGenerationServiceDependency;
   pluginService: PluginServiceDependency;
-  ollamaService: OllamaServiceDependency;
   now?: () => number;
   logger?: Pick<Console, 'error'>;
 }
@@ -118,7 +109,6 @@ export class FollowUpService {
   private chatService: ChatServiceDependency;
   private chatGenerationService: ChatGenerationServiceDependency;
   private pluginService: PluginServiceDependency;
-  private ollamaService: OllamaServiceDependency;
   private now: () => number;
   private logger: Pick<Console, 'error'>;
 
@@ -126,14 +116,12 @@ export class FollowUpService {
     chatService,
     chatGenerationService,
     pluginService,
-    ollamaService,
     now = Date.now,
     logger = console,
   }: FollowUpServiceDependencies) {
     this.chatService = chatService;
     this.chatGenerationService = chatGenerationService;
     this.pluginService = pluginService;
-    this.ollamaService = ollamaService;
     this.now = now;
     this.logger = logger;
   }
@@ -219,22 +207,8 @@ export class FollowUpService {
       );
     }
 
-    // Ollama takes the thinking setting beside the options, never inside
-    // them, and this call answers it for itself below.
-    const { think: _think, ...ollamaOptions } = target.mergedOptions;
-
-    const response = await this.ollamaService.generateResponse({
-      model: target.actualModelName,
-      prompt,
-      stream: false,
-      think: false,
-      options: {
-        ...ollamaOptions,
-        temperature: FOLLOW_UP_GENERATION_OPTIONS.temperature,
-        num_predict: FOLLOW_UP_GENERATION_OPTIONS.num_predict,
-      },
-    });
-
-    return response.response;
+    throw new Error(
+      `No follow-up provider available for model "${target.actualModelName}"`
+    );
   }
 }

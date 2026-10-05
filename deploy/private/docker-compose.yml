@@ -24,7 +24,6 @@ services:
       CORS_ORIGIN: https://${PUBLIC_HOSTNAME:?set PUBLIC_HOSTNAME}
       TRUST_PROXY: '1'
       ENABLE_SIGNUP: ${ENABLE_SIGNUP:-false}
-      OLLAMA_BASE_URL: http://ollama:11434
       # Default SearXNG endpoint for the bundled web-search service. Search
       # stays off until an administrator enables it in Settings > Search.
       SEARXNG_URL: http://searxng:8080
@@ -64,9 +63,6 @@ services:
       - '3001'
     networks:
       - private
-    depends_on:
-      ollama:
-        condition: service_healthy
     labels:
       # Application upgrades are coordinated with a verified backup and an
       # operator-reviewed image. Never let Watchtower replace this service.
@@ -81,38 +77,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-    logging:
-      driver: local
-      options:
-        max-size: 10m
-        max-file: '3'
-
-  ollama:
-    image: ollama/ollama:latest
-    container_name: alcore-ollama
-    restart: unless-stopped
-    init: true
-    security_opt:
-      - no-new-privileges:true
-    pids_limit: ${OLLAMA_PIDS_LIMIT:-1024}
-    mem_limit: ${OLLAMA_MEMORY_LIMIT:-12g}
-    cpus: ${OLLAMA_CPU_LIMIT:-8}
-    environment:
-      OLLAMA_HOST: 0.0.0.0:11434
-    volumes:
-      - ollama-data:/root/.ollama
-    expose:
-      - '11434'
-    networks:
-      - private
-    healthcheck:
-      test: ['CMD', 'ollama', 'list']
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 15s
-    labels:
-      com.centurylinklabs.watchtower.enable: 'true'
     logging:
       driver: local
       options:
@@ -210,4 +174,3 @@ networks:
 volumes:
   alcore-data:
   alcore-preflight:
-  ollama-data:

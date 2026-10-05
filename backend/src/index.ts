@@ -64,7 +64,6 @@ import {
   optionalAuth,
   type AuthenticatedRequest,
 } from './middleware/auth.js';
-import ollamaRoutes from './routes/ollama.js';
 import chatRoutes from './routes/chat.js';
 import agentCliRoutes from './routes/agentCli.js';
 import preferencesRoutes from './routes/preferences.js';
@@ -111,8 +110,6 @@ import accessRoutes from './routes/access.js';
 import auditRoutes from './routes/audit.js';
 import tokenpanelRoutes from './routes/tokenpanel.js';
 import adminProvidersRoutes from './routes/adminProviders.js';
-import ollamaService from './services/ollamaService.js';
-import { initializeOllamaRuntime } from './services/ollamaSettingsService.js';
 import workRuntimeService from './services/workRuntimeService.js';
 import workTaskService from './services/workTaskService.js';
 import workAgentService from './services/workAgentService.js';
@@ -505,19 +502,6 @@ const preferencesRateLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Rate limiter for the /api/ollama route
-const ollamaRateLimiter = rateLimit({
-  keyPrefix: 'api-ollama',
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10000, // limit each IP to 10000 requests per windowMs (very high limit for streaming chunks)
-  message: {
-    success: false,
-    error: 'Too many requests from this IP, please try again later.',
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
 // Rate limiter for the /api/documents route
 const documentsRateLimiter = rateLimit({
   keyPrefix: 'api-documents',
@@ -672,7 +656,6 @@ app.use('/api/tokenpanel', tokenpanelBillingRoutes);
 app.use('/api/tokenpanel', tokenpanelAccountRoutes);
 app.use('/api/tokenpanel', tokenpanelUsageRoutes);
 app.use('/api/users', usersRateLimiter, optionalAuth, usersRoutes);
-app.use('/api/ollama', ollamaRateLimiter, ollamaRoutes);
 app.use('/api/chat', chatRateLimiter, optionalAuth, chatRoutes);
 app.use('/api/agent-clis', chatRateLimiter, optionalAuth, agentCliRoutes);
 app.use(
@@ -878,28 +861,6 @@ healthService.registerDependencyCheck({
     };
   },
 });
-healthService.registerDependencyCheck({
-  id: 'ollama-provider',
-  required: false,
-  depths: ['deep'],
-  check: async () => {
-    if (!ollamaService.isEnabled()) {
-      return {
-        status: 'pass' as const,
-        message: 'The Ollama provider is disabled by admin settings.',
-        details: { provider: 'ollama', disabled: true },
-      };
-    }
-    const healthy = await ollamaService.isHealthy();
-    return {
-      status: healthy ? 'pass' : 'warn',
-      ...(!healthy
-        ? { message: 'The optional Ollama provider is unavailable.' }
-        : {}),
-      details: { provider: 'ollama' },
-    };
-  },
-});
 // Create HTTP server
 const server = createServer(app);
 
@@ -976,26 +937,6 @@ server.listen({ port, host }, () => {
   } else {
     logger.info('No SSO providers configured (optional)');
   }
-
-  // Apply persisted Ollama runtime settings, then check the connection once.
-  // A deliberately disabled Ollama is silent: no probe, no warning.
-  initializeOllamaRuntime()
-    .catch(() => undefined)
-    .then(() => {
-      if (!ollamaService.isEnabled()) {
-        logger.info('Ollama provider is disabled by admin settings');
-        return;
-      }
-      return ollamaService.isHealthy().then(isHealthy => {
-        if (isHealthy) {
-          logger.info('Ollama service is connected and ready');
-        } else {
-          logger.warn(
-            `Ollama service is not available - make sure it's running on ${ollamaService.getBaseUrl()}`
-          );
-        }
-      });
-    });
 });
 
 // Graceful shutdown

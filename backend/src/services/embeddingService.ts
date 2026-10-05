@@ -21,11 +21,7 @@ import {
   OllamaEmbeddingsResponse,
   Plugin,
 } from '../types/index.js';
-import ollamaService from './ollamaService.js';
 import pluginService from './pluginService.js';
-import { createLogger } from '../utils/logger.js';
-
-const logger = createLogger('services:embedding-service');
 
 const EMBEDDING_PATTERNS = [
   'embed',
@@ -92,26 +88,6 @@ class EmbeddingService {
   async getAvailableModels(userId?: string): Promise<EmbeddingModel[]> {
     const models: EmbeddingModel[] = [];
 
-    try {
-      const ollamaModels = await ollamaService.getModels();
-      for (const model of ollamaModels) {
-        if (!isLikelyEmbeddingModel(model.name)) {
-          continue;
-        }
-
-        models.push({
-          id: model.name,
-          name: model.name,
-          description: `Ollama - ${model.details?.parameter_size || 'Unknown size'} - ${model.details?.family || 'Model'}`,
-          provider: 'ollama',
-          dimensions: 0,
-          isDetectedEmbedding: isLikelyEmbeddingModel(model.name),
-        });
-      }
-    } catch (error) {
-      logger.warn('Failed to load Ollama embedding models:', error);
-    }
-
     const plugins: Plugin[] = [];
     for (const plugin of await pluginService.getActivePlugins(userId)) {
       if (
@@ -157,29 +133,16 @@ class EmbeddingService {
     }
 
     const deduped = this.dedupeModels(models);
-    if (deduped.length > 0) {
-      return deduped.sort((a, b) => {
-        const detectionDelta =
-          Number(Boolean(b.isDetectedEmbedding)) -
-          Number(Boolean(a.isDetectedEmbedding));
-        if (detectionDelta !== 0) {
-          return detectionDelta;
-        }
+    return deduped.sort((a, b) => {
+      const detectionDelta =
+        Number(Boolean(b.isDetectedEmbedding)) -
+        Number(Boolean(a.isDetectedEmbedding));
+      if (detectionDelta !== 0) {
+        return detectionDelta;
+      }
 
-        return a.name.localeCompare(b.name);
-      });
-    }
-
-    return [
-      {
-        id: 'nomic-embed-text',
-        name: 'nomic-embed-text',
-        description: 'Ollama - Default embedding model',
-        provider: 'ollama',
-        dimensions: 0,
-        isDetectedEmbedding: true,
-      },
-    ];
+      return a.name.localeCompare(b.name);
+    });
   }
 
   async generateEmbeddings(
@@ -213,12 +176,8 @@ class EmbeddingService {
       );
     }
 
-    return ollamaService.generateEmbeddings(
-      {
-        ...payload,
-        model: target.model,
-      },
-      signal
+    throw new Error(
+      `No embedding provider available for model "${target.model}"`
     );
   }
 }

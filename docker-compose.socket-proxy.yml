@@ -25,7 +25,6 @@ services:
       - WORK_PREVIEW_BIND=${WORK_PREVIEW_BIND:-127.0.0.1}
       - WORK_DOCKER_PUBLISHED_HOST=${WORK_DOCKER_PUBLISHED_HOST:-host.docker.internal}
       - PORT=3001
-      - OLLAMA_BASE_URL=http://ollama:11434
       # Work talks to the Docker Engine API through the filtered proxy.
       # The docker CLI, the interactive terminal, and system diagnostics all
       # follow this endpoint; no socket mount or socket-group membership.
@@ -54,8 +53,6 @@ services:
       - STORAGE_ENCRYPTION_KEYS=${STORAGE_ENCRYPTION_KEYS:-}
       - STORAGE_ENCRYPTION_ACTIVE_KEY_ID=${STORAGE_ENCRYPTION_ACTIVE_KEY_ID:-}
       # Timeout configuration for large models on multiple GPUs
-      - OLLAMA_TIMEOUT=${OLLAMA_TIMEOUT:-300000}
-      - OLLAMA_LONG_OPERATION_TIMEOUT=${OLLAMA_LONG_OPERATION_TIMEOUT:-900000}
       - VITE_API_TIMEOUT=${VITE_API_TIMEOUT:-300000}
       # Database path - points to the volume mount
       - DATA_DIR=/app/backend/data
@@ -73,7 +70,6 @@ services:
       - libre_webui_data:/app/backend/data
       - libre_webui_temp:/app/backend/temp
     depends_on:
-      - ollama
       - docker-socket-proxy
     restart: unless-stopped
     networks:
@@ -105,26 +101,9 @@ services:
     networks:
       - docker-proxy
 
-  ollama:
-    image: ollama/ollama:latest
-    volumes:
-      - ollama_data:/root/.ollama
-    restart: unless-stopped
-    networks:
-      - libre-webui-network
-    # Uncomment the following lines if you have GPU support
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: 1
-    #           capabilities: [gpu]
-
 volumes:
   libre_webui_data:
   libre_webui_temp:
-  ollama_data:
 
 networks:
   libre-webui-network:

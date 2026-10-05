@@ -27,7 +27,6 @@ import {
   getDefaultTheme,
   type ThemePreference,
 } from './appearanceSettingsService.js';
-import { getOllamaRuntimeSettings } from './ollamaSettingsService.js';
 import {
   canCreateLocalAccount,
   isPublicRegistrationEnabled,
@@ -313,7 +312,7 @@ export class AuthService {
       signupEnabled: canCreateLocalAccount(userCount),
       agentsEnabled: await getAgentsEnabled(),
       passkeysInUse: await anyPasskeysRegistered(),
-      ollamaEnabled: (await getOllamaRuntimeSettings()).enabled,
+      ollamaEnabled: false,
       version: packageVersion,
       turnstile: turnstileService.getPublicConfig(),
       defaultTheme: await getDefaultTheme(),
