@@ -164,7 +164,10 @@ test('tariff resolution prefers exact models and the newest effective row', asyn
     pluginWide.id,
     'plugin-wide rows back-fill unknown models'
   );
-  assert.equal(resolveTariff(tariffs, 'unknown', 'gpt-test', base + 5000), null);
+  assert.equal(
+    resolveTariff(tariffs, 'unknown', 'gpt-test', base + 5000),
+    null
+  );
 
   const priced = costForEvent(
     {
@@ -286,9 +289,16 @@ test('hard budgets block exhausted principals and fail open otherwise', async ()
     costGovernanceService.assertWithinBudget('cost-blocked', now),
     error =>
       error instanceof BudgetExceededError &&
-      /Per-user hard cap/.test(error.message)
+      /Per-user hard cap/.test(error.message) &&
+      error.period === 'monthly'
   );
   await costGovernanceService.assertWithinBudget('cost-free', now);
+
+  // The cached verdict keeps the period for the 429 reset copy.
+  await assert.rejects(
+    costGovernanceService.assertWithinBudget('cost-blocked', now),
+    error => error instanceof BudgetExceededError && error.period === 'monthly'
+  );
 
   // Group budgets cover members through fresh membership resolution.
   upsertUser('cost-grouped');

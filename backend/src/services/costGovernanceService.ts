@@ -62,7 +62,10 @@ export type BudgetPrincipalType = StoredUsageBudgetRecord['principal_type'];
 
 export class BudgetExceededError extends Error {
   readonly statusCode = 429;
-  constructor(readonly budgetName: string) {
+  constructor(
+    readonly budgetName: string,
+    readonly period?: BudgetPeriod
+  ) {
     super(
       `The "${budgetName}" budget is exhausted for this period; new generations are paused`
     );
@@ -491,10 +494,12 @@ class CostGovernanceService {
       if (typeof cached === 'string' && cached) {
         const parsed = JSON.parse(cached) as {
           blockedBy: string | null;
+          period?: BudgetPeriod;
           at: number;
         };
         if (now - parsed.at < SPEND_CACHE_TTL_MS) {
-          if (parsed.blockedBy) throw new BudgetExceededError(parsed.blockedBy);
+          if (parsed.blockedBy)
+            throw new BudgetExceededError(parsed.blockedBy, parsed.period);
           return;
         }
       }
@@ -505,6 +510,7 @@ class CostGovernanceService {
         ).repositories.security.groups.listGroupIdsForUser(userId),
       ]);
       let blockedBy: string | null = null;
+      let blockedPeriod: BudgetPeriod | null = null;
       for (const budget of hard) {
         const applies =
           budget.principal_type === 'instance' ||
@@ -517,17 +523,19 @@ class CostGovernanceService {
         const spent = await this.spendForBudget(budget, tariffs, now);
         if (spent >= budget.amount_usd) {
           blockedBy = budget.name;
+          blockedPeriod = budget.period;
           break;
         }
       }
       await coordinator
         .setCache(
           cacheKey,
-          JSON.stringify({ blockedBy, at: now }),
+          JSON.stringify({ blockedBy, period: blockedPeriod, at: now }),
           SPEND_CACHE_TTL_MS
         )
         .catch(() => undefined);
-      if (blockedBy) throw new BudgetExceededError(blockedBy);
+      if (blockedBy)
+        throw new BudgetExceededError(blockedBy, blockedPeriod ?? undefined);
     } catch (error) {
       if (error instanceof BudgetExceededError) throw error;
       logger.warn('Budget admission check failed open', { error });

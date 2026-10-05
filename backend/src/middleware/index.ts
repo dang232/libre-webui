@@ -206,7 +206,11 @@ export const budgetGuard = async (
       await costGovernanceService.assertWithinBudget(userId);
     } catch (error) {
       if (error instanceof BudgetExceededError) {
-        res.status(429).json({ success: false, message: error.message });
+        res.status(429).json({
+          success: false,
+          message: error.message,
+          ...(error.period ? { period: error.period } : {}),
+        });
         return;
       }
       throw error;

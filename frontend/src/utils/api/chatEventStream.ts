@@ -132,23 +132,44 @@ export const reconcileCompletedDurableGeneration = async <
   return session;
 };
 
-const errorFrom = async (response: Response): Promise<Error> => {
+/** A rejected chat enqueue carries the HTTP status and any machine-readable
+ * failure fields (budget period, account code) so callers can show the
+ * specific recovery message instead of a generic send failure. */
+export interface ChatEnqueueFailure extends Error {
+  status: number;
+  code?: string;
+  period?: string;
+}
+
+const errorFrom = async (response: Response): Promise<ChatEnqueueFailure> => {
+  let body:
+    | { error?: unknown; message?: unknown; code?: unknown; period?: unknown }
+    | undefined;
   try {
-    const payload = (await response.json()) as {
+    body = (await response.json()) as {
       error?: unknown;
       message?: unknown;
+      code?: unknown;
+      period?: unknown;
     };
-    const message =
-      typeof payload.error === 'string'
-        ? payload.error
-        : typeof payload.message === 'string'
-          ? payload.message
-          : undefined;
-    if (message) return new Error(message);
   } catch {
-    // Use the status-only error below for non-JSON responses.
+    body = undefined;
   }
-  return new Error(`Chat event request failed with status ${response.status}.`);
+  const message =
+    typeof body?.error === 'string'
+      ? body.error
+      : typeof body?.message === 'string'
+        ? body.message
+        : undefined;
+  const failure = (
+    message
+      ? new Error(message)
+      : new Error(`Chat event request failed with status ${response.status}.`)
+  ) as ChatEnqueueFailure;
+  failure.status = response.status;
+  if (typeof body?.code === 'string') failure.code = body.code;
+  if (typeof body?.period === 'string') failure.period = body.period;
+  return failure;
 };
 
 const headers = (): Record<string, string> => {

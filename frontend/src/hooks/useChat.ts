@@ -31,7 +31,10 @@ import websocketService from '@/utils/websocket';
 import { generateId, parseThinkingContent } from '@/utils';
 import { parseArtifacts } from '@/utils/artifactParser';
 import { resolveFinalStreamedContent } from '@/utils/streamContent';
-import { chatFailureToastKey } from '@/utils/chatFailureCopy';
+import {
+  chatFailureToastKey,
+  chatSendFailureToastKey,
+} from '@/utils/chatFailureCopy';
 import {
   trackThinkingProgress,
   takeThinkingDuration,
@@ -67,6 +70,26 @@ const getSessionTitle = (sessionId: string) => {
   return state.currentSession?.id === sessionId
     ? state.currentSession.title
     : state.sessions.find(session => session.id === sessionId)?.title;
+};
+
+/**
+ * Resolve a rejected send/regeneration to its toast key. Budget 429s,
+ * verification 403s, and pending-approval 403s each name their recovery;
+ * anything else keeps the caller's generic fallback copy.
+ */
+const sendFailureToastKey = (error: unknown, fallback: string): string => {
+  const failure = error as {
+    status?: number;
+    code?: string;
+    period?: string;
+  } | null;
+  const key = chatSendFailureToastKey({
+    status: failure?.status,
+    code: failure?.code,
+    period: failure?.period,
+    message: error instanceof Error ? error.message : undefined,
+  });
+  return key === 'chat.toasts.sendFailed' ? fallback : key;
 };
 
 export const useChat = (sessionId: string) => {
@@ -1074,7 +1097,7 @@ export const useChat = (sessionId: string) => {
         setIsGenerating(false);
         streamingMessageIdRef.current = null;
         streamingThinkingRef.current = '';
-        toast.error(t('chat.toasts.sendFailed'));
+        toast.error(t(sendFailureToastKey(error, 'chat.toasts.sendFailed')));
       }
     },
     [
@@ -1393,7 +1416,9 @@ export const useChat = (sessionId: string) => {
       setIsGenerating(false);
       streamingMessageIdRef.current = null;
       streamingThinkingRef.current = '';
-      toast.error(t('chat.toasts.regenerateFailed'));
+      toast.error(
+        t(sendFailureToastKey(error, 'chat.toasts.regenerateFailed'))
+      );
     }
   }, [
     sessionId,

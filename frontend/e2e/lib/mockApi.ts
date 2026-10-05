@@ -315,6 +315,8 @@ type MockChatStream = {
   chunkDelayMs?: number;
   completionDelayMs?: number;
   duplicateCompletion?: boolean;
+  /** Dispatch a terminal generation error frame instead of streaming. */
+  failWith?: { error: string; code?: string; delayMs?: number };
 };
 
 type MockWorkRecoveryItem = {
@@ -585,6 +587,8 @@ type MockOptions = {
     source?: 'plugin' | 'fallback';
   };
   chatStream?: MockChatStream;
+  /** Reject the generations POST with an HTTP status and JSON body. */
+  generationFailure?: { status: number; body: unknown };
   workCapabilities?: MockWorkCapabilities;
   /** Work access mode; defaults to the admin-only shipping default. */
   workAccess?: { mode: 'admins' | 'all-users'; allowed: boolean };
@@ -884,6 +888,9 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
         chunkDelayMs: options.chatStream.chunkDelayMs ?? 40,
         completionDelayMs: options.chatStream.completionDelayMs ?? 40,
         duplicateCompletion: options.chatStream.duplicateCompletion ?? false,
+        ...(options.chatStream.failWith
+          ? { failWith: options.chatStream.failWith }
+          : {}),
       }
     : null;
   const pullStreamUrls: string[] = [];
@@ -1179,6 +1186,14 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
   };
 
   await page.addInitScript(streamConfig => {
+    const generationFailure = (): {
+      status: number;
+      body: unknown;
+    } | null =>
+      (window as unknown as Record<string, unknown>).__e2eGenerationFailure as {
+        status: number;
+        body: unknown;
+      } | null;
     const originalFetch = window.fetch.bind(window);
     let nextDurableJobId = 1;
     const durableGenerations = new Map<
@@ -1233,6 +1248,13 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
             { status: 400, headers: { 'content-type': 'application/json' } }
           );
         }
+        if (generationFailure()) {
+          const failure = generationFailure();
+          return new Response(JSON.stringify(failure.body), {
+            status: failure.status,
+            headers: { 'content-type': 'application/json' },
+          });
+        }
         const sent = window as unknown as Record<string, unknown>;
         ((sent.__libreChatStreams ||= []) as unknown[]).push(body);
         const jobId = `e2e-chat-job-${nextDurableJobId++}`;
@@ -1267,6 +1289,34 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
                 : [streamConfig.finalChunk]),
             ]
           : ['Mock assistant response'];
+        if (streamConfig?.failWith) {
+          const failure = streamConfig.failWith;
+          const failBody = new ReadableStream<Uint8Array>({
+            start(controller) {
+              const encoder = new TextEncoder();
+              window.setTimeout(() => {
+                controller.enqueue(
+                  encoder.encode(
+                    `id: 1\ndata: ${JSON.stringify({
+                      type: 'error',
+                      messageId: assistantMessageId,
+                      error: failure.error,
+                      ...(failure.code ? { code: failure.code } : {}),
+                    })}\n\n`
+                  )
+                );
+                controller.close();
+              }, failure.delayMs ?? 50);
+            },
+          });
+          return new Response(failBody, {
+            status: 200,
+            headers: {
+              'content-type': 'text/event-stream',
+              'cache-control': 'no-cache',
+            },
+          });
+        }
         const chunkDelayMs = streamConfig?.chunkDelayMs ?? 0;
         const completionDelayMs = streamConfig?.completionDelayMs ?? 0;
         const signal = requestSignal(input, init);
@@ -1432,6 +1482,17 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
           );
         };
 
+        if (streamConfig?.failWith) {
+          const failure = streamConfig.failWith;
+          window.setTimeout(() => {
+            dispatch('error', {
+              error: failure.error,
+              ...(failure.code ? { code: failure.code } : {}),
+            });
+          }, failure.delayMs ?? 50);
+          return;
+        }
+
         if (!streamConfig) {
           window.setTimeout(() => {
             dispatch('assistant_complete', {
@@ -1498,6 +1559,13 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
       value: MockWebSocket,
     });
   }, chatStream);
+
+  // Rejected sends ride a separate init script so the chat-stream
+  // callback above keeps its shape (and its formatting).
+  await page.addInitScript(failure => {
+    (window as unknown as Record<string, unknown>).__e2eGenerationFailure =
+      failure;
+  }, options.generationFailure ?? null);
 
   // Dev traffic rides Vite's same-origin proxy, so API calls arrive on the
   // dev-server port; Electron and explicit configurations still target :3001.

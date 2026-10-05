@@ -41,6 +41,7 @@ Object.defineProperty(globalThis, 'window', {
 
 const {
   acceptDurableGenerationJob,
+  enqueueDurableChatGeneration,
   reconcileCancelledDurableGeneration,
   reconcileCompletedDurableGeneration,
   releaseDurableGenerationCancellationFence,
@@ -376,4 +377,58 @@ test('Stop reloads the authoritative regeneration branch when completion wins', 
   assert.equal(appliedSession, authoritativeSession);
   assert.equal(authoritativeSession.messages[0]?.isActive, false);
   assert.equal(authoritativeSession.messages[1]?.isActive, true);
+});
+
+test('rejected enqueues carry status, code, and budget period for toast mapping', async () => {
+  const bodies = [
+    {
+      status: 429,
+      body: {
+        success: false,
+        message:
+          'The "Cap" budget is exhausted for this period; new generations are paused',
+        period: 'weekly',
+      },
+    },
+    {
+      status: 403,
+      body: {
+        success: false,
+        code: 'ACCOUNT_PENDING',
+        message: 'Your account is waiting for administrator approval',
+      },
+    },
+  ];
+  const input = {
+    sessionId: 'failure-session',
+    message: 'hello',
+    userMessageId: 'user-1',
+    assistantMessageId: 'assistant-1',
+    options: {},
+    webSearch: false,
+    signal: new AbortController().signal,
+  };
+  for (const { status, body } of bodies) {
+    Object.defineProperty(globalThis, 'fetch', {
+      configurable: true,
+      value: async () =>
+        new Response(JSON.stringify(body), {
+          status,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+    });
+    await assert.rejects(enqueueDurableChatGeneration(input), error => {
+      const failure = error as {
+        status?: number;
+        code?: string;
+        period?: string;
+        message?: string;
+      };
+      assert.equal(failure.status, status);
+      assert.equal(failure.code, (body as { code?: string }).code);
+      assert.equal(failure.period, (body as { period?: string }).period);
+      assert.ok((failure.message ?? '').length > 0);
+      return true;
+    });
+  }
 });

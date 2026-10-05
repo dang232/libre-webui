@@ -561,7 +561,12 @@
       "branchSwitched": "{{number}} numaralı varyanta geçildi",
       "branchSelectFailed": "Dal seçilemedi",
       "editFailed": "Mesaj düzenlenemedi",
-      "toolDecisionFailed": "Araç kararı kaydedilemedi"
+      "toolDecisionFailed": "Araç kararı kaydedilemedi",
+      "generationRateLimitedDaily": "Daily budget spent — new chats pause until midnight UTC. Try again later or upgrade your plan.",
+      "generationRateLimitedWeekly": "Weekly budget spent — new chats pause until Monday 00:00 UTC. Try again later or upgrade your plan.",
+      "generationRateLimitedMonthly": "Monthly budget spent — new chats pause until the 1st of next month (UTC). Try again later or upgrade your plan.",
+      "generationFailedSupport": "The reply couldn't be finished — retry, and if it keeps happening report it from Settings > About > GitHub issues.",
+      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access."
     },
     "documents": {
       "title": "Bağlamdaki belgeler"

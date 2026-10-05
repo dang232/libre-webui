@@ -561,7 +561,12 @@
       "branchSwitched": "Passage à la variante {{number}}",
       "branchSelectFailed": "Échec de la sélection de la branche",
       "editFailed": "Échec de la modification du message",
-      "toolDecisionFailed": "La décision de l’outil n’a pas pu être enregistrée"
+      "toolDecisionFailed": "La décision de l’outil n’a pas pu être enregistrée",
+      "generationRateLimitedDaily": "Daily budget spent — new chats pause until midnight UTC. Try again later or upgrade your plan.",
+      "generationRateLimitedWeekly": "Weekly budget spent — new chats pause until Monday 00:00 UTC. Try again later or upgrade your plan.",
+      "generationRateLimitedMonthly": "Monthly budget spent — new chats pause until the 1st of next month (UTC). Try again later or upgrade your plan.",
+      "generationFailedSupport": "The reply couldn't be finished — retry, and if it keeps happening report it from Settings > About > GitHub issues.",
+      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access."
     },
     "documents": {
       "title": "Documents dans le contexte"

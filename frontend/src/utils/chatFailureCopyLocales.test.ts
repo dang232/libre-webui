@@ -8,6 +8,14 @@ const CODES = [
   'chat-generation-unverified',
   'chat-generation-model-unavailable',
   'chat-generation-upstream-incomplete',
+  'chat-generation-failed',
+];
+
+const SEND_COPY_KEYS = [
+  'chat.toasts.generationRateLimitedDaily',
+  'chat.toasts.generationRateLimitedWeekly',
+  'chat.toasts.generationRateLimitedMonthly',
+  'chat.toasts.generationAccountPending',
 ];
 
 function resolveKey(locale: Record<string, unknown>, dotted: string): unknown {
@@ -36,6 +44,11 @@ describe('chat failure copy ships in every locale', () => {
       for (const code of CODES) {
         const key = chatFailureToastKey(code);
         assert.ok(key, `mapper covers ${code}`);
+        const copy = resolveKey(locale, key);
+        assert.equal(typeof copy, 'string', `${lang}:${key} resolves`);
+        assert.ok((copy as string).length > 0, `${lang}:${key} non-empty`);
+      }
+      for (const key of SEND_COPY_KEYS) {
         const copy = resolveKey(locale, key);
         assert.equal(typeof copy, 'string', `${lang}:${key} resolves`);
         assert.ok((copy as string).length > 0, `${lang}:${key} non-empty`);
