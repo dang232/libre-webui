@@ -45,7 +45,6 @@
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "ollamaUnavailable": "خدمة Ollama غير متاحة. لا يزال من الممكن استخدام نماذج الإضافات.",
     "backendConnectionFailed": "تعذّر الاتصال بخدمة الواجهة الخلفية"
   },
   "auth": {
@@ -454,7 +453,6 @@
       "updated": "تم تحديث النموذج",
       "noModels": "لا توجد نماذج متاحة",
       "noModelsDescription": "لا توجد نماذج متاحة. تأكد من تشغيل Ollama وتثبيت النماذج.",
-      "pullCommand": "ollama pull llama3.2:3b",
       "noModelsTooltip": "لا توجد نماذج متاحة. يرجى التأكد من تشغيل Ollama وتثبيت النماذج.",
       "selectBeforePrivateChat": "اختر نموذجاً متاحاً قبل بدء محادثة خاصة",
       "selectBeforeSending": "اختر نموذجاً متاحاً قبل الإرسال",
@@ -675,7 +673,6 @@
       "sessions": "الجلسات",
       "apiKeys": "مفاتيح API",
       "notifications": "الإشعارات",
-      "ollamaDisabled": "تم تعطيل Ollama من قبل مسؤول",
       "apiPlatform": "API Platform"
     },
     "appearance": {
@@ -1144,12 +1141,6 @@
     "about": {
       "title": "حول",
       "versionLabel": "الإصدار",
-      "ollama": {
-        "title": "حالة Ollama",
-        "version": "الإصدار",
-        "healthy": "سليم",
-        "unhealthy": "غير سليم"
-      },
       "stats": {
         "models": "النماذج",
         "sessions": "الجلسات"
@@ -1462,20 +1453,7 @@
   },
   "models": {
     "title": "النماذج",
-    "subtitle": "سحب وإدارة ومراقبة نماذج Ollama",
-    "installed": "النماذج المثبتة",
-    "available": "النماذج المتاحة",
-    "pull": "سحب النموذج",
-    "pulling": "جاري السحب...",
-    "delete": "حذف النموذج",
-    "deleting": "جاري الحذف...",
-    "size": "الحجم",
-    "modified": "تم التعديل",
-    "family": "العائلة",
-    "parameters": "المعلمات",
-    "quantization": "التكميم",
     "noModels": "لا توجد نماذج مثبتة",
-    "pullFirst": "اسحب نموذجاً للبدء",
     "noModelsFound": "لم يتم العثور على نماذج"
   },
   "personas": {
@@ -1544,12 +1522,6 @@
     "newWork": "جلسة عمل جديدة",
     "openPalette": "فتح لوحة الأوامر"
   },
-  "modelDownload": {
-    "success": "تم تنزيل {{name}}",
-    "failed": "تعذّر التنزيل: {{error}}",
-    "startFailed": "تعذّر بدء التنزيل",
-    "cancelled": "تم إلغاء التنزيل"
-  },
   "modelTools": {
     "toasts": {
       "fetchInfoFailed": "تعذّر جلب المعلومات",
@@ -1562,30 +1534,13 @@
     }
   },
   "modelManager": {
-    "title": "النماذج",
-    "loading": "جاري تحميل النماذج...",
-    "systemStatus": {
-      "online": "Ollama متصل",
-      "offline": "Ollama غير متصل",
-      "models": "نموذج",
-      "models_plural": "نماذج",
-      "running": "قيد التشغيل",
-      "vram": "VRAM"
-    },
     "sections": {
-      "pull": "سحب نموذج جديد",
-      "library": "تصفح المكتبة",
-      "huggingface": "HuggingFace Hub",
-      "running": "النماذج قيد التشغيل",
-      "local": "النماذج المحلية",
-      "advanced": "إجراءات متقدمة",
       "catalog": "دليل النماذج"
     },
     "catalog": {
       "searchPlaceholder": "ابحث عن النماذج بالاسم أو المزوّد...",
       "noModels": "لا توجد نماذج متاحة بعد.",
       "empty": "لا توجد نماذج تطابق بحثك.",
-      "providerOllama": "Ollama",
       "hidden": "مخفي",
       "visibilityFailed": "تعذّر تحديث ظهور النموذج.",
       "filterAll": "كل النماذج",
@@ -1605,144 +1560,10 @@
       "star": "تمييز {{name}} بنجمة",
       "unstar": "إزالة النجمة من {{name}}"
     },
-    "pull": {
-      "placeholder": "أدخل اسم النموذج (مثل llama3.2:3b، deepseek-r1:14b)",
-      "button": "سحب",
-      "cancel": "إلغاء",
-      "popular": "النماذج الشائعة:",
-      "browseAll": "تصفح جميع النماذج على ollama.com",
-      "success": "تم سحب النموذج {{name}} بنجاح",
-      "cancelled": "تم إلغاء سحب النموذج",
-      "failed": "فشل سحب النموذج",
-      "enterName": "يرجى إدخال اسم النموذج",
-      "restricted": "تثبيت النماذج مقصور على المسؤولين في هذا المثيل."
-    },
-    "progress": {
-      "starting": "جاري التهيئة...",
-      "pulling": "جاري تحميل النموذج...",
-      "pullingLayer": "تحميل",
-      "verifying": "جاري التحقق من السلامة...",
-      "verifyingDigest": "التحقق من تجزئة sha256",
-      "writing": "جاري كتابة البيان...",
-      "cleaning": "جاري التنظيف..."
-    },
-    "library": {
-      "available": "متاح",
-      "search": "البحث عن نماذج...",
-      "noResults": "لم يتم العثور على نماذج تطابق معاييرك",
-      "installed": "مثبت",
-      "more": "+{{count}} المزيد",
-      "refresh": "تحديث المكتبة"
-    },
     "huggingface": {
-      "browseAll": "تصفح الكل على HuggingFace",
       "checkingGguf": "البحث عن ملفات GGUF...",
       "noGgufAvailable": "لا توجد ملفات GGUF متاحة للسحب المباشر من Ollama",
-      "ggufFilesCount": "ملفات GGUF ({{count}}) - سحب مباشر إلى Ollama",
-      "noModelsFound": "لم يتم العثور على نماذج",
-      "noResults": "لم يتم العثور على نماذج. حاول تعديل البحث أو المرشحات.",
-      "browseAllLink": "تصفح الكل",
-      "search": "البحث في نماذج HuggingFace...",
-      "by": "بواسطة",
-      "gated": "وصول مقيد",
-      "viewOnHF": "عرض على HuggingFace",
-      "sortDownloads": "التنزيلات",
-      "sortLikes": "الإعجابات",
-      "sortRecent": "الأحدث",
-      "taskTextGeneration": "توليد النص",
-      "taskTextToSpeech": "تحويل النص إلى كلام",
-      "taskTextToImage": "تحويل النص إلى صورة",
-      "taskSpeechRecognition": "التعرف على الكلام",
-      "tasks": {
-        "textGen": "توليد النص",
-        "tts": "تحويل النص إلى كلام",
-        "image": "تحويل النص إلى صورة",
-        "stt": "التعرف على الكلام"
-      },
-      "sort": {
-        "downloads": "الأكثر تنزيلاً",
-        "likes": "الأكثر إعجاباً",
-        "recent": "المحدثة مؤخراً"
-      }
-    },
-    "local": {
-      "noModels": "لم يتم تثبيت نماذج بعد",
-      "pullToStart": "اسحب نموذجاً أعلاه للبدء",
-      "installed": "مثبت",
-      "running": "قيد التشغيل",
-      "info": "معلومات",
-      "copy": "نسخ",
-      "delete": "حذف",
-      "deleteConfirm": "هل أنت متأكد من حذف النموذج \"{{name}}\"؟",
-      "deleteSuccess": "تم حذف النموذج {{name}} بنجاح",
-      "deleteFailed": "فشل حذف النموذج"
-    },
-    "advanced": {
-      "createModel": "إنشاء نموذج",
-      "fromModelfile": "من Modelfile",
-      "copyModel": "نسخ نموذج",
-      "duplicateExisting": "تكرار موجود",
-      "testEmbeddings": "اختبار التضمينات",
-      "generateVectors": "توليد المتجهات",
-      "healthCheck": "فحص الصحة",
-      "testConnection": "اختبار الاتصال",
-      "healthy": "Ollama سليم!"
-    },
-    "modals": {
-      "details": {
-        "title": "تفاصيل النموذج",
-        "info": "معلومات النموذج",
-        "family": "العائلة",
-        "parameters": "المعلمات",
-        "quantization": "التكميم",
-        "format": "التنسيق",
-        "systemPrompt": "موجه النظام",
-        "template": "القالب",
-        "license": "الترخيص",
-        "modelfile": "Modelfile",
-        "noDetails": "لا تتوفر تفاصيل"
-      },
-      "copy": {
-        "title": "نسخ النموذج",
-        "source": "النموذج المصدر",
-        "selectModel": "اختر نموذجاً...",
-        "newName": "اسم النموذج الجديد",
-        "placeholder": "مثل my-custom-model",
-        "copying": "جاري النسخ...",
-        "button": "نسخ النموذج",
-        "success": "تم نسخ النموذج إلى {{name}}",
-        "failed": "فشل نسخ النموذج",
-        "enterBoth": "يرجى إدخال أسماء المصدر والوجهة"
-      },
-      "create": {
-        "title": "إنشاء نموذج مخصص",
-        "name": "اسم النموذج",
-        "namePlaceholder": "مثل my-assistant",
-        "modelfile": "Modelfile",
-        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
-        "see": "راجع",
-        "docs": "توثيق Modelfile",
-        "docsLink": "لمرجع الصيغة",
-        "creating": "جاري الإنشاء...",
-        "button": "إنشاء النموذج",
-        "success": "تم إنشاء النموذج {{name}} بنجاح",
-        "failed": "فشل إنشاء النموذج",
-        "enterBoth": "يرجى إدخال اسم النموذج ومحتوى Modelfile"
-      },
-      "embeddings": {
-        "title": "اختبار التضمينات",
-        "model": "نموذج التضمين",
-        "selectModel": "اختر نموذجاً...",
-        "recommended": "موصى به: nomic-embed-text، mxbai-embed-large",
-        "input": "نص الإدخال",
-        "placeholder": "أدخل النص لتوليد التضمينات...",
-        "generating": "جاري التوليد...",
-        "button": "توليد التضمينات",
-        "result": "النتيجة ({{count}} بُعد)",
-        "success": "تم توليد متجه تضمين من {{count}} بُعد",
-        "failed": "فشل توليد التضمينات",
-        "enterBoth": "يرجى اختيار نموذج وإدخال نص"
-      }
+      "ggufFilesCount": "ملفات GGUF ({{count}}) - سحب مباشر إلى Ollama"
     }
   },
   "personaManager": {
@@ -1941,11 +1762,8 @@
     "noUsers": "لم يتم العثور على مستخدمين",
     "noUsersMatching": "لا يوجد مستخدمون يطابقون بحثك",
     "columns": {
-      "user": "المستخدم",
-      "email": "البريد الإلكتروني",
       "role": "الدور",
-      "created": "تم الإنشاء",
-      "actions": "الإجراءات"
+      "created": "تم الإنشاء"
     },
     "roles": {
       "admin": "مسؤول",
@@ -1973,11 +1791,8 @@
         "edit": "تعديل المستخدم"
       },
       "username": "اسم المستخدم",
-      "usernamePlaceholder": "أدخل اسم المستخدم",
       "email": "البريد الإلكتروني",
-      "emailPlaceholder": "أدخل البريد الإلكتروني (اختياري)",
       "password": "كلمة المرور",
-      "passwordPlaceholder": "أدخل كلمة المرور",
       "passwordHint": "اتركها فارغة للاحتفاظ بكلمة المرور الحالية",
       "role": "الدور",
       "creating": "جاري الإنشاء...",
@@ -2025,12 +1840,6 @@
       "computerPreset": "Work Computer",
       "computerPresetHint": "يتطلب الـ Work Computer صورة الواجهة الرسومية: ابنها من deploy/work-computer في المستودع بوسم libre-work-computer:latest.",
       "approvalsRequired": "طلب موافقة على الإجراءات ذات الأثر"
-    },
-    "modelAccess": {
-      "title": "تنزيل النماذج",
-      "description": "السماح لجميع المستخدمين النشطين بسحب النماذج من Ollama ومتصفح Hugging Face. يمكن للمسؤولين دائمًا تنزيل النماذج.",
-      "saved": "تم تحديث صلاحية تنزيل النماذج",
-      "saveFailed": "تعذر تحديث صلاحية تنزيل النماذج"
     },
     "webSearchAccess": {
       "title": "البحث في الويب",
@@ -2137,13 +1946,6 @@
     "mfaResetSuccess": "تمت إزالة المصادقة الثنائية للمستخدم {{name}}.",
     "mfaResetNothing": "لم يكن لدى {{name}} مصادقة ثنائية.",
     "mfaResetFailed": "فشلت إعادة التعيين.",
-    "ollamaProvider": {
-      "title": "مزود Ollama",
-      "description": "عند الإيقاف، يتوقف التطبيق عن البحث عن Ollama تمامًا — بلا فحوصات صحة ولا تحذيرات. يمكن أن تشير نقطة النهاية إلى أي بوابة متوافقة مع Ollama.",
-      "saved": "تم حفظ إعدادات مزود Ollama",
-      "saveFailed": "تعذّر حفظ إعدادات مزود Ollama",
-      "baseUrlLabel": "عنوان URL لنقطة نهاية Ollama"
-    },
     "emailNotifications": {
       "title": "إشعارات البريد الإلكتروني",
       "description": "خادم البريد الصادر الخاص بالإشعارات. يختار المستخدمون الإشعارات التي تصل إلى بريدهم من الإعدادات > الإشعارات.",
@@ -2157,11 +1959,6 @@
       "portHint": "اتركه فارغًا لاستخدام القيمة الافتراضية لوضع الأمان المحدد.",
       "securityLabel": "أمان الاتصال",
       "securityHint": "STARTTLS يُرقّي اتصالًا عاديًا؛ TLS مشفّر منذ البداية.",
-      "security": {
-        "starttls": "STARTTLS (المنفذ 587)",
-        "tls": "TLS (المنفذ 465)",
-        "none": "بلا (شبكة موثوقة فقط)"
-      },
       "verifyLabel": "التحقق من الشهادة",
       "verifyHint": "عطّله فقط لخادم وسيط ذي شهادة موقّعة ذاتيًا.",
       "usernameLabel": "اسم المستخدم",
@@ -2493,7 +2290,6 @@
     "deleteConfirm": "هل أنت متأكد من حذف هذه الصورة؟",
     "deleteSuccess": "تم حذف الصورة",
     "deleteFailed": "فشل حذف الصورة",
-    "downloadFailed": "فشل تحميل الصورة",
     "loadMore": "تحميل المزيد ({{current}} من {{total}})",
     "loadFailed": "فشل تحميل المعرض"
   },
@@ -3242,18 +3038,10 @@
   },
   "modelSelector": {
     "searchInstalled": "البحث في النماذج المثبتة...",
-    "searchOllama": "البحث في مكتبة Ollama...",
-    "searchHuggingFace": "البحث في HuggingFace...",
     "selectModel": "اختر نموذجًا",
     "personas": "الشخصيات",
-    "ollamaModels": "نماذج Ollama",
     "pluginModels": "نماذج الإضافات",
     "actions": "الإجراءات",
-    "installed": "مثبت",
-    "use": "استخدام",
-    "pull": "تنزيل",
-    "pullRestricted": "تثبيت النماذج مقصور على المسؤولين في هذا المثيل.",
-    "adminOnlyPull": "للمسؤولين فقط",
     "legacyProvider": "المزود غير مسجل",
     "providerNotRecorded": "المزود غير مسجل",
     "providerUnavailable": "المزود غير متاح",
@@ -4089,22 +3877,6 @@
   "connectModels": {
     "adminOnly": "اطلب من المسؤول توصيل مزود نماذج.",
     "skip": "تخطَّ الآن — سأقوم بتوصيل النماذج لاحقًا",
-    "ollama": {
-      "status": {
-        "checking": "جارٍ التحقق من التوفر…",
-        "healthy": "قيد التشغيل وجاهز للنماذج المحلية",
-        "offline": "غير مكتشَف على هذا الجهاز",
-        "disabled": "معطّل — لن تُجرى أي فحوصات"
-      },
-      "recheck": "تحقق مرة أخرى",
-      "enable": "تفعيل",
-      "disable": "إيقاف البحث عن Ollama",
-      "enabledToast": "تم تفعيل مزود Ollama",
-      "disabledToast": "تم تعطيل فحوصات Ollama — يمكنك إعادة تفعيلها من الإعدادات",
-      "settingsFailed": "تعذّر تحديث إعدادات Ollama",
-      "offlineHint": "ثبّت Ollama من ollama.com وسيتم اكتشافه تلقائيًا — أو استخدم أحد الخيارات أدناه بدلاً من ذلك. إذا كنت لا تخطط لاستخدام Ollama، يمكنك إيقاف فحوصاته.",
-      "healthyHint": "تم توصيل Ollama. اسحب نموذجًا من صفحة النماذج وستكون جاهزًا للدردشة."
-    },
     "local": {
       "title": "خادم محلي",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",

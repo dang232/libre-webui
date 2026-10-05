@@ -45,7 +45,6 @@
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "ollamaUnavailable": "Služba Ollama není dostupná. Modely pluginů lze stále používat.",
     "backendConnectionFailed": "Nepodařilo se připojit k backendové službě"
   },
   "auth": {
@@ -454,7 +453,6 @@
       "updated": "Model aktualizován",
       "noModels": "Žádné dostupné modely",
       "noModelsDescription": "Žádné dostupné modely. Ujistěte se, že Ollama běží a modely jsou nainstalované.",
-      "pullCommand": "ollama pull llama3.2:3b",
       "noModelsTooltip": "Žádné dostupné modely. Ujistěte se, že Ollama běží a modely jsou nainstalované.",
       "selectBeforePrivateChat": "Před zahájením soukromého chatu vyberte dostupný model",
       "selectBeforeSending": "Před odesláním vyberte dostupný model",
@@ -675,7 +673,6 @@
       "sessions": "Relace",
       "apiKeys": "API klíče",
       "notifications": "Oznámení",
-      "ollamaDisabled": "Ollama je zakázána správcem",
       "apiPlatform": "API Platform"
     },
     "appearance": {
@@ -1144,12 +1141,6 @@
     "about": {
       "title": "O aplikaci",
       "versionLabel": "Verze",
-      "ollama": {
-        "title": "Stav Ollama",
-        "version": "Verze",
-        "healthy": "V pořádku",
-        "unhealthy": "Nefunkční"
-      },
       "stats": {
         "models": "Modely",
         "sessions": "Relace"
@@ -1462,20 +1453,7 @@
   },
   "models": {
     "title": "Modely",
-    "subtitle": "Stahujte, spravujte a monitorujte své modely Ollama",
-    "installed": "Nainstalované modely",
-    "available": "Dostupné modely",
-    "pull": "Stáhnout model",
-    "pulling": "Stahování...",
-    "delete": "Smazat model",
-    "deleting": "Mazání...",
-    "size": "Velikost",
-    "modified": "Upraveno",
-    "family": "Rodina",
-    "parameters": "Parametry",
-    "quantization": "Kvantizace",
     "noModels": "Žádné nainstalované modely",
-    "pullFirst": "Stáhněte model pro začátek",
     "noModelsFound": "Žádné modely nenalezeny"
   },
   "personas": {
@@ -1544,12 +1522,6 @@
     "newWork": "Nová relace Work",
     "openPalette": "Otevřít příkazovou paletu"
   },
-  "modelDownload": {
-    "success": "Model {{name}} stažen",
-    "failed": "Model se nepodařilo stáhnout: {{error}}",
-    "startFailed": "Stahování se nepodařilo spustit",
-    "cancelled": "Stahování zrušeno"
-  },
   "modelTools": {
     "toasts": {
       "fetchInfoFailed": "Informace se nepodařilo načíst",
@@ -1562,30 +1534,13 @@
     }
   },
   "modelManager": {
-    "title": "Modely",
-    "loading": "Načítání modelů...",
-    "systemStatus": {
-      "online": "Ollama online",
-      "offline": "Ollama offline",
-      "models": "model",
-      "models_plural": "modelů",
-      "running": "běží",
-      "vram": "VRAM"
-    },
     "sections": {
-      "pull": "Stáhnout nový model",
-      "library": "Procházet knihovnu",
-      "huggingface": "HuggingFace Hub",
-      "running": "Běžící modely",
-      "local": "Lokální modely",
-      "advanced": "Pokročilé akce",
       "catalog": "Katalog modelů"
     },
     "catalog": {
       "searchPlaceholder": "Hledat modely podle názvu nebo poskytovatele...",
       "noModels": "Zatím nejsou k dispozici žádné modely.",
       "empty": "Vašemu hledání neodpovídají žádné modely.",
-      "providerOllama": "Ollama",
       "hidden": "Skrytý",
       "visibilityFailed": "Viditelnost modelu se nepodařilo změnit.",
       "filterAll": "Všechny modely",
@@ -1605,144 +1560,10 @@
       "star": "Označit {{name}} hvězdičkou",
       "unstar": "Odebrat hvězdičku z modelu {{name}}"
     },
-    "pull": {
-      "placeholder": "Zadejte název modelu (např. llama3.2:3b, deepseek-r1:14b)",
-      "button": "Stáhnout",
-      "cancel": "Zrušit",
-      "popular": "Populární modely:",
-      "browseAll": "Procházet všechny modely na ollama.com",
-      "success": "Model {{name}} úspěšně stažen",
-      "cancelled": "Stahování modelu zrušeno",
-      "failed": "Nepodařilo se stáhnout model",
-      "enterName": "Zadejte název modelu",
-      "restricted": "Instalace modelů je v této instanci omezena pouze na administrátory."
-    },
-    "progress": {
-      "starting": "Inicializace...",
-      "pulling": "Stahování modelu...",
-      "pullingLayer": "stahování",
-      "verifying": "Ověřování integrity...",
-      "verifyingDigest": "ověřování sha256 digestu",
-      "writing": "Zápis manifestu...",
-      "cleaning": "Čištění..."
-    },
-    "library": {
-      "available": "dostupné",
-      "search": "Hledat modely...",
-      "noResults": "Nebyly nalezeny žádné modely odpovídající kritériím",
-      "installed": "Nainstalováno",
-      "more": "+{{count}} dalších",
-      "refresh": "Obnovit knihovnu"
-    },
     "huggingface": {
-      "browseAll": "Procházet vše na HuggingFace",
       "checkingGguf": "Hledání GGUF souborů...",
       "noGgufAvailable": "Žádné GGUF soubory nejsou dostupné pro přímé stažení do Ollama",
-      "ggufFilesCount": "GGUF soubory ({{count}}) - Stáhnout přímo do Ollama",
-      "noModelsFound": "Nenalezeny žádné modely",
-      "noResults": "Nenalezeny žádné modely. Zkuste upravit vyhledávání nebo filtry.",
-      "browseAllLink": "Zobrazit vše",
-      "search": "Hledat modely HuggingFace...",
-      "by": "od",
-      "gated": "Omezený přístup",
-      "viewOnHF": "Zobrazit na HuggingFace",
-      "sortDownloads": "Stažení",
-      "sortLikes": "Líbí se",
-      "sortRecent": "Nedávné",
-      "taskTextGeneration": "Generování textu",
-      "taskTextToSpeech": "Text na řeč",
-      "taskTextToImage": "Text na obrázek",
-      "taskSpeechRecognition": "Rozpoznávání řeči",
-      "tasks": {
-        "textGen": "Generování textu",
-        "tts": "Text na řeč",
-        "image": "Text na obrázek",
-        "stt": "Rozpoznávání řeči"
-      },
-      "sort": {
-        "downloads": "Nejstahovanější",
-        "likes": "Nejoblíbenější",
-        "recent": "Nedávno aktualizované"
-      }
-    },
-    "local": {
-      "noModels": "Zatím žádné nainstalované modely",
-      "pullToStart": "Stáhněte model výše pro začátek",
-      "installed": "nainstalováno",
-      "running": "Běží",
-      "info": "Info",
-      "copy": "Kopírovat",
-      "delete": "Smazat",
-      "deleteConfirm": "Opravdu chcete smazat model \"{{name}}\"?",
-      "deleteSuccess": "Model {{name}} úspěšně smazán",
-      "deleteFailed": "Nepodařilo se smazat model"
-    },
-    "advanced": {
-      "createModel": "Vytvořit model",
-      "fromModelfile": "Z Modelfile",
-      "copyModel": "Kopírovat model",
-      "duplicateExisting": "Duplikovat existující",
-      "testEmbeddings": "Testovat embeddingy",
-      "generateVectors": "Generovat vektory",
-      "healthCheck": "Kontrola stavu",
-      "testConnection": "Test připojení",
-      "healthy": "Ollama je v pořádku!"
-    },
-    "modals": {
-      "details": {
-        "title": "Detaily modelu",
-        "info": "Informace o modelu",
-        "family": "Rodina",
-        "parameters": "Parametry",
-        "quantization": "Kvantizace",
-        "format": "Formát",
-        "systemPrompt": "Systémový prompt",
-        "template": "Šablona",
-        "license": "Licence",
-        "modelfile": "Modelfile",
-        "noDetails": "Žádné dostupné detaily"
-      },
-      "copy": {
-        "title": "Kopírovat model",
-        "source": "Zdrojový model",
-        "selectModel": "Vyberte model...",
-        "newName": "Nový název modelu",
-        "placeholder": "např. muj-vlastni-model",
-        "copying": "Kopírování...",
-        "button": "Kopírovat model",
-        "success": "Model zkopírován jako {{name}}",
-        "failed": "Nepodařilo se zkopírovat model",
-        "enterBoth": "Zadejte zdrojový i cílový název modelu"
-      },
-      "create": {
-        "title": "Vytvořit vlastní model",
-        "name": "Název modelu",
-        "namePlaceholder": "např. muj-asistent",
-        "modelfile": "Modelfile",
-        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM Jsi užitečný asistent.",
-        "see": "Viz",
-        "docs": "Dokumentace Modelfile",
-        "docsLink": "pro referenci syntaxe",
-        "creating": "Vytváření...",
-        "button": "Vytvořit model",
-        "success": "Model {{name}} úspěšně vytvořen",
-        "failed": "Nepodařilo se vytvořit model",
-        "enterBoth": "Zadejte název modelu a obsah Modelfile"
-      },
-      "embeddings": {
-        "title": "Testovat embeddingy",
-        "model": "Model embeddingů",
-        "selectModel": "Vyberte model...",
-        "recommended": "Doporučené: nomic-embed-text, mxbai-embed-large",
-        "input": "Vstupní text",
-        "placeholder": "Zadejte text pro generování embeddingů...",
-        "generating": "Generování...",
-        "button": "Generovat embeddingy",
-        "result": "Výsledek ({{count}} dimenzí)",
-        "success": "Vygenerován {{count}}-dimenzionální embedding vektor",
-        "failed": "Nepodařilo se vygenerovat embeddingy",
-        "enterBoth": "Vyberte model a zadejte text"
-      }
+      "ggufFilesCount": "GGUF soubory ({{count}}) - Stáhnout přímo do Ollama"
     }
   },
   "personaManager": {
@@ -1941,11 +1762,8 @@
     "noUsers": "Nebyli nalezeni žádní uživatelé",
     "noUsersMatching": "Nebyli nalezeni žádní uživatelé odpovídající hledání",
     "columns": {
-      "user": "Uživatel",
-      "email": "Email",
       "role": "Role",
-      "created": "Vytvořeno",
-      "actions": "Akce"
+      "created": "Vytvořeno"
     },
     "roles": {
       "admin": "Správce",
@@ -1973,11 +1791,8 @@
         "edit": "Upravit uživatele"
       },
       "username": "Uživatelské jméno",
-      "usernamePlaceholder": "Zadejte uživatelské jméno",
       "email": "Email",
-      "emailPlaceholder": "Zadejte email (volitelné)",
       "password": "Heslo",
-      "passwordPlaceholder": "Zadejte heslo",
       "passwordHint": "Ponechte prázdné pro zachování současného hesla",
       "role": "Role",
       "creating": "Vytváření...",
@@ -2025,12 +1840,6 @@
       "computerPreset": "Work Computer",
       "computerPresetHint": "Work Computer vyžaduje GUI image: sestavte jej z deploy/work-computer v repozitáři a označte libre-work-computer:latest.",
       "approvalsRequired": "Vyžadovat schválení akcí s vedlejšími účinky"
-    },
-    "modelAccess": {
-      "title": "Stahování modelů",
-      "description": "Povolit všem aktivním uživatelům stahovat modely z Ollamy a prohlížeče Hugging Face. Administrátoři mohou modely stahovat vždy.",
-      "saved": "Přístup ke stahování modelů byl aktualizován",
-      "saveFailed": "Přístup ke stahování modelů se nepodařilo aktualizovat"
     },
     "webSearchAccess": {
       "title": "Vyhledávání na webu",
@@ -2137,13 +1946,6 @@
     "mfaResetSuccess": "Druhý faktor uživatele {{name}} odebrán.",
     "mfaResetNothing": "{{name}} neměl druhý faktor.",
     "mfaResetFailed": "Reset se nezdařil.",
-    "ollamaProvider": {
-      "title": "Poskytovatel Ollama",
-      "description": "Když je vypnuto, aplikace zcela přestane Ollamu vyhledávat — žádné kontroly stavu, žádná upozornění. Endpoint může směřovat na jakoukoli bránu kompatibilní s Ollamou.",
-      "saved": "Nastavení poskytovatele Ollama uloženo",
-      "saveFailed": "Nepodařilo se uložit nastavení poskytovatele Ollama",
-      "baseUrlLabel": "URL endpointu Ollama"
-    },
     "emailNotifications": {
       "title": "E-mailová oznámení",
       "description": "Server pro odchozí poštu k oznámením. V Nastavení > Oznámení si uživatelé sami vybírají, která oznámení chtějí dostávat do schránky.",
@@ -2157,11 +1959,6 @@
       "portHint": "Ponechte prázdné pro výchozí hodnotu zvoleného režimu zabezpečení.",
       "securityLabel": "Zabezpečení spojení",
       "securityHint": "STARTTLS povýší obyčejné spojení na zabezpečené; TLS je šifrované od začátku.",
-      "security": {
-        "starttls": "STARTTLS (port 587)",
-        "tls": "TLS (port 465)",
-        "none": "Žádné (pouze důvěryhodná síť)"
-      },
       "verifyLabel": "Ověřovat certifikát",
       "verifyHint": "Vypněte pouze pro relay se samopodepsaným certifikátem.",
       "usernameLabel": "Uživatelské jméno",
@@ -2493,7 +2290,6 @@
     "deleteConfirm": "Opravdu chcete smazat tento obrázek?",
     "deleteSuccess": "Obrázek smazán",
     "deleteFailed": "Nepodařilo se smazat obrázek",
-    "downloadFailed": "Nepodařilo se stáhnout obrázek",
     "loadMore": "Načíst více ({{current}} z {{total}})",
     "loadFailed": "Nepodařilo se načíst galerii"
   },
@@ -3242,18 +3038,10 @@
   },
   "modelSelector": {
     "searchInstalled": "Hledat nainstalované modely...",
-    "searchOllama": "Hledat v knihovně Ollama...",
-    "searchHuggingFace": "Hledat na HuggingFace...",
     "selectModel": "Vybrat model",
     "personas": "Persony",
-    "ollamaModels": "Modely Ollama",
     "pluginModels": "Modely pluginů",
     "actions": "Akce",
-    "installed": "Nainstalováno",
-    "use": "Použít",
-    "pull": "Stáhnout",
-    "pullRestricted": "Instalace modelů je v této instanci omezena pouze na administrátory.",
-    "adminOnlyPull": "Pouze administrátoři",
     "legacyProvider": "poskytovatel nezaznamenán",
     "providerNotRecorded": "Poskytovatel nezaznamenán",
     "providerUnavailable": "poskytovatel nedostupný",
@@ -4089,22 +3877,6 @@
   "connectModels": {
     "adminOnly": "Požádejte svého správce, aby připojil poskytovatele modelů.",
     "skip": "Zatím přeskočit — modely připojím později",
-    "ollama": {
-      "status": {
-        "checking": "Kontroluji dostupnost…",
-        "healthy": "Běží a je připravena pro lokální modely",
-        "offline": "Na tomto zařízení nebyla zjištěna",
-        "disabled": "Vypnuto — nebudou probíhat žádné kontroly"
-      },
-      "recheck": "Zkontrolovat znovu",
-      "enable": "Povolit",
-      "disable": "Přestat kontrolovat Ollamu",
-      "enabledToast": "Poskytovatel Ollama povolen",
-      "disabledToast": "Kontroly Ollamy vypnuty — můžete je znovu povolit v Nastavení",
-      "settingsFailed": "Nepodařilo se aktualizovat nastavení Ollamy",
-      "offlineHint": "Nainstalujte Ollamu z ollama.com a bude automaticky rozpoznána — nebo místo toho použijte některou z možností níže. Pokud Ollamu používat neplánujete, můžete její kontroly vypnout.",
-      "healthyHint": "Ollama je připojena. Stáhněte model ze sekce Modely a budete připraveni chatovat."
-    },
     "local": {
       "title": "Lokální server",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",

@@ -45,7 +45,6 @@
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "ollamaUnavailable": "บริการ Ollama ไม่พร้อมใช้งาน แต่ยังสามารถใช้โมเดลจากปลั๊กอินได้",
     "backendConnectionFailed": "ไม่สามารถเชื่อมต่อกับบริการแบ็กเอนด์ได้"
   },
   "auth": {
@@ -454,7 +453,6 @@
       "updated": "อัปเดตโมเดลแล้ว",
       "noModels": "ไม่มีโมเดลที่ใช้ได้",
       "noModelsDescription": "ไม่มีโมเดลที่ใช้ได้ ตรวจสอบให้แน่ใจว่า Ollama กำลังทำงานและติดตั้งโมเดลแล้ว",
-      "pullCommand": "ollama pull llama3.2:3b",
       "noModelsTooltip": "ไม่มีโมเดลที่ใช้ได้ กรุณาตรวจสอบให้แน่ใจว่า Ollama กำลังทำงานและติดตั้งโมเดลแล้ว",
       "selectBeforePrivateChat": "เลือกโมเดลที่พร้อมใช้งานก่อนเริ่มแชทส่วนตัว",
       "selectBeforeSending": "เลือกโมเดลที่พร้อมใช้งานก่อนส่งข้อความ",
@@ -675,7 +673,6 @@
       "sessions": "เซสชัน",
       "apiKeys": "คีย์ API",
       "notifications": "การแจ้งเตือน",
-      "ollamaDisabled": "ผู้ดูแลระบบปิดใช้งาน Ollama แล้ว",
       "apiPlatform": "API Platform"
     },
     "appearance": {
@@ -1144,12 +1141,6 @@
     "about": {
       "title": "เกี่ยวกับ",
       "versionLabel": "เวอร์ชัน",
-      "ollama": {
-        "title": "สถานะ Ollama",
-        "version": "เวอร์ชัน",
-        "healthy": "สมบูรณ์",
-        "unhealthy": "ไม่สมบูรณ์"
-      },
       "stats": {
         "models": "โมเดล",
         "sessions": "เซสชัน"
@@ -1462,20 +1453,7 @@
   },
   "models": {
     "title": "โมเดล",
-    "subtitle": "ดาวน์โหลด จัดการ และตรวจสอบโมเดล Ollama ของคุณ",
-    "installed": "โมเดลที่ติดตั้ง",
-    "available": "โมเดลที่มี",
-    "pull": "ดาวน์โหลดโมเดล",
-    "pulling": "กำลังดาวน์โหลด...",
-    "delete": "ลบโมเดล",
-    "deleting": "กำลังลบ...",
-    "size": "ขนาด",
-    "modified": "แก้ไขล่าสุด",
-    "family": "ตระกูล",
-    "parameters": "พารามิเตอร์",
-    "quantization": "การควอนไทเซชัน",
     "noModels": "ไม่มีโมเดลที่ติดตั้ง",
-    "pullFirst": "ดาวน์โหลดโมเดลเพื่อเริ่มต้น",
     "noModelsFound": "ไม่พบโมเดล"
   },
   "personas": {
@@ -1544,12 +1522,6 @@
     "newWork": "เซสชัน Work ใหม่",
     "openPalette": "เปิดคอมมานด์พาเลตต์"
   },
-  "modelDownload": {
-    "success": "ดาวน์โหลด {{name}} แล้ว",
-    "failed": "ดาวน์โหลดไม่สำเร็จ: {{error}}",
-    "startFailed": "ไม่สามารถเริ่มดาวน์โหลดได้",
-    "cancelled": "ยกเลิกการดาวน์โหลดแล้ว"
-  },
   "modelTools": {
     "toasts": {
       "fetchInfoFailed": "ไม่สามารถดึงข้อมูลได้",
@@ -1562,30 +1534,13 @@
     }
   },
   "modelManager": {
-    "title": "โมเดล",
-    "loading": "กำลังโหลดโมเดล...",
-    "systemStatus": {
-      "online": "Ollama ออนไลน์",
-      "offline": "Ollama ออฟไลน์",
-      "models": "โมเดล",
-      "models_plural": "โมเดล",
-      "running": "กำลังทำงาน",
-      "vram": "VRAM"
-    },
     "sections": {
-      "pull": "ดาวน์โหลดโมเดลใหม่",
-      "library": "เรียกดูไลบรารี",
-      "huggingface": "HuggingFace Hub",
-      "running": "โมเดลที่กำลังทำงาน",
-      "local": "โมเดลในเครื่อง",
-      "advanced": "การดำเนินการขั้นสูง",
       "catalog": "แคตตาล็อกโมเดล"
     },
     "catalog": {
       "searchPlaceholder": "ค้นหาโมเดลตามชื่อหรือผู้ให้บริการ...",
       "noModels": "ยังไม่มีโมเดลพร้อมใช้งาน",
       "empty": "ไม่มีโมเดลที่ตรงกับการค้นหาของคุณ",
-      "providerOllama": "Ollama",
       "hidden": "ซ่อนอยู่",
       "visibilityFailed": "ไม่สามารถอัปเดตการมองเห็นของโมเดลได้",
       "filterAll": "โมเดลทั้งหมด",
@@ -1605,144 +1560,10 @@
       "star": "ติดดาว {{name}}",
       "unstar": "นำดาวออกจาก {{name}}"
     },
-    "pull": {
-      "placeholder": "ป้อนชื่อโมเดล (เช่น llama3.2:3b, deepseek-r1:14b)",
-      "button": "ดาวน์โหลด",
-      "cancel": "ยกเลิก",
-      "popular": "โมเดลยอดนิยม:",
-      "browseAll": "เรียกดูโมเดลทั้งหมดที่ ollama.com",
-      "success": "ดาวน์โหลดโมเดล {{name}} สำเร็จ",
-      "cancelled": "ยกเลิกการดาวน์โหลดโมเดลแล้ว",
-      "failed": "ไม่สามารถดาวน์โหลดโมเดล",
-      "enterName": "กรุณาป้อนชื่อโมเดล",
-      "restricted": "การติดตั้งโมเดลบนอินสแตนซ์นี้จำกัดเฉพาะผู้ดูแลระบบเท่านั้น"
-    },
-    "progress": {
-      "starting": "กำลังเริ่มต้น...",
-      "pulling": "กำลังดาวน์โหลดโมเดล...",
-      "pullingLayer": "กำลังดาวน์โหลด",
-      "verifying": "กำลังตรวจสอบความถูกต้อง...",
-      "verifyingDigest": "กำลังตรวจสอบ sha256 digest",
-      "writing": "กำลังเขียน manifest...",
-      "cleaning": "กำลังล้างข้อมูล..."
-    },
-    "library": {
-      "available": "มี",
-      "search": "ค้นหาโมเดล...",
-      "noResults": "ไม่พบโมเดลที่ตรงกับเกณฑ์ของคุณ",
-      "installed": "ติดตั้งแล้ว",
-      "more": "+{{count}} เพิ่มเติม",
-      "refresh": "รีเฟรชไลบรารี"
-    },
     "huggingface": {
-      "browseAll": "ดูทั้งหมดบน HuggingFace",
       "checkingGguf": "กำลังค้นหาไฟล์ GGUF...",
       "noGgufAvailable": "ไม่มีไฟล์ GGUF สำหรับดึงไปยัง Ollama โดยตรง",
-      "ggufFilesCount": "ไฟล์ GGUF ({{count}}) - ดึงไปยัง Ollama โดยตรง",
-      "noModelsFound": "ไม่พบโมเดล",
-      "noResults": "ไม่พบโมเดล ลองปรับการค้นหาหรือตัวกรอง",
-      "browseAllLink": "ดูทั้งหมด",
-      "search": "ค้นหาโมเดล HuggingFace...",
-      "by": "โดย",
-      "gated": "การเข้าถึงจำกัด",
-      "viewOnHF": "ดูบน HuggingFace",
-      "sortDownloads": "ดาวน์โหลด",
-      "sortLikes": "ถูกใจ",
-      "sortRecent": "ล่าสุด",
-      "taskTextGeneration": "การสร้างข้อความ",
-      "taskTextToSpeech": "ข้อความเป็นเสียง",
-      "taskTextToImage": "ข้อความเป็นภาพ",
-      "taskSpeechRecognition": "การรู้จำเสียง",
-      "tasks": {
-        "textGen": "การสร้างข้อความ",
-        "tts": "ข้อความเป็นเสียง",
-        "image": "ข้อความเป็นภาพ",
-        "stt": "การรู้จำเสียง"
-      },
-      "sort": {
-        "downloads": "ดาวน์โหลดมากที่สุด",
-        "likes": "ถูกใจมากที่สุด",
-        "recent": "อัปเดตล่าสุด"
-      }
-    },
-    "local": {
-      "noModels": "ยังไม่มีโมเดลที่ติดตั้ง",
-      "pullToStart": "ดาวน์โหลดโมเดลด้านบนเพื่อเริ่มต้น",
-      "installed": "ติดตั้งแล้ว",
-      "running": "กำลังทำงาน",
-      "info": "ข้อมูล",
-      "copy": "คัดลอก",
-      "delete": "ลบ",
-      "deleteConfirm": "คุณแน่ใจหรือไม่ว่าต้องการลบโมเดล \"{{name}}\"?",
-      "deleteSuccess": "ลบโมเดล {{name}} สำเร็จ",
-      "deleteFailed": "ไม่สามารถลบโมเดล"
-    },
-    "advanced": {
-      "createModel": "สร้างโมเดล",
-      "fromModelfile": "จาก Modelfile",
-      "copyModel": "คัดลอกโมเดล",
-      "duplicateExisting": "ทำซ้ำที่มีอยู่",
-      "testEmbeddings": "ทดสอบ Embeddings",
-      "generateVectors": "สร้างเวกเตอร์",
-      "healthCheck": "ตรวจสอบสุขภาพ",
-      "testConnection": "ทดสอบการเชื่อมต่อ",
-      "healthy": "Ollama สมบูรณ์!"
-    },
-    "modals": {
-      "details": {
-        "title": "รายละเอียดโมเดล",
-        "info": "ข้อมูลโมเดล",
-        "family": "ตระกูล",
-        "parameters": "พารามิเตอร์",
-        "quantization": "การควอนไทเซชัน",
-        "format": "รูปแบบ",
-        "systemPrompt": "Prompt ระบบ",
-        "template": "เทมเพลต",
-        "license": "ใบอนุญาต",
-        "modelfile": "Modelfile",
-        "noDetails": "ไม่มีรายละเอียด"
-      },
-      "copy": {
-        "title": "คัดลอกโมเดล",
-        "source": "โมเดลต้นทาง",
-        "selectModel": "เลือกโมเดล...",
-        "newName": "ชื่อโมเดลใหม่",
-        "placeholder": "เช่น my-custom-model",
-        "copying": "กำลังคัดลอก...",
-        "button": "คัดลอกโมเดล",
-        "success": "คัดลอกโมเดลไปยัง {{name}} แล้ว",
-        "failed": "ไม่สามารถคัดลอกโมเดล",
-        "enterBoth": "กรุณาป้อนชื่อต้นทางและปลายทาง"
-      },
-      "create": {
-        "title": "สร้างโมเดลกำหนดเอง",
-        "name": "ชื่อโมเดล",
-        "namePlaceholder": "เช่น my-assistant",
-        "modelfile": "Modelfile",
-        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
-        "see": "ดู",
-        "docs": "เอกสาร Modelfile",
-        "docsLink": "สำหรับอ้างอิงไวยากรณ์",
-        "creating": "กำลังสร้าง...",
-        "button": "สร้างโมเดล",
-        "success": "สร้างโมเดล {{name}} สำเร็จ",
-        "failed": "ไม่สามารถสร้างโมเดล",
-        "enterBoth": "กรุณาป้อนชื่อโมเดลและเนื้อหา Modelfile"
-      },
-      "embeddings": {
-        "title": "ทดสอบ Embeddings",
-        "model": "โมเดล Embedding",
-        "selectModel": "เลือกโมเดล...",
-        "recommended": "แนะนำ: nomic-embed-text, mxbai-embed-large",
-        "input": "ข้อความนำเข้า",
-        "placeholder": "ป้อนข้อความเพื่อสร้าง embeddings...",
-        "generating": "กำลังสร้าง...",
-        "button": "สร้าง Embeddings",
-        "result": "ผลลัพธ์ ({{count}} มิติ)",
-        "success": "สร้างเวกเตอร์ embedding {{count}} มิติ",
-        "failed": "ไม่สามารถสร้าง embeddings",
-        "enterBoth": "กรุณาเลือกโมเดลและป้อนข้อความ"
-      }
+      "ggufFilesCount": "ไฟล์ GGUF ({{count}}) - ดึงไปยัง Ollama โดยตรง"
     }
   },
   "personaManager": {
@@ -1941,11 +1762,8 @@
     "noUsers": "ไม่พบผู้ใช้",
     "noUsersMatching": "ไม่มีผู้ใช้ที่ตรงกับการค้นหาของคุณ",
     "columns": {
-      "user": "ผู้ใช้",
-      "email": "อีเมล",
       "role": "บทบาท",
-      "created": "สร้างเมื่อ",
-      "actions": "การดำเนินการ"
+      "created": "สร้างเมื่อ"
     },
     "roles": {
       "admin": "ผู้ดูแลระบบ",
@@ -1973,11 +1791,8 @@
         "edit": "แก้ไขผู้ใช้"
       },
       "username": "ชื่อผู้ใช้",
-      "usernamePlaceholder": "ป้อนชื่อผู้ใช้",
       "email": "อีเมล",
-      "emailPlaceholder": "ป้อนอีเมล (ไม่บังคับ)",
       "password": "รหัสผ่าน",
-      "passwordPlaceholder": "ป้อนรหัสผ่าน",
       "passwordHint": "เว้นว่างเพื่อเก็บรหัสผ่านปัจจุบัน",
       "role": "บทบาท",
       "creating": "กำลังสร้าง...",
@@ -2025,12 +1840,6 @@
       "computerPreset": "Work Computer",
       "computerPresetHint": "Work Computer ต้องใช้อิมเมจ GUI: สร้างจาก deploy/work-computer ในรีโพซิทอรีแล้วแท็กเป็น libre-work-computer:latest",
       "approvalsRequired": "ต้องอนุมัติก่อนการกระทำที่มีผลข้างเคียง"
-    },
-    "modelAccess": {
-      "title": "การดาวน์โหลดโมเดล",
-      "description": "อนุญาตให้ผู้ใช้ที่ใช้งานอยู่ทุกคนดึงโมเดลจาก Ollama และเบราว์เซอร์ Hugging Face ผู้ดูแลระบบดาวน์โหลดโมเดลได้เสมอ",
-      "saved": "อัปเดตสิทธิ์ดาวน์โหลดโมเดลแล้ว",
-      "saveFailed": "ไม่สามารถอัปเดตสิทธิ์ดาวน์โหลดโมเดลได้"
     },
     "webSearchAccess": {
       "title": "การค้นหาเว็บ",
@@ -2137,13 +1946,6 @@
     "mfaResetSuccess": "ลบสองขั้นตอนของ {{name}} แล้ว",
     "mfaResetNothing": "{{name}} ไม่ได้ตั้งค่าสองขั้นตอน",
     "mfaResetFailed": "การรีเซ็ตล้มเหลว",
-    "ollamaProvider": {
-      "title": "ผู้ให้บริการ Ollama",
-      "description": "เมื่อปิดใช้งาน แอปจะหยุดตรวจสอบ Ollama ทั้งหมด — ไม่มีการตรวจสอบสถานะ ไม่มีคำเตือน Endpoint สามารถชี้ไปยังเกตเวย์ที่รองรับ Ollama ใดก็ได้",
-      "saved": "บันทึกการตั้งค่าผู้ให้บริการ Ollama แล้ว",
-      "saveFailed": "ไม่สามารถบันทึกการตั้งค่าผู้ให้บริการ Ollama ได้",
-      "baseUrlLabel": "URL ของ Endpoint ของ Ollama"
-    },
     "emailNotifications": {
       "title": "การแจ้งเตือนทางอีเมล",
       "description": "เซิร์ฟเวอร์อีเมลขาออกสำหรับการแจ้งเตือน ผู้ใช้เลือกได้เองว่าการแจ้งเตือนใดจะส่งเข้ากล่องจดหมายของตนภายใต้การตั้งค่า > การแจ้งเตือน",
@@ -2157,11 +1959,6 @@
       "portHint": "เว้นว่างไว้เพื่อใช้ค่าเริ่มต้นของโหมดความปลอดภัยที่เลือก",
       "securityLabel": "ความปลอดภัยของการเชื่อมต่อ",
       "securityHint": "STARTTLS จะอัปเกรดการเชื่อมต่อธรรมดาให้ปลอดภัยขึ้น ส่วน TLS เข้ารหัสตั้งแต่เริ่มต้น",
-      "security": {
-        "starttls": "STARTTLS (พอร์ต 587)",
-        "tls": "TLS (พอร์ต 465)",
-        "none": "ไม่มี (เฉพาะเครือข่ายที่เชื่อถือได้เท่านั้น)"
-      },
       "verifyLabel": "ตรวจสอบใบรับรอง",
       "verifyHint": "ปิดใช้งานเฉพาะกรณีใช้รีเลย์ที่มีใบรับรองที่ออกให้ตนเอง",
       "usernameLabel": "ชื่อผู้ใช้",
@@ -2493,7 +2290,6 @@
     "deleteConfirm": "คุณแน่ใจหรือไม่ว่าต้องการลบรูปภาพนี้?",
     "deleteSuccess": "ลบรูปภาพแล้ว",
     "deleteFailed": "ไม่สามารถลบรูปภาพ",
-    "downloadFailed": "ไม่สามารถดาวน์โหลดรูปภาพ",
     "loadMore": "โหลดเพิ่มเติม ({{current}} จาก {{total}})",
     "loadFailed": "ไม่สามารถโหลดแกลเลอรี"
   },
@@ -3242,18 +3038,10 @@
   },
   "modelSelector": {
     "searchInstalled": "ค้นหาโมเดลที่ติดตั้ง...",
-    "searchOllama": "ค้นหาในไลบรารี Ollama...",
-    "searchHuggingFace": "ค้นหาใน HuggingFace...",
     "selectModel": "เลือกโมเดล",
     "personas": "บุคลิก",
-    "ollamaModels": "โมเดล Ollama",
     "pluginModels": "โมเดลปลั๊กอิน",
     "actions": "การดำเนินการ",
-    "installed": "ติดตั้งแล้ว",
-    "use": "ใช้",
-    "pull": "ดาวน์โหลด",
-    "pullRestricted": "การติดตั้งโมเดลบนอินสแตนซ์นี้จำกัดเฉพาะผู้ดูแลระบบเท่านั้น",
-    "adminOnlyPull": "ผู้ดูแลระบบเท่านั้น",
     "legacyProvider": "ไม่ได้บันทึกผู้ให้บริการ",
     "providerNotRecorded": "ไม่ได้บันทึกผู้ให้บริการ",
     "providerUnavailable": "ผู้ให้บริการไม่พร้อมใช้งาน",
@@ -4089,22 +3877,6 @@
   "connectModels": {
     "adminOnly": "ขอให้ผู้ดูแลระบบเชื่อมต่อผู้ให้บริการโมเดล",
     "skip": "ข้ามไปก่อน — ฉันจะเชื่อมต่อโมเดลทีหลัง",
-    "ollama": {
-      "status": {
-        "checking": "กำลังตรวจสอบความพร้อมใช้งาน…",
-        "healthy": "ทำงานอยู่และพร้อมสำหรับโมเดลในเครื่อง",
-        "offline": "ไม่พบในเครื่องนี้",
-        "disabled": "ปิดใช้งาน — จะไม่มีการตรวจสอบใดๆ"
-      },
-      "recheck": "ตรวจสอบอีกครั้ง",
-      "enable": "เปิดใช้งาน",
-      "disable": "หยุดตรวจสอบ Ollama",
-      "enabledToast": "เปิดใช้งานผู้ให้บริการ Ollama แล้ว",
-      "disabledToast": "ปิดใช้งานการตรวจสอบ Ollama แล้ว — คุณสามารถเปิดใช้งานอีกครั้งได้ในการตั้งค่า",
-      "settingsFailed": "ไม่สามารถอัปเดตการตั้งค่า Ollama ได้",
-      "offlineHint": "ติดตั้ง Ollama จาก ollama.com แล้วระบบจะตรวจพบโดยอัตโนมัติ — หรือใช้ตัวเลือกด้านล่างแทน หากคุณไม่ได้วางแผนจะใช้ Ollama คุณสามารถปิดการตรวจสอบนี้ได้",
-      "healthyHint": "เชื่อมต่อ Ollama แล้ว ดาวน์โหลดโมเดลจากหน้าโมเดล แล้วคุณก็พร้อมสำหรับการแชท"
-    },
     "local": {
       "title": "เซิร์ฟเวอร์ในเครื่อง",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",

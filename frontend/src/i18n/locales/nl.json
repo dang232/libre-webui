@@ -45,7 +45,6 @@
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "ollamaUnavailable": "De Ollama-service is niet beschikbaar. Pluginmodellen kunnen nog wel worden gebruikt.",
     "backendConnectionFailed": "Kan geen verbinding maken met de backendservice"
   },
   "auth": {
@@ -454,7 +453,6 @@
       "updated": "Model bijgewerkt",
       "noModels": "Geen modellen beschikbaar",
       "noModelsDescription": "Geen modellen beschikbaar. Zorg ervoor dat Ollama draait en modellen zijn geïnstalleerd.",
-      "pullCommand": "ollama pull llama3.2:3b",
       "noModelsTooltip": "Geen modellen beschikbaar. Zorg ervoor dat Ollama draait en modellen zijn geïnstalleerd.",
       "selectBeforePrivateChat": "Selecteer een beschikbaar model voordat je een privéchat start",
       "selectBeforeSending": "Selecteer een beschikbaar model voordat je verzendt",
@@ -675,7 +673,6 @@
       "sessions": "Sessies",
       "apiKeys": "API-sleutels",
       "notifications": "Meldingen",
-      "ollamaDisabled": "Ollama is uitgeschakeld door een beheerder",
       "apiPlatform": "API Platform"
     },
     "appearance": {
@@ -1144,12 +1141,6 @@
     "about": {
       "title": "Over",
       "versionLabel": "Versie",
-      "ollama": {
-        "title": "Ollama-status",
-        "version": "Versie",
-        "healthy": "Gezond",
-        "unhealthy": "Ongezond"
-      },
       "stats": {
         "models": "Modellen",
         "sessions": "Sessies"
@@ -1462,20 +1453,7 @@
   },
   "models": {
     "title": "Modellen",
-    "subtitle": "Pull, beheer en monitor uw Ollama-modellen",
-    "installed": "Geïnstalleerde modellen",
-    "available": "Beschikbare modellen",
-    "pull": "Model ophalen",
-    "pulling": "Ophalen...",
-    "delete": "Model verwijderen",
-    "deleting": "Verwijderen...",
-    "size": "Grootte",
-    "modified": "Gewijzigd",
-    "family": "Familie",
-    "parameters": "Parameters",
-    "quantization": "Kwantisatie",
     "noModels": "Geen modellen geïnstalleerd",
-    "pullFirst": "Haal een model op om te beginnen",
     "noModelsFound": "Geen modellen gevonden"
   },
   "personas": {
@@ -1544,12 +1522,6 @@
     "newWork": "Nieuwe Work-sessie",
     "openPalette": "Opdrachtenpalet openen"
   },
-  "modelDownload": {
-    "success": "Model {{name}} opgehaald",
-    "failed": "Kon model niet ophalen: {{error}}",
-    "startFailed": "Kon het ophalen niet starten",
-    "cancelled": "Ophalen geannuleerd"
-  },
   "modelTools": {
     "toasts": {
       "fetchInfoFailed": "Kon informatie niet ophalen",
@@ -1562,30 +1534,13 @@
     }
   },
   "modelManager": {
-    "title": "Modellen",
-    "loading": "Modellen laden...",
-    "systemStatus": {
-      "online": "Ollama online",
-      "offline": "Ollama offline",
-      "models": "model",
-      "models_plural": "modellen",
-      "running": "actief",
-      "vram": "VRAM"
-    },
     "sections": {
-      "pull": "Nieuw model ophalen",
-      "library": "Bibliotheek doorzoeken",
-      "huggingface": "HuggingFace Hub",
-      "running": "Actieve modellen",
-      "local": "Lokale modellen",
-      "advanced": "Geavanceerde acties",
       "catalog": "Modelcatalogus"
     },
     "catalog": {
       "searchPlaceholder": "Zoek modellen op naam of aanbieder...",
       "noModels": "Er zijn nog geen modellen beschikbaar.",
       "empty": "Geen modellen komen overeen met je zoekopdracht.",
-      "providerOllama": "Ollama",
       "hidden": "Verborgen",
       "visibilityFailed": "De zichtbaarheid van het model kon niet worden bijgewerkt.",
       "filterAll": "Alle modellen",
@@ -1605,144 +1560,10 @@
       "star": "{{name}} markeren met ster",
       "unstar": "Ster van {{name}} verwijderen"
     },
-    "pull": {
-      "placeholder": "Voer modelnaam in (bijv. llama3.2:3b, deepseek-r1:14b)",
-      "button": "Ophalen",
-      "cancel": "Annuleren",
-      "popular": "Populaire modellen:",
-      "browseAll": "Bekijk alle modellen op ollama.com",
-      "success": "Model {{name}} succesvol opgehaald",
-      "cancelled": "Model ophalen geannuleerd",
-      "failed": "Kon model niet ophalen",
-      "enterName": "Voer een modelnaam in",
-      "restricted": "Modelinstallatie is op deze instantie beperkt tot beheerders."
-    },
-    "progress": {
-      "starting": "Initialiseren...",
-      "pulling": "Model downloaden...",
-      "pullingLayer": "downloaden",
-      "verifying": "Integriteit verifiëren...",
-      "verifyingDigest": "sha256-digest verifiëren",
-      "writing": "Manifest schrijven...",
-      "cleaning": "Opruimen..."
-    },
-    "library": {
-      "available": "beschikbaar",
-      "search": "Modellen zoeken...",
-      "noResults": "Geen modellen gevonden die aan uw criteria voldoen",
-      "installed": "Geïnstalleerd",
-      "more": "+{{count}} meer",
-      "refresh": "Bibliotheek vernieuwen"
-    },
     "huggingface": {
-      "browseAll": "Alles bekijken op HuggingFace",
       "checkingGguf": "GGUF-bestanden zoeken...",
       "noGgufAvailable": "Geen GGUF-bestanden beschikbaar voor directe Ollama pull",
-      "ggufFilesCount": "GGUF-bestanden ({{count}}) - Direct naar Ollama pullen",
-      "noModelsFound": "Geen modellen gevonden",
-      "noResults": "Geen modellen gevonden. Probeer je zoekopdracht of filters aan te passen.",
-      "browseAllLink": "Alles bekijken",
-      "search": "HuggingFace-modellen zoeken...",
-      "by": "door",
-      "gated": "Beperkte toegang",
-      "viewOnHF": "Bekijk op HuggingFace",
-      "sortDownloads": "Downloads",
-      "sortLikes": "Likes",
-      "sortRecent": "Recent",
-      "taskTextGeneration": "Tekstgeneratie",
-      "taskTextToSpeech": "Tekst naar spraak",
-      "taskTextToImage": "Tekst naar afbeelding",
-      "taskSpeechRecognition": "Spraakherkenning",
-      "tasks": {
-        "textGen": "Tekstgeneratie",
-        "tts": "Tekst naar spraak",
-        "image": "Tekst naar afbeelding",
-        "stt": "Spraakherkenning"
-      },
-      "sort": {
-        "downloads": "Meest gedownload",
-        "likes": "Meest geliked",
-        "recent": "Recent bijgewerkt"
-      }
-    },
-    "local": {
-      "noModels": "Nog geen modellen geïnstalleerd",
-      "pullToStart": "Haal hierboven een model op om te beginnen",
-      "installed": "geïnstalleerd",
-      "running": "Actief",
-      "info": "Info",
-      "copy": "Kopiëren",
-      "delete": "Verwijderen",
-      "deleteConfirm": "Weet u zeker dat u model \"{{name}}\" wilt verwijderen?",
-      "deleteSuccess": "Model {{name}} succesvol verwijderd",
-      "deleteFailed": "Kon model niet verwijderen"
-    },
-    "advanced": {
-      "createModel": "Model aanmaken",
-      "fromModelfile": "Vanuit Modelfile",
-      "copyModel": "Model kopiëren",
-      "duplicateExisting": "Bestaande dupliceren",
-      "testEmbeddings": "Embeddings testen",
-      "generateVectors": "Vectoren genereren",
-      "healthCheck": "Gezondheidscontrole",
-      "testConnection": "Verbinding testen",
-      "healthy": "Ollama is gezond!"
-    },
-    "modals": {
-      "details": {
-        "title": "Modeldetails",
-        "info": "Modelinformatie",
-        "family": "Familie",
-        "parameters": "Parameters",
-        "quantization": "Kwantisatie",
-        "format": "Formaat",
-        "systemPrompt": "Systeemprompt",
-        "template": "Sjabloon",
-        "license": "Licentie",
-        "modelfile": "Modelfile",
-        "noDetails": "Geen details beschikbaar"
-      },
-      "copy": {
-        "title": "Model kopiëren",
-        "source": "Bronmodel",
-        "selectModel": "Selecteer een model...",
-        "newName": "Nieuwe modelnaam",
-        "placeholder": "bijv. mijn-aangepast-model",
-        "copying": "Kopiëren...",
-        "button": "Model kopiëren",
-        "success": "Model gekopieerd naar {{name}}",
-        "failed": "Kon model niet kopiëren",
-        "enterBoth": "Voer zowel bron- als doelnamen in"
-      },
-      "create": {
-        "title": "Aangepast model aanmaken",
-        "name": "Modelnaam",
-        "namePlaceholder": "bijv. mijn-assistent",
-        "modelfile": "Modelfile",
-        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM Je bent een behulpzame assistent.",
-        "see": "Zie",
-        "docs": "Modelfile-documentatie",
-        "docsLink": "voor syntaxreferentie",
-        "creating": "Aanmaken...",
-        "button": "Model aanmaken",
-        "success": "Model {{name}} succesvol aangemaakt",
-        "failed": "Kon model niet aanmaken",
-        "enterBoth": "Voer modelnaam en Modelfile-inhoud in"
-      },
-      "embeddings": {
-        "title": "Embeddings testen",
-        "model": "Embedding-model",
-        "selectModel": "Selecteer een model...",
-        "recommended": "Aanbevolen: nomic-embed-text, mxbai-embed-large",
-        "input": "Invoertekst",
-        "placeholder": "Voer tekst in om embeddings voor te genereren...",
-        "generating": "Genereren...",
-        "button": "Embeddings genereren",
-        "result": "Resultaat ({{count}} dimensies)",
-        "success": "{{count}}-dimensionale embeddingvector gegenereerd",
-        "failed": "Kon embeddings niet genereren",
-        "enterBoth": "Selecteer een model en voer tekst in"
-      }
+      "ggufFilesCount": "GGUF-bestanden ({{count}}) - Direct naar Ollama pullen"
     }
   },
   "personaManager": {
@@ -1941,11 +1762,8 @@
     "noUsers": "Geen gebruikers gevonden",
     "noUsersMatching": "Geen gebruikers die overeenkomen met uw zoekopdracht",
     "columns": {
-      "user": "Gebruiker",
-      "email": "E-mail",
       "role": "Rol",
-      "created": "Aangemaakt",
-      "actions": "Acties"
+      "created": "Aangemaakt"
     },
     "roles": {
       "admin": "Admin",
@@ -1973,11 +1791,8 @@
         "edit": "Gebruiker bewerken"
       },
       "username": "Gebruikersnaam",
-      "usernamePlaceholder": "Voer gebruikersnaam in",
       "email": "E-mail",
-      "emailPlaceholder": "Voer e-mail in (optioneel)",
       "password": "Wachtwoord",
-      "passwordPlaceholder": "Voer wachtwoord in",
       "passwordHint": "Laat leeg om huidig wachtwoord te behouden",
       "role": "Rol",
       "creating": "Aanmaken...",
@@ -2025,12 +1840,6 @@
       "computerPreset": "Work Computer",
       "computerPresetHint": "De Work Computer vereist de GUI-image: bouw die vanuit deploy/work-computer in de repository en tag als libre-work-computer:latest.",
       "approvalsRequired": "Goedkeuring vereisen voor acties die gegevens wijzigen"
-    },
-    "modelAccess": {
-      "title": "Modeldownloads",
-      "description": "Sta alle actieve gebruikers toe modellen op te halen via Ollama en de Hugging Face-browser. Beheerders kunnen altijd modellen downloaden.",
-      "saved": "Toegang tot modeldownloads bijgewerkt",
-      "saveFailed": "Kon toegang tot modeldownloads niet bijwerken"
     },
     "webSearchAccess": {
       "title": "Webzoeken",
@@ -2137,13 +1946,6 @@
     "mfaResetSuccess": "Tweestapsverificatie verwijderd voor {{name}}.",
     "mfaResetNothing": "{{name}} had geen tweestapsverificatie.",
     "mfaResetFailed": "Het resetten is mislukt.",
-    "ollamaProvider": {
-      "title": "Ollama-provider",
-      "description": "Indien uitgeschakeld, stopt de app volledig met controleren op Ollama — geen statuscontroles, geen waarschuwingen. Het eindpunt kan naar elke Ollama-compatibele gateway wijzen.",
-      "saved": "Instellingen voor Ollama-provider opgeslagen",
-      "saveFailed": "Kon de instellingen voor de Ollama-provider niet opslaan",
-      "baseUrlLabel": "Ollama-eindpunt-URL"
-    },
     "emailNotifications": {
       "title": "E-mailmeldingen",
       "description": "Uitgaande mailserver voor meldingen. Gebruikers kiezen zelf welke meldingen in hun inbox terechtkomen, onder Instellingen > Meldingen.",
@@ -2157,11 +1959,6 @@
       "portHint": "Laat leeg voor de standaard van de gekozen beveiligingsmodus.",
       "securityLabel": "Verbindingsbeveiliging",
       "securityHint": "STARTTLS zet een onversleutelde verbinding om in een versleutelde; TLS is vanaf het begin versleuteld.",
-      "security": {
-        "starttls": "STARTTLS (poort 587)",
-        "tls": "TLS (poort 465)",
-        "none": "Geen (alleen vertrouwd netwerk)"
-      },
       "verifyLabel": "Certificaat verifiëren",
       "verifyHint": "Zet dit alleen uit voor een relay met een zelfondertekend certificaat.",
       "usernameLabel": "Gebruikersnaam",
@@ -2493,7 +2290,6 @@
     "deleteConfirm": "Weet u zeker dat u deze afbeelding wilt verwijderen?",
     "deleteSuccess": "Afbeelding verwijderd",
     "deleteFailed": "Kon afbeelding niet verwijderen",
-    "downloadFailed": "Kon afbeelding niet downloaden",
     "loadMore": "Meer laden ({{current}} van {{total}})",
     "loadFailed": "Kon galerij niet laden"
   },
@@ -3242,18 +3038,10 @@
   },
   "modelSelector": {
     "searchInstalled": "Geïnstalleerde modellen zoeken...",
-    "searchOllama": "Ollama bibliotheek doorzoeken...",
-    "searchHuggingFace": "HuggingFace doorzoeken...",
     "selectModel": "Model selecteren",
     "personas": "Personas",
-    "ollamaModels": "Ollama-modellen",
     "pluginModels": "Plugin-modellen",
     "actions": "Acties",
-    "installed": "Geïnstalleerd",
-    "use": "Gebruiken",
-    "pull": "Downloaden",
-    "pullRestricted": "Modelinstallatie is op deze instantie beperkt tot beheerders.",
-    "adminOnlyPull": "Alleen beheerders",
     "legacyProvider": "provider niet vastgelegd",
     "providerNotRecorded": "Provider niet vastgelegd",
     "providerUnavailable": "provider niet beschikbaar",
@@ -4089,22 +3877,6 @@
   "connectModels": {
     "adminOnly": "Vraag uw beheerder om een modelprovider te verbinden.",
     "skip": "Voorlopig overslaan — ik verbind later modellen",
-    "ollama": {
-      "status": {
-        "checking": "Beschikbaarheid controleren…",
-        "healthy": "Actief en klaar voor lokale modellen",
-        "offline": "Niet gedetecteerd op deze machine",
-        "disabled": "Uitgeschakeld — er worden geen controles uitgevoerd"
-      },
-      "recheck": "Opnieuw controleren",
-      "enable": "Inschakelen",
-      "disable": "Stoppen met controleren op Ollama",
-      "enabledToast": "Ollama-provider ingeschakeld",
-      "disabledToast": "Ollama-controles uitgeschakeld — u kunt ze weer inschakelen in Instellingen",
-      "settingsFailed": "Kon de Ollama-instellingen niet bijwerken",
-      "offlineHint": "Installeer Ollama vanaf ollama.com en het wordt automatisch gedetecteerd — of gebruik in plaats daarvan een van de onderstaande opties. Als u niet van plan bent Ollama te gebruiken, kunt u de controles uitschakelen.",
-      "healthyHint": "Ollama is verbonden. Haal een model op via Modellen en u kunt chatten."
-    },
     "local": {
       "title": "Lokale server",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",

@@ -22,6 +22,7 @@ import React, {
   useRef,
   useEffect,
   useCallback,
+  type ComponentType,
 } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -74,7 +75,6 @@ import { SettingsSkillsTab } from '@/components/settings/SettingsSkillsTab';
 import { SettingsToolsTab } from '@/components/settings/SettingsToolsTab';
 import { SettingsTabHeader } from '@/components/settings/SettingsTabHeader';
 import { useDialogFocus } from '@/hooks/useDialogFocus';
-import { ModelManager } from '@/components/ModelManager';
 import { useSettingsDataImport } from '@/components/settings/useSettingsDataImport';
 import { useTranslation } from 'react-i18next';
 import { useChatStore } from '@/store/chatStore';
@@ -98,7 +98,6 @@ import {
 } from '@/utils/chatModelSelection';
 import {
   preferencesApi,
-  ollamaApi,
   documentsApi,
   embeddingApi,
   ttsApi,
@@ -267,9 +266,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               ? `${model.agentName || model.name} · Agent CLI${
                   model.isUnavailable ? ' (unavailable)' : ''
                 }`
-              : `${model.name} · Ollama${
-                  model.isUnavailable ? ' (unavailable)' : ''
-                }`,
+              : `${model.name}${model.isUnavailable ? ' (unavailable)' : ''}`,
     })),
   ];
   const autoTitleTaskModelOptions = [
@@ -293,9 +290,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             ? `${model.name} · ${model.pluginName || model.pluginId}${
                 model.isUnavailable ? ' (unavailable)' : ''
               }`
-            : `${model.name} · Ollama${
-                model.isUnavailable ? ' (unavailable)' : ''
-              }`,
+            : `${model.name}${model.isUnavailable ? ' (unavailable)' : ''}`,
     })),
   ];
 
@@ -320,15 +315,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   );
   const [settingsQuery, setSettingsQuery] = useState('');
   const [tempSystemMessage, setTempSystemMessage] = useState(systemMessage);
-
-  const [updatingAllModels, setUpdatingAllModels] = useState(false);
-  const [updateProgress, setUpdateProgress] = useState<{
-    current: number;
-    total: number;
-    modelName: string;
-    status: 'starting' | 'success' | 'error';
-    error?: string;
-  } | null>(null);
 
   // Plugin state
   const [showUploadForm, setShowUploadForm] = useState(false);
@@ -358,14 +344,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
    * trained for far more.
    */
   const loadModelRecommendedOptions = useCallback(
-    async (model: string): Promise<Partial<GenerationOptions>> => {
-      try {
-        const response = await ollamaApi.getModelDefaults(model);
-        return response.success ? (response.data?.options ?? {}) : {};
-      } catch {
-        // A model that cannot be inspected simply contributes nothing.
-        return {};
-      }
+    async (_model: string): Promise<Partial<GenerationOptions>> => {
+      return {};
     },
     []
   );
@@ -1462,27 +1442,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     }
   };
 
-  const handleUpdateAllModels = () => {
-    setUpdatingAllModels(true);
-    setUpdateProgress(null);
-
-    ollamaApi.pullAllModelsStream(
-      progress => {
-        setUpdateProgress(progress);
-      },
-      () => {
-        setUpdatingAllModels(false);
-        setUpdateProgress(null);
-        toast.success(t('settings.model.allModelsUpdated'));
-      },
-      error => {
-        setUpdatingAllModels(false);
-        setUpdateProgress(null);
-        toast.error(t('settings.model.updateAllFailed', { error }));
-      }
-    );
-  };
-
   const handleAutoTitleChange = (autoTitle: boolean) => {
     const newTitleSettings = {
       ...preferences.titleSettings,
@@ -1714,10 +1673,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     'api-keys': 'api key token scope secret bearer security integration',
     'api-platform':
       'api platform keys billing usage tokenpanel portal playground recharge',
-    'model-manager':
-      `models download pull update bulk refresh delete ollama library huggingface bulk operations update all models ${t(
-        'settings.model.bulkOperations'
-      )} ${t('settings.model.updateAll')}`.toLowerCase(),
     prompts: 'prompts slash command template variables library rollback',
     skills: 'skills manifest instructions slug load_skill rollback',
     tools: 'tools mcp openapi server credential approval function calling',
@@ -1730,7 +1685,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     (tabSearchKeywords[tab.id] || '').includes(settingsQueryText);
 
   // Grouped so the nav reads as four short lists instead of one long one.
-  const tabGroups = [
+  interface SettingsNavTab {
+    id: string;
+    label: string;
+    icon: ComponentType<{ className?: string }>;
+    disabled?: boolean;
+    disabledHint?: string;
+  }
+  const tabGroups: { id: string; label: string; tabs: SettingsNavTab[] }[] = [
     {
       id: 'general',
       label: t('settings.groups.general', 'General'),
@@ -1774,15 +1736,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       label: t('settings.groups.chat', 'Chat'),
       tabs: [
         { id: 'models', label: t('settings.tabs.model'), icon: Bot },
-        {
-          id: 'model-manager',
-          label: t('models.title'),
-          icon: Database,
-          // The model manager only speaks to Ollama; when an administrator
-          // has switched the provider off there is nothing in it to manage.
-          disabled: settingsSystemInfo?.ollamaEnabled === false,
-          disabledHint: t('settings.tabs.ollamaDisabled'),
-        },
         {
           id: 'generation',
           label: t('settings.tabs.generation'),
@@ -2012,21 +1965,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <Suspense fallback={null}>
               <UserManagementPanel />
             </Suspense>
-          </div>
-        );
-
-      case 'model-manager':
-        return (
-          <div className='pb-2'>
-            <SettingsTabHeader
-              title={t('models.title')}
-              description={t('models.subtitle')}
-            />
-            <ModelManager
-              updatingAllModels={updatingAllModels}
-              updateProgress={updateProgress}
-              onUpdateAllModels={handleUpdateAllModels}
-            />
           </div>
         );
 

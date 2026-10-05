@@ -26,7 +26,6 @@ import { EmailNotificationSettings } from './EmailNotificationSettings';
 import { MfaPolicySettings } from '@/components/MfaPolicySettings';
 import { GroupManager } from '@/components/GroupManager';
 import { SecurityAuditLog } from '@/components/SecurityAuditLog';
-import { ModelDownloadSettings } from '@/components/ModelDownloadSettings';
 import { WebSearchAccessSettings } from '@/components/WebSearchAccessSettings';
 import { WorkAccessSettings } from '@/components/WorkAccessSettings';
 import { WorkPoliciesSettings } from '@/components/WorkPoliciesSettings';
@@ -53,7 +52,6 @@ const renderSection = (section: SectionId) => {
         <div className='space-y-4'>
           <WorkAccessSettings />
           <WorkPoliciesSettings />
-          <ModelDownloadSettings />
           <WebSearchAccessSettings />
           <AgentAccessSettings />
           <ToolAccessSettings />

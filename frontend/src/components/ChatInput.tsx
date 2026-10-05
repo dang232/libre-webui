@@ -59,7 +59,6 @@ import {
   chatApi,
   imageGenApi,
   documentsApi,
-  ollamaApi,
   searchApi,
 } from '@/utils/api';
 import { useDictation } from '@/hooks/useDictation';
@@ -320,67 +319,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     () => models.find(model => model.name === currentSession?.model),
     [models, currentSession?.model]
   );
-  // Asking a model that cannot reason to reason is an error from Ollama, so
-  // the toggle only appears where thinking means something. Models reached
-  // through a plugin answer for themselves; Ollama says what it supports, and
-  // where it says nothing the toggle is offered rather than hidden. The answer
-  // is stored with the model it was read for, so switching models never shows
-  // the previous model's answer.
-  const [modelDefaults, setModelDefaults] = useState<{
-    model: string;
-    supportsThinking?: boolean;
-    options: Partial<GenerationOptions>;
-    trainedContextLength?: number;
-    contextCapped?: boolean;
-  } | null>(null);
-
-  useEffect(() => {
-    const model = currentSession?.model;
-    // Only a model resolved as a local Ollama model is worth asking Ollama
-    // about: while the list is loading, and for agents, personas, and plugin
-    // models, the lookup would 404 against a name Ollama has never heard of.
-    if (
-      !model ||
-      models.length === 0 ||
-      !activeModelEntry ||
-      activeModelEntry.isPlugin ||
-      activeModelEntry.isAgent
-    ) {
-      return;
-    }
-
-    let cancelled = false;
-    void ollamaApi
-      .getModelDefaults(model)
-      .then(response => {
-        if (cancelled || !response.success || !response.data) return;
-        setModelDefaults({
-          model,
-          supportsThinking: response.data.supportsThinking,
-          options: response.data.options ?? {},
-          trainedContextLength: response.data.trainedContextLength,
-          contextCapped: response.data.contextCapped,
-        });
-      })
-      .catch(() => {
-        // A model that cannot be inspected keeps the toggle available.
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [activeModelEntry, currentSession?.model, models.length]);
-
-  const activeModelDefaults =
-    modelDefaults?.model === currentSession?.model ? modelDefaults : null;
-  const ollamaThinkingSupported = activeModelDefaults?.supportsThinking;
+  // Model capability lookups ran against the local provider; with platform
+  // models the thinking toggle is offered unless the entry says otherwise.
 
   const thinkingAvailable = Boolean(
     currentSession &&
     !activeModelEntry?.isAgent &&
     (activeModelEntry?.isPlugin
       ? activeModelEntry.reasoningSupport !== false
-      : ollamaThinkingSupported !== false)
+      : true)
   );
 
   // How full the model's context is. The window comes from the same settings
@@ -390,7 +337,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     model: activeModelEntry,
     sessionOptions: currentSession?.settings?.generationOptions,
     pinnedOptions: pinnedModelOptions,
-    modelDefaults: activeModelDefaults?.options,
+    modelDefaults: undefined,
     globalOptions: globalGenerationOptions,
   });
   const contextWindowMessages = useChatStore(
@@ -1255,11 +1202,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                   {currentSession && (
                     <ContextMeter
                       usage={contextUsage}
-                      trainedBudget={
-                        activeModelDefaults?.contextCapped
-                          ? activeModelDefaults.trainedContextLength
-                          : undefined
-                      }
+                      trainedBudget={undefined}
                     />
                   )}
 

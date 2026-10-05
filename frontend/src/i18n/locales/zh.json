@@ -45,7 +45,6 @@
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "ollamaUnavailable": "Ollama 服务不可用。仍可使用插件模型。",
     "backendConnectionFailed": "无法连接后端服务"
   },
   "auth": {
@@ -454,7 +453,6 @@
       "updated": "模型已更新",
       "noModels": "没有可用的模型",
       "noModelsDescription": "没有可用的模型。请确保 Ollama 正在运行并已安装模型。",
-      "pullCommand": "ollama pull llama3.2:3b",
       "noModelsTooltip": "没有可用的模型。请确保 Ollama 正在运行并已安装模型。",
       "selectBeforePrivateChat": "开始私密聊天前请选择一个可用的模型",
       "selectBeforeSending": "发送前请选择一个可用的模型",
@@ -675,7 +673,6 @@
       "sessions": "登录会话",
       "apiKeys": "API 密钥",
       "notifications": "通知",
-      "ollamaDisabled": "管理员已禁用 Ollama",
       "apiPlatform": "API Platform"
     },
     "appearance": {
@@ -1144,12 +1141,6 @@
     "about": {
       "title": "关于",
       "versionLabel": "版本",
-      "ollama": {
-        "title": "Ollama 状态",
-        "version": "版本",
-        "healthy": "正常",
-        "unhealthy": "异常"
-      },
       "stats": {
         "models": "模型",
         "sessions": "会话"
@@ -1462,20 +1453,7 @@
   },
   "models": {
     "title": "模型",
-    "subtitle": "拉取、管理和监控您的 Ollama 模型",
-    "installed": "已安装模型",
-    "available": "可用模型",
-    "pull": "拉取模型",
-    "pulling": "拉取中...",
-    "delete": "删除模型",
-    "deleting": "删除中...",
-    "size": "大小",
-    "modified": "修改时间",
-    "family": "系列",
-    "parameters": "参数",
-    "quantization": "量化",
     "noModels": "未安装模型",
-    "pullFirst": "拉取模型以开始使用",
     "noModelsFound": "未找到模型"
   },
   "personas": {
@@ -1544,12 +1522,6 @@
     "newWork": "新建 Work 会话",
     "openPalette": "打开命令面板"
   },
-  "modelDownload": {
-    "success": "已下载 {{name}}",
-    "failed": "下载失败：{{error}}",
-    "startFailed": "无法开始下载",
-    "cancelled": "下载已取消"
-  },
   "modelTools": {
     "toasts": {
       "fetchInfoFailed": "获取信息失败",
@@ -1562,30 +1534,13 @@
     }
   },
   "modelManager": {
-    "title": "模型",
-    "loading": "加载模型中...",
-    "systemStatus": {
-      "online": "Ollama 在线",
-      "offline": "Ollama 离线",
-      "models": "模型",
-      "models_plural": "模型",
-      "running": "运行中",
-      "vram": "显存"
-    },
     "sections": {
-      "pull": "拉取新模型",
-      "library": "浏览模型库",
-      "huggingface": "HuggingFace Hub",
-      "running": "运行中的模型",
-      "local": "本地模型",
-      "advanced": "高级操作",
       "catalog": "模型目录"
     },
     "catalog": {
       "searchPlaceholder": "按名称或提供方搜索模型...",
       "noModels": "暂无可用模型。",
       "empty": "没有模型符合您的搜索。",
-      "providerOllama": "Ollama",
       "hidden": "已隐藏",
       "visibilityFailed": "无法更新模型的可见性。",
       "filterAll": "全部模型",
@@ -1605,144 +1560,10 @@
       "star": "为 {{name}} 加星",
       "unstar": "取消 {{name}} 的星标"
     },
-    "pull": {
-      "placeholder": "输入模型名称（例如：llama3.2:3b、deepseek-r1:14b）",
-      "button": "拉取",
-      "cancel": "取消",
-      "popular": "热门模型：",
-      "browseAll": "在 ollama.com 浏览所有模型",
-      "success": "模型 {{name}} 拉取成功",
-      "cancelled": "模型拉取已取消",
-      "failed": "拉取模型失败",
-      "enterName": "请输入模型名称",
-      "restricted": "此实例上的模型安装仅限管理员。"
-    },
-    "progress": {
-      "starting": "初始化中...",
-      "pulling": "下载模型中...",
-      "pullingLayer": "下载中",
-      "verifying": "验证完整性...",
-      "verifyingDigest": "验证 sha256 摘要",
-      "writing": "写入清单...",
-      "cleaning": "清理中..."
-    },
-    "library": {
-      "available": "可用",
-      "search": "搜索模型...",
-      "noResults": "未找到符合条件的模型",
-      "installed": "已安装",
-      "more": "+{{count}} 更多",
-      "refresh": "刷新模型库"
-    },
     "huggingface": {
-      "browseAll": "在 HuggingFace 上浏览全部",
       "checkingGguf": "正在检查 GGUF 文件...",
       "noGgufAvailable": "没有可用于直接 Ollama 拉取的 GGUF 文件",
-      "ggufFilesCount": "GGUF 文件 ({{count}}) - 直接拉取到 Ollama",
-      "noModelsFound": "未找到模型",
-      "noResults": "未找到模型。请尝试调整搜索或筛选条件。",
-      "browseAllLink": "浏览全部",
-      "search": "搜索 HuggingFace 模型...",
-      "by": "作者",
-      "gated": "受限访问",
-      "viewOnHF": "在 HuggingFace 上查看",
-      "sortDownloads": "下载量",
-      "sortLikes": "点赞",
-      "sortRecent": "最近",
-      "taskTextGeneration": "文本生成",
-      "taskTextToSpeech": "语音合成",
-      "taskTextToImage": "图像生成",
-      "taskSpeechRecognition": "语音识别",
-      "tasks": {
-        "textGen": "文本生成",
-        "tts": "语音合成",
-        "image": "图像生成",
-        "stt": "语音识别"
-      },
-      "sort": {
-        "downloads": "下载最多",
-        "likes": "最受欢迎",
-        "recent": "最近更新"
-      }
-    },
-    "local": {
-      "noModels": "尚未安装模型",
-      "pullToStart": "拉取上方的模型以开始使用",
-      "installed": "已安装",
-      "running": "运行中",
-      "info": "信息",
-      "copy": "复制",
-      "delete": "删除",
-      "deleteConfirm": "确定要删除模型 \"{{name}}\" 吗？",
-      "deleteSuccess": "模型 {{name}} 删除成功",
-      "deleteFailed": "删除模型失败"
-    },
-    "advanced": {
-      "createModel": "创建模型",
-      "fromModelfile": "从 Modelfile",
-      "copyModel": "复制模型",
-      "duplicateExisting": "复制现有模型",
-      "testEmbeddings": "测试嵌入",
-      "generateVectors": "生成向量",
-      "healthCheck": "健康检查",
-      "testConnection": "测试连接",
-      "healthy": "Ollama 运行正常！"
-    },
-    "modals": {
-      "details": {
-        "title": "模型详情",
-        "info": "模型信息",
-        "family": "系列",
-        "parameters": "参数",
-        "quantization": "量化",
-        "format": "格式",
-        "systemPrompt": "系统提示词",
-        "template": "模板",
-        "license": "许可证",
-        "modelfile": "Modelfile",
-        "noDetails": "无可用详情"
-      },
-      "copy": {
-        "title": "复制模型",
-        "source": "源模型",
-        "selectModel": "选择模型...",
-        "newName": "新模型名称",
-        "placeholder": "例如：my-custom-model",
-        "copying": "复制中...",
-        "button": "复制模型",
-        "success": "模型已复制到 {{name}}",
-        "failed": "复制模型失败",
-        "enterBoth": "请输入源名称和目标名称"
-      },
-      "create": {
-        "title": "创建自定义模型",
-        "name": "模型名称",
-        "namePlaceholder": "例如：my-assistant",
-        "modelfile": "Modelfile",
-        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
-        "see": "查看",
-        "docs": "Modelfile 文档",
-        "docsLink": "语法参考",
-        "creating": "创建中...",
-        "button": "创建模型",
-        "success": "模型 {{name}} 创建成功",
-        "failed": "创建模型失败",
-        "enterBoth": "请输入模型名称和 Modelfile 内容"
-      },
-      "embeddings": {
-        "title": "测试嵌入",
-        "model": "嵌入模型",
-        "selectModel": "选择模型...",
-        "recommended": "推荐：nomic-embed-text、mxbai-embed-large",
-        "input": "输入文本",
-        "placeholder": "输入要生成嵌入的文本...",
-        "generating": "生成中...",
-        "button": "生成嵌入",
-        "result": "结果（{{count}} 维）",
-        "success": "生成了 {{count}} 维嵌入向量",
-        "failed": "生成嵌入失败",
-        "enterBoth": "请选择模型并输入文本"
-      }
+      "ggufFilesCount": "GGUF 文件 ({{count}}) - 直接拉取到 Ollama"
     }
   },
   "personaManager": {
@@ -1941,11 +1762,8 @@
     "noUsers": "未找到用户",
     "noUsersMatching": "未找到符合搜索条件的用户",
     "columns": {
-      "user": "用户",
-      "email": "邮箱",
       "role": "角色",
-      "created": "创建时间",
-      "actions": "操作"
+      "created": "创建时间"
     },
     "roles": {
       "admin": "管理员",
@@ -1973,11 +1791,8 @@
         "edit": "编辑用户"
       },
       "username": "用户名",
-      "usernamePlaceholder": "输入用户名",
       "email": "邮箱",
-      "emailPlaceholder": "输入邮箱（可选）",
       "password": "密码",
-      "passwordPlaceholder": "输入密码",
       "passwordHint": "留空以保持当前密码",
       "role": "角色",
       "creating": "创建中...",
@@ -2025,12 +1840,6 @@
       "computerPreset": "Work Computer",
       "computerPresetHint": "Work Computer 需要 GUI 镜像：从仓库的 deploy/work-computer 构建并标记为 libre-work-computer:latest。",
       "approvalsRequired": "有副作用的操作需要批准"
-    },
-    "modelAccess": {
-      "title": "模型下载",
-      "description": "允许所有活跃用户通过 Ollama 和 Hugging Face 浏览器拉取模型。管理员始终可以下载模型。",
-      "saved": "模型下载权限已更新",
-      "saveFailed": "无法更新模型下载权限"
     },
     "webSearchAccess": {
       "title": "网页搜索",
@@ -2137,13 +1946,6 @@
     "mfaResetSuccess": "已移除 {{name}} 的两步验证。",
     "mfaResetNothing": "{{name}} 未设置两步验证。",
     "mfaResetFailed": "重置失败。",
-    "ollamaProvider": {
-      "title": "Ollama 提供商",
-      "description": "关闭后，应用将完全停止检查 Ollama — 不进行健康探测，不显示警告。该端点可以指向任何兼容 Ollama 的网关。",
-      "saved": "Ollama 提供商设置已保存",
-      "saveFailed": "无法保存 Ollama 提供商设置",
-      "baseUrlLabel": "Ollama 端点 URL"
-    },
     "emailNotifications": {
       "title": "邮件通知",
       "description": "用于通知的发件邮件服务器。用户可在设置 > 通知中选择哪些通知会发送到他们的收件箱。",
@@ -2157,11 +1959,6 @@
       "portHint": "留空则使用所选安全模式的默认端口。",
       "securityLabel": "连接安全性",
       "securityHint": "STARTTLS 会将普通连接升级为加密连接；TLS 从一开始就是加密的。",
-      "security": {
-        "starttls": "STARTTLS（端口 587）",
-        "tls": "TLS（端口 465）",
-        "none": "无（仅限受信任网络）"
-      },
       "verifyLabel": "验证证书",
       "verifyHint": "仅在中继服务器使用自签名证书时关闭。",
       "usernameLabel": "用户名",
@@ -2493,7 +2290,6 @@
     "deleteConfirm": "确定要删除此图像吗？",
     "deleteSuccess": "图像已删除",
     "deleteFailed": "删除图像失败",
-    "downloadFailed": "下载图像失败",
     "loadMore": "加载更多（{{current}} / {{total}}）",
     "loadFailed": "加载图库失败"
   },
@@ -3242,18 +3038,10 @@
   },
   "modelSelector": {
     "searchInstalled": "搜索已安装的模型...",
-    "searchOllama": "搜索Ollama库...",
-    "searchHuggingFace": "搜索HuggingFace...",
     "selectModel": "选择模型",
     "personas": "角色",
-    "ollamaModels": "Ollama模型",
     "pluginModels": "插件模型",
     "actions": "操作",
-    "installed": "已安装",
-    "use": "使用",
-    "pull": "下载",
-    "pullRestricted": "此实例上的模型安装仅限管理员。",
-    "adminOnlyPull": "仅管理员",
     "legacyProvider": "未记录提供方",
     "providerNotRecorded": "未记录提供方",
     "providerUnavailable": "提供方不可用",
@@ -4089,22 +3877,6 @@
   "connectModels": {
     "adminOnly": "请管理员为您连接模型提供商。",
     "skip": "暂时跳过 — 我稍后再连接模型",
-    "ollama": {
-      "status": {
-        "checking": "正在检查可用性…",
-        "healthy": "正在运行，可用于本地模型",
-        "offline": "未在此设备上检测到",
-        "disabled": "已停用 — 不会运行任何检查"
-      },
-      "recheck": "重新检查",
-      "enable": "启用",
-      "disable": "停止检查 Ollama",
-      "enabledToast": "已启用 Ollama 提供商",
-      "disabledToast": "已停用 Ollama 检查 — 您可以在设置中重新启用",
-      "settingsFailed": "无法更新 Ollama 设置",
-      "offlineHint": "从 ollama.com 安装 Ollama，系统会自动检测到它 — 或者改用下面的选项之一。如果您不打算使用 Ollama，可以关闭其检查。",
-      "healthyHint": "Ollama 已连接。从模型页面拉取一个模型，即可开始对话。"
-    },
     "local": {
       "title": "本地服务器",
       "subtitle": "llama.cpp、vLLM、llama-swap、LM Studio、mlx-lm",

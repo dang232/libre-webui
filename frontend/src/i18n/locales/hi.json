@@ -45,7 +45,6 @@
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "ollamaUnavailable": "Ollama सेवा उपलब्ध नहीं है। प्लगइन मॉडल अब भी उपयोग किए जा सकते हैं।",
     "backendConnectionFailed": "बैकएंड सेवा से कनेक्ट करने में विफल"
   },
   "auth": {
@@ -454,7 +453,6 @@
       "updated": "मॉडल अपडेट किया गया",
       "noModels": "कोई मॉडल उपलब्ध नहीं",
       "noModelsDescription": "कोई मॉडल उपलब्ध नहीं। सुनिश्चित करें कि Ollama चल रहा है और मॉडल इंस्टॉल हैं।",
-      "pullCommand": "ollama pull llama3.2:3b",
       "noModelsTooltip": "कोई मॉडल उपलब्ध नहीं। कृपया सुनिश्चित करें कि Ollama चल रहा है और मॉडल इंस्टॉल हैं।",
       "selectBeforePrivateChat": "निजी चैट शुरू करने से पहले एक उपलब्ध मॉडल चुनें",
       "selectBeforeSending": "भेजने से पहले एक उपलब्ध मॉडल चुनें",
@@ -675,7 +673,6 @@
       "sessions": "सत्र",
       "apiKeys": "API कुंजियाँ",
       "notifications": "सूचनाएँ",
-      "ollamaDisabled": "Ollama को एक व्यवस्थापक द्वारा अक्षम किया गया है",
       "apiPlatform": "API Platform"
     },
     "appearance": {
@@ -1144,12 +1141,6 @@
     "about": {
       "title": "परिचय",
       "versionLabel": "संस्करण",
-      "ollama": {
-        "title": "Ollama स्थिति",
-        "version": "संस्करण",
-        "healthy": "स्वस्थ",
-        "unhealthy": "अस्वस्थ"
-      },
       "stats": {
         "models": "मॉडल",
         "sessions": "सत्र"
@@ -1462,20 +1453,7 @@
   },
   "models": {
     "title": "मॉडल",
-    "subtitle": "अपने Ollama मॉडल पुल, प्रबंधित और मॉनिटर करें",
-    "installed": "इंस्टॉल मॉडल",
-    "available": "उपलब्ध मॉडल",
-    "pull": "मॉडल पुल करें",
-    "pulling": "पुल हो रहा है...",
-    "delete": "मॉडल हटाएं",
-    "deleting": "हटाया जा रहा है...",
-    "size": "आकार",
-    "modified": "संशोधित",
-    "family": "फैमिली",
-    "parameters": "पैरामीटर",
-    "quantization": "क्वांटाइज़ेशन",
     "noModels": "कोई मॉडल इंस्टॉल नहीं",
-    "pullFirst": "शुरू करने के लिए मॉडल पुल करें",
     "noModelsFound": "कोई मॉडल नहीं मिला"
   },
   "personas": {
@@ -1544,12 +1522,6 @@
     "newWork": "नया Work सत्र",
     "openPalette": "कमांड पैलेट खोलें"
   },
-  "modelDownload": {
-    "success": "{{name}} डाउनलोड किया गया",
-    "failed": "डाउनलोड नहीं हो सका: {{error}}",
-    "startFailed": "डाउनलोड शुरू नहीं किया जा सका",
-    "cancelled": "डाउनलोड रद्द कर दिया गया"
-  },
   "modelTools": {
     "toasts": {
       "fetchInfoFailed": "जानकारी प्राप्त नहीं की जा सकी",
@@ -1562,30 +1534,13 @@
     }
   },
   "modelManager": {
-    "title": "मॉडल",
-    "loading": "मॉडल लोड हो रहे हैं...",
-    "systemStatus": {
-      "online": "Ollama ऑनलाइन",
-      "offline": "Ollama ऑफलाइन",
-      "models": "मॉडल",
-      "models_plural": "मॉडल",
-      "running": "चल रहा है",
-      "vram": "VRAM"
-    },
     "sections": {
-      "pull": "नया मॉडल पुल करें",
-      "library": "लाइब्रेरी ब्राउज़ करें",
-      "huggingface": "HuggingFace Hub",
-      "running": "चल रहे मॉडल",
-      "local": "स्थानीय मॉडल",
-      "advanced": "उन्नत क्रियाएं",
       "catalog": "मॉडल सूची"
     },
     "catalog": {
       "searchPlaceholder": "नाम या प्रदाता से मॉडल खोजें...",
       "noModels": "अभी कोई मॉडल उपलब्ध नहीं है।",
       "empty": "आपकी खोज से कोई मॉडल मेल नहीं खाता।",
-      "providerOllama": "Ollama",
       "hidden": "छिपा हुआ",
       "visibilityFailed": "मॉडल की दृश्यता अपडेट नहीं की जा सकी।",
       "filterAll": "सभी मॉडल",
@@ -1605,144 +1560,10 @@
       "star": "{{name}} को स्टार करें",
       "unstar": "{{name}} से स्टार हटाएँ"
     },
-    "pull": {
-      "placeholder": "मॉडल नाम दर्ज करें (जैसे, llama3.2:3b, deepseek-r1:14b)",
-      "button": "पुल करें",
-      "cancel": "रद्द करें",
-      "popular": "लोकप्रिय मॉडल:",
-      "browseAll": "ollama.com पर सभी मॉडल ब्राउज़ करें",
-      "success": "मॉडल {{name}} सफलतापूर्वक पुल किया गया",
-      "cancelled": "मॉडल पुल रद्द किया गया",
-      "failed": "मॉडल पुल करने में विफल",
-      "enterName": "कृपया मॉडल नाम दर्ज करें",
-      "restricted": "इस इंस्टेंस पर मॉडल इंस्टॉलेशन केवल एडमिन तक सीमित है।"
-    },
-    "progress": {
-      "starting": "प्रारंभ हो रहा है...",
-      "pulling": "मॉडल डाउनलोड हो रहा है...",
-      "pullingLayer": "डाउनलोड हो रहा है",
-      "verifying": "अखंडता सत्यापित हो रही है...",
-      "verifyingDigest": "sha256 डाइजेस्ट सत्यापित हो रहा है",
-      "writing": "मैनिफेस्ट लिखा जा रहा है...",
-      "cleaning": "साफ हो रहा है..."
-    },
-    "library": {
-      "available": "उपलब्ध",
-      "search": "मॉडल खोजें...",
-      "noResults": "आपके मापदंड से मेल खाता कोई मॉडल नहीं मिला",
-      "installed": "इंस्टॉल",
-      "more": "+{{count}} और",
-      "refresh": "लाइब्रेरी रिफ्रेश करें"
-    },
     "huggingface": {
-      "browseAll": "HuggingFace पर सभी देखें",
       "checkingGguf": "GGUF फ़ाइलें खोज रहे हैं...",
       "noGgufAvailable": "सीधे Ollama पुल के लिए कोई GGUF फ़ाइल उपलब्ध नहीं",
-      "ggufFilesCount": "GGUF फ़ाइलें ({{count}}) - सीधे Ollama में पुल करें",
-      "noModelsFound": "कोई मॉडल नहीं मिला",
-      "noResults": "कोई मॉडल नहीं मिला। अपनी खोज या फ़िल्टर समायोजित करें।",
-      "browseAllLink": "सभी देखें",
-      "search": "HuggingFace मॉडल खोजें...",
-      "by": "द्वारा",
-      "gated": "प्रतिबंधित पहुंच",
-      "viewOnHF": "HuggingFace पर देखें",
-      "sortDownloads": "डाउनलोड",
-      "sortLikes": "पसंद",
-      "sortRecent": "हाल के",
-      "taskTextGeneration": "टेक्स्ट जनरेशन",
-      "taskTextToSpeech": "टेक्स्ट टू स्पीच",
-      "taskTextToImage": "टेक्स्ट टू इमेज",
-      "taskSpeechRecognition": "स्पीच रिकग्निशन",
-      "tasks": {
-        "textGen": "टेक्स्ट जनरेशन",
-        "tts": "टेक्स्ट टू स्पीच",
-        "image": "टेक्स्ट टू इमेज",
-        "stt": "स्पीच रिकग्निशन"
-      },
-      "sort": {
-        "downloads": "सबसे ज़्यादा डाउनलोड",
-        "likes": "सबसे लोकप्रिय",
-        "recent": "हाल में अपडेट किए गए"
-      }
-    },
-    "local": {
-      "noModels": "अभी तक कोई मॉडल इंस्टॉल नहीं",
-      "pullToStart": "शुरू करने के लिए ऊपर मॉडल पुल करें",
-      "installed": "इंस्टॉल",
-      "running": "चल रहा है",
-      "info": "जानकारी",
-      "copy": "कॉपी",
-      "delete": "हटाएं",
-      "deleteConfirm": "क्या आप वाकई मॉडल \"{{name}}\" हटाना चाहते हैं?",
-      "deleteSuccess": "मॉडल {{name}} सफलतापूर्वक हटाया गया",
-      "deleteFailed": "मॉडल हटाने में विफल"
-    },
-    "advanced": {
-      "createModel": "मॉडल बनाएं",
-      "fromModelfile": "Modelfile से",
-      "copyModel": "मॉडल कॉपी करें",
-      "duplicateExisting": "मौजूदा डुप्लीकेट करें",
-      "testEmbeddings": "एम्बेडिंग टेस्ट करें",
-      "generateVectors": "वेक्टर जनरेट करें",
-      "healthCheck": "हेल्थ चेक",
-      "testConnection": "कनेक्शन टेस्ट करें",
-      "healthy": "Ollama स्वस्थ है!"
-    },
-    "modals": {
-      "details": {
-        "title": "मॉडल विवरण",
-        "info": "मॉडल जानकारी",
-        "family": "फैमिली",
-        "parameters": "पैरामीटर",
-        "quantization": "क्वांटाइज़ेशन",
-        "format": "फॉर्मेट",
-        "systemPrompt": "सिस्टम प्रॉम्प्ट",
-        "template": "टेम्पलेट",
-        "license": "लाइसेंस",
-        "modelfile": "Modelfile",
-        "noDetails": "कोई विवरण उपलब्ध नहीं"
-      },
-      "copy": {
-        "title": "मॉडल कॉपी करें",
-        "source": "स्रोत मॉडल",
-        "selectModel": "मॉडल चुनें...",
-        "newName": "नया मॉडल नाम",
-        "placeholder": "जैसे, my-custom-model",
-        "copying": "कॉपी हो रहा है...",
-        "button": "मॉडल कॉपी करें",
-        "success": "मॉडल {{name}} में कॉपी किया गया",
-        "failed": "मॉडल कॉपी करने में विफल",
-        "enterBoth": "कृपया स्रोत और गंतव्य दोनों नाम दर्ज करें"
-      },
-      "create": {
-        "title": "कस्टम मॉडल बनाएं",
-        "name": "मॉडल नाम",
-        "namePlaceholder": "जैसे, my-assistant",
-        "modelfile": "Modelfile",
-        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
-        "see": "देखें",
-        "docs": "Modelfile डॉक्स",
-        "docsLink": "सिंटैक्स संदर्भ के लिए",
-        "creating": "बनाया जा रहा है...",
-        "button": "मॉडल बनाएं",
-        "success": "मॉडल {{name}} सफलतापूर्वक बनाया गया",
-        "failed": "मॉडल बनाने में विफल",
-        "enterBoth": "कृपया मॉडल नाम और Modelfile सामग्री दर्ज करें"
-      },
-      "embeddings": {
-        "title": "एम्बेडिंग टेस्ट करें",
-        "model": "एम्बेडिंग मॉडल",
-        "selectModel": "मॉडल चुनें...",
-        "recommended": "अनुशंसित: nomic-embed-text, mxbai-embed-large",
-        "input": "इनपुट टेक्स्ट",
-        "placeholder": "एम्बेडिंग जनरेट करने के लिए टेक्स्ट दर्ज करें...",
-        "generating": "जनरेट हो रहा है...",
-        "button": "एम्बेडिंग जनरेट करें",
-        "result": "परिणाम ({{count}} डाइमेंशन)",
-        "success": "{{count}}-डाइमेंशनल एम्बेडिंग वेक्टर जनरेट किया गया",
-        "failed": "एम्बेडिंग जनरेट करने में विफल",
-        "enterBoth": "कृपया मॉडल चुनें और टेक्स्ट दर्ज करें"
-      }
+      "ggufFilesCount": "GGUF फ़ाइलें ({{count}}) - सीधे Ollama में पुल करें"
     }
   },
   "personaManager": {
@@ -1941,11 +1762,8 @@
     "noUsers": "कोई उपयोगकर्ता नहीं मिला",
     "noUsersMatching": "आपकी खोज से मेल खाने वाला कोई उपयोगकर्ता नहीं",
     "columns": {
-      "user": "उपयोगकर्ता",
-      "email": "ईमेल",
       "role": "भूमिका",
-      "created": "बनाया गया",
-      "actions": "क्रियाएं"
+      "created": "बनाया गया"
     },
     "roles": {
       "admin": "एडमिन",
@@ -1973,11 +1791,8 @@
         "edit": "उपयोगकर्ता संपादित करें"
       },
       "username": "उपयोगकर्ता नाम",
-      "usernamePlaceholder": "उपयोगकर्ता नाम दर्ज करें",
       "email": "ईमेल",
-      "emailPlaceholder": "ईमेल दर्ज करें (वैकल्पिक)",
       "password": "पासवर्ड",
-      "passwordPlaceholder": "पासवर्ड दर्ज करें",
       "passwordHint": "वर्तमान पासवर्ड रखने के लिए खाली छोड़ें",
       "role": "भूमिका",
       "creating": "बनाया जा रहा है...",
@@ -2025,12 +1840,6 @@
       "computerPreset": "Work Computer",
       "computerPresetHint": "Work Computer को GUI इमेज चाहिए: रिपॉज़िटरी के deploy/work-computer से बनाएँ और libre-work-computer:latest टैग करें।",
       "approvalsRequired": "दुष्प्रभाव वाली क्रियाओं के लिए अनुमोदन आवश्यक करें"
-    },
-    "modelAccess": {
-      "title": "मॉडल डाउनलोड",
-      "description": "सभी सक्रिय उपयोगकर्ताओं को Ollama और Hugging Face ब्राउज़र से मॉडल खींचने की अनुमति दें। प्रशासक हमेशा मॉडल डाउनलोड कर सकते हैं।",
-      "saved": "मॉडल डाउनलोड एक्सेस अपडेट हुआ",
-      "saveFailed": "मॉडल डाउनलोड एक्सेस अपडेट नहीं हो सका"
     },
     "webSearchAccess": {
       "title": "वेब खोज",
@@ -2137,13 +1946,6 @@
     "mfaResetSuccess": "{{name}} का दो-चरण हटाया गया।",
     "mfaResetNothing": "{{name}} के पास दो-चरण सेटअप नहीं था।",
     "mfaResetFailed": "रीसेट विफल रहा।",
-    "ollamaProvider": {
-      "title": "Ollama प्रदाता",
-      "description": "बंद होने पर, ऐप Ollama की जाँच करना पूरी तरह बंद कर देता है — कोई स्वास्थ्य जाँच नहीं, कोई चेतावनी नहीं। एंडपॉइंट किसी भी Ollama-संगत गेटवे की ओर इंगित कर सकता है।",
-      "saved": "Ollama प्रदाता सेटिंग्स सहेजी गईं",
-      "saveFailed": "Ollama प्रदाता सेटिंग्स सहेजी नहीं जा सकीं",
-      "baseUrlLabel": "Ollama एंडपॉइंट URL"
-    },
     "emailNotifications": {
       "title": "ईमेल सूचनाएँ",
       "description": "सूचनाओं के लिए आउटगोइंग मेल सर्वर। उपयोगकर्ता सेटिंग्स > सूचनाएँ में चुनते हैं कि कौन-सी सूचनाएँ उनके इनबॉक्स तक पहुँचें।",
@@ -2157,11 +1959,6 @@
       "portHint": "चुने गए सुरक्षा मोड के डिफ़ॉल्ट के लिए खाली छोड़ें।",
       "securityLabel": "कनेक्शन सुरक्षा",
       "securityHint": "STARTTLS एक सामान्य कनेक्शन को अपग्रेड करता है; TLS शुरू से ही एन्क्रिप्टेड होता है।",
-      "security": {
-        "starttls": "STARTTLS (पोर्ट 587)",
-        "tls": "TLS (पोर्ट 465)",
-        "none": "कोई नहीं (केवल भरोसेमंद नेटवर्क)"
-      },
       "verifyLabel": "प्रमाणपत्र सत्यापित करें",
       "verifyHint": "केवल स्व-हस्ताक्षरित प्रमाणपत्र वाले रिले के लिए बंद करें।",
       "usernameLabel": "उपयोगकर्ता नाम",
@@ -2493,7 +2290,6 @@
     "deleteConfirm": "क्या आप वाकई इस छवि को हटाना चाहते हैं?",
     "deleteSuccess": "छवि हटाई गई",
     "deleteFailed": "छवि हटाने में विफल",
-    "downloadFailed": "छवि डाउनलोड करने में विफल",
     "loadMore": "और लोड करें ({{current}} में से {{total}})",
     "loadFailed": "गैलरी लोड करने में विफल"
   },
@@ -3242,18 +3038,10 @@
   },
   "modelSelector": {
     "searchInstalled": "स्थापित मॉडल खोजें...",
-    "searchOllama": "Ollama लाइब्रेरी में खोजें...",
-    "searchHuggingFace": "HuggingFace में खोजें...",
     "selectModel": "मॉडल चुनें",
     "personas": "व्यक्तित्व",
-    "ollamaModels": "Ollama मॉडल",
     "pluginModels": "प्लगइन मॉडल",
     "actions": "कार्य",
-    "installed": "स्थापित",
-    "use": "उपयोग करें",
-    "pull": "डाउनलोड करें",
-    "pullRestricted": "इस इंस्टेंस पर मॉडल इंस्टॉलेशन केवल एडमिन तक सीमित है।",
-    "adminOnlyPull": "केवल एडमिन",
     "legacyProvider": "प्रोवाइडर दर्ज नहीं",
     "providerNotRecorded": "प्रोवाइडर दर्ज नहीं",
     "providerUnavailable": "प्रोवाइडर अनुपलब्ध",
@@ -4089,22 +3877,6 @@
   "connectModels": {
     "adminOnly": "अपने प्रशासक से मॉडल प्रदाता कनेक्ट करने के लिए कहें।",
     "skip": "अभी के लिए छोड़ें — मैं बाद में मॉडल कनेक्ट करूँगा",
-    "ollama": {
-      "status": {
-        "checking": "उपलब्धता जाँची जा रही है…",
-        "healthy": "चल रहा है और स्थानीय मॉडलों के लिए तैयार है",
-        "offline": "इस मशीन पर पता नहीं चला",
-        "disabled": "अक्षम — कोई जाँच नहीं चलेगी"
-      },
-      "recheck": "फिर से जाँचें",
-      "enable": "सक्षम करें",
-      "disable": "Ollama की जाँच रोकें",
-      "enabledToast": "Ollama प्रदाता सक्षम किया गया",
-      "disabledToast": "Ollama जाँच अक्षम — आप उन्हें सेटिंग्स में फिर से सक्षम कर सकते हैं",
-      "settingsFailed": "Ollama सेटिंग्स अपडेट नहीं की जा सकीं",
-      "offlineHint": "ollama.com से Ollama इंस्टॉल करें और यह स्वतः पहचाना जाएगा — या इसके बजाय नीचे दिए विकल्पों में से किसी एक का उपयोग करें। यदि आप Ollama का उपयोग करने की योजना नहीं बना रहे हैं, तो आप इसकी जाँच बंद कर सकते हैं।",
-      "healthyHint": "Ollama कनेक्ट है। मॉडल पृष्ठ से कोई मॉडल पुल करें और आप चैट के लिए तैयार हैं।"
-    },
     "local": {
       "title": "स्थानीय सर्वर",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",

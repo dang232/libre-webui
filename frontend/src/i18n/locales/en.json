@@ -45,7 +45,6 @@
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "ollamaUnavailable": "Ollama service is not available. Plugin models may still be used.",
     "backendConnectionFailed": "Failed to connect to the backend service"
   },
   "auth": {
@@ -454,7 +453,6 @@
       "updated": "Model updated",
       "noModels": "No models available",
       "noModelsDescription": "No models available. Make sure Ollama is running and has models installed.",
-      "pullCommand": "ollama pull llama3.2:3b",
       "noModelsTooltip": "No models available. Please ensure Ollama is running and models are installed.",
       "selectBeforePrivateChat": "Select an available model before starting private chat",
       "selectBeforeSending": "Select an available model before sending",
@@ -675,8 +673,7 @@
       "sessions": "Sessions",
       "apiKeys": "API keys",
       "apiPlatform": "API Platform",
-      "notifications": "Notifications",
-      "ollamaDisabled": "Ollama is disabled by an administrator"
+      "notifications": "Notifications"
     },
     "apiPlatform": {
       "title": "API Platform",
@@ -1285,12 +1282,6 @@
     "about": {
       "title": "About",
       "versionLabel": "Version",
-      "ollama": {
-        "title": "Ollama Status",
-        "version": "Version",
-        "healthy": "Healthy",
-        "unhealthy": "Unhealthy"
-      },
       "stats": {
         "models": "Models",
         "sessions": "Sessions"
@@ -1462,20 +1453,7 @@
   },
   "models": {
     "title": "Models",
-    "subtitle": "Pull, manage, and monitor your Ollama models",
-    "installed": "Installed Models",
-    "available": "Available Models",
-    "pull": "Pull Model",
-    "pulling": "Pulling...",
-    "delete": "Delete Model",
-    "deleting": "Deleting...",
-    "size": "Size",
-    "modified": "Modified",
-    "family": "Family",
-    "parameters": "Parameters",
-    "quantization": "Quantization",
     "noModels": "No models installed",
-    "pullFirst": "Pull a model to get started",
     "noModelsFound": "No models found"
   },
   "personas": {
@@ -1544,12 +1522,6 @@
     "newWork": "New Work session",
     "openPalette": "Open command palette"
   },
-  "modelDownload": {
-    "success": "Downloaded {{name}}",
-    "failed": "Failed to download: {{error}}",
-    "startFailed": "Failed to start download",
-    "cancelled": "Download cancelled"
-  },
   "modelTools": {
     "toasts": {
       "fetchInfoFailed": "Failed to fetch info",
@@ -1562,30 +1534,13 @@
     }
   },
   "modelManager": {
-    "title": "Models",
-    "loading": "Loading models...",
-    "systemStatus": {
-      "online": "Ollama Online",
-      "offline": "Ollama Offline",
-      "models": "model",
-      "models_plural": "models",
-      "running": "running",
-      "vram": "VRAM"
-    },
     "sections": {
-      "pull": "Pull New Model",
-      "library": "Browse Library",
-      "huggingface": "HuggingFace Hub",
-      "running": "Running Models",
-      "local": "Local Models",
-      "advanced": "Advanced Actions",
       "catalog": "Model Catalog"
     },
     "catalog": {
       "searchPlaceholder": "Search models by name or provider...",
       "noModels": "No models are available yet.",
       "empty": "No models match your search.",
-      "providerOllama": "Ollama",
       "hidden": "Hidden",
       "visibilityFailed": "Could not update model visibility.",
       "filterAll": "All models",
@@ -1605,144 +1560,10 @@
       "star": "Star {{name}}",
       "unstar": "Remove star from {{name}}"
     },
-    "pull": {
-      "placeholder": "Enter model name (e.g., llama3.2:3b, deepseek-r1:14b)",
-      "button": "Pull",
-      "cancel": "Cancel",
-      "popular": "Popular models:",
-      "browseAll": "Browse all models on ollama.com",
-      "success": "Model {{name}} pulled successfully",
-      "cancelled": "Model pull cancelled",
-      "failed": "Failed to pull model",
-      "enterName": "Please enter a model name",
-      "restricted": "Model installation is restricted to administrators on this instance."
-    },
-    "progress": {
-      "starting": "Initializing...",
-      "pulling": "Downloading model...",
-      "pullingLayer": "pulling",
-      "verifying": "Verifying integrity...",
-      "verifyingDigest": "verifying sha256 digest",
-      "writing": "Writing manifest...",
-      "cleaning": "Cleaning up..."
-    },
-    "library": {
-      "available": "available",
-      "search": "Search models...",
-      "noResults": "No models found matching your criteria",
-      "installed": "Installed",
-      "more": "+{{count}} more",
-      "refresh": "Refresh Library"
-    },
     "huggingface": {
-      "browseAll": "Browse all on HuggingFace",
       "checkingGguf": "Checking for GGUF files...",
       "noGgufAvailable": "No GGUF files available for direct Ollama pull",
-      "ggufFilesCount": "GGUF Files ({{count}}) - Pull directly to Ollama",
-      "noModelsFound": "No models found",
-      "noResults": "No models found. Try adjusting your search or filters.",
-      "browseAllLink": "Browse all",
-      "search": "Search HuggingFace models...",
-      "by": "by",
-      "gated": "Gated",
-      "viewOnHF": "View on HuggingFace",
-      "sortDownloads": "Downloads",
-      "sortLikes": "Likes",
-      "sortRecent": "Recent",
-      "taskTextGeneration": "Text Generation",
-      "taskTextToSpeech": "Text to Speech",
-      "taskTextToImage": "Text to Image",
-      "taskSpeechRecognition": "Speech Recognition",
-      "tasks": {
-        "textGen": "Text Generation",
-        "tts": "Text to Speech",
-        "image": "Text to Image",
-        "stt": "Speech Recognition"
-      },
-      "sort": {
-        "downloads": "Most Downloads",
-        "likes": "Most Liked",
-        "recent": "Recently Updated"
-      }
-    },
-    "local": {
-      "noModels": "No models installed yet",
-      "pullToStart": "Pull a model above to get started",
-      "installed": "installed",
-      "running": "Running",
-      "info": "Info",
-      "copy": "Copy",
-      "delete": "Delete",
-      "deleteConfirm": "Are you sure you want to delete model \"{{name}}\"?",
-      "deleteSuccess": "Model {{name}} deleted successfully",
-      "deleteFailed": "Failed to delete model"
-    },
-    "advanced": {
-      "createModel": "Create Model",
-      "fromModelfile": "From Modelfile",
-      "copyModel": "Copy Model",
-      "duplicateExisting": "Duplicate existing",
-      "testEmbeddings": "Test Embeddings",
-      "generateVectors": "Generate vectors",
-      "healthCheck": "Health Check",
-      "testConnection": "Test connection",
-      "healthy": "Ollama is healthy!"
-    },
-    "modals": {
-      "details": {
-        "title": "Model Details",
-        "info": "Model Information",
-        "family": "Family",
-        "parameters": "Parameters",
-        "quantization": "Quantization",
-        "format": "Format",
-        "systemPrompt": "System Prompt",
-        "template": "Template",
-        "license": "License",
-        "modelfile": "Modelfile",
-        "noDetails": "No details available"
-      },
-      "copy": {
-        "title": "Copy Model",
-        "source": "Source Model",
-        "selectModel": "Select a model...",
-        "newName": "New Model Name",
-        "placeholder": "e.g., my-custom-model",
-        "copying": "Copying...",
-        "button": "Copy Model",
-        "success": "Model copied to {{name}}",
-        "failed": "Failed to copy model",
-        "enterBoth": "Please enter both source and destination names"
-      },
-      "create": {
-        "title": "Create Custom Model",
-        "name": "Model Name",
-        "namePlaceholder": "e.g., my-assistant",
-        "modelfile": "Modelfile",
-        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
-        "see": "See",
-        "docs": "Modelfile docs",
-        "docsLink": "for syntax reference",
-        "creating": "Creating...",
-        "button": "Create Model",
-        "success": "Model {{name}} created successfully",
-        "failed": "Failed to create model",
-        "enterBoth": "Please enter model name and Modelfile content"
-      },
-      "embeddings": {
-        "title": "Test Embeddings",
-        "model": "Embedding Model",
-        "selectModel": "Select a model...",
-        "recommended": "Recommended: nomic-embed-text, mxbai-embed-large",
-        "input": "Input Text",
-        "placeholder": "Enter text to generate embeddings for...",
-        "generating": "Generating...",
-        "button": "Generate Embeddings",
-        "result": "Result ({{count}} dimensions)",
-        "success": "Generated {{count}}-dimensional embedding vector",
-        "failed": "Failed to generate embeddings",
-        "enterBoth": "Please select a model and enter text"
-      }
+      "ggufFilesCount": "GGUF Files ({{count}}) - Pull directly to Ollama"
     }
   },
   "personaManager": {
@@ -1941,11 +1762,8 @@
     "noUsers": "No users found",
     "noUsersMatching": "No users matching your search",
     "columns": {
-      "user": "User",
-      "email": "Email",
       "role": "Role",
-      "created": "Created",
-      "actions": "Actions"
+      "created": "Created"
     },
     "roles": {
       "admin": "Admin",
@@ -1973,11 +1791,8 @@
         "edit": "Edit User"
       },
       "username": "Username",
-      "usernamePlaceholder": "Enter username",
       "email": "Email",
-      "emailPlaceholder": "Enter email (optional)",
       "password": "Password",
-      "passwordPlaceholder": "Enter password",
       "passwordHint": "Leave blank to keep current password",
       "role": "Role",
       "creating": "Creating...",
@@ -2025,12 +1840,6 @@
       "computerPreset": "Work Computer",
       "computerPresetHint": "The Work Computer needs the GUI image: build it from deploy/work-computer in the repository and tag it libre-work-computer:latest.",
       "approvalsRequired": "Require approval for side-effecting actions"
-    },
-    "modelAccess": {
-      "title": "Model downloads",
-      "description": "Allow all active users to pull models from Ollama and the Hugging Face browser. Administrators can always download models.",
-      "saved": "Model download access updated",
-      "saveFailed": "Could not update model download access"
     },
     "webSearchAccess": {
       "title": "Web search",
@@ -2137,13 +1946,6 @@
     "mfaResetSuccess": "Two-factor removed for {{name}}.",
     "mfaResetNothing": "{{name}} had no two-factor enrollment.",
     "mfaResetFailed": "The two-factor reset failed.",
-    "ollamaProvider": {
-      "title": "Ollama provider",
-      "description": "When off, the app stops checking for Ollama entirely — no health probes, no warnings. The endpoint can point at any Ollama-compatible gateway.",
-      "saved": "Ollama provider settings saved",
-      "saveFailed": "Could not save the Ollama provider settings",
-      "baseUrlLabel": "Ollama endpoint URL"
-    },
     "emailNotifications": {
       "title": "Email notifications",
       "description": "Outgoing mail server for notifications. Users choose which notifications reach their inbox under Settings > Notifications.",
@@ -2157,11 +1959,6 @@
       "portHint": "Leave empty for the default of the selected security mode.",
       "securityLabel": "Connection security",
       "securityHint": "STARTTLS upgrades a plain connection; TLS is encrypted from the start.",
-      "security": {
-        "starttls": "STARTTLS (port 587)",
-        "tls": "TLS (port 465)",
-        "none": "None (trusted network only)"
-      },
       "verifyLabel": "Verify certificate",
       "verifyHint": "Turn off only for a relay with a self-signed certificate.",
       "usernameLabel": "Username",
@@ -2493,7 +2290,6 @@
     "deleteConfirm": "Are you sure you want to delete this image?",
     "deleteSuccess": "Image deleted",
     "deleteFailed": "Failed to delete image",
-    "downloadFailed": "Failed to download image",
     "loadMore": "Load More ({{current}} of {{total}})",
     "loadFailed": "Failed to load gallery"
   },
@@ -3242,18 +3038,10 @@
   },
   "modelSelector": {
     "searchInstalled": "Search installed models...",
-    "searchOllama": "Search Ollama library...",
-    "searchHuggingFace": "Search HuggingFace...",
     "selectModel": "Select a model",
     "personas": "Personas",
-    "ollamaModels": "Ollama Models",
     "pluginModels": "Plugin Models",
     "actions": "Actions",
-    "installed": "Installed",
-    "use": "Use",
-    "pull": "Pull",
-    "pullRestricted": "Model installation is restricted to administrators on this instance.",
-    "adminOnlyPull": "Admins only",
     "legacyProvider": "provider not recorded",
     "providerNotRecorded": "Provider not recorded",
     "providerUnavailable": "provider unavailable",
@@ -4089,22 +3877,6 @@
   "connectModels": {
     "adminOnly": "Ask your administrator to connect a model provider.",
     "skip": "Skip for now — I'll connect models later",
-    "ollama": {
-      "status": {
-        "checking": "Checking availability…",
-        "healthy": "Running and ready for local models",
-        "offline": "Not detected on this machine",
-        "disabled": "Disabled — no checks will run"
-      },
-      "recheck": "Check again",
-      "enable": "Enable",
-      "disable": "Stop checking for Ollama",
-      "enabledToast": "Ollama provider enabled",
-      "disabledToast": "Ollama checks disabled — you can re-enable them in Settings",
-      "settingsFailed": "Could not update the Ollama settings",
-      "offlineHint": "Install Ollama from ollama.com and it will be detected automatically — or use one of the options below instead. If you don't plan to use Ollama, you can turn its checks off.",
-      "healthyHint": "Ollama is connected. Pull a model from the Model Manager and you're ready to chat."
-    },
     "local": {
       "title": "Local server",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",

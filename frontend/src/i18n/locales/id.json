@@ -45,7 +45,6 @@
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "ollamaUnavailable": "Layanan Ollama tidak tersedia. Model plugin tetap dapat digunakan.",
     "backendConnectionFailed": "Gagal terhubung ke layanan backend"
   },
   "auth": {
@@ -454,7 +453,6 @@
       "updated": "Model diperbarui",
       "noModels": "Tidak ada model tersedia",
       "noModelsDescription": "Tidak ada model tersedia. Pastikan Ollama berjalan dan model sudah diinstal.",
-      "pullCommand": "ollama pull llama3.2:3b",
       "noModelsTooltip": "Tidak ada model tersedia. Pastikan Ollama berjalan dan model sudah diinstal.",
       "selectBeforePrivateChat": "Pilih model yang tersedia sebelum memulai obrolan privat",
       "selectBeforeSending": "Pilih model yang tersedia sebelum mengirim",
@@ -675,7 +673,6 @@
       "sessions": "Sesi",
       "apiKeys": "API key",
       "notifications": "Notifikasi",
-      "ollamaDisabled": "Ollama dinonaktifkan oleh administrator",
       "apiPlatform": "API Platform"
     },
     "appearance": {
@@ -1144,12 +1141,6 @@
     "about": {
       "title": "Tentang",
       "versionLabel": "Versi",
-      "ollama": {
-        "title": "Status Ollama",
-        "version": "Versi",
-        "healthy": "Sehat",
-        "unhealthy": "Tidak Sehat"
-      },
       "stats": {
         "models": "Model",
         "sessions": "Sesi"
@@ -1462,20 +1453,7 @@
   },
   "models": {
     "title": "Model",
-    "subtitle": "Unduh, kelola, dan pantau model Ollama Anda",
-    "installed": "Model Terinstal",
-    "available": "Model Tersedia",
-    "pull": "Unduh Model",
-    "pulling": "Mengunduh...",
-    "delete": "Hapus Model",
-    "deleting": "Menghapus...",
-    "size": "Ukuran",
-    "modified": "Dimodifikasi",
-    "family": "Keluarga",
-    "parameters": "Parameter",
-    "quantization": "Kuantisasi",
     "noModels": "Tidak ada model terinstal",
-    "pullFirst": "Unduh model untuk memulai",
     "noModelsFound": "Tidak ada model ditemukan"
   },
   "personas": {
@@ -1544,12 +1522,6 @@
     "newWork": "Sesi Work baru",
     "openPalette": "Buka palet perintah"
   },
-  "modelDownload": {
-    "success": "{{name}} telah diunduh",
-    "failed": "Gagal mengunduh: {{error}}",
-    "startFailed": "Gagal memulai pengunduhan",
-    "cancelled": "Pengunduhan dibatalkan"
-  },
   "modelTools": {
     "toasts": {
       "fetchInfoFailed": "Gagal mengambil informasi",
@@ -1562,30 +1534,13 @@
     }
   },
   "modelManager": {
-    "title": "Model",
-    "loading": "Memuat model...",
-    "systemStatus": {
-      "online": "Ollama Online",
-      "offline": "Ollama Offline",
-      "models": "model",
-      "models_plural": "model",
-      "running": "berjalan",
-      "vram": "VRAM"
-    },
     "sections": {
-      "pull": "Unduh Model Baru",
-      "library": "Telusuri Pustaka",
-      "huggingface": "HuggingFace Hub",
-      "running": "Model Berjalan",
-      "local": "Model Lokal",
-      "advanced": "Tindakan Lanjutan",
       "catalog": "Katalog Model"
     },
     "catalog": {
       "searchPlaceholder": "Cari model berdasarkan nama atau penyedia...",
       "noModels": "Belum ada model yang tersedia.",
       "empty": "Tidak ada model yang cocok dengan pencarian Anda.",
-      "providerOllama": "Ollama",
       "hidden": "Disembunyikan",
       "visibilityFailed": "Tidak dapat memperbarui visibilitas model.",
       "filterAll": "Semua model",
@@ -1605,144 +1560,10 @@
       "star": "Beri bintang pada {{name}}",
       "unstar": "Hapus bintang dari {{name}}"
     },
-    "pull": {
-      "placeholder": "Masukkan nama model (mis., llama3.2:3b, deepseek-r1:14b)",
-      "button": "Unduh",
-      "cancel": "Batal",
-      "popular": "Model populer:",
-      "browseAll": "Telusuri semua model di ollama.com",
-      "success": "Model {{name}} berhasil diunduh",
-      "cancelled": "Unduhan model dibatalkan",
-      "failed": "Gagal mengunduh model",
-      "enterName": "Silakan masukkan nama model",
-      "restricted": "Instalasi model dibatasi hanya untuk administrator pada instance ini."
-    },
-    "progress": {
-      "starting": "Menginisialisasi...",
-      "pulling": "Mengunduh model...",
-      "pullingLayer": "mengunduh",
-      "verifying": "Memverifikasi integritas...",
-      "verifyingDigest": "memverifikasi digest sha256",
-      "writing": "Menulis manifest...",
-      "cleaning": "Membersihkan..."
-    },
-    "library": {
-      "available": "tersedia",
-      "search": "Cari model...",
-      "noResults": "Tidak ada model yang ditemukan sesuai kriteria Anda",
-      "installed": "Terinstal",
-      "more": "+{{count}} lagi",
-      "refresh": "Segarkan Pustaka"
-    },
     "huggingface": {
-      "browseAll": "Jelajahi semua di HuggingFace",
       "checkingGguf": "Mencari file GGUF...",
       "noGgufAvailable": "Tidak ada file GGUF yang tersedia untuk pull langsung ke Ollama",
-      "ggufFilesCount": "File GGUF ({{count}}) - Pull langsung ke Ollama",
-      "noModelsFound": "Tidak ada model ditemukan",
-      "noResults": "Tidak ada model ditemukan. Coba sesuaikan pencarian atau filter.",
-      "browseAllLink": "Lihat semua",
-      "search": "Cari model HuggingFace...",
-      "by": "oleh",
-      "gated": "Akses terbatas",
-      "viewOnHF": "Lihat di HuggingFace",
-      "sortDownloads": "Unduhan",
-      "sortLikes": "Suka",
-      "sortRecent": "Terbaru",
-      "taskTextGeneration": "Pembuatan Teks",
-      "taskTextToSpeech": "Teks ke Suara",
-      "taskTextToImage": "Teks ke Gambar",
-      "taskSpeechRecognition": "Pengenalan Suara",
-      "tasks": {
-        "textGen": "Pembuatan Teks",
-        "tts": "Teks ke Suara",
-        "image": "Teks ke Gambar",
-        "stt": "Pengenalan Suara"
-      },
-      "sort": {
-        "downloads": "Paling Banyak Diunduh",
-        "likes": "Paling Disukai",
-        "recent": "Baru Diperbarui"
-      }
-    },
-    "local": {
-      "noModels": "Belum ada model terinstal",
-      "pullToStart": "Unduh model di atas untuk memulai",
-      "installed": "terinstal",
-      "running": "Berjalan",
-      "info": "Info",
-      "copy": "Salin",
-      "delete": "Hapus",
-      "deleteConfirm": "Apakah Anda yakin ingin menghapus model \"{{name}}\"?",
-      "deleteSuccess": "Model {{name}} berhasil dihapus",
-      "deleteFailed": "Gagal menghapus model"
-    },
-    "advanced": {
-      "createModel": "Buat Model",
-      "fromModelfile": "Dari Modelfile",
-      "copyModel": "Salin Model",
-      "duplicateExisting": "Duplikat yang ada",
-      "testEmbeddings": "Tes Embedding",
-      "generateVectors": "Buat vektor",
-      "healthCheck": "Pemeriksaan Kesehatan",
-      "testConnection": "Tes koneksi",
-      "healthy": "Ollama sehat!"
-    },
-    "modals": {
-      "details": {
-        "title": "Detail Model",
-        "info": "Informasi Model",
-        "family": "Keluarga",
-        "parameters": "Parameter",
-        "quantization": "Kuantisasi",
-        "format": "Format",
-        "systemPrompt": "Prompt Sistem",
-        "template": "Template",
-        "license": "Lisensi",
-        "modelfile": "Modelfile",
-        "noDetails": "Tidak ada detail tersedia"
-      },
-      "copy": {
-        "title": "Salin Model",
-        "source": "Model Sumber",
-        "selectModel": "Pilih model...",
-        "newName": "Nama Model Baru",
-        "placeholder": "mis., my-custom-model",
-        "copying": "Menyalin...",
-        "button": "Salin Model",
-        "success": "Model disalin ke {{name}}",
-        "failed": "Gagal menyalin model",
-        "enterBoth": "Silakan masukkan nama sumber dan tujuan"
-      },
-      "create": {
-        "title": "Buat Model Kustom",
-        "name": "Nama Model",
-        "namePlaceholder": "mis., my-assistant",
-        "modelfile": "Modelfile",
-        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
-        "see": "Lihat",
-        "docs": "Dokumentasi Modelfile",
-        "docsLink": "untuk referensi sintaks",
-        "creating": "Membuat...",
-        "button": "Buat Model",
-        "success": "Model {{name}} berhasil dibuat",
-        "failed": "Gagal membuat model",
-        "enterBoth": "Silakan masukkan nama model dan konten Modelfile"
-      },
-      "embeddings": {
-        "title": "Tes Embedding",
-        "model": "Model Embedding",
-        "selectModel": "Pilih model...",
-        "recommended": "Direkomendasikan: nomic-embed-text, mxbai-embed-large",
-        "input": "Teks Input",
-        "placeholder": "Masukkan teks untuk membuat embedding...",
-        "generating": "Membuat...",
-        "button": "Buat Embedding",
-        "result": "Hasil ({{count}} dimensi)",
-        "success": "Dibuat vektor embedding {{count}} dimensi",
-        "failed": "Gagal membuat embedding",
-        "enterBoth": "Silakan pilih model dan masukkan teks"
-      }
+      "ggufFilesCount": "File GGUF ({{count}}) - Pull langsung ke Ollama"
     }
   },
   "personaManager": {
@@ -1941,11 +1762,8 @@
     "noUsers": "Tidak ada pengguna ditemukan",
     "noUsersMatching": "Tidak ada pengguna yang cocok dengan pencarian Anda",
     "columns": {
-      "user": "Pengguna",
-      "email": "Email",
       "role": "Peran",
-      "created": "Dibuat",
-      "actions": "Tindakan"
+      "created": "Dibuat"
     },
     "roles": {
       "admin": "Admin",
@@ -1973,11 +1791,8 @@
         "edit": "Edit Pengguna"
       },
       "username": "Nama Pengguna",
-      "usernamePlaceholder": "Masukkan nama pengguna",
       "email": "Email",
-      "emailPlaceholder": "Masukkan email (opsional)",
       "password": "Kata Sandi",
-      "passwordPlaceholder": "Masukkan kata sandi",
       "passwordHint": "Kosongkan untuk mempertahankan kata sandi saat ini",
       "role": "Peran",
       "creating": "Membuat...",
@@ -2025,12 +1840,6 @@
       "computerPreset": "Work Computer",
       "computerPresetHint": "Work Computer memerlukan image GUI: bangun dari deploy/work-computer di repositori dan beri tag libre-work-computer:latest.",
       "approvalsRequired": "Wajibkan persetujuan untuk aksi yang menimbulkan efek samping"
-    },
-    "modelAccess": {
-      "title": "Unduhan model",
-      "description": "Izinkan semua pengguna aktif menarik model dari Ollama dan peramban Hugging Face. Administrator selalu dapat mengunduh model.",
-      "saved": "Akses unduhan model diperbarui",
-      "saveFailed": "Tidak dapat memperbarui akses unduhan model"
     },
     "webSearchAccess": {
       "title": "Pencarian web",
@@ -2137,13 +1946,6 @@
     "mfaResetSuccess": "Dua langkah dihapus untuk {{name}}.",
     "mfaResetNothing": "{{name}} tidak memiliki dua langkah.",
     "mfaResetFailed": "Penyetelan ulang gagal.",
-    "ollamaProvider": {
-      "title": "Penyedia Ollama",
-      "description": "Saat dimatikan, aplikasi berhenti sepenuhnya memeriksa Ollama — tidak ada pemeriksaan kesehatan, tidak ada peringatan. Endpoint dapat mengarah ke gateway apa pun yang kompatibel dengan Ollama.",
-      "saved": "Pengaturan penyedia Ollama disimpan",
-      "saveFailed": "Tidak dapat menyimpan pengaturan penyedia Ollama",
-      "baseUrlLabel": "URL endpoint Ollama"
-    },
     "emailNotifications": {
       "title": "Notifikasi email",
       "description": "Server email keluar untuk notifikasi. Pengguna memilih notifikasi mana yang masuk ke kotak masuk mereka di Pengaturan > Notifikasi.",
@@ -2157,11 +1959,6 @@
       "portHint": "Kosongkan untuk memakai default dari mode keamanan yang dipilih.",
       "securityLabel": "Keamanan koneksi",
       "securityHint": "STARTTLS meningkatkan koneksi biasa menjadi terenkripsi; TLS sudah terenkripsi sejak awal.",
-      "security": {
-        "starttls": "STARTTLS (port 587)",
-        "tls": "TLS (port 465)",
-        "none": "Tanpa enkripsi (khusus jaringan tepercaya)"
-      },
       "verifyLabel": "Verifikasi sertifikat",
       "verifyHint": "Matikan hanya untuk relay dengan sertifikat self-signed.",
       "usernameLabel": "Nama pengguna",
@@ -2493,7 +2290,6 @@
     "deleteConfirm": "Apakah Anda yakin ingin menghapus gambar ini?",
     "deleteSuccess": "Gambar dihapus",
     "deleteFailed": "Gagal menghapus gambar",
-    "downloadFailed": "Gagal mengunduh gambar",
     "loadMore": "Muat Lebih Banyak ({{current}} dari {{total}})",
     "loadFailed": "Gagal memuat galeri"
   },
@@ -3242,18 +3038,10 @@
   },
   "modelSelector": {
     "searchInstalled": "Cari model yang terinstal...",
-    "searchOllama": "Cari di perpustakaan Ollama...",
-    "searchHuggingFace": "Cari di HuggingFace...",
     "selectModel": "Pilih model",
     "personas": "Persona",
-    "ollamaModels": "Model Ollama",
     "pluginModels": "Model Plugin",
     "actions": "Aksi",
-    "installed": "Terinstal",
-    "use": "Gunakan",
-    "pull": "Unduh",
-    "pullRestricted": "Instalasi model dibatasi hanya untuk administrator pada instance ini.",
-    "adminOnlyPull": "Hanya admin",
     "legacyProvider": "penyedia tidak tercatat",
     "providerNotRecorded": "Penyedia tidak tercatat",
     "providerUnavailable": "penyedia tidak tersedia",
@@ -4089,22 +3877,6 @@
   "connectModels": {
     "adminOnly": "Minta administrator Anda untuk menghubungkan penyedia model.",
     "skip": "Lewati dulu — saya akan menghubungkan model nanti",
-    "ollama": {
-      "status": {
-        "checking": "Memeriksa ketersediaan…",
-        "healthy": "Berjalan dan siap untuk model lokal",
-        "offline": "Tidak terdeteksi di komputer ini",
-        "disabled": "Dinonaktifkan — tidak ada pemeriksaan yang akan dijalankan"
-      },
-      "recheck": "Periksa lagi",
-      "enable": "Aktifkan",
-      "disable": "Berhenti memeriksa Ollama",
-      "enabledToast": "Penyedia Ollama diaktifkan",
-      "disabledToast": "Pemeriksaan Ollama dinonaktifkan — Anda dapat mengaktifkannya kembali di Pengaturan",
-      "settingsFailed": "Tidak dapat memperbarui pengaturan Ollama",
-      "offlineHint": "Instal Ollama dari ollama.com dan itu akan terdeteksi secara otomatis — atau gunakan salah satu opsi di bawah ini. Jika Anda tidak berencana menggunakan Ollama, Anda dapat mematikan pemeriksaannya.",
-      "healthyHint": "Ollama terhubung. Unduh model dari halaman Model dan Anda siap mengobrol."
-    },
     "local": {
       "title": "Server lokal",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",

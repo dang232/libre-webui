@@ -21,7 +21,7 @@ import { useChatStore } from '@/store/chatStore';
 import { useAppStore } from '@/store/appStore';
 import { useAuthStore } from '@/store/authStore';
 import { usePluginStore } from '@/store/pluginStore';
-import { MODELS_CHANGED_EVENT, ollamaApi } from '@/utils/api';
+import { MODELS_CHANGED_EVENT } from '@/utils/api';
 import { UserService } from '@/services/userService';
 import toast from 'react-hot-toast';
 import { isDemoMode } from '@/utils/demoMode';
@@ -43,7 +43,6 @@ export const useInitializeApp = () => {
     loadPreferences: loadChatPreferences,
     setSelectedModel,
     models,
-    ollamaConnected,
   } = useChatStore();
   const { loadPreferences: loadAppPreferences } = useAppStore();
   const { loadPlugins, plugins } = usePluginStore();
@@ -74,37 +73,9 @@ export const useInitializeApp = () => {
           return;
         }
 
-        // Ollama and configured plugins are independent model providers. An
-        // unavailable Ollama daemon must not prevent the rest of the app (or
-        // plugin-backed Work models) from initializing. The outage toast is
-        // deferred until the model list is known: Ollama is opt-in, so the
-        // toast only fires when no plugin/agent provider is available either.
-        let ollamaHealthFailed = false;
-        try {
-          const healthResponse = await ollamaApi.checkHealth();
-          if (!healthResponse.success) {
-            ollamaHealthFailed = true;
-          }
-        } catch (healthError) {
-          logger.warn(
-            'Ollama health check failed; continuing provider initialization:',
-            healthError
-          );
-          ollamaHealthFailed = true;
-        }
-
         // Load preferences first, then models, sessions, and plugins
         await Promise.all([loadAppPreferences(), loadChatPreferences()]);
         await Promise.all([loadModels(), loadSessions(), loadPlugins()]);
-
-        if (ollamaHealthFailed && !isDemoMode()) {
-          const hasIndependentProvider = useChatStore
-            .getState()
-            .models.some(model => model.isPlugin || model.isAgent);
-          if (!hasIndependentProvider) {
-            toast.error(t('appInitialization.ollamaUnavailable'));
-          }
-        }
 
         initialized.current = true;
         logger.debug('Alcore initialized successfully');
@@ -155,11 +126,7 @@ export const useInitializeApp = () => {
           providerId: selectedProviderId,
         });
 
-        if (
-          !availableSelection &&
-          selectedProviderType !== 'ollama' &&
-          selectedProviderType !== 'plugin'
-        ) {
+        if (!availableSelection && selectedProviderType !== 'plugin') {
           // Only legacy name-only preferences retain the automatic fallback.
           const fallbackSelection = chatModelSelectionFromModel(fallback);
           logger.debug(
@@ -229,13 +196,11 @@ export const useInitializeApp = () => {
     return () => window.removeEventListener(MODELS_CHANGED_EVENT, reload);
   }, [loadModels]);
 
-  // Providers that are still starting when the app loads — a booting stack or
-  // an Ollama daemon launched afterwards — must show up without a page
-  // reload. While no provider-backed model is available, poll quietly; once
-  // some are, an offline Ollama is only re-checked when the window regains
-  // focus, so a deliberately plugin-only setup is not polled forever.
+  // Providers that are still starting when the app loads must show up
+  // without a page reload. While no provider-backed model is available,
+  // poll quietly; once some are, availability is only re-checked when the
+  // window regains focus.
   useEffect(() => {
-    if (ollamaConnected) return;
     const auth = useAuthStore.getState();
     if (auth.requiresAuth() && !auth.isAuthenticated) return;
 
@@ -254,5 +219,5 @@ export const useInitializeApp = () => {
       if (timer !== undefined) window.clearInterval(timer);
       window.removeEventListener('focus', reload);
     };
-  }, [ollamaConnected, models, loadModels]);
+  }, [models, loadModels]);
 };

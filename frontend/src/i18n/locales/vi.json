@@ -45,7 +45,6 @@
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "ollamaUnavailable": "Dịch vụ Ollama không khả dụng. Vẫn có thể sử dụng các mô hình plugin.",
     "backendConnectionFailed": "Không thể kết nối với dịch vụ backend"
   },
   "auth": {
@@ -454,7 +453,6 @@
       "updated": "Đã cập nhật mô hình",
       "noModels": "Không có mô hình nào",
       "noModelsDescription": "Không có mô hình nào. Hãy đảm bảo Ollama đang chạy và đã cài đặt các mô hình.",
-      "pullCommand": "ollama pull llama3.2:3b",
       "noModelsTooltip": "Không có mô hình nào. Vui lòng đảm bảo Ollama đang chạy và các mô hình đã được cài đặt.",
       "selectBeforePrivateChat": "Chọn một mô hình khả dụng trước khi bắt đầu trò chuyện riêng tư",
       "selectBeforeSending": "Chọn một mô hình khả dụng trước khi gửi",
@@ -675,7 +673,6 @@
       "sessions": "Phiên đăng nhập",
       "apiKeys": "Khóa API",
       "notifications": "Thông báo",
-      "ollamaDisabled": "Ollama đã bị quản trị viên vô hiệu hóa",
       "apiPlatform": "API Platform"
     },
     "appearance": {
@@ -1144,12 +1141,6 @@
     "about": {
       "title": "Giới thiệu",
       "versionLabel": "Phiên bản",
-      "ollama": {
-        "title": "Trạng thái Ollama",
-        "version": "Phiên bản",
-        "healthy": "Khỏe mạnh",
-        "unhealthy": "Không khỏe mạnh"
-      },
       "stats": {
         "models": "Mô hình",
         "sessions": "Phiên"
@@ -1462,20 +1453,7 @@
   },
   "models": {
     "title": "Mô hình",
-    "subtitle": "Tải, quản lý và giám sát mô hình Ollama của bạn",
-    "installed": "Mô hình đã cài đặt",
-    "available": "Mô hình khả dụng",
-    "pull": "Tải mô hình",
-    "pulling": "Đang tải...",
-    "delete": "Xóa mô hình",
-    "deleting": "Đang xóa...",
-    "size": "Kích thước",
-    "modified": "Đã sửa đổi",
-    "family": "Họ",
-    "parameters": "Tham số",
-    "quantization": "Lượng tử hóa",
     "noModels": "Chưa có mô hình nào được cài đặt",
-    "pullFirst": "Tải mô hình để bắt đầu",
     "noModelsFound": "Không tìm thấy mô hình"
   },
   "personas": {
@@ -1544,12 +1522,6 @@
     "newWork": "Phiên Work mới",
     "openPalette": "Mở bảng lệnh"
   },
-  "modelDownload": {
-    "success": "Đã tải xuống {{name}}",
-    "failed": "Không thể tải xuống: {{error}}",
-    "startFailed": "Không thể bắt đầu tải xuống",
-    "cancelled": "Đã hủy tải xuống"
-  },
   "modelTools": {
     "toasts": {
       "fetchInfoFailed": "Không thể lấy thông tin",
@@ -1562,30 +1534,13 @@
     }
   },
   "modelManager": {
-    "title": "Mô hình",
-    "loading": "Đang tải mô hình...",
-    "systemStatus": {
-      "online": "Ollama trực tuyến",
-      "offline": "Ollama ngoại tuyến",
-      "models": "mô hình",
-      "models_plural": "mô hình",
-      "running": "đang chạy",
-      "vram": "VRAM"
-    },
     "sections": {
-      "pull": "Tải mô hình mới",
-      "library": "Duyệt thư viện",
-      "huggingface": "HuggingFace Hub",
-      "running": "Mô hình đang chạy",
-      "local": "Mô hình cục bộ",
-      "advanced": "Hành động nâng cao",
       "catalog": "Danh mục mô hình"
     },
     "catalog": {
       "searchPlaceholder": "Tìm mô hình theo tên hoặc nhà cung cấp...",
       "noModels": "Chưa có mô hình nào khả dụng.",
       "empty": "Không có mô hình nào khớp với tìm kiếm của bạn.",
-      "providerOllama": "Ollama",
       "hidden": "Đã ẩn",
       "visibilityFailed": "Không thể cập nhật hiển thị của mô hình.",
       "filterAll": "Tất cả mô hình",
@@ -1605,144 +1560,10 @@
       "star": "Gắn sao cho {{name}}",
       "unstar": "Bỏ sao khỏi {{name}}"
     },
-    "pull": {
-      "placeholder": "Nhập tên mô hình (vd: llama3.2:3b, deepseek-r1:14b)",
-      "button": "Tải",
-      "cancel": "Hủy",
-      "popular": "Mô hình phổ biến:",
-      "browseAll": "Duyệt tất cả mô hình trên ollama.com",
-      "success": "Đã tải mô hình {{name}} thành công",
-      "cancelled": "Đã hủy tải mô hình",
-      "failed": "Không thể tải mô hình",
-      "enterName": "Vui lòng nhập tên mô hình",
-      "restricted": "Việc cài đặt mô hình trên phiên bản này chỉ dành cho quản trị viên."
-    },
-    "progress": {
-      "starting": "Đang khởi tạo...",
-      "pulling": "Đang tải mô hình...",
-      "pullingLayer": "đang tải",
-      "verifying": "Đang xác minh tính toàn vẹn...",
-      "verifyingDigest": "đang xác minh digest sha256",
-      "writing": "Đang ghi manifest...",
-      "cleaning": "Đang dọn dẹp..."
-    },
-    "library": {
-      "available": "khả dụng",
-      "search": "Tìm kiếm mô hình...",
-      "noResults": "Không tìm thấy mô hình nào phù hợp với tiêu chí của bạn",
-      "installed": "Đã cài đặt",
-      "more": "+{{count}} thêm",
-      "refresh": "Làm mới thư viện"
-    },
     "huggingface": {
-      "browseAll": "Xem tất cả trên HuggingFace",
       "checkingGguf": "Đang tìm tệp GGUF...",
       "noGgufAvailable": "Không có tệp GGUF để tải trực tiếp vào Ollama",
-      "ggufFilesCount": "Tệp GGUF ({{count}}) - Tải trực tiếp vào Ollama",
-      "noModelsFound": "Không tìm thấy mô hình",
-      "noResults": "Không tìm thấy mô hình. Thử điều chỉnh tìm kiếm hoặc bộ lọc.",
-      "browseAllLink": "Xem tất cả",
-      "search": "Tìm kiếm mô hình HuggingFace...",
-      "by": "bởi",
-      "gated": "Truy cập hạn chế",
-      "viewOnHF": "Xem trên HuggingFace",
-      "sortDownloads": "Lượt tải",
-      "sortLikes": "Lượt thích",
-      "sortRecent": "Gần đây",
-      "taskTextGeneration": "Tạo văn bản",
-      "taskTextToSpeech": "Văn bản thành giọng nói",
-      "taskTextToImage": "Văn bản thành hình ảnh",
-      "taskSpeechRecognition": "Nhận dạng giọng nói",
-      "tasks": {
-        "textGen": "Tạo văn bản",
-        "tts": "Văn bản thành giọng nói",
-        "image": "Văn bản thành hình ảnh",
-        "stt": "Nhận dạng giọng nói"
-      },
-      "sort": {
-        "downloads": "Tải nhiều nhất",
-        "likes": "Được thích nhiều nhất",
-        "recent": "Cập nhật gần đây"
-      }
-    },
-    "local": {
-      "noModels": "Chưa có mô hình nào được cài đặt",
-      "pullToStart": "Tải mô hình ở trên để bắt đầu",
-      "installed": "đã cài đặt",
-      "running": "Đang chạy",
-      "info": "Thông tin",
-      "copy": "Sao chép",
-      "delete": "Xóa",
-      "deleteConfirm": "Bạn có chắc chắn muốn xóa mô hình \"{{name}}\"?",
-      "deleteSuccess": "Đã xóa mô hình {{name}} thành công",
-      "deleteFailed": "Không thể xóa mô hình"
-    },
-    "advanced": {
-      "createModel": "Tạo mô hình",
-      "fromModelfile": "Từ Modelfile",
-      "copyModel": "Sao chép mô hình",
-      "duplicateExisting": "Nhân đôi hiện có",
-      "testEmbeddings": "Kiểm tra nhúng",
-      "generateVectors": "Tạo vector",
-      "healthCheck": "Kiểm tra sức khỏe",
-      "testConnection": "Kiểm tra kết nối",
-      "healthy": "Ollama đang hoạt động tốt!"
-    },
-    "modals": {
-      "details": {
-        "title": "Chi tiết mô hình",
-        "info": "Thông tin mô hình",
-        "family": "Họ",
-        "parameters": "Tham số",
-        "quantization": "Lượng tử hóa",
-        "format": "Định dạng",
-        "systemPrompt": "Prompt hệ thống",
-        "template": "Mẫu",
-        "license": "Giấy phép",
-        "modelfile": "Modelfile",
-        "noDetails": "Không có chi tiết"
-      },
-      "copy": {
-        "title": "Sao chép mô hình",
-        "source": "Mô hình nguồn",
-        "selectModel": "Chọn mô hình...",
-        "newName": "Tên mô hình mới",
-        "placeholder": "vd: my-custom-model",
-        "copying": "Đang sao chép...",
-        "button": "Sao chép mô hình",
-        "success": "Đã sao chép mô hình sang {{name}}",
-        "failed": "Không thể sao chép mô hình",
-        "enterBoth": "Vui lòng nhập cả tên nguồn và tên đích"
-      },
-      "create": {
-        "title": "Tạo mô hình tùy chỉnh",
-        "name": "Tên mô hình",
-        "namePlaceholder": "vd: my-assistant",
-        "modelfile": "Modelfile",
-        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
-        "see": "Xem",
-        "docs": "Tài liệu Modelfile",
-        "docsLink": "để tham khảo cú pháp",
-        "creating": "Đang tạo...",
-        "button": "Tạo mô hình",
-        "success": "Đã tạo mô hình {{name}} thành công",
-        "failed": "Không thể tạo mô hình",
-        "enterBoth": "Vui lòng nhập tên mô hình và nội dung Modelfile"
-      },
-      "embeddings": {
-        "title": "Kiểm tra nhúng",
-        "model": "Mô hình nhúng",
-        "selectModel": "Chọn mô hình...",
-        "recommended": "Khuyến nghị: nomic-embed-text, mxbai-embed-large",
-        "input": "Văn bản đầu vào",
-        "placeholder": "Nhập văn bản để tạo nhúng cho...",
-        "generating": "Đang tạo...",
-        "button": "Tạo nhúng",
-        "result": "Kết quả ({{count}} chiều)",
-        "success": "Đã tạo vector nhúng {{count}} chiều",
-        "failed": "Không thể tạo nhúng",
-        "enterBoth": "Vui lòng chọn mô hình và nhập văn bản"
-      }
+      "ggufFilesCount": "Tệp GGUF ({{count}}) - Tải trực tiếp vào Ollama"
     }
   },
   "personaManager": {
@@ -1941,11 +1762,8 @@
     "noUsers": "Không tìm thấy người dùng",
     "noUsersMatching": "Không có người dùng nào khớp với tìm kiếm của bạn",
     "columns": {
-      "user": "Người dùng",
-      "email": "Email",
       "role": "Vai trò",
-      "created": "Đã tạo",
-      "actions": "Hành động"
+      "created": "Đã tạo"
     },
     "roles": {
       "admin": "Quản trị viên",
@@ -1973,11 +1791,8 @@
         "edit": "Chỉnh sửa người dùng"
       },
       "username": "Tên người dùng",
-      "usernamePlaceholder": "Nhập tên người dùng",
       "email": "Email",
-      "emailPlaceholder": "Nhập email (tùy chọn)",
       "password": "Mật khẩu",
-      "passwordPlaceholder": "Nhập mật khẩu",
       "passwordHint": "Để trống để giữ mật khẩu hiện tại",
       "role": "Vai trò",
       "creating": "Đang tạo...",
@@ -2025,12 +1840,6 @@
       "computerPreset": "Work Computer",
       "computerPresetHint": "Work Computer cần image GUI: dựng từ deploy/work-computer trong kho mã và gắn thẻ libre-work-computer:latest.",
       "approvalsRequired": "Yêu cầu phê duyệt cho các hành động có tác động ra bên ngoài"
-    },
-    "modelAccess": {
-      "title": "Tải mô hình",
-      "description": "Cho phép tất cả người dùng đang hoạt động tải mô hình từ Ollama và trình duyệt Hugging Face. Quản trị viên luôn có thể tải mô hình.",
-      "saved": "Đã cập nhật quyền tải mô hình",
-      "saveFailed": "Không thể cập nhật quyền tải mô hình"
     },
     "webSearchAccess": {
       "title": "Tìm kiếm web",
@@ -2137,13 +1946,6 @@
     "mfaResetSuccess": "Đã xóa hai bước của {{name}}.",
     "mfaResetNothing": "{{name}} chưa thiết lập hai bước.",
     "mfaResetFailed": "Đặt lại thất bại.",
-    "ollamaProvider": {
-      "title": "Nhà cung cấp Ollama",
-      "description": "Khi tắt, ứng dụng sẽ ngừng hoàn toàn việc kiểm tra Ollama — không dò trạng thái, không cảnh báo. Điểm cuối có thể trỏ đến bất kỳ cổng nào tương thích với Ollama.",
-      "saved": "Đã lưu cài đặt nhà cung cấp Ollama",
-      "saveFailed": "Không thể lưu cài đặt nhà cung cấp Ollama",
-      "baseUrlLabel": "URL điểm cuối Ollama"
-    },
     "emailNotifications": {
       "title": "Thông báo qua email",
       "description": "Máy chủ gửi thư dùng cho thông báo. Người dùng chọn thông báo nào sẽ đến hộp thư của họ trong mục Cài đặt > Thông báo.",
@@ -2157,11 +1959,6 @@
       "portHint": "Để trống để dùng giá trị mặc định của chế độ bảo mật đã chọn.",
       "securityLabel": "Bảo mật kết nối",
       "securityHint": "STARTTLS nâng cấp một kết nối thường; TLS được mã hóa ngay từ đầu.",
-      "security": {
-        "starttls": "STARTTLS (cổng 587)",
-        "tls": "TLS (cổng 465)",
-        "none": "Không (chỉ mạng đáng tin cậy)"
-      },
       "verifyLabel": "Xác minh chứng chỉ",
       "verifyHint": "Chỉ tắt với một relay dùng chứng chỉ tự ký.",
       "usernameLabel": "Tên đăng nhập",
@@ -2493,7 +2290,6 @@
     "deleteConfirm": "Bạn có chắc chắn muốn xóa hình ảnh này?",
     "deleteSuccess": "Đã xóa hình ảnh",
     "deleteFailed": "Không thể xóa hình ảnh",
-    "downloadFailed": "Không thể tải xuống hình ảnh",
     "loadMore": "Tải thêm ({{current}} trong số {{total}})",
     "loadFailed": "Không thể tải thư viện"
   },
@@ -3242,18 +3038,10 @@
   },
   "modelSelector": {
     "searchInstalled": "Tìm kiếm mô hình đã cài...",
-    "searchOllama": "Tìm trong thư viện Ollama...",
-    "searchHuggingFace": "Tìm trên HuggingFace...",
     "selectModel": "Chọn mô hình",
     "personas": "Nhân vật",
-    "ollamaModels": "Mô hình Ollama",
     "pluginModels": "Mô hình plugin",
     "actions": "Hành động",
-    "installed": "Đã cài",
-    "use": "Dùng",
-    "pull": "Tải",
-    "pullRestricted": "Việc cài đặt mô hình trên phiên bản này chỉ dành cho quản trị viên.",
-    "adminOnlyPull": "Chỉ quản trị viên",
     "legacyProvider": "nhà cung cấp chưa được ghi",
     "providerNotRecorded": "Nhà cung cấp chưa được ghi",
     "providerUnavailable": "nhà cung cấp không khả dụng",
@@ -4089,22 +3877,6 @@
   "connectModels": {
     "adminOnly": "Hãy nhờ quản trị viên kết nối một nhà cung cấp mô hình.",
     "skip": "Bỏ qua lúc này — tôi sẽ kết nối mô hình sau",
-    "ollama": {
-      "status": {
-        "checking": "Đang kiểm tra khả dụng…",
-        "healthy": "Đang chạy và sẵn sàng cho các mô hình cục bộ",
-        "offline": "Không phát hiện trên máy này",
-        "disabled": "Đã tắt — sẽ không có kiểm tra nào chạy"
-      },
-      "recheck": "Kiểm tra lại",
-      "enable": "Bật",
-      "disable": "Ngừng kiểm tra Ollama",
-      "enabledToast": "Đã bật nhà cung cấp Ollama",
-      "disabledToast": "Đã tắt kiểm tra Ollama — bạn có thể bật lại trong Cài đặt",
-      "settingsFailed": "Không thể cập nhật cài đặt Ollama",
-      "offlineHint": "Cài đặt Ollama từ ollama.com và nó sẽ được tự động phát hiện — hoặc dùng một trong các tùy chọn bên dưới. Nếu bạn không định dùng Ollama, bạn có thể tắt các kiểm tra của nó.",
-      "healthyHint": "Ollama đã kết nối. Hãy tải một mô hình từ trang Mô hình và bạn đã sẵn sàng trò chuyện."
-    },
     "local": {
       "title": "Máy chủ cục bộ",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",

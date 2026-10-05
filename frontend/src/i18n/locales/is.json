@@ -45,7 +45,6 @@
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "ollamaUnavailable": "Ollama-þjónustan er ekki tiltæk. Enn er hægt að nota líkön úr viðbótum.",
     "backendConnectionFailed": "Ekki tókst að tengjast bakendaþjónustunni"
   },
   "auth": {
@@ -454,7 +453,6 @@
       "updated": "Líkan uppfært",
       "noModels": "Engin líkön tiltæk",
       "noModelsDescription": "Engin líkön tiltæk. Gakktu úr skugga um að Ollama sé í gangi og hafi líkön uppsett.",
-      "pullCommand": "ollama pull llama3.2:3b",
       "noModelsTooltip": "Engin líkön tiltæk. Gakktu úr skugga um að Ollama sé í gangi og líkön séu uppsett.",
       "selectBeforePrivateChat": "Veldu tiltækt líkan áður en þú byrjar einkaspjall",
       "selectBeforeSending": "Veldu tiltækt líkan áður en þú sendir",
@@ -675,7 +673,6 @@
       "sessions": "Setur",
       "apiKeys": "API lyklar",
       "notifications": "Tilkynningar",
-      "ollamaDisabled": "Stjórnandi hefur slökkt á Ollama",
       "apiPlatform": "API Platform"
     },
     "appearance": {
@@ -1144,12 +1141,6 @@
     "about": {
       "title": "Um",
       "versionLabel": "Útgáfa",
-      "ollama": {
-        "title": "Ollama staða",
-        "version": "Útgáfa",
-        "healthy": "Heilbrigt",
-        "unhealthy": "Óheilbrigt"
-      },
       "stats": {
         "models": "Líkön",
         "sessions": "Setur"
@@ -1462,20 +1453,7 @@
   },
   "models": {
     "title": "Líkön",
-    "subtitle": "Sæktu, stjórnaðu og fylgstu með Ollama líkönunum þínum",
-    "installed": "Uppsett líkön",
-    "available": "Tiltæk líkön",
-    "pull": "Sækja líkan",
-    "pulling": "Sækir...",
-    "delete": "Eyða líkani",
-    "deleting": "Eyðir...",
-    "size": "Stærð",
-    "modified": "Breytt",
-    "family": "Fjölskylda",
-    "parameters": "Færibreytur",
-    "quantization": "Magngreining",
     "noModels": "Engin líkön uppsett",
-    "pullFirst": "Sæktu líkan til að byrja",
     "noModelsFound": "Engin líkön fundust"
   },
   "personas": {
@@ -1544,12 +1522,6 @@
     "newWork": "Ný Work-lota",
     "openPalette": "Opna skipanaspjaldið"
   },
-  "modelDownload": {
-    "success": "Líkan {{name}} sótt",
-    "failed": "Ekki tókst að sækja líkanið: {{error}}",
-    "startFailed": "Ekki tókst að hefja niðurhal",
-    "cancelled": "Hætt við niðurhal"
-  },
   "modelTools": {
     "toasts": {
       "fetchInfoFailed": "Ekki tókst að sækja upplýsingar",
@@ -1562,30 +1534,13 @@
     }
   },
   "modelManager": {
-    "title": "Líkön",
-    "loading": "Hleður líkönum...",
-    "systemStatus": {
-      "online": "Ollama á netinu",
-      "offline": "Ollama ekki á netinu",
-      "models": "líkan",
-      "models_plural": "líkön",
-      "running": "í gangi",
-      "vram": "VRAM"
-    },
     "sections": {
-      "pull": "Sækja nýtt líkan",
-      "library": "Skoða safn",
-      "huggingface": "HuggingFace Hub",
-      "running": "Líkön í gangi",
-      "local": "Staðbundin líkön",
-      "advanced": "Ítarlegar aðgerðir",
       "catalog": "Líkanaskrá"
     },
     "catalog": {
       "searchPlaceholder": "Leita að líkönum eftir nafni eða veitu...",
       "noModels": "Engin líkön eru í boði enn.",
       "empty": "Engin líkön passa við leitina.",
-      "providerOllama": "Ollama",
       "hidden": "Falið",
       "visibilityFailed": "Ekki tókst að uppfæra sýnileika líkansins.",
       "filterAll": "Öll líkön",
@@ -1605,144 +1560,10 @@
       "star": "Stjörnumerkja {{name}}",
       "unstar": "Fjarlægja stjörnu af {{name}}"
     },
-    "pull": {
-      "placeholder": "Sláðu inn nafn líkans (t.d. llama3.2:3b, deepseek-r1:14b)",
-      "button": "Sækja",
-      "cancel": "Hætta við",
-      "popular": "Vinsæl líkön:",
-      "browseAll": "Skoða öll líkön á ollama.com",
-      "success": "Líkan {{name}} sótt",
-      "cancelled": "Hætt var við að sækja líkan",
-      "failed": "Ekki tókst að sækja líkan",
-      "enterName": "Sláðu inn nafn líkans",
-      "restricted": "Uppsetning líkana er takmörkuð við stjórnendur á þessu tilviki."
-    },
-    "progress": {
-      "starting": "Frumstillir...",
-      "pulling": "Sækir líkan...",
-      "pullingLayer": "sækir",
-      "verifying": "Sannreynir heilleika...",
-      "verifyingDigest": "staðfestir sha256 digest",
-      "writing": "Skrifar skrá...",
-      "cleaning": "Hreinsar upp..."
-    },
-    "library": {
-      "available": "tiltæk",
-      "search": "Leita að líkönum...",
-      "noResults": "Engin líkön fundust sem passa við leitarskilyrði",
-      "installed": "Uppsett",
-      "more": "+{{count}} fleiri",
-      "refresh": "Endurhlaða safni"
-    },
     "huggingface": {
-      "browseAll": "Skoða allt á HuggingFace",
       "checkingGguf": "Leita að GGUF skrám...",
       "noGgufAvailable": "Engar GGUF skrár tiltækar fyrir beina Ollama niðurhal",
-      "ggufFilesCount": "GGUF skrár ({{count}}) - Sækja beint í Ollama",
-      "noModelsFound": "Engin líkön fundust",
-      "noResults": "Engin líkön fundust. Prófaðu að breyta leit eða síum.",
-      "browseAllLink": "Skoða allt",
-      "search": "Leita í HuggingFace líkönum...",
-      "by": "eftir",
-      "gated": "Takmarkaður aðgangur",
-      "viewOnHF": "Skoða á HuggingFace",
-      "sortDownloads": "Niðurhal",
-      "sortLikes": "Líkar við",
-      "sortRecent": "Nýlegt",
-      "taskTextGeneration": "Textagerð",
-      "taskTextToSpeech": "Texti í tal",
-      "taskTextToImage": "Texti í mynd",
-      "taskSpeechRecognition": "Talgreining",
-      "tasks": {
-        "textGen": "Textagerð",
-        "tts": "Texti í tal",
-        "image": "Texti í mynd",
-        "stt": "Talgreining"
-      },
-      "sort": {
-        "downloads": "Mest niðurhlaðið",
-        "likes": "Mest vinsælt",
-        "recent": "Nýlega uppfært"
-      }
-    },
-    "local": {
-      "noModels": "Engin líkön uppsett ennþá",
-      "pullToStart": "Sæktu líkan hér að ofan til að byrja",
-      "installed": "uppsett",
-      "running": "Í gangi",
-      "info": "Upplýsingar",
-      "copy": "Afrita",
-      "delete": "Eyða",
-      "deleteConfirm": "Ertu viss um að þú viljir eyða líkani \"{{name}}\"?",
-      "deleteSuccess": "Líkani {{name}} eytt",
-      "deleteFailed": "Ekki tókst að eyða líkani"
-    },
-    "advanced": {
-      "createModel": "Búa til líkan",
-      "fromModelfile": "Úr Modelfile",
-      "copyModel": "Afrita líkan",
-      "duplicateExisting": "Tvítaka núverandi",
-      "testEmbeddings": "Prófa innfellingar",
-      "generateVectors": "Búa til vigra",
-      "healthCheck": "Heilbrigðisskoðun",
-      "testConnection": "Prófa tengingu",
-      "healthy": "Ollama er heilbrigt!"
-    },
-    "modals": {
-      "details": {
-        "title": "Upplýsingar um líkan",
-        "info": "Líkansupplýsingar",
-        "family": "Fjölskylda",
-        "parameters": "Færibreytur",
-        "quantization": "Magngreining",
-        "format": "Snið",
-        "systemPrompt": "Kerfisfyrirmæli",
-        "template": "Sniðmát",
-        "license": "Leyfi",
-        "modelfile": "Modelfile",
-        "noDetails": "Engar upplýsingar tiltækar"
-      },
-      "copy": {
-        "title": "Afrita líkan",
-        "source": "Upprunalíkan",
-        "selectModel": "Veldu líkan...",
-        "newName": "Nýtt nafn líkans",
-        "placeholder": "t.d. mitt-sérsniðna-líkan",
-        "copying": "Afritar...",
-        "button": "Afrita líkan",
-        "success": "Líkan afritað sem {{name}}",
-        "failed": "Ekki tókst að afrita líkan",
-        "enterBoth": "Sláðu inn bæði upprunanafn og áfangastað"
-      },
-      "create": {
-        "title": "Búa til sérsniðið líkan",
-        "name": "Nafn líkans",
-        "namePlaceholder": "t.d. minn-aðstoðarmaður",
-        "modelfile": "Modelfile",
-        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM Þú ert hjálpsamur aðstoðarmaður.",
-        "see": "Sjá",
-        "docs": "Modelfile skjölun",
-        "docsLink": "fyrir setningafræðiviðmið",
-        "creating": "Býr til...",
-        "button": "Búa til líkan",
-        "success": "Líkan {{name}} búið til",
-        "failed": "Ekki tókst að búa til líkan",
-        "enterBoth": "Sláðu inn nafn líkans og Modelfile innihald"
-      },
-      "embeddings": {
-        "title": "Prófa innfellingar",
-        "model": "Innfellingalíkan",
-        "selectModel": "Veldu líkan...",
-        "recommended": "Mælt með: nomic-embed-text, mxbai-embed-large",
-        "input": "Inntakstexti",
-        "placeholder": "Sláðu inn texta til að búa til innfellingar fyrir...",
-        "generating": "Býr til...",
-        "button": "Búa til innfellingar",
-        "result": "Niðurstaða ({{count}} víddir)",
-        "success": "Búin til {{count}}-vídd innfellingavigur",
-        "failed": "Ekki tókst að búa til innfellingar",
-        "enterBoth": "Veldu líkan og sláðu inn texta"
-      }
+      "ggufFilesCount": "GGUF skrár ({{count}}) - Sækja beint í Ollama"
     }
   },
   "personaManager": {
@@ -1941,11 +1762,8 @@
     "noUsers": "Engir notendur fundust",
     "noUsersMatching": "Engir notendur passa við leitina",
     "columns": {
-      "user": "Notandi",
-      "email": "Netfang",
       "role": "Hlutverk",
-      "created": "Stofnað",
-      "actions": "Aðgerðir"
+      "created": "Stofnað"
     },
     "roles": {
       "admin": "Stjórnandi",
@@ -1973,11 +1791,8 @@
         "edit": "Breyta notanda"
       },
       "username": "Notandanafn",
-      "usernamePlaceholder": "Sláðu inn notandanafn",
       "email": "Netfang",
-      "emailPlaceholder": "Sláðu inn netfang (valfrjálst)",
       "password": "Lykilorð",
-      "passwordPlaceholder": "Sláðu inn lykilorð",
       "passwordHint": "Skildu eftir autt til að halda núverandi lykilorði",
       "role": "Hlutverk",
       "creating": "Býr til...",
@@ -2025,12 +1840,6 @@
       "computerPreset": "Work Computer",
       "computerPresetHint": "Work Computer þarf GUI-myndina: byggðu hana úr deploy/work-computer í geymslunni og merktu libre-work-computer:latest.",
       "approvalsRequired": "Krefjast samþykkis fyrir aðgerðir með hliðarverkunum"
-    },
-    "modelAccess": {
-      "title": "Niðurhal líkana",
-      "description": "Leyfa öllum virkum notendum að sækja líkön frá Ollama og Hugging Face-vafranum. Stjórnendur geta alltaf sótt líkön.",
-      "saved": "Aðgangur að niðurhali líkana uppfærður",
-      "saveFailed": "Ekki tókst að uppfæra aðgang að niðurhali líkana"
     },
     "webSearchAccess": {
       "title": "Vefleit",
@@ -2137,13 +1946,6 @@
     "mfaResetSuccess": "Annar þáttur fjarlægður fyrir {{name}}.",
     "mfaResetNothing": "{{name}} var ekki með annan þátt.",
     "mfaResetFailed": "Endurstillingin mistókst.",
-    "ollamaProvider": {
-      "title": "Ollama-veitandi",
-      "description": "Þegar slökkt er á þessu hættir forritið alveg að athuga með Ollama — engar heilsuathuganir, engar viðvaranir. Endapunkturinn getur bent á hvaða Ollama-samhæfa gátt sem er.",
-      "saved": "Stillingar Ollama-veitanda vistaðar",
-      "saveFailed": "Ekki tókst að vista stillingar Ollama-veitanda",
-      "baseUrlLabel": "Endapunktur-URL fyrir Ollama"
-    },
     "emailNotifications": {
       "title": "Tölvupóststilkynningar",
       "description": "Útsendur póstþjónn fyrir tilkynningar. Notendur velja sjálfir hvaða tilkynningar berast í pósthólfið þeirra undir Stillingar > Tilkynningar.",
@@ -2157,11 +1959,6 @@
       "portHint": "Skildu eftir autt til að nota sjálfgefna gátt fyrir valda öryggisstillingu.",
       "securityLabel": "Öryggi tengingar",
       "securityHint": "STARTTLS uppfærir venjulega tengingu í dulkóðaða; TLS er dulkóðað frá upphafi.",
-      "security": {
-        "starttls": "STARTTLS (gátt 587)",
-        "tls": "TLS (gátt 465)",
-        "none": "Ekkert (aðeins fyrir traust net)"
-      },
       "verifyLabel": "Sannreyna skilríki",
       "verifyHint": "Slökktu á þessu aðeins fyrir milliþjón með sjálfundirrituðu skilríki.",
       "usernameLabel": "Notandanafn",
@@ -2493,7 +2290,6 @@
     "deleteConfirm": "Ertu viss um að þú viljir eyða þessari mynd?",
     "deleteSuccess": "Mynd eytt",
     "deleteFailed": "Ekki tókst að eyða mynd",
-    "downloadFailed": "Ekki tókst að sækja mynd",
     "loadMore": "Hlaða fleiri ({{current}} af {{total}})",
     "loadFailed": "Ekki tókst að hlaða myndasafni"
   },
@@ -3242,18 +3038,10 @@
   },
   "modelSelector": {
     "searchInstalled": "Search installed models...",
-    "searchOllama": "Search Ollama library...",
-    "searchHuggingFace": "Search HuggingFace...",
     "selectModel": "Select Model",
     "personas": "Personas",
-    "ollamaModels": "Ollama Models",
     "pluginModels": "Plugin Models",
     "actions": "Actions",
-    "installed": "Installed",
-    "use": "Use",
-    "pull": "Pull",
-    "pullRestricted": "Uppsetning líkana er takmörkuð við stjórnendur á þessu tilviki.",
-    "adminOnlyPull": "Aðeins stjórnendur",
     "legacyProvider": "veitandi ekki skráður",
     "providerNotRecorded": "Veitandi ekki skráður",
     "providerUnavailable": "veitandi ófáanlegur",
@@ -4089,22 +3877,6 @@
   "connectModels": {
     "adminOnly": "Biddu kerfisstjórann þinn um að tengja líkanaveitanda.",
     "skip": "Sleppa í bili — ég tengi líkön síðar",
-    "ollama": {
-      "status": {
-        "checking": "Athugar tiltækileika…",
-        "healthy": "Keyrir og tilbúið fyrir staðbundin líkön",
-        "offline": "Fannst ekki á þessari tölvu",
-        "disabled": "Óvirkt — engar athuganir keyra"
-      },
-      "recheck": "Athuga aftur",
-      "enable": "Virkja",
-      "disable": "Hætta að athuga Ollama",
-      "enabledToast": "Ollama-veitandi virkjaður",
-      "disabledToast": "Athuganir á Ollama óvirkjaðar — þú getur virkjað þær aftur í Stillingum",
-      "settingsFailed": "Ekki tókst að uppfæra Ollama-stillingarnar",
-      "offlineHint": "Settu upp Ollama af ollama.com og það greinist sjálfkrafa — eða notaðu einn af valkostunum hér fyrir neðan í staðinn. Ef þú ætlar ekki að nota Ollama geturðu slökkt á athugunum þess.",
-      "healthyHint": "Ollama er tengt. Sæktu líkan af Líkön-síðunni og þú getur byrjað að spjalla."
-    },
     "local": {
       "title": "Staðbundinn netþjónn",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",

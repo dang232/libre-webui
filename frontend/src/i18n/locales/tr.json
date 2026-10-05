@@ -45,7 +45,6 @@
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "ollamaUnavailable": "Ollama hizmeti kullanılamıyor. Eklenti modelleri kullanılmaya devam edilebilir.",
     "backendConnectionFailed": "Backend hizmetine bağlanılamadı"
   },
   "auth": {
@@ -454,7 +453,6 @@
       "updated": "Model güncellendi",
       "noModels": "Kullanılabilir model yok",
       "noModelsDescription": "Kullanılabilir model yok. Ollama'nın çalıştığından ve modellerin yüklü olduğundan emin olun.",
-      "pullCommand": "ollama pull llama3.2:3b",
       "noModelsTooltip": "Kullanılabilir model yok. Lütfen Ollama'nın çalıştığından ve modellerin yüklü olduğundan emin olun.",
       "selectBeforePrivateChat": "Gizli sohbeti başlatmadan önce kullanılabilir bir model seçin",
       "selectBeforeSending": "Göndermeden önce kullanılabilir bir model seçin",
@@ -675,7 +673,6 @@
       "sessions": "Oturumlar",
       "apiKeys": "API Anahtarları",
       "notifications": "Bildirimler",
-      "ollamaDisabled": "Ollama bir yönetici tarafından devre dışı bırakıldı",
       "apiPlatform": "API Platform"
     },
     "appearance": {
@@ -1144,12 +1141,6 @@
     "about": {
       "title": "Hakkında",
       "versionLabel": "Sürüm",
-      "ollama": {
-        "title": "Ollama Durumu",
-        "version": "Sürüm",
-        "healthy": "Sağlıklı",
-        "unhealthy": "Sağlıksız"
-      },
       "stats": {
         "models": "Modeller",
         "sessions": "Oturumlar"
@@ -1462,20 +1453,7 @@
   },
   "models": {
     "title": "Modeller",
-    "subtitle": "Ollama modellerinizi çekin, yönetin ve izleyin",
-    "installed": "Yüklü Modeller",
-    "available": "Mevcut Modeller",
-    "pull": "Model Çek",
-    "pulling": "Çekiliyor...",
-    "delete": "Modeli Sil",
-    "deleting": "Siliniyor...",
-    "size": "Boyut",
-    "modified": "Değiştirilme",
-    "family": "Aile",
-    "parameters": "Parametreler",
-    "quantization": "Niceleme",
     "noModels": "Yüklü model yok",
-    "pullFirst": "Başlamak için bir model çekin",
     "noModelsFound": "Model bulunamadı"
   },
   "personas": {
@@ -1544,12 +1522,6 @@
     "newWork": "Yeni Work oturumu",
     "openPalette": "Komut paletini aç"
   },
-  "modelDownload": {
-    "success": "{{name}} indirildi",
-    "failed": "İndirme başarısız: {{error}}",
-    "startFailed": "İndirme başlatılamadı",
-    "cancelled": "İndirme iptal edildi"
-  },
   "modelTools": {
     "toasts": {
       "fetchInfoFailed": "Bilgi alınamadı",
@@ -1562,30 +1534,13 @@
     }
   },
   "modelManager": {
-    "title": "Modeller",
-    "loading": "Modeller yükleniyor...",
-    "systemStatus": {
-      "online": "Ollama Çevrimiçi",
-      "offline": "Ollama Çevrimdışı",
-      "models": "model",
-      "models_plural": "model",
-      "running": "çalışıyor",
-      "vram": "VRAM"
-    },
     "sections": {
-      "pull": "Yeni Model Çek",
-      "library": "Kütüphaneye Göz At",
-      "huggingface": "HuggingFace Hub",
-      "running": "Çalışan Modeller",
-      "local": "Yerel Modeller",
-      "advanced": "Gelişmiş İşlemler",
       "catalog": "Model Kataloğu"
     },
     "catalog": {
       "searchPlaceholder": "Modelleri ada veya sağlayıcıya göre arayın...",
       "noModels": "Henüz kullanılabilir model yok.",
       "empty": "Aramanızla eşleşen model yok.",
-      "providerOllama": "Ollama",
       "hidden": "Gizli",
       "visibilityFailed": "Model görünürlüğü güncellenemedi.",
       "filterAll": "Tüm modeller",
@@ -1605,144 +1560,10 @@
       "star": "{{name}} modelini yıldızla",
       "unstar": "{{name}} modelinin yıldızını kaldır"
     },
-    "pull": {
-      "placeholder": "Model adını girin (ör., llama3.2:3b, deepseek-r1:14b)",
-      "button": "Çek",
-      "cancel": "İptal",
-      "popular": "Popüler modeller:",
-      "browseAll": "ollama.com'da tüm modellere göz atın",
-      "success": "{{name}} modeli başarıyla çekildi",
-      "cancelled": "Model çekme iptal edildi",
-      "failed": "Model çekilemedi",
-      "enterName": "Lütfen bir model adı girin",
-      "restricted": "Bu örnekte model kurulumu yalnızca yöneticilerle sınırlandırılmıştır."
-    },
-    "progress": {
-      "starting": "Başlatılıyor...",
-      "pulling": "Model indiriliyor...",
-      "pullingLayer": "indiriliyor",
-      "verifying": "Bütünlük doğrulanıyor...",
-      "verifyingDigest": "sha256 özeti doğrulanıyor",
-      "writing": "Manifest yazılıyor...",
-      "cleaning": "Temizleniyor..."
-    },
-    "library": {
-      "available": "mevcut",
-      "search": "Model ara...",
-      "noResults": "Kriterlerinize uyan model bulunamadı",
-      "installed": "Yüklü",
-      "more": "+{{count}} daha",
-      "refresh": "Kütüphaneyi Yenile"
-    },
     "huggingface": {
-      "browseAll": "HuggingFace'te tümünü görüntüle",
       "checkingGguf": "GGUF dosyaları aranıyor...",
       "noGgufAvailable": "Doğrudan Ollama çekmesi için GGUF dosyası yok",
-      "ggufFilesCount": "GGUF Dosyaları ({{count}}) - Doğrudan Ollama'ya çek",
-      "noModelsFound": "Model bulunamadı",
-      "noResults": "Model bulunamadı. Aramanızı veya filtrelerinizi ayarlamayı deneyin.",
-      "browseAllLink": "Tümünü görüntüle",
-      "search": "HuggingFace modellerini ara...",
-      "by": "tarafından",
-      "gated": "Kısıtlı erişim",
-      "viewOnHF": "HuggingFace'te görüntüle",
-      "sortDownloads": "İndirmeler",
-      "sortLikes": "Beğeniler",
-      "sortRecent": "Son",
-      "taskTextGeneration": "Metin Oluşturma",
-      "taskTextToSpeech": "Metinden Konuşmaya",
-      "taskTextToImage": "Metinden Görüntüye",
-      "taskSpeechRecognition": "Konuşma Tanıma",
-      "tasks": {
-        "textGen": "Metin Oluşturma",
-        "tts": "Metinden Konuşmaya",
-        "image": "Metinden Görüntüye",
-        "stt": "Konuşma Tanıma"
-      },
-      "sort": {
-        "downloads": "En Çok İndirilen",
-        "likes": "En Beğenilen",
-        "recent": "Son Güncellenen"
-      }
-    },
-    "local": {
-      "noModels": "Henüz yüklü model yok",
-      "pullToStart": "Başlamak için yukarıdan bir model çekin",
-      "installed": "yüklü",
-      "running": "Çalışıyor",
-      "info": "Bilgi",
-      "copy": "Kopyala",
-      "delete": "Sil",
-      "deleteConfirm": "\"{{name}}\" modelini silmek istediğinizden emin misiniz?",
-      "deleteSuccess": "{{name}} modeli başarıyla silindi",
-      "deleteFailed": "Model silinemedi"
-    },
-    "advanced": {
-      "createModel": "Model Oluştur",
-      "fromModelfile": "Modelfile'dan",
-      "copyModel": "Modeli Kopyala",
-      "duplicateExisting": "Mevcut olanı çoğalt",
-      "testEmbeddings": "Gömmeleri Test Et",
-      "generateVectors": "Vektörler oluştur",
-      "healthCheck": "Sağlık Kontrolü",
-      "testConnection": "Bağlantıyı test et",
-      "healthy": "Ollama sağlıklı!"
-    },
-    "modals": {
-      "details": {
-        "title": "Model Detayları",
-        "info": "Model Bilgisi",
-        "family": "Aile",
-        "parameters": "Parametreler",
-        "quantization": "Niceleme",
-        "format": "Format",
-        "systemPrompt": "Sistem Mesajı",
-        "template": "Şablon",
-        "license": "Lisans",
-        "modelfile": "Modelfile",
-        "noDetails": "Detay mevcut değil"
-      },
-      "copy": {
-        "title": "Modeli Kopyala",
-        "source": "Kaynak Model",
-        "selectModel": "Bir model seçin...",
-        "newName": "Yeni Model Adı",
-        "placeholder": "ör., benim-özel-modelim",
-        "copying": "Kopyalanıyor...",
-        "button": "Modeli Kopyala",
-        "success": "Model {{name}} olarak kopyalandı",
-        "failed": "Model kopyalanamadı",
-        "enterBoth": "Lütfen hem kaynak hem de hedef adlarını girin"
-      },
-      "create": {
-        "title": "Özel Model Oluştur",
-        "name": "Model Adı",
-        "namePlaceholder": "ör., benim-asistanım",
-        "modelfile": "Modelfile",
-        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM Yardımcı bir asistansınız.",
-        "see": "Bkz.",
-        "docs": "Modelfile belgeleri",
-        "docsLink": "söz dizimi referansı için",
-        "creating": "Oluşturuluyor...",
-        "button": "Model Oluştur",
-        "success": "{{name}} modeli başarıyla oluşturuldu",
-        "failed": "Model oluşturulamadı",
-        "enterBoth": "Lütfen model adını ve Modelfile içeriğini girin"
-      },
-      "embeddings": {
-        "title": "Gömmeleri Test Et",
-        "model": "Gömme Modeli",
-        "selectModel": "Bir model seçin...",
-        "recommended": "Önerilen: nomic-embed-text, mxbai-embed-large",
-        "input": "Giriş Metni",
-        "placeholder": "Gömme oluşturmak için metin girin...",
-        "generating": "Oluşturuluyor...",
-        "button": "Gömme Oluştur",
-        "result": "Sonuç ({{count}} boyut)",
-        "success": "{{count}} boyutlu gömme vektörü oluşturuldu",
-        "failed": "Gömme oluşturulamadı",
-        "enterBoth": "Lütfen bir model seçin ve metin girin"
-      }
+      "ggufFilesCount": "GGUF Dosyaları ({{count}}) - Doğrudan Ollama'ya çek"
     }
   },
   "personaManager": {
@@ -1941,11 +1762,8 @@
     "noUsers": "Kullanıcı bulunamadı",
     "noUsersMatching": "Aramanıza uyan kullanıcı yok",
     "columns": {
-      "user": "Kullanıcı",
-      "email": "E-posta",
       "role": "Rol",
-      "created": "Oluşturulma",
-      "actions": "İşlemler"
+      "created": "Oluşturulma"
     },
     "roles": {
       "admin": "Yönetici",
@@ -1973,11 +1791,8 @@
         "edit": "Kullanıcıyı Düzenle"
       },
       "username": "Kullanıcı Adı",
-      "usernamePlaceholder": "Kullanıcı adını girin",
       "email": "E-posta",
-      "emailPlaceholder": "E-posta girin (isteğe bağlı)",
       "password": "Şifre",
-      "passwordPlaceholder": "Şifre girin",
       "passwordHint": "Mevcut şifreyi korumak için boş bırakın",
       "role": "Rol",
       "creating": "Oluşturuluyor...",
@@ -2025,12 +1840,6 @@
       "computerPreset": "Work Computer",
       "computerPresetHint": "Work Computer, GUI imajını gerektirir: depodaki deploy/work-computer klasöründen derleyin ve libre-work-computer:latest olarak etiketleyin.",
       "approvalsRequired": "Yan etkili eylemler için onay iste"
-    },
-    "modelAccess": {
-      "title": "Model indirmeleri",
-      "description": "Tüm etkin kullanıcıların Ollama ve Hugging Face tarayıcısından model çekmesine izin verin. Yöneticiler her zaman model indirebilir.",
-      "saved": "Model indirme erişimi güncellendi",
-      "saveFailed": "Model indirme erişimi güncellenemedi"
     },
     "webSearchAccess": {
       "title": "Web araması",
@@ -2137,13 +1946,6 @@
     "mfaResetSuccess": "{{name}} için iki adım kaldırıldı.",
     "mfaResetNothing": "{{name}} için iki adım tanımlı değildi.",
     "mfaResetFailed": "Sıfırlama başarısız oldu.",
-    "ollamaProvider": {
-      "title": "Ollama sağlayıcısı",
-      "description": "Kapalıyken uygulama Ollama'yı tamamen denetlemeyi durdurur — sağlık kontrolü, uyarı yok. Uç nokta, Ollama uyumlu herhangi bir ağ geçidini gösterebilir.",
-      "saved": "Ollama sağlayıcı ayarları kaydedildi",
-      "saveFailed": "Ollama sağlayıcı ayarları kaydedilemedi",
-      "baseUrlLabel": "Ollama uç nokta URL'si"
-    },
     "emailNotifications": {
       "title": "E-posta bildirimleri",
       "description": "Bildirimler için giden posta sunucusu. Kullanıcılar hangi bildirimlerin gelen kutularına ulaşacağını Ayarlar > Bildirimler altında seçer.",
@@ -2157,11 +1959,6 @@
       "portHint": "Seçilen güvenlik modunun varsayılanı için boş bırakın.",
       "securityLabel": "Bağlantı güvenliği",
       "securityHint": "STARTTLS düz bir bağlantıyı yükseltir; TLS baştan itibaren şifrelidir.",
-      "security": {
-        "starttls": "STARTTLS (bağlantı noktası 587)",
-        "tls": "TLS (bağlantı noktası 465)",
-        "none": "Yok (yalnızca güvenilir ağ)"
-      },
       "verifyLabel": "Sertifikayı doğrula",
       "verifyHint": "Yalnızca kendinden imzalı sertifikaya sahip bir aktarıcı için kapatın.",
       "usernameLabel": "Kullanıcı adı",
@@ -2493,7 +2290,6 @@
     "deleteConfirm": "Bu görseli silmek istediğinizden emin misiniz?",
     "deleteSuccess": "Görsel silindi",
     "deleteFailed": "Görsel silinemedi",
-    "downloadFailed": "Görsel indirilemedi",
     "loadMore": "Daha Fazla Yükle ({{current}}/{{total}})",
     "loadFailed": "Galeri yüklenemedi"
   },
@@ -3242,18 +3038,10 @@
   },
   "modelSelector": {
     "searchInstalled": "Yüklü modelleri ara...",
-    "searchOllama": "Ollama kütüphanesinde ara...",
-    "searchHuggingFace": "HuggingFace'ta ara...",
     "selectModel": "Model seç",
     "personas": "Personalar",
-    "ollamaModels": "Ollama Modelleri",
     "pluginModels": "Eklenti Modelleri",
     "actions": "Eylemler",
-    "installed": "Yüklü",
-    "use": "Kullan",
-    "pull": "İndir",
-    "pullRestricted": "Bu örnekte model kurulumu yalnızca yöneticilerle sınırlandırılmıştır.",
-    "adminOnlyPull": "Yalnızca yöneticiler",
     "legacyProvider": "sağlayıcı kayıtlı değil",
     "providerNotRecorded": "Sağlayıcı kayıtlı değil",
     "providerUnavailable": "sağlayıcı kullanılamıyor",
@@ -4089,22 +3877,6 @@
   "connectModels": {
     "adminOnly": "Bir model sağlayıcısı bağlamak için yöneticinizden yardım isteyin.",
     "skip": "Şimdilik atla — modelleri daha sonra bağlarım",
-    "ollama": {
-      "status": {
-        "checking": "Kullanılabilirlik denetleniyor…",
-        "healthy": "Çalışıyor ve yerel modeller için hazır",
-        "offline": "Bu makinede algılanmadı",
-        "disabled": "Devre dışı — hiçbir denetim çalıştırılmayacak"
-      },
-      "recheck": "Tekrar denetle",
-      "enable": "Etkinleştir",
-      "disable": "Ollama denetimini durdur",
-      "enabledToast": "Ollama sağlayıcısı etkinleştirildi",
-      "disabledToast": "Ollama denetimleri devre dışı bırakıldı — Ayarlar'dan yeniden etkinleştirebilirsiniz",
-      "settingsFailed": "Ollama ayarları güncellenemedi",
-      "offlineHint": "ollama.com adresinden Ollama'yı kurun, otomatik olarak algılanacaktır — ya da aşağıdaki seçeneklerden birini kullanın. Ollama kullanmayı düşünmüyorsanız denetimlerini kapatabilirsiniz.",
-      "healthyHint": "Ollama bağlı. Modeller sayfasından bir model çekin, sohbete hazırsınız."
-    },
     "local": {
       "title": "Yerel sunucu",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",

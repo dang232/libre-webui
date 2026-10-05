@@ -24,7 +24,6 @@ import { useChatStore } from '@/store/chatStore';
 import { useAppStore } from '@/store/appStore';
 import { usePluginStore } from '@/store/pluginStore';
 import { useWorkStore } from '@/store/workStore';
-import { ollamaApi } from '@/utils/api';
 import { isDemoMode } from '@/utils/demoMode';
 import { createLogger } from '@/utils/logger';
 import { clearAllWorkDrafts } from '@/utils/workDrafts';
@@ -118,20 +117,6 @@ export const useAuthStore = create<AuthState>()(
               logger.warn(
                 'WebSocket reconnect after login failed; continuing app initialization:',
                 websocketError
-              );
-            }
-
-            // Ollama is optional when the user has a configured plugin model.
-            // Its health check must not block the rest of post-login loading.
-            try {
-              const healthResponse = await ollamaApi.checkHealth();
-              if (!healthResponse.success && !isDemoMode()) {
-                logger.warn('Ollama service not available after login');
-              }
-            } catch (healthError) {
-              logger.warn(
-                'Ollama health check failed after login; continuing provider initialization:',
-                healthError
               );
             }
 

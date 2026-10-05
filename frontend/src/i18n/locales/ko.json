@@ -45,7 +45,6 @@
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "ollamaUnavailable": "Ollama 서비스를 사용할 수 없습니다. 플러그인 모델은 계속 사용할 수도 있습니다.",
     "backendConnectionFailed": "백엔드 서비스에 연결하지 못했습니다"
   },
   "auth": {
@@ -454,7 +453,6 @@
       "updated": "모델 업데이트됨",
       "noModels": "사용 가능한 모델 없음",
       "noModelsDescription": "사용 가능한 모델이 없습니다. Ollama가 실행 중이고 모델이 설치되어 있는지 확인하세요.",
-      "pullCommand": "ollama pull llama3.2:3b",
       "noModelsTooltip": "사용 가능한 모델이 없습니다. Ollama가 실행 중이고 모델이 설치되어 있는지 확인하세요.",
       "selectBeforePrivateChat": "비공개 채팅을 시작하기 전에 사용 가능한 모델을 선택하세요",
       "selectBeforeSending": "전송하기 전에 사용 가능한 모델을 선택하세요",
@@ -675,7 +673,6 @@
       "sessions": "세션",
       "apiKeys": "API 키",
       "notifications": "알림",
-      "ollamaDisabled": "관리자가 Ollama를 비활성화했습니다",
       "apiPlatform": "API Platform"
     },
     "appearance": {
@@ -1144,12 +1141,6 @@
     "about": {
       "title": "정보",
       "versionLabel": "버전",
-      "ollama": {
-        "title": "Ollama 상태",
-        "version": "버전",
-        "healthy": "정상",
-        "unhealthy": "비정상"
-      },
       "stats": {
         "models": "모델",
         "sessions": "세션"
@@ -1462,20 +1453,7 @@
   },
   "models": {
     "title": "모델",
-    "subtitle": "Ollama 모델 풀, 관리 및 모니터링",
-    "installed": "설치된 모델",
-    "available": "사용 가능한 모델",
-    "pull": "모델 풀",
-    "pulling": "풀 중...",
-    "delete": "모델 삭제",
-    "deleting": "삭제 중...",
-    "size": "크기",
-    "modified": "수정됨",
-    "family": "계열",
-    "parameters": "매개변수",
-    "quantization": "양자화",
     "noModels": "설치된 모델 없음",
-    "pullFirst": "시작하려면 모델을 풀하세요",
     "noModelsFound": "모델을 찾을 수 없습니다"
   },
   "personas": {
@@ -1544,12 +1522,6 @@
     "newWork": "새 Work 세션",
     "openPalette": "명령 팔레트 열기"
   },
-  "modelDownload": {
-    "success": "{{name}} 다운로드가 완료되었습니다",
-    "failed": "다운로드에 실패했습니다: {{error}}",
-    "startFailed": "다운로드를 시작하지 못했습니다",
-    "cancelled": "다운로드가 취소되었습니다"
-  },
   "modelTools": {
     "toasts": {
       "fetchInfoFailed": "정보를 가져오지 못했습니다",
@@ -1562,30 +1534,13 @@
     }
   },
   "modelManager": {
-    "title": "모델",
-    "loading": "모델 로딩 중...",
-    "systemStatus": {
-      "online": "Ollama 온라인",
-      "offline": "Ollama 오프라인",
-      "models": "모델",
-      "models_plural": "모델",
-      "running": "실행 중",
-      "vram": "VRAM"
-    },
     "sections": {
-      "pull": "새 모델 풀",
-      "library": "라이브러리 찾아보기",
-      "huggingface": "HuggingFace Hub",
-      "running": "실행 중인 모델",
-      "local": "로컬 모델",
-      "advanced": "고급 작업",
       "catalog": "모델 카탈로그"
     },
     "catalog": {
       "searchPlaceholder": "이름 또는 제공자로 모델 검색...",
       "noModels": "아직 사용할 수 있는 모델이 없습니다.",
       "empty": "검색과 일치하는 모델이 없습니다.",
-      "providerOllama": "Ollama",
       "hidden": "숨김",
       "visibilityFailed": "모델 표시 설정을 변경하지 못했습니다.",
       "filterAll": "모든 모델",
@@ -1605,144 +1560,10 @@
       "star": "{{name}}에 별표 표시",
       "unstar": "{{name}}에서 별표 제거"
     },
-    "pull": {
-      "placeholder": "모델 이름 입력 (예: llama3.2:3b, deepseek-r1:14b)",
-      "button": "풀",
-      "cancel": "취소",
-      "popular": "인기 모델:",
-      "browseAll": "ollama.com에서 모든 모델 찾아보기",
-      "success": "모델 {{name}}이(가) 성공적으로 풀되었습니다",
-      "cancelled": "모델 풀이 취소되었습니다",
-      "failed": "모델 풀 실패",
-      "enterName": "모델 이름을 입력하세요",
-      "restricted": "이 인스턴스에서 모델 설치는 관리자만 가능합니다."
-    },
-    "progress": {
-      "starting": "초기화 중...",
-      "pulling": "모델 다운로드 중...",
-      "pullingLayer": "다운로드 중",
-      "verifying": "무결성 확인 중...",
-      "verifyingDigest": "sha256 다이제스트 확인 중",
-      "writing": "매니페스트 작성 중...",
-      "cleaning": "정리 중..."
-    },
-    "library": {
-      "available": "사용 가능",
-      "search": "모델 검색...",
-      "noResults": "기준에 맞는 모델을 찾을 수 없습니다",
-      "installed": "설치됨",
-      "more": "+{{count}}개 더",
-      "refresh": "라이브러리 새로고침"
-    },
     "huggingface": {
-      "browseAll": "HuggingFace에서 모두 보기",
       "checkingGguf": "GGUF 파일 확인 중...",
       "noGgufAvailable": "Ollama로 직접 풀할 수 있는 GGUF 파일이 없습니다",
-      "ggufFilesCount": "GGUF 파일 ({{count}}) - Ollama로 직접 풀",
-      "noModelsFound": "모델을 찾을 수 없습니다",
-      "noResults": "모델을 찾을 수 없습니다. 검색어나 필터를 조정해 보세요.",
-      "browseAllLink": "모두 보기",
-      "search": "HuggingFace 모델 검색...",
-      "by": "작성자",
-      "gated": "제한된 액세스",
-      "viewOnHF": "HuggingFace에서 보기",
-      "sortDownloads": "다운로드",
-      "sortLikes": "좋아요",
-      "sortRecent": "최근",
-      "taskTextGeneration": "텍스트 생성",
-      "taskTextToSpeech": "텍스트 음성 변환",
-      "taskTextToImage": "텍스트 이미지 변환",
-      "taskSpeechRecognition": "음성 인식",
-      "tasks": {
-        "textGen": "텍스트 생성",
-        "tts": "텍스트 음성 변환",
-        "image": "텍스트 이미지 변환",
-        "stt": "음성 인식"
-      },
-      "sort": {
-        "downloads": "다운로드 순",
-        "likes": "인기 순",
-        "recent": "최근 업데이트"
-      }
-    },
-    "local": {
-      "noModels": "아직 설치된 모델 없음",
-      "pullToStart": "시작하려면 위에서 모델을 풀하세요",
-      "installed": "설치됨",
-      "running": "실행 중",
-      "info": "정보",
-      "copy": "복사",
-      "delete": "삭제",
-      "deleteConfirm": "모델 \"{{name}}\"을(를) 삭제하시겠습니까?",
-      "deleteSuccess": "모델 {{name}}이(가) 성공적으로 삭제되었습니다",
-      "deleteFailed": "모델 삭제 실패"
-    },
-    "advanced": {
-      "createModel": "모델 만들기",
-      "fromModelfile": "Modelfile에서",
-      "copyModel": "모델 복사",
-      "duplicateExisting": "기존 항목 복제",
-      "testEmbeddings": "임베딩 테스트",
-      "generateVectors": "벡터 생성",
-      "healthCheck": "상태 점검",
-      "testConnection": "연결 테스트",
-      "healthy": "Ollama가 정상입니다!"
-    },
-    "modals": {
-      "details": {
-        "title": "모델 세부정보",
-        "info": "모델 정보",
-        "family": "계열",
-        "parameters": "매개변수",
-        "quantization": "양자화",
-        "format": "형식",
-        "systemPrompt": "시스템 프롬프트",
-        "template": "템플릿",
-        "license": "라이선스",
-        "modelfile": "Modelfile",
-        "noDetails": "사용 가능한 세부정보 없음"
-      },
-      "copy": {
-        "title": "모델 복사",
-        "source": "소스 모델",
-        "selectModel": "모델 선택...",
-        "newName": "새 모델 이름",
-        "placeholder": "예: my-custom-model",
-        "copying": "복사 중...",
-        "button": "모델 복사",
-        "success": "모델이 {{name}}(으)로 복사되었습니다",
-        "failed": "모델 복사 실패",
-        "enterBoth": "소스와 대상 이름을 모두 입력하세요"
-      },
-      "create": {
-        "title": "사용자 정의 모델 만들기",
-        "name": "모델 이름",
-        "namePlaceholder": "예: my-assistant",
-        "modelfile": "Modelfile",
-        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
-        "see": "참조:",
-        "docs": "Modelfile 문서",
-        "docsLink": "구문 참조용",
-        "creating": "만드는 중...",
-        "button": "모델 만들기",
-        "success": "모델 {{name}}이(가) 성공적으로 만들어졌습니다",
-        "failed": "모델 만들기 실패",
-        "enterBoth": "모델 이름과 Modelfile 내용을 입력하세요"
-      },
-      "embeddings": {
-        "title": "임베딩 테스트",
-        "model": "임베딩 모델",
-        "selectModel": "모델 선택...",
-        "recommended": "권장: nomic-embed-text, mxbai-embed-large",
-        "input": "입력 텍스트",
-        "placeholder": "임베딩을 생성할 텍스트를 입력하세요...",
-        "generating": "생성 중...",
-        "button": "임베딩 생성",
-        "result": "결과 ({{count}}차원)",
-        "success": "{{count}}차원 임베딩 벡터가 생성되었습니다",
-        "failed": "임베딩 생성 실패",
-        "enterBoth": "모델을 선택하고 텍스트를 입력하세요"
-      }
+      "ggufFilesCount": "GGUF 파일 ({{count}}) - Ollama로 직접 풀"
     }
   },
   "personaManager": {
@@ -1941,11 +1762,8 @@
     "noUsers": "사용자 없음",
     "noUsersMatching": "검색과 일치하는 사용자 없음",
     "columns": {
-      "user": "사용자",
-      "email": "이메일",
       "role": "역할",
-      "created": "생성됨",
-      "actions": "작업"
+      "created": "생성됨"
     },
     "roles": {
       "admin": "관리자",
@@ -1973,11 +1791,8 @@
         "edit": "사용자 편집"
       },
       "username": "사용자 이름",
-      "usernamePlaceholder": "사용자 이름 입력",
       "email": "이메일",
-      "emailPlaceholder": "이메일 입력 (선택사항)",
       "password": "비밀번호",
-      "passwordPlaceholder": "비밀번호 입력",
       "passwordHint": "현재 비밀번호를 유지하려면 비워두세요",
       "role": "역할",
       "creating": "만드는 중...",
@@ -2025,12 +1840,6 @@
       "computerPreset": "Work Computer",
       "computerPresetHint": "Work Computer에는 GUI 이미지가 필요합니다. 저장소의 deploy/work-computer에서 빌드해 libre-work-computer:latest 태그를 지정하세요.",
       "approvalsRequired": "데이터를 바꾸는 작업에 승인 요구"
-    },
-    "modelAccess": {
-      "title": "모델 다운로드",
-      "description": "모든 활성 사용자가 Ollama와 Hugging Face 브라우저에서 모델을 가져올 수 있도록 허용합니다. 관리자는 항상 모델을 다운로드할 수 있습니다.",
-      "saved": "모델 다운로드 접근이 업데이트되었습니다",
-      "saveFailed": "모델 다운로드 접근을 업데이트할 수 없습니다"
     },
     "webSearchAccess": {
       "title": "웹 검색",
@@ -2137,13 +1946,6 @@
     "mfaResetSuccess": "{{name}}의 2단계가 제거되었습니다.",
     "mfaResetNothing": "{{name}}은(는) 2단계를 설정하지 않았습니다.",
     "mfaResetFailed": "재설정에 실패했습니다.",
-    "ollamaProvider": {
-      "title": "Ollama 제공자",
-      "description": "꺼져 있으면 앱이 Ollama 확인을 완전히 중단합니다 — 상태 점검도, 경고도 없습니다. 엔드포인트는 Ollama 호환 게이트웨이라면 어디든 가리킬 수 있습니다.",
-      "saved": "Ollama 제공자 설정이 저장되었습니다",
-      "saveFailed": "Ollama 제공자 설정을 저장할 수 없습니다",
-      "baseUrlLabel": "Ollama 엔드포인트 URL"
-    },
     "emailNotifications": {
       "title": "이메일 알림",
       "description": "알림 발송용 발신 메일 서버입니다. 사용자는 설정 > 알림에서 받은편지함으로 받을 알림을 직접 선택합니다.",
@@ -2157,11 +1959,6 @@
       "portHint": "선택한 보안 모드의 기본값을 사용하려면 비워 두세요.",
       "securityLabel": "연결 보안",
       "securityHint": "STARTTLS는 일반 연결을 암호화 연결로 전환하고, TLS는 처음부터 암호화된 상태로 연결합니다.",
-      "security": {
-        "starttls": "STARTTLS (포트 587)",
-        "tls": "TLS (포트 465)",
-        "none": "없음 (신뢰할 수 있는 네트워크 전용)"
-      },
       "verifyLabel": "인증서 확인",
       "verifyHint": "자체 서명된 인증서를 사용하는 릴레이일 때만 꺼 두세요.",
       "usernameLabel": "사용자 이름",
@@ -2493,7 +2290,6 @@
     "deleteConfirm": "이 이미지를 삭제하시겠습니까?",
     "deleteSuccess": "이미지가 삭제되었습니다",
     "deleteFailed": "이미지 삭제 실패",
-    "downloadFailed": "이미지 다운로드 실패",
     "loadMore": "더 보기 ({{current}}/{{total}})",
     "loadFailed": "갤러리 로드 실패"
   },
@@ -3242,18 +3038,10 @@
   },
   "modelSelector": {
     "searchInstalled": "설치된 모델 검색...",
-    "searchOllama": "Ollama 라이브러리 검색...",
-    "searchHuggingFace": "HuggingFace 검색...",
     "selectModel": "모델 선택",
     "personas": "페르소나",
-    "ollamaModels": "Ollama 모델",
     "pluginModels": "플러그인 모델",
     "actions": "작업",
-    "installed": "설치됨",
-    "use": "사용",
-    "pull": "다운로드",
-    "pullRestricted": "이 인스턴스에서 모델 설치는 관리자만 가능합니다.",
-    "adminOnlyPull": "관리자만",
     "legacyProvider": "프로바이더 미기록",
     "providerNotRecorded": "프로바이더 미기록",
     "providerUnavailable": "프로바이더 사용 불가",
@@ -4089,22 +3877,6 @@
   "connectModels": {
     "adminOnly": "모델 제공자를 연결하려면 관리자에게 문의하세요.",
     "skip": "지금은 건너뛰기 — 모델은 나중에 연결할게요",
-    "ollama": {
-      "status": {
-        "checking": "사용 가능 여부 확인 중…",
-        "healthy": "실행 중이며 로컬 모델을 사용할 준비가 되었습니다",
-        "offline": "이 기기에서 감지되지 않았습니다",
-        "disabled": "사용 안 함 — 검사가 실행되지 않습니다"
-      },
-      "recheck": "다시 확인",
-      "enable": "사용",
-      "disable": "Ollama 확인 중지",
-      "enabledToast": "Ollama 제공자가 활성화되었습니다",
-      "disabledToast": "Ollama 확인이 비활성화되었습니다 — 설정에서 다시 활성화할 수 있습니다",
-      "settingsFailed": "Ollama 설정을 업데이트할 수 없습니다",
-      "offlineHint": "ollama.com에서 Ollama를 설치하면 자동으로 감지됩니다 — 또는 아래 옵션 중 하나를 대신 사용하세요. Ollama를 사용할 계획이 없다면 확인을 꺼둘 수 있습니다.",
-      "healthyHint": "Ollama가 연결되었습니다. 모델에서 모델을 풀하면 채팅할 준비가 끝납니다."
-    },
     "local": {
       "title": "로컬 서버",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",

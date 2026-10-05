@@ -26,10 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { Columns2 } from 'lucide-react';
 import { cn } from '@/utils';
 import { Button } from '@/components/ui';
-import {
-  chatModelOptionKey,
-  isAvailableOllamaModel,
-} from '@/utils/chatModelSelection';
+import { chatModelOptionKey } from '@/utils/chatModelSelection';
 import { MAX_COMPARE_MODELS } from './compareTargets';
 import type { OllamaModel } from '@/types';
 
@@ -65,7 +62,7 @@ export const ComposerCompareMenu: React.FC<ComposerCompareMenuProps> = ({
   }, [open]);
 
   const options = models
-    .filter(isAvailableOllamaModel)
+    .filter(model => !model.isUnavailable && !model.isLegacySelection)
     .map(model => ({ model, key: chatModelOptionKey(model) }))
     .filter(entry => entry.key !== currentModelKey);
 

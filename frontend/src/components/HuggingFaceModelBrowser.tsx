@@ -18,12 +18,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import {
-  huggingfaceHubApi,
-  ollamaApi,
-  HuggingFaceModel,
-  GgufFileInfo,
-} from '@/utils/api';
+import { huggingfaceHubApi, HuggingFaceModel, GgufFileInfo } from '@/utils/api';
 import { Button } from '@/components/ui/Button';
 import {
   Search,
@@ -38,9 +33,7 @@ import {
   Loader,
   ChevronDown,
 } from '@/components/icons';
-import toast from 'react-hot-toast';
 import { cn } from '@/utils';
-import { useAuthStore } from '@/store/authStore';
 import { createLogger } from '@/utils/logger';
 
 const logger = createLogger('components:hugging-face-model-browser');
@@ -76,9 +69,6 @@ export const HuggingFaceModelBrowser: React.FC<
   HuggingFaceModelBrowserProps
 > = ({ isOpen, onClose, onSelectModel, selectedModels = [] }) => {
   const { t } = useTranslation();
-  const { user, systemInfo } = useAuthStore();
-  const canInstallModels =
-    user?.role === 'admin' || systemInfo?.requiresAuth === false;
   const [searchQuery, setSearchQuery] = useState('');
   const [task, setTask] = useState<TaskOption>('text-generation');
   const [sort, setSort] = useState<SortOption>('downloads');
@@ -90,12 +80,6 @@ export const HuggingFaceModelBrowser: React.FC<
     {}
   );
   const [loadingGguf, setLoadingGguf] = useState<string | null>(null);
-  const [pullingModel, setPullingModel] = useState<string | null>(null);
-  const [pullProgress, setPullProgress] = useState<{
-    status: string;
-    percent?: number;
-  } | null>(null);
-  const [cancelPull, setCancelPull] = useState<(() => void) | null>(null);
 
   // Debounced search
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -179,57 +163,6 @@ export const HuggingFaceModelBrowser: React.FC<
     },
     [expandedModel, ggufFiles, loadGgufFiles]
   );
-
-  // Pull a GGUF model from HuggingFace via Ollama
-  const handlePullGguf = useCallback(
-    (ollamaCommand: string, filename: string) => {
-      if (!canInstallModels) {
-        toast.error(t('modelSelector.pullRestricted'));
-        return;
-      }
-      if (pullingModel) return;
-
-      setPullingModel(ollamaCommand);
-      setPullProgress({ status: 'starting' });
-
-      try {
-        const cancelFn = ollamaApi.pullModelStream(
-          ollamaCommand,
-          progress => {
-            setPullProgress(progress);
-          },
-          () => {
-            setPullProgress(null);
-            setPullingModel(null);
-            setCancelPull(null);
-            toast.success(t('modelDownload.success', { name: filename }));
-          },
-          error => {
-            setPullProgress(null);
-            setPullingModel(null);
-            setCancelPull(null);
-            toast.error(t('modelDownload.failed', { error }));
-          }
-        );
-        setCancelPull(() => cancelFn);
-      } catch (_error) {
-        setPullProgress(null);
-        setPullingModel(null);
-        toast.error(t('modelDownload.startFailed'));
-      }
-    },
-    [canInstallModels, pullingModel, t]
-  );
-
-  // Cancel in-progress pull
-  const handleCancelPull = useCallback(() => {
-    if (cancelPull) {
-      cancelPull();
-      setCancelPull(null);
-      setPullingModel(null);
-      setPullProgress(null);
-    }
-  }, [cancelPull]);
 
   if (!isOpen) return null;
 
@@ -331,11 +264,6 @@ export const HuggingFaceModelBrowser: React.FC<
 
         {/* Model List */}
         <div className='scroll-region min-h-0 flex-1 px-6 py-4 scrollbar-thin'>
-          {!canInstallModels && (
-            <div className='mb-4 rounded-lg border border-amber-200 bg-amber-500/10 px-3 py-2 text-xs text-ink dark:border-amber-800 dark:bg-amber-900/20'>
-              {t('modelSelector.pullRestricted')}
-            </div>
-          )}
           {isLoading ? (
             <div className='flex items-center justify-center py-12'>
               <Loader className='w-8 h-8 text-blue-500 animate-spin' />
@@ -466,7 +394,7 @@ export const HuggingFaceModelBrowser: React.FC<
                           <div className='py-4 text-center text-xs text-gray-500 dark:text-gray-400'>
                             {t(
                               'modelManager.huggingface.noGgufAvailable',
-                              'No GGUF files available for direct Ollama pull'
+                              'No GGUF files available'
                             )}
                           </div>
                         ) : (
@@ -474,13 +402,10 @@ export const HuggingFaceModelBrowser: React.FC<
                             <div className='text-xs font-medium text-gray-600 dark:text-gray-300 mb-2'>
                               {t('modelManager.huggingface.ggufFilesCount', {
                                 count: modelGgufFiles.length,
-                                defaultValue: `GGUF Files (${modelGgufFiles.length}) - Pull directly to Ollama`,
+                                defaultValue: `GGUF Files (${modelGgufFiles.length})`,
                               })}
                             </div>
                             {modelGgufFiles.map(file => {
-                              const isPullingThis =
-                                pullingModel === file.ollamaCommand;
-
                               return (
                                 <div
                                   key={file.filename}
@@ -499,66 +424,9 @@ export const HuggingFaceModelBrowser: React.FC<
                                       )}
                                     </div>
                                   </div>
-                                  {isPullingThis ? (
-                                    <div className='flex items-center gap-2'>
-                                      <div className='text-xs text-gray-500 w-12 text-right'>
-                                        {pullProgress?.percent !== undefined
-                                          ? `${pullProgress.percent}%`
-                                          : '...'}
-                                      </div>
-                                      <button
-                                        onClick={e => {
-                                          e.stopPropagation();
-                                          handleCancelPull();
-                                        }}
-                                        className='p-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
-                                      >
-                                        <X className='w-4 h-4' />
-                                      </button>
-                                    </div>
-                                  ) : canInstallModels ? (
-                                    <button
-                                      onClick={e => {
-                                        e.stopPropagation();
-                                        handlePullGguf(
-                                          file.ollamaCommand,
-                                          file.filename
-                                        );
-                                      }}
-                                      disabled={!!pullingModel}
-                                      className={cn(
-                                        'px-3 py-1.5 rounded-lg text-xs font-medium',
-                                        'bg-blue-100 dark:bg-blue-900/30',
-                                        'text-blue-700 dark:text-blue-400',
-                                        'hover:bg-blue-200 dark:hover:bg-blue-900/50',
-                                        'disabled:opacity-50 disabled:cursor-not-allowed'
-                                      )}
-                                    >
-                                      <Download className='w-3 h-3 inline mr-1' />
-                                      {t('models.pull', 'Pull')}
-                                    </button>
-                                  ) : (
-                                    <span className='rounded bg-amber-500/20 px-2 py-1 text-[11px] font-medium text-ink dark:bg-amber-900/30'>
-                                      {t('modelSelector.adminOnlyPull')}
-                                    </span>
-                                  )}
                                 </div>
                               );
                             })}
-
-                            {/* Pull progress bar */}
-                            {pullingModel?.startsWith('hf.co/') &&
-                              pullingModel.includes(model.id) &&
-                              pullProgress?.percent !== undefined && (
-                                <div className='w-full bg-gray-200 dark:bg-dark-300 rounded-full h-1.5 overflow-hidden mt-2'>
-                                  <div
-                                    className='h-1.5 rounded-full bg-blue-500 transition-all duration-300'
-                                    style={{
-                                      width: `${pullProgress.percent}%`,
-                                    }}
-                                  />
-                                </div>
-                              )}
                           </div>
                         )}
                       </div>

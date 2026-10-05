@@ -45,7 +45,6 @@
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "ollamaUnavailable": "Сервис Ollama недоступен. Модели плагинов по-прежнему можно использовать.",
     "backendConnectionFailed": "Не удалось подключиться к серверной службе"
   },
   "auth": {
@@ -454,7 +453,6 @@
       "updated": "Модель обновлена",
       "noModels": "Модели недоступны",
       "noModelsDescription": "Модели недоступны. Убедитесь, что Ollama запущен и модели установлены.",
-      "pullCommand": "ollama pull llama3.2:3b",
       "noModelsTooltip": "Модели недоступны. Убедитесь, что Ollama запущен и модели установлены.",
       "selectBeforePrivateChat": "Выберите доступную модель перед началом приватного чата",
       "selectBeforeSending": "Выберите доступную модель перед отправкой",
@@ -675,7 +673,6 @@
       "sessions": "Сеансы",
       "apiKeys": "API-ключи",
       "notifications": "Уведомления",
-      "ollamaDisabled": "Ollama отключён администратором",
       "apiPlatform": "API Platform"
     },
     "appearance": {
@@ -1144,12 +1141,6 @@
     "about": {
       "title": "О программе",
       "versionLabel": "Версия",
-      "ollama": {
-        "title": "Статус Ollama",
-        "version": "Версия",
-        "healthy": "Работает",
-        "unhealthy": "Не работает"
-      },
       "stats": {
         "models": "Модели",
         "sessions": "Сессии"
@@ -1462,20 +1453,7 @@
   },
   "models": {
     "title": "Модели",
-    "subtitle": "Загружайте, управляйте и отслеживайте ваши модели Ollama",
-    "installed": "Установленные модели",
-    "available": "Доступные модели",
-    "pull": "Загрузить модель",
-    "pulling": "Загрузка...",
-    "delete": "Удалить модель",
-    "deleting": "Удаление...",
-    "size": "Размер",
-    "modified": "Изменено",
-    "family": "Семейство",
-    "parameters": "Параметры",
-    "quantization": "Квантование",
     "noModels": "Модели не установлены",
-    "pullFirst": "Загрузите модель, чтобы начать",
     "noModelsFound": "Модели не найдены"
   },
   "personas": {
@@ -1544,12 +1522,6 @@
     "newWork": "Новая сессия Work",
     "openPalette": "Открыть палитру команд"
   },
-  "modelDownload": {
-    "success": "Модель {{name}} загружена",
-    "failed": "Не удалось загрузить: {{error}}",
-    "startFailed": "Не удалось начать загрузку",
-    "cancelled": "Загрузка отменена"
-  },
   "modelTools": {
     "toasts": {
       "fetchInfoFailed": "Не удалось получить информацию",
@@ -1562,30 +1534,13 @@
     }
   },
   "modelManager": {
-    "title": "Модели",
-    "loading": "Загрузка моделей...",
-    "systemStatus": {
-      "online": "Ollama онлайн",
-      "offline": "Ollama офлайн",
-      "models": "модель",
-      "models_plural": "моделей",
-      "running": "запущено",
-      "vram": "VRAM"
-    },
     "sections": {
-      "pull": "Загрузить новую модель",
-      "library": "Обзор библиотеки",
-      "huggingface": "HuggingFace Hub",
-      "running": "Запущенные модели",
-      "local": "Локальные модели",
-      "advanced": "Расширенные действия",
       "catalog": "Каталог моделей"
     },
     "catalog": {
       "searchPlaceholder": "Искать модели по названию или провайдеру...",
       "noModels": "Моделей пока нет.",
       "empty": "Ни одна модель не соответствует вашему запросу.",
-      "providerOllama": "Ollama",
       "hidden": "Скрыта",
       "visibilityFailed": "Не удалось изменить видимость модели.",
       "filterAll": "Все модели",
@@ -1605,144 +1560,10 @@
       "star": "Отметить {{name}} звездой",
       "unstar": "Снять звезду с {{name}}"
     },
-    "pull": {
-      "placeholder": "Введите название модели (напр., llama3.2:3b, deepseek-r1:14b)",
-      "button": "Загрузить",
-      "cancel": "Отмена",
-      "popular": "Популярные модели:",
-      "browseAll": "Просмотреть все модели на ollama.com",
-      "success": "Модель {{name}} успешно загружена",
-      "cancelled": "Загрузка модели отменена",
-      "failed": "Не удалось загрузить модель",
-      "enterName": "Пожалуйста, введите название модели",
-      "restricted": "Установка моделей в этом экземпляре доступна только администраторам."
-    },
-    "progress": {
-      "starting": "Инициализация...",
-      "pulling": "Загрузка модели...",
-      "pullingLayer": "загрузка",
-      "verifying": "Проверка целостности...",
-      "verifyingDigest": "проверка sha256 дайджеста",
-      "writing": "Запись манифеста...",
-      "cleaning": "Очистка..."
-    },
-    "library": {
-      "available": "доступно",
-      "search": "Поиск моделей...",
-      "noResults": "Модели не найдены по вашим критериям",
-      "installed": "Установлено",
-      "more": "+{{count}} ещё",
-      "refresh": "Обновить библиотеку"
-    },
     "huggingface": {
-      "browseAll": "Смотреть всё на HuggingFace",
       "checkingGguf": "Поиск GGUF-файлов...",
       "noGgufAvailable": "Нет доступных GGUF-файлов для прямой загрузки в Ollama",
-      "ggufFilesCount": "GGUF-файлы ({{count}}) - Загрузить напрямую в Ollama",
-      "noModelsFound": "Модели не найдены",
-      "noResults": "Модели не найдены. Попробуйте изменить поиск или фильтры.",
-      "browseAllLink": "Смотреть всё",
-      "search": "Поиск моделей HuggingFace...",
-      "by": "от",
-      "gated": "Ограниченный доступ",
-      "viewOnHF": "Открыть на HuggingFace",
-      "sortDownloads": "Загрузки",
-      "sortLikes": "Лайки",
-      "sortRecent": "Недавние",
-      "taskTextGeneration": "Генерация текста",
-      "taskTextToSpeech": "Текст в речь",
-      "taskTextToImage": "Текст в изображение",
-      "taskSpeechRecognition": "Распознавание речи",
-      "tasks": {
-        "textGen": "Генерация текста",
-        "tts": "Текст в речь",
-        "image": "Текст в изображение",
-        "stt": "Распознавание речи"
-      },
-      "sort": {
-        "downloads": "Самые загружаемые",
-        "likes": "Самые популярные",
-        "recent": "Недавно обновлённые"
-      }
-    },
-    "local": {
-      "noModels": "Модели ещё не установлены",
-      "pullToStart": "Загрузите модель выше, чтобы начать",
-      "installed": "установлено",
-      "running": "Запущено",
-      "info": "Инфо",
-      "copy": "Копировать",
-      "delete": "Удалить",
-      "deleteConfirm": "Вы уверены, что хотите удалить модель \"{{name}}\"?",
-      "deleteSuccess": "Модель {{name}} успешно удалена",
-      "deleteFailed": "Не удалось удалить модель"
-    },
-    "advanced": {
-      "createModel": "Создать модель",
-      "fromModelfile": "Из Modelfile",
-      "copyModel": "Копировать модель",
-      "duplicateExisting": "Дублировать существующую",
-      "testEmbeddings": "Тест встраивания",
-      "generateVectors": "Создать векторы",
-      "healthCheck": "Проверка состояния",
-      "testConnection": "Проверить соединение",
-      "healthy": "Ollama работает нормально!"
-    },
-    "modals": {
-      "details": {
-        "title": "Детали модели",
-        "info": "Информация о модели",
-        "family": "Семейство",
-        "parameters": "Параметры",
-        "quantization": "Квантование",
-        "format": "Формат",
-        "systemPrompt": "Системный промпт",
-        "template": "Шаблон",
-        "license": "Лицензия",
-        "modelfile": "Modelfile",
-        "noDetails": "Детали недоступны"
-      },
-      "copy": {
-        "title": "Копировать модель",
-        "source": "Исходная модель",
-        "selectModel": "Выберите модель...",
-        "newName": "Новое название модели",
-        "placeholder": "напр., my-custom-model",
-        "copying": "Копирование...",
-        "button": "Копировать модель",
-        "success": "Модель скопирована в {{name}}",
-        "failed": "Не удалось скопировать модель",
-        "enterBoth": "Пожалуйста, введите исходное и целевое названия"
-      },
-      "create": {
-        "title": "Создать пользовательскую модель",
-        "name": "Название модели",
-        "namePlaceholder": "напр., my-assistant",
-        "modelfile": "Modelfile",
-        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
-        "see": "См.",
-        "docs": "Документация Modelfile",
-        "docsLink": "для справки по синтаксису",
-        "creating": "Создание...",
-        "button": "Создать модель",
-        "success": "Модель {{name}} успешно создана",
-        "failed": "Не удалось создать модель",
-        "enterBoth": "Пожалуйста, введите название модели и содержимое Modelfile"
-      },
-      "embeddings": {
-        "title": "Тест встраивания",
-        "model": "Модель встраивания",
-        "selectModel": "Выберите модель...",
-        "recommended": "Рекомендуется: nomic-embed-text, mxbai-embed-large",
-        "input": "Входной текст",
-        "placeholder": "Введите текст для создания встраивания...",
-        "generating": "Создание...",
-        "button": "Создать встраивание",
-        "result": "Результат ({{count}} измерений)",
-        "success": "Создан {{count}}-мерный вектор встраивания",
-        "failed": "Не удалось создать встраивание",
-        "enterBoth": "Пожалуйста, выберите модель и введите текст"
-      }
+      "ggufFilesCount": "GGUF-файлы ({{count}}) - Загрузить напрямую в Ollama"
     }
   },
   "personaManager": {
@@ -1941,11 +1762,8 @@
     "noUsers": "Пользователи не найдены",
     "noUsersMatching": "Пользователи по вашему запросу не найдены",
     "columns": {
-      "user": "Пользователь",
-      "email": "Эл. почта",
       "role": "Роль",
-      "created": "Создан",
-      "actions": "Действия"
+      "created": "Создан"
     },
     "roles": {
       "admin": "Администратор",
@@ -1973,11 +1791,8 @@
         "edit": "Редактировать пользователя"
       },
       "username": "Имя пользователя",
-      "usernamePlaceholder": "Введите имя пользователя",
       "email": "Эл. почта",
-      "emailPlaceholder": "Введите эл. почту (необязательно)",
       "password": "Пароль",
-      "passwordPlaceholder": "Введите пароль",
       "passwordHint": "Оставьте пустым, чтобы сохранить текущий пароль",
       "role": "Роль",
       "creating": "Создание...",
@@ -2025,12 +1840,6 @@
       "computerPreset": "Work Computer",
       "computerPresetHint": "Для Work Computer нужен GUI-образ: соберите его из deploy/work-computer в репозитории и пометьте libre-work-computer:latest.",
       "approvalsRequired": "Требовать одобрение для действий, изменяющих данные"
-    },
-    "modelAccess": {
-      "title": "Загрузка моделей",
-      "description": "Разрешить всем активным пользователям загружать модели из Ollama и браузера Hugging Face. Администраторы всегда могут загружать модели.",
-      "saved": "Доступ к загрузке моделей обновлён",
-      "saveFailed": "Не удалось обновить доступ к загрузке моделей"
     },
     "webSearchAccess": {
       "title": "Веб-поиск",
@@ -2137,13 +1946,6 @@
     "mfaResetSuccess": "Второй фактор пользователя {{name}} удалён.",
     "mfaResetNothing": "У {{name}} не было второго фактора.",
     "mfaResetFailed": "Сброс не удался.",
-    "ollamaProvider": {
-      "title": "Провайдер Ollama",
-      "description": "Когда отключено, приложение полностью прекращает проверку Ollama — ни проверок работоспособности, ни предупреждений. Эндпоинт может указывать на любой шлюз, совместимый с Ollama.",
-      "saved": "Настройки провайдера Ollama сохранены",
-      "saveFailed": "Не удалось сохранить настройки провайдера Ollama",
-      "baseUrlLabel": "URL эндпоинта Ollama"
-    },
     "emailNotifications": {
       "title": "Уведомления по почте",
       "description": "Сервер исходящей почты для уведомлений. Пользователи сами выбирают, какие уведомления приходят к ним в почту, в разделе «Настройки > Уведомления».",
@@ -2157,11 +1959,6 @@
       "portHint": "Оставьте пустым, чтобы использовать значение по умолчанию для выбранного режима безопасности.",
       "securityLabel": "Защита соединения",
       "securityHint": "STARTTLS повышает защиту обычного соединения; TLS шифрует его с самого начала.",
-      "security": {
-        "starttls": "STARTTLS (порт 587)",
-        "tls": "TLS (порт 465)",
-        "none": "Без шифрования (только для доверенной сети)"
-      },
       "verifyLabel": "Проверять сертификат",
       "verifyHint": "Отключайте только для ретранслятора с самоподписанным сертификатом.",
       "usernameLabel": "Имя пользователя",
@@ -2493,7 +2290,6 @@
     "deleteConfirm": "Вы уверены, что хотите удалить это изображение?",
     "deleteSuccess": "Изображение удалено",
     "deleteFailed": "Не удалось удалить изображение",
-    "downloadFailed": "Не удалось скачать изображение",
     "loadMore": "Загрузить ещё ({{current}} из {{total}})",
     "loadFailed": "Не удалось загрузить галерею"
   },
@@ -3242,18 +3038,10 @@
   },
   "modelSelector": {
     "searchInstalled": "Поиск установленных моделей...",
-    "searchOllama": "Поиск в библиотеке Ollama...",
-    "searchHuggingFace": "Поиск на HuggingFace...",
     "selectModel": "Выбрать модель",
     "personas": "Персоны",
-    "ollamaModels": "Модели Ollama",
     "pluginModels": "Модели плагинов",
     "actions": "Действия",
-    "installed": "Установлено",
-    "use": "Использовать",
-    "pull": "Загрузить",
-    "pullRestricted": "Установка моделей в этом экземпляре доступна только администраторам.",
-    "adminOnlyPull": "Только администраторы",
     "legacyProvider": "провайдер не записан",
     "providerNotRecorded": "Провайдер не записан",
     "providerUnavailable": "провайдер недоступен",
@@ -4089,22 +3877,6 @@
   "connectModels": {
     "adminOnly": "Попросите администратора подключить провайдера моделей.",
     "skip": "Пропустить пока — я подключу модели позже",
-    "ollama": {
-      "status": {
-        "checking": "Проверка доступности…",
-        "healthy": "Запущен и готов к работе с локальными моделями",
-        "offline": "Не обнаружен на этом компьютере",
-        "disabled": "Отключено — проверки выполняться не будут"
-      },
-      "recheck": "Проверить снова",
-      "enable": "Включить",
-      "disable": "Прекратить проверку Ollama",
-      "enabledToast": "Провайдер Ollama включён",
-      "disabledToast": "Проверки Ollama отключены — вы можете снова включить их в настройках",
-      "settingsFailed": "Не удалось обновить настройки Ollama",
-      "offlineHint": "Установите Ollama с ollama.com, и она будет обнаружена автоматически — или используйте один из вариантов ниже. Если вы не планируете использовать Ollama, можно отключить эти проверки.",
-      "healthyHint": "Ollama подключена. Загрузите модель в разделе «Модели», и можно приступать к общению."
-    },
     "local": {
       "title": "Локальный сервер",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",

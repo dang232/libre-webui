@@ -26,7 +26,7 @@ import {
   ChatProviderType,
   SessionFolder,
 } from '@/types';
-import { chatApi, ollamaApi, preferencesApi, personaApi } from '@/utils/api';
+import { chatApi, modelsApi, preferencesApi, personaApi } from '@/utils/api';
 import { pluginApi } from '@/utils/api';
 import { createLogger } from '@/utils/logger';
 import i18n from '@/i18n';
@@ -134,8 +134,8 @@ interface ChatState {
   // Models
   models: OllamaModel[];
   /**
-   * Model keys an administrator hid from the pickers (Ollama models by name,
-   * plugin models as `${pluginId}/${modelName}`). Non-administrators never
+   * Model keys an administrator hid from the pickers
+   * (`${pluginId}/${modelName}` for plugin models). Non-administrators never
    * see hidden entries in `models`; administrators keep the full list and
    * use this set to show visibility state.
    */
@@ -143,8 +143,6 @@ interface ChatState {
   setHiddenModels: (keys: string[]) => void;
   /** Administrator-set name and picture per model key, for the pickers. */
   modelMetadata: Record<string, ModelPresentation>;
-  /** False when the last model load could not reach the Ollama endpoint. */
-  ollamaConnected: boolean;
   loadModels: (options?: { quiet?: boolean }) => Promise<void>;
   loadPreferences: () => Promise<void>;
   /** The server's rolling context window, in messages; the meter mirrors it. */
@@ -743,7 +741,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
   hiddenModels: [],
   setHiddenModels: (keys: string[]) => set({ hiddenModels: keys }),
   modelMetadata: {},
-  ollamaConnected: false,
   loadModels: async (options?: { quiet?: boolean }) => {
     const quiet = options?.quiet === true;
     try {
@@ -753,29 +750,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
       logger.debug('Loading models from API...');
 
       let allModels: OllamaModel[] = [];
-      let ollamaLoadError: unknown;
-
-      // Ollama and plugins are independent providers. Keep loading configured
-      // plugin models when the local Ollama endpoint is offline.
-      try {
-        const ollamaResponse = await ollamaApi.getModels();
-        if (ollamaResponse.success && ollamaResponse.data) {
-          allModels = [...ollamaResponse.data];
-          logger.debug('Ollama models loaded:', ollamaResponse.data.length);
-        } else {
-          ollamaLoadError = new Error(
-            ollamaResponse.error ||
-              ollamaResponse.message ||
-              i18n.t('chat.toasts.noModelProvider')
-          );
-        }
-      } catch (error) {
-        ollamaLoadError = error;
-        logger.warn(
-          'Ollama models are unavailable; continuing with plugin models:',
-          error
-        );
-      }
 
       // Load plugin models
       try {
@@ -855,14 +829,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
       // Which models an administrator hid from the pickers. Administrators
       // keep the full list; everyone else's selectable models drop the
-      // hidden entries (Ollama and plugin alike). Fail open: visibility is a
-      // listing refinement, never a reason to blank the picker.
+      // hidden entries. Fail open: visibility is a listing refinement,
+      // never a reason to blank the picker.
       let hiddenModels: string[] = [];
       let modelOrder: string[] = [];
       let starredModels: string[] = [];
       let modelMetadata: Record<string, ModelPresentation> = {};
       try {
-        const visibilityResponse = await ollamaApi.getModelVisibility();
+        const visibilityResponse = await modelsApi.getModelVisibility();
         if (visibilityResponse.success && visibilityResponse.data) {
           hiddenModels = visibilityResponse.data.hidden ?? [];
           modelOrder = visibilityResponse.data.order ?? [];
@@ -902,12 +876,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
       logger.debug('Total models loaded:', allModels.length);
       const providerLoadError =
-        providerModelCount === 0 && ollamaLoadError
-          ? getErrorMessage(
-              ollamaLoadError,
-              i18n.t('chat.toasts.noModelProvider')
-            )
-          : null;
+        providerModelCount === 0 ? i18n.t('chat.toasts.noModelProvider') : null;
 
       // Validate that the currently selected model still exists in the models list
       const currentState = get();
@@ -921,21 +890,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
         findChatModelForSelection(allModels, currentSelection)
       );
       const hasExplicitProvider =
-        currentState.selectedProviderType === 'ollama' ||
         currentState.selectedProviderType === 'plugin';
 
       if (currentSelectedModel && !modelExists && hasExplicitProvider) {
-        const providerLabel =
-          currentState.selectedProviderType === 'plugin'
-            ? currentState.selectedProviderId || 'plugin'
-            : 'Ollama';
+        const providerLabel = currentState.selectedProviderId || 'plugin';
         const unavailableError = i18n.t('chat.toasts.modelUnavailable', {
           model: currentSelectedModel,
           provider: providerLabel,
         });
         set({
           models: allModels,
-          ollamaConnected: !ollamaLoadError,
           loading: false,
           error: unavailableError,
         });
@@ -953,7 +917,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
         );
         set({
           models: allModels,
-          ollamaConnected: !ollamaLoadError,
           loading: false,
           selectedModel: fallbackSelection.model,
           selectedProviderType: fallbackSelection.providerType || null,
@@ -977,7 +940,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
       } else {
         set({
           models: allModels,
-          ollamaConnected: !ollamaLoadError,
           loading: false,
           error: providerLoadError,
         });
@@ -991,7 +953,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         error,
         i18n.t('chat.toasts.modelsLoadFailed')
       );
-      set({ ollamaConnected: false, error: errorMessage, loading: false });
+      set({ error: errorMessage, loading: false });
       if (!quiet) {
         toast.error(errorMessage);
       }

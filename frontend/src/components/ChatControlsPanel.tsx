@@ -22,7 +22,7 @@ import toast from 'react-hot-toast';
 import { Button } from '@/components/ui';
 import { useAppStore } from '@/store/appStore';
 import { useChatStore } from '@/store/chatStore';
-import { chatApi, ollamaApi } from '@/utils/api';
+import { chatApi } from '@/utils/api';
 import { generateId } from '@/utils';
 import {
   THINKING_CHOICES,
@@ -101,29 +101,6 @@ export const ChatControlsPanel: React.FC<ChatControlsPanelProps> = ({
   // What this model recommends for itself. Shown as the placeholder so the
   // panel reports the value a message will actually run with, rather than an
   // application default the model overrides.
-  useEffect(() => {
-    if (!open || !model) return;
-
-    let cancelled = false;
-    void ollamaApi
-      .getModelDefaults(model)
-      .then(response => {
-        if (cancelled || !response.success || !response.data) return;
-        setModelDefaults({
-          options: response.data.options ?? {},
-          trainedContextLength: response.data.trainedContextLength,
-          contextCapped: Boolean(response.data.contextCapped),
-        });
-      })
-      .catch(() => {
-        // A model that cannot be inspected simply contributes nothing.
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [open, model]);
-
   const effectiveDefaults = useMemo(
     () => ({
       ...(globalDefaults ?? {}),

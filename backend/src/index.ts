@@ -68,6 +68,7 @@ import chatRoutes from './routes/chat.js';
 import agentCliRoutes from './routes/agentCli.js';
 import preferencesRoutes from './routes/preferences.js';
 import pluginRoutes from './routes/plugins.js';
+import modelsRoutes from './routes/models.js';
 import documentRoutes from './routes/documents.js';
 import notesRoutes from './routes/notes.js';
 import calendarRoutes from './routes/calendar.js';
@@ -476,6 +477,19 @@ app.use('/health', healthRoutes);
 // Static files are served by a separate frontend server on port 8080
 // Backend only serves API endpoints
 
+// Rate limiter for the /api/models route
+const modelsRateLimiter = rateLimit({
+  keyPrefix: 'api-models',
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: {
+    success: false,
+    error: 'Too many requests from this IP, please try again later.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Rate limiter for the /api/personas route
 const personasRateLimiter = rateLimit({
   keyPrefix: 'api-personas',
@@ -656,6 +670,7 @@ app.use('/api/tokenpanel', tokenpanelBillingRoutes);
 app.use('/api/tokenpanel', tokenpanelAccountRoutes);
 app.use('/api/tokenpanel', tokenpanelUsageRoutes);
 app.use('/api/users', usersRateLimiter, optionalAuth, usersRoutes);
+app.use('/api/models', modelsRateLimiter, optionalAuth, modelsRoutes);
 app.use('/api/chat', chatRateLimiter, optionalAuth, chatRoutes);
 app.use('/api/agent-clis', chatRateLimiter, optionalAuth, agentCliRoutes);
 app.use(

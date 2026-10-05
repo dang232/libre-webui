@@ -39,7 +39,7 @@ import {
 } from 'lucide-react';
 import { Button, Input } from '@/components/ui';
 import { useChatStore } from '@/store/chatStore';
-import { ollamaApi } from '@/utils/api';
+import { modelsApi } from '@/utils/api';
 import type { ModelPresentation } from '@/utils/api/modelApi';
 import {
   modelVisibilityKey,
@@ -92,7 +92,7 @@ export const SettingsModelCatalog: React.FC = () => {
     let cancelled = false;
     void (async () => {
       try {
-        const response = await ollamaApi.getModelVisibility();
+        const response = await modelsApi.getModelVisibility();
         if (cancelled || !response.success || !response.data) return;
         const { hidden: h, order: o, starred: s, metadata: m } = response.data;
         setHidden(h ?? []);
@@ -128,7 +128,7 @@ export const SettingsModelCatalog: React.FC = () => {
       return (
         model.name.toLowerCase().includes(query) ||
         label.toLowerCase().includes(query) ||
-        providerLabelFor(model, 'ollama').toLowerCase().includes(query)
+        providerLabelFor(model, 'local').toLowerCase().includes(query)
       );
     });
   }, [orderedModels, search, filter, hiddenSet, metadata]);
@@ -245,7 +245,7 @@ export const SettingsModelCatalog: React.FC = () => {
   ) => {
     setSaving(true);
     try {
-      const response = await ollamaApi.setModelVisibility(update);
+      const response = await modelsApi.setModelVisibility(update);
       if (!response.success) {
         revert();
         toast.error(
@@ -424,10 +424,7 @@ export const SettingsModelCatalog: React.FC = () => {
                   </span>
                   <span className='block truncate text-[11px] text-gray-500 dark:text-gray-400'>
                     {entry.label ? `${model.name} · ` : ''}
-                    {providerLabelFor(
-                      model,
-                      t('modelManager.catalog.providerOllama')
-                    )}
+                    {providerLabelFor(model, 'local')}
                   </span>
                 </div>
                 {!enabled && (

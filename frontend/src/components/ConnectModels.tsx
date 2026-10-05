@@ -15,22 +15,19 @@
  * limitations under the License.
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import {
   Server,
   Cloud,
-  Cpu,
   Check,
-  RefreshCw,
   PlugZap,
   ChevronRight,
   KeyRound,
-  PowerOff,
 } from 'lucide-react';
 import { Button } from '@/components/ui';
-import { ollamaApi, pluginApi } from '@/utils/api';
+import { pluginApi } from '@/utils/api';
 import { useAuthStore } from '@/store/authStore';
 import { useChatStore } from '@/store/chatStore';
 import { cn } from '@/utils';
@@ -63,8 +60,6 @@ const CLOUD_PROVIDERS = [
   { id: 'deepseek', name: 'DeepSeek' },
 ] as const;
 
-type OllamaProbe = 'checking' | 'healthy' | 'offline' | 'disabled';
-
 interface ConnectModelsProps {
   /** 'setup' renders wizard-sized cards; 'inline' fits the chat empty state. */
   variant?: 'setup' | 'inline';
@@ -80,9 +75,6 @@ export const ConnectModels: React.FC<ConnectModelsProps> = ({
   const loadModels = useChatStore(state => state.loadModels);
   const isAdmin = user?.role === 'admin' || systemInfo?.requiresAuth === false;
 
-  const [ollamaStatus, setOllamaStatus] = useState<OllamaProbe>(() =>
-    systemInfo?.ollamaEnabled === false ? 'disabled' : 'checking'
-  );
   const [openSection, setOpenSection] = useState<'local' | 'cloud' | null>(
     null
   );
@@ -104,57 +96,6 @@ export const ConnectModels: React.FC<ConnectModelsProps> = ({
   >(null);
   const [cloudKey, setCloudKey] = useState('');
   const [savingCloud, setSavingCloud] = useState(false);
-
-  // Does NOT set 'checking' itself: the initial state already is, and event
-  // handlers set it before calling.
-  const checkOllama = useCallback(async () => {
-    try {
-      const response = await ollamaApi.checkHealth();
-      if (response.success && response.data?.status === 'disabled') {
-        setOllamaStatus('disabled');
-      } else if (response.success && response.data?.status === 'healthy') {
-        setOllamaStatus('healthy');
-      } else {
-        setOllamaStatus('offline');
-      }
-    } catch {
-      setOllamaStatus('offline');
-    }
-  }, []);
-
-  useEffect(() => {
-    if (systemInfo?.ollamaEnabled === false) return;
-    // Defer the probe until after the effect completes so its async result can
-    // update component state without triggering a cascading-effect warning.
-    const probe = window.setTimeout(() => {
-      void checkOllama();
-    }, 0);
-    return () => window.clearTimeout(probe);
-  }, [checkOllama, systemInfo?.ollamaEnabled]);
-
-  const setOllamaEnabled = async (enabled: boolean) => {
-    try {
-      const response = await ollamaApi.updateSettings({ enabled });
-      if (response.success) {
-        toast.success(
-          enabled
-            ? t('connectModels.ollama.enabledToast')
-            : t('connectModels.ollama.disabledToast')
-        );
-        if (enabled) {
-          setOllamaStatus('checking');
-          void checkOllama();
-        } else {
-          setOllamaStatus('disabled');
-        }
-      } else {
-        toast.error(t('connectModels.ollama.settingsFailed'));
-      }
-    } catch (error) {
-      logger.error('Failed to update Ollama settings:', error);
-      toast.error(t('connectModels.ollama.settingsFailed'));
-    }
-  };
 
   const handleProbe = async () => {
     setProbing(true);
@@ -279,13 +220,6 @@ export const ConnectModels: React.FC<ConnectModelsProps> = ({
   const inputClass =
     'w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-primary-400 focus:outline-none dark:border-white/10 dark:bg-white/[0.035] dark:text-dark-800 dark:placeholder-dark-500';
 
-  const statusDot = {
-    checking: 'bg-gray-400 animate-pulse',
-    healthy: 'bg-green-500',
-    offline: 'bg-red-500',
-    disabled: 'bg-gray-400',
-  }[ollamaStatus];
-
   return (
     <div
       className={cn(
@@ -293,75 +227,6 @@ export const ConnectModels: React.FC<ConnectModelsProps> = ({
         variant === 'setup' ? 'max-w-lg' : 'max-w-lg'
       )}
     >
-      {/* ------------------------------------------------ Ollama */}
-      <div className={cardClass}>
-        <div className='flex items-center gap-3'>
-          <div className='rounded-xl border border-gray-200 bg-gray-50 p-2 dark:border-white/10 dark:bg-white/[0.05]'>
-            <Cpu className='h-5 w-5 text-gray-700 dark:text-dark-700' />
-          </div>
-          <div className='min-w-0 flex-1'>
-            <div className='flex items-center gap-2'>
-              <span className='text-sm font-medium text-gray-900 dark:text-dark-900'>
-                Ollama
-              </span>
-              <span className={cn('h-2 w-2 rounded-full', statusDot)} />
-            </div>
-            <p className='truncate text-xs text-gray-500 dark:text-dark-500'>
-              {t(`connectModels.ollama.status.${ollamaStatus}`)}
-            </p>
-          </div>
-          <div className='flex items-center gap-1.5'>
-            {ollamaStatus !== 'disabled' && (
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => {
-                  setOllamaStatus('checking');
-                  void checkOllama();
-                }}
-                title={t('connectModels.ollama.recheck')}
-              >
-                <RefreshCw
-                  className={cn(
-                    'h-4 w-4',
-                    ollamaStatus === 'checking' && 'animate-spin'
-                  )}
-                />
-              </Button>
-            )}
-            {isAdmin && ollamaStatus === 'offline' && (
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => void setOllamaEnabled(false)}
-                title={t('connectModels.ollama.disable')}
-              >
-                <PowerOff className='h-4 w-4' />
-              </Button>
-            )}
-            {isAdmin && ollamaStatus === 'disabled' && (
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => void setOllamaEnabled(true)}
-              >
-                {t('connectModels.ollama.enable')}
-              </Button>
-            )}
-          </div>
-        </div>
-        {ollamaStatus === 'offline' && (
-          <p className='mt-3 text-xs leading-relaxed text-gray-500 dark:text-dark-500'>
-            {t('connectModels.ollama.offlineHint')}
-          </p>
-        )}
-        {ollamaStatus === 'healthy' && (
-          <p className='mt-3 text-xs leading-relaxed text-green-600 dark:text-green-400'>
-            {t('connectModels.ollama.healthyHint')}
-          </p>
-        )}
-      </div>
-
       {/* ------------------------------------------------ Local server */}
       <div className={cardClass}>
         <button

@@ -66,13 +66,7 @@ import { UPLOAD_ACCEPT_ATTRIBUTE } from '@/utils/documentUploadTypes';
 import { useAuthStore } from '@/store/authStore';
 import { useAppStore } from '@/store/appStore';
 import { useChat } from '@/hooks/useChat';
-import {
-  chatApi,
-  documentsApi,
-  imageGenApi,
-  ollamaApi,
-  searchApi,
-} from '@/utils/api';
+import { chatApi, documentsApi, imageGenApi, searchApi } from '@/utils/api';
 import { cn, generateId } from '@/utils';
 import type { ChatSession, ThinkingPreference } from '@/types';
 import { createLogger } from '@/utils/logger';
@@ -348,53 +342,14 @@ export const ChatPage: React.FC = () => {
     () => models.find(model => model.name === selectedModel),
     [models, selectedModel]
   );
-  // Only Ollama says whether a model reasons, and only its answer can hide the
-  // toggle: a model reached through a plugin decides for itself.
-  const [welcomeThinkingSupport, setWelcomeThinkingSupport] = useState<{
-    model: string;
-    supported?: boolean;
-  } | null>(null);
-
-  useEffect(() => {
-    // Only a model resolved as a local Ollama model is worth asking Ollama
-    // about — see the same guard in ChatInput.
-    if (
-      !selectedModel ||
-      models.length === 0 ||
-      !selectedModelEntry ||
-      selectedModelEntry.isPlugin ||
-      selectedModelEntry.isAgent
-    ) {
-      return;
-    }
-
-    let cancelled = false;
-    void ollamaApi
-      .getModelDefaults(selectedModel)
-      .then(response => {
-        if (cancelled || !response.success || !response.data) return;
-        setWelcomeThinkingSupport({
-          model: selectedModel,
-          supported: response.data.supportsThinking,
-        });
-      })
-      .catch(() => {
-        // A model that cannot be inspected keeps the toggle available.
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedModel, selectedModelEntry, models.length]);
-
+  // Only plugins say whether a model reasons, and only their answer can
+  // hide the toggle: a model reached through a plugin decides for itself.
   const welcomeThinkingAvailable = Boolean(
     selectedModel &&
     !selectedModelEntry?.isAgent &&
     (selectedModelEntry?.isPlugin
       ? selectedModelEntry.reasoningSupport !== false
-      : welcomeThinkingSupport?.model === selectedModel
-        ? welcomeThinkingSupport.supported !== false
-        : true)
+      : true)
   );
 
   const setWelcomeThinking = (think: ThinkingPreference | null) => {

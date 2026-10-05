@@ -45,7 +45,6 @@
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "ollamaUnavailable": "Ollama-tjenesten er ikke tilgængelig. Pluginmodeller kan stadig bruges.",
     "backendConnectionFailed": "Kunne ikke oprette forbindelse til backendtjenesten"
   },
   "auth": {
@@ -454,7 +453,6 @@
       "updated": "Model opdateret",
       "noModels": "Ingen modeller tilgængelige",
       "noModelsDescription": "Ingen modeller tilgængelige. Sørg for, at Ollama kører og har installeret modeller.",
-      "pullCommand": "ollama pull llama3.2:3b",
       "noModelsTooltip": "Ingen modeller tilgængelige. Sørg venligst for, at Ollama kører, og at modeller er installeret.",
       "selectBeforePrivateChat": "Vælg en tilgængelig model, før du starter en privat chat",
       "selectBeforeSending": "Vælg en tilgængelig model, før du sender",
@@ -675,7 +673,6 @@
       "sessions": "Sessioner",
       "apiKeys": "API-nøgler",
       "notifications": "Notifikationer",
-      "ollamaDisabled": "Ollama er deaktiveret af en administrator",
       "apiPlatform": "API Platform"
     },
     "appearance": {
@@ -1144,12 +1141,6 @@
     "about": {
       "title": "Om",
       "versionLabel": "Version",
-      "ollama": {
-        "title": "Ollama-status",
-        "version": "Version",
-        "healthy": "Sund",
-        "unhealthy": "Usund"
-      },
       "stats": {
         "models": "Modeller",
         "sessions": "Sessioner"
@@ -1462,20 +1453,7 @@
   },
   "models": {
     "title": "Modeller",
-    "subtitle": "Hent, administrer og overvåg dine Ollama-modeller",
-    "installed": "Installerede modeller",
-    "available": "Tilgængelige modeller",
-    "pull": "Hent model",
-    "pulling": "Henter...",
-    "delete": "Slet model",
-    "deleting": "Sletter...",
-    "size": "Størrelse",
-    "modified": "Ændret",
-    "family": "Familie",
-    "parameters": "Parametre",
-    "quantization": "Kvantisering",
     "noModels": "Ingen modeller installeret",
-    "pullFirst": "Hent en model for at komme i gang",
     "noModelsFound": "Ingen modeller fundet"
   },
   "personas": {
@@ -1544,12 +1522,6 @@
     "newWork": "Ny Work-session",
     "openPalette": "Åbn kommandopaletten"
   },
-  "modelDownload": {
-    "success": "Model {{name}} hentet",
-    "failed": "Kunne ikke hente modellen: {{error}}",
-    "startFailed": "Kunne ikke starte hentningen",
-    "cancelled": "Hentning annulleret"
-  },
   "modelTools": {
     "toasts": {
       "fetchInfoFailed": "Kunne ikke hente oplysninger",
@@ -1562,30 +1534,13 @@
     }
   },
   "modelManager": {
-    "title": "Modeller",
-    "loading": "Indlæser modeller...",
-    "systemStatus": {
-      "online": "Ollama online",
-      "offline": "Ollama offline",
-      "models": "model",
-      "models_plural": "modeller",
-      "running": "kører",
-      "vram": "VRAM"
-    },
     "sections": {
-      "pull": "Hent ny model",
-      "library": "Gennemse bibliotek",
-      "huggingface": "HuggingFace Hub",
-      "running": "Kørende modeller",
-      "local": "Lokale modeller",
-      "advanced": "Avancerede handlinger",
       "catalog": "Modelkatalog"
     },
     "catalog": {
       "searchPlaceholder": "Søg efter modeller på navn eller udbyder...",
       "noModels": "Der er endnu ingen tilgængelige modeller.",
       "empty": "Ingen modeller matcher din søgning.",
-      "providerOllama": "Ollama",
       "hidden": "Skjult",
       "visibilityFailed": "Modellens synlighed kunne ikke opdateres.",
       "filterAll": "Alle modeller",
@@ -1605,144 +1560,10 @@
       "star": "Markér {{name}} med stjerne",
       "unstar": "Fjern stjerne fra {{name}}"
     },
-    "pull": {
-      "placeholder": "Indtast modelnavn (f.eks. llama3.2:3b, deepseek-r1:14b)",
-      "button": "Hent",
-      "cancel": "Annuller",
-      "popular": "Populære modeller:",
-      "browseAll": "Gennemse alle modeller på ollama.com",
-      "success": "Model {{name}} hentet",
-      "cancelled": "Modelhentning annulleret",
-      "failed": "Kunne ikke hente model",
-      "enterName": "Indtast venligst et modelnavn",
-      "restricted": "Modelinstallation er begrænset til administratorer på denne instans."
-    },
-    "progress": {
-      "starting": "Initialiserer...",
-      "pulling": "Downloader model...",
-      "pullingLayer": "downloader",
-      "verifying": "Verificerer integritet...",
-      "verifyingDigest": "verificerer sha256-digest",
-      "writing": "Skriver manifest...",
-      "cleaning": "Rydder op..."
-    },
-    "library": {
-      "available": "tilgængelig",
-      "search": "Søg modeller...",
-      "noResults": "Ingen modeller fundet, der matcher dine kriterier",
-      "installed": "Installeret",
-      "more": "+{{count}} mere",
-      "refresh": "Opdater bibliotek"
-    },
     "huggingface": {
-      "browseAll": "Gennemse alle på HuggingFace",
       "checkingGguf": "Søger efter GGUF-filer...",
       "noGgufAvailable": "Ingen GGUF-filer tilgængelige til direkte Ollama-hentning",
-      "ggufFilesCount": "GGUF-filer ({{count}}) - Hent direkte til Ollama",
-      "noModelsFound": "Ingen modeller fundet",
-      "noResults": "Ingen modeller fundet. Prøv at justere din søgning eller filtre.",
-      "browseAllLink": "Se alle",
-      "search": "Søg i HuggingFace-modeller...",
-      "by": "af",
-      "gated": "Begrænset adgang",
-      "viewOnHF": "Vis på HuggingFace",
-      "sortDownloads": "Downloads",
-      "sortLikes": "Likes",
-      "sortRecent": "Seneste",
-      "taskTextGeneration": "Tekstgenerering",
-      "taskTextToSpeech": "Tekst til tale",
-      "taskTextToImage": "Tekst til billede",
-      "taskSpeechRecognition": "Talegenkendelse",
-      "tasks": {
-        "textGen": "Tekstgenerering",
-        "tts": "Tekst til tale",
-        "image": "Tekst til billede",
-        "stt": "Talegenkendelse"
-      },
-      "sort": {
-        "downloads": "Flest downloads",
-        "likes": "Mest populære",
-        "recent": "Senest opdateret"
-      }
-    },
-    "local": {
-      "noModels": "Ingen modeller installeret endnu",
-      "pullToStart": "Hent en model ovenfor for at komme i gang",
-      "installed": "installeret",
-      "running": "Kører",
-      "info": "Info",
-      "copy": "Kopier",
-      "delete": "Slet",
-      "deleteConfirm": "Er du sikker på, at du vil slette modellen \"{{name}}\"?",
-      "deleteSuccess": "Model {{name}} slettet",
-      "deleteFailed": "Kunne ikke slette model"
-    },
-    "advanced": {
-      "createModel": "Opret model",
-      "fromModelfile": "Fra Modelfile",
-      "copyModel": "Kopier model",
-      "duplicateExisting": "Dupliker eksisterende",
-      "testEmbeddings": "Test embeddings",
-      "generateVectors": "Generer vektorer",
-      "healthCheck": "Sundhedstjek",
-      "testConnection": "Test forbindelse",
-      "healthy": "Ollama er sund!"
-    },
-    "modals": {
-      "details": {
-        "title": "Modeldetaljer",
-        "info": "Modelinformation",
-        "family": "Familie",
-        "parameters": "Parametre",
-        "quantization": "Kvantisering",
-        "format": "Format",
-        "systemPrompt": "System-prompt",
-        "template": "Skabelon",
-        "license": "Licens",
-        "modelfile": "Modelfile",
-        "noDetails": "Ingen detaljer tilgængelige"
-      },
-      "copy": {
-        "title": "Kopier model",
-        "source": "Kildemodel",
-        "selectModel": "Vælg en model...",
-        "newName": "Nyt modelnavn",
-        "placeholder": "f.eks. min-tilpassede-model",
-        "copying": "Kopierer...",
-        "button": "Kopier model",
-        "success": "Model kopieret til {{name}}",
-        "failed": "Kunne ikke kopiere model",
-        "enterBoth": "Indtast venligst både kilde- og destinationsnavn"
-      },
-      "create": {
-        "title": "Opret tilpasset model",
-        "name": "Modelnavn",
-        "namePlaceholder": "f.eks. min-assistent",
-        "modelfile": "Modelfile",
-        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM Du er en hjælpsom assistent.",
-        "see": "Se",
-        "docs": "Modelfile-dokumentation",
-        "docsLink": "for syntaksreference",
-        "creating": "Opretter...",
-        "button": "Opret model",
-        "success": "Model {{name}} oprettet",
-        "failed": "Kunne ikke oprette model",
-        "enterBoth": "Indtast venligst modelnavn og Modelfile-indhold"
-      },
-      "embeddings": {
-        "title": "Test embeddings",
-        "model": "Embedding-model",
-        "selectModel": "Vælg en model...",
-        "recommended": "Anbefalet: nomic-embed-text, mxbai-embed-large",
-        "input": "Inputtekst",
-        "placeholder": "Indtast tekst til at generere embeddings for...",
-        "generating": "Genererer...",
-        "button": "Generer embeddings",
-        "result": "Resultat ({{count}} dimensioner)",
-        "success": "Genererede {{count}}-dimensionel embedding-vektor",
-        "failed": "Kunne ikke generere embeddings",
-        "enterBoth": "Vælg venligst en model og indtast tekst"
-      }
+      "ggufFilesCount": "GGUF-filer ({{count}}) - Hent direkte til Ollama"
     }
   },
   "personaManager": {
@@ -1941,11 +1762,8 @@
     "noUsers": "Ingen brugere fundet",
     "noUsersMatching": "Ingen brugere matcher din søgning",
     "columns": {
-      "user": "Bruger",
-      "email": "E-mail",
       "role": "Rolle",
-      "created": "Oprettet",
-      "actions": "Handlinger"
+      "created": "Oprettet"
     },
     "roles": {
       "admin": "Administrator",
@@ -1973,11 +1791,8 @@
         "edit": "Rediger bruger"
       },
       "username": "Brugernavn",
-      "usernamePlaceholder": "Indtast brugernavn",
       "email": "E-mail",
-      "emailPlaceholder": "Indtast e-mail (valgfri)",
       "password": "Adgangskode",
-      "passwordPlaceholder": "Indtast adgangskode",
       "passwordHint": "Lad være tom for at beholde nuværende adgangskode",
       "role": "Rolle",
       "creating": "Opretter...",
@@ -2025,12 +1840,6 @@
       "computerPreset": "Work Computer",
       "computerPresetHint": "Work Computer kræver GUI-imaget: byg det fra deploy/work-computer i repositoriet og tag det libre-work-computer:latest.",
       "approvalsRequired": "Kræv godkendelse af handlinger med sideeffekter"
-    },
-    "modelAccess": {
-      "title": "Modeldownloads",
-      "description": "Tillad alle aktive brugere at hente modeller fra Ollama og Hugging Face-browseren. Administratorer kan altid hente modeller.",
-      "saved": "Adgang til modeldownload opdateret",
-      "saveFailed": "Kunne ikke opdatere adgang til modeldownload"
     },
     "webSearchAccess": {
       "title": "Websøgning",
@@ -2137,13 +1946,6 @@
     "mfaResetSuccess": "Totrinsbekræftelse fjernet for {{name}}.",
     "mfaResetNothing": "{{name}} havde ingen totrinsbekræftelse.",
     "mfaResetFailed": "Nulstillingen mislykkedes.",
-    "ollamaProvider": {
-      "title": "Ollama-udbyder",
-      "description": "Når det er slået fra, stopper appen helt med at tjekke for Ollama — ingen sundhedstjek, ingen advarsler. Endepunktet kan pege på enhver Ollama-kompatibel gateway.",
-      "saved": "Indstillinger for Ollama-udbyder gemt",
-      "saveFailed": "Kunne ikke gemme indstillingerne for Ollama-udbyderen",
-      "baseUrlLabel": "Ollama-endepunkts-URL"
-    },
     "emailNotifications": {
       "title": "E-mailnotifikationer",
       "description": "Udgående mailserver til notifikationer. Brugerne vælger selv, hvilke notifikationer der skal havne i deres indbakke, under Indstillinger > Notifikationer.",
@@ -2157,11 +1959,6 @@
       "portHint": "Lad stå tom for standardværdien for den valgte sikkerhedstilstand.",
       "securityLabel": "Forbindelsessikkerhed",
       "securityHint": "STARTTLS opgraderer en almindelig forbindelse; TLS er krypteret fra starten.",
-      "security": {
-        "starttls": "STARTTLS (port 587)",
-        "tls": "TLS (port 465)",
-        "none": "Ingen (kun betroet netværk)"
-      },
       "verifyLabel": "Verificer certifikat",
       "verifyHint": "Slå kun fra for en relay med et selvsigneret certifikat.",
       "usernameLabel": "Brugernavn",
@@ -2493,7 +2290,6 @@
     "deleteConfirm": "Er du sikker på, at du vil slette dette billede?",
     "deleteSuccess": "Billede slettet",
     "deleteFailed": "Kunne ikke slette billede",
-    "downloadFailed": "Kunne ikke downloade billede",
     "loadMore": "Indlæs mere ({{current}} af {{total}})",
     "loadFailed": "Kunne ikke indlæse galleri"
   },
@@ -3242,18 +3038,10 @@
   },
   "modelSelector": {
     "searchInstalled": "Søg installerede modeller...",
-    "searchOllama": "Søg i Ollama-biblioteket...",
-    "searchHuggingFace": "Søg på HuggingFace...",
     "selectModel": "Vælg model",
     "personas": "Personas",
-    "ollamaModels": "Ollama-modeller",
     "pluginModels": "Plugin-modeller",
     "actions": "Handlinger",
-    "installed": "Installeret",
-    "use": "Brug",
-    "pull": "Download",
-    "pullRestricted": "Modelinstallation er begrænset til administratorer på denne instans.",
-    "adminOnlyPull": "Kun administratorer",
     "legacyProvider": "udbyder ikke registreret",
     "providerNotRecorded": "Udbyder ikke registreret",
     "providerUnavailable": "udbyder utilgængelig",
@@ -4089,22 +3877,6 @@
   "connectModels": {
     "adminOnly": "Bed din administrator om at forbinde en modeludbyder.",
     "skip": "Spring over for nu — jeg forbinder modeller senere",
-    "ollama": {
-      "status": {
-        "checking": "Tjekker tilgængelighed…",
-        "healthy": "Kører og klar til lokale modeller",
-        "offline": "Ikke registreret på denne maskine",
-        "disabled": "Deaktiveret — der udføres ingen tjek"
-      },
-      "recheck": "Tjek igen",
-      "enable": "Aktivér",
-      "disable": "Stop med at tjekke for Ollama",
-      "enabledToast": "Ollama-udbyder aktiveret",
-      "disabledToast": "Ollama-tjek deaktiveret — du kan genaktivere dem i Indstillinger",
-      "settingsFailed": "Kunne ikke opdatere Ollama-indstillingerne",
-      "offlineHint": "Installer Ollama fra ollama.com, så bliver den registreret automatisk — eller brug en af mulighederne nedenfor i stedet. Hvis du ikke planlægger at bruge Ollama, kan du slå dens tjek fra.",
-      "healthyHint": "Ollama er forbundet. Hent en model fra Modeller, så er du klar til at chatte."
-    },
     "local": {
       "title": "Lokal server",
       "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
