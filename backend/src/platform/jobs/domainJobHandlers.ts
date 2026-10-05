@@ -33,6 +33,7 @@ import {
 import type { CoordinationLease, Coordinator } from '../coordination/types.js';
 import { createLogger } from '../../utils/logger.js';
 import { DurableJobExecutionError } from './durableJobTypes.js';
+import { classifyChatFailureCause } from './chatFailureCause.js';
 import type { DurableJobHandler } from './embeddedDurableJobWorker.js';
 import {
   EVAL_RUN_JOB_TYPE,
@@ -949,7 +950,7 @@ const generateChat: DurableJobHandler = async context => {
     );
     throw new DurableJobExecutionError(
       true,
-      'chat-generation-failed',
+      `chat-generation-${classifyChatFailureCause(error) ?? 'failed'}`,
       'The chat response could not be completed'
     );
   }

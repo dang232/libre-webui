@@ -1255,6 +1255,10 @@ router.get(
                     current.state === 'cancelled'
                       ? 'Chat generation was cancelled'
                       : current.errorSummary || 'Chat generation failed',
+                  ...(current.errorCode !== undefined &&
+                  current.errorCode !== null
+                    ? { code: current.errorCode }
+                    : {}),
                 }
               );
               close();

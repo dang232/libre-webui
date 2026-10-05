@@ -31,6 +31,7 @@ import websocketService from '@/utils/websocket';
 import { generateId, parseThinkingContent } from '@/utils';
 import { parseArtifacts } from '@/utils/artifactParser';
 import { resolveFinalStreamedContent } from '@/utils/streamContent';
+import { chatFailureToastKey } from '@/utils/chatFailureCopy';
 import {
   trackThinkingProgress,
   takeThinkingDuration,
@@ -707,7 +708,8 @@ export const useChat = (sessionId: string) => {
         return;
       }
 
-      toast.error(errorData.error);
+      const recoveryKey = chatFailureToastKey(errorData.code);
+      toast.error(recoveryKey ? t(recoveryKey) : errorData.error);
     });
 
     // Reset streaming state when switching sessions
