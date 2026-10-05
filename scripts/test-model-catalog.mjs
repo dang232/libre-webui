@@ -43,11 +43,11 @@ const catalog = await distModule('services/modelVisibilityService.js');
 // after a top-level await would run against a closed server.
 const coordinationModule = await distModule('platform/coordination/service.js');
 await coordinationModule.initializeCoordinator();
-const [{ getDatabase }, { authService }, { default: ollamaRouter }] =
+const [{ getDatabase }, { authService }, { default: modelsRouter }] =
   await Promise.all([
     distModule('db.js'),
     distModule('services/authService.js'),
-    distModule('routes/ollama.js'),
+    distModule('routes/models.js'),
   ]);
 
 const now = Date.now();
@@ -74,10 +74,10 @@ const memberToken = tokenFor('catalog-member', 'user');
 
 const app = express();
 app.use(express.json({ limit: '5mb' }));
-app.use('/api/ollama', ollamaRouter);
+app.use('/api/models', modelsRouter);
 const server = createServer(app);
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-const baseUrl = `http://127.0.0.1:${server.address().port}/api/ollama`;
+const baseUrl = `http://127.0.0.1:${server.address().port}/api/models`;
 
 after(async () => {
   await new Promise(resolve => server.close(resolve));

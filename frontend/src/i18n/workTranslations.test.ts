@@ -55,9 +55,7 @@ const interpolationNames = (message: string): string[] =>
 
 const toastTranslationSources = [
   // Model-management toasts (#187).
-  'components/ModelManager.tsx',
   'components/ModelSelector.tsx',
-  'components/ModelTools.tsx',
   'components/HuggingFaceModelBrowser.tsx',
   // Chat-surface toasts (#188).
   'App.tsx',
