@@ -85,7 +85,6 @@ ehthumbs.db
 Thumbs.db
 
 # Local development overrides
-docker-compose.dev.external-ollama.watchtower.yml
 plugins/openclaw-agent.json
 
 # Local Codex instructions

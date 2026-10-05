@@ -131,14 +131,6 @@ const diagnostics: SystemDiagnostics = {
         createdAt: now - 3 * 86_400_000,
       },
       {
-        id: '001122334455',
-        name: 'ollama',
-        image: 'ollama/ollama:latest',
-        state: 'running',
-        status: 'Up 3 days',
-        createdAt: now - 3 * 86_400_000,
-      },
-      {
         id: '66778899aabb',
         name: 'old-worker',
         image: 'libre-webui/work-runtime:0.1.0',
@@ -185,7 +177,6 @@ test('administrators open machine and Docker diagnostics from the user menu', as
   await expect(page.getByText('libre-prod-01')).toBeVisible();
   await expect(page.getByTestId('system-docker-table')).toBeVisible();
   await expect(page.getByText('libre-webui', { exact: true })).toBeVisible();
-  await expect(page.getByText('ollama', { exact: true })).toBeVisible();
   await expect(page.getByText('172.18.0.4/16')).toBeVisible();
 });
 

@@ -144,7 +144,7 @@ test('a slow title request does not delay replies or duplicate on the next turn'
     preferences: {
       titleSettings: { autoTitle: true, taskModel: 'llama3.2:3b' },
     },
-    generatedTitle: { title: 'Slow Title Result', source: 'ollama' },
+    generatedTitle: { title: 'Slow Title Result', source: 'fallback' },
   });
   let titleRequests = 0;
   let releaseTitle!: () => void;
@@ -202,7 +202,7 @@ for (const snapshotSource of [
       preferences: {
         titleSettings: { autoTitle: true, taskModel: 'llama3.2:3b' },
       },
-      generatedTitle: { title: 'Keep This New Title', source: 'ollama' },
+      generatedTitle: { title: 'Keep This New Title', source: 'fallback' },
       chatStream: {
         chunks: ['The streamed response is complete.'],
         duplicateCompletion: snapshotSource === 'completion replay',
@@ -395,7 +395,7 @@ test('generated title immediately replaces the sidebar preview without a duplica
     },
     generatedTitle: {
       title: 'Persistent Sidebar Summary',
-      source: 'ollama',
+      source: 'fallback',
     },
   });
 

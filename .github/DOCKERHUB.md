@@ -10,11 +10,11 @@ Self-hosted. Provider-flexible. Apache 2.0. No application telemetry.
 
 ![Alcore](https://raw.githubusercontent.com/libre-webui/libre-webui/main/screenshot.png)
 
-Alcore connects to local models through Ollama or to providers you choose. It includes document search, interactive artifacts, personas, multi-user access controls, image and speech providers, and task-scoped Work containers for model-driven file and command workflows.
+Alcore connects to the providers you choose. It includes document search, interactive artifacts, personas, multi-user access controls, image and speech providers, and task-scoped Work containers for model-driven file and command workflows.
 
 ## Start with Docker
 
-The repository includes Compose configurations for bundled Ollama, an existing Ollama server, and NVIDIA GPU inference:
+The repository includes Compose configurations for CPU and NVIDIA GPU inference:
 
 ```bash
 git clone https://github.com/libre-webui/libre-webui.git
@@ -24,7 +24,7 @@ docker compose up -d
 
 Open <http://localhost:8080>. The first account created on a fresh installation becomes the administrator; further registration remains disabled unless an administrator enables it deliberately.
 
-See the [Docker deployment documentation](https://docs.librewebui.org/DOCKER) for persistent secrets, HTTPS, backups, external Ollama, and GPU configuration.
+See the [Docker deployment documentation](https://docs.librewebui.org/DOCKER) for persistent secrets, HTTPS, backups, and GPU configuration.
 
 > The repository's Compose files mount the Docker socket so Work can create isolated task containers. Docker socket access is root-equivalent access to the host. Remove that mount when Work is not required.
 

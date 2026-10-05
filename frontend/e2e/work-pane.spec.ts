@@ -1088,38 +1088,6 @@ test('shows a readable LTR model name without changing its identifier', async ({
   await expect(trigger).toBeFocused();
 });
 
-test('shows the complete live Ollama catalogue in the shared selector', async ({
-  page,
-}) => {
-  const libraryModels = Array.from({ length: 75 }, (_, index) => ({
-    name: `catalogue-model-${index + 1}`,
-    description: `Ollama catalogue model ${index + 1}`,
-    category:
-      index % 3 === 0 ? 'general' : index % 3 === 1 ? 'coding' : 'reasoning',
-    sizes: ['7b'],
-    pulls: `${index + 1}K`,
-    tags: ['tools'],
-  }));
-  await mockLibreWebUiApi(page, { libraryModels });
-
-  await page.goto('/work');
-  await page.getByTestId('work-model-selector-trigger').click();
-  await page.getByRole('button', { name: 'Ollama' }).click();
-
-  await expect(
-    page.getByText('catalogue-model-75', { exact: true })
-  ).toHaveCount(1);
-  await expect(
-    page.getByRole('button', { name: 'General', exact: true })
-  ).toBeVisible();
-  await expect(
-    page.getByRole('button', { name: 'Coding', exact: true })
-  ).toBeVisible();
-  await expect(
-    page.getByRole('button', { name: 'Reasoning', exact: true })
-  ).toBeVisible();
-});
-
 test('offers cloud models and remembers remote disclosure dismissal', async ({
   page,
 }) => {

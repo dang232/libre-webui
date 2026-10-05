@@ -582,7 +582,7 @@ type MockOptions = {
   deferPreferenceUpdates?: boolean;
   generatedTitle?: {
     title: string;
-    source?: 'plugin' | 'ollama' | 'fallback';
+    source?: 'plugin' | 'fallback';
   };
   chatStream?: MockChatStream;
   workCapabilities?: MockWorkCapabilities;
@@ -2393,12 +2393,20 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
         return;
       }
 
-      if (path === '/ollama/models/visibility' && method === 'GET') {
+      if (
+        (path === '/ollama/models/visibility' ||
+          path === '/models/visibility') &&
+        method === 'GET'
+      ) {
         await fulfillJson(route, modelCatalog);
         return;
       }
 
-      if (path === '/ollama/models/visibility' && method === 'PUT') {
+      if (
+        (path === '/ollama/models/visibility' ||
+          path === '/models/visibility') &&
+        method === 'PUT'
+      ) {
         const update = route
           .request()
           .postDataJSON() as Partial<MockModelCatalog>;
@@ -2580,7 +2588,7 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
 
         await fulfillJson(route, {
           title: generatedTitle.title,
-          source: generatedTitle.source ?? 'ollama',
+          source: generatedTitle.source ?? 'fallback',
           updatedAt,
         });
         return;

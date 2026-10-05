@@ -492,7 +492,7 @@ test('packed npm artifact resolves package metadata and frontend dist', async ()
   });
 });
 
-test('packed CLI rejects malformed provider limits without creating its default state', async () => {
+test('packed CLI rejects malformed platform durations without creating its default state', async () => {
   await withTempPackedProject(async ({ tempDir, packedRoot }) => {
     linkInstalledDependencies(packedRoot);
     const callerDirectory = path.join(tempDir, 'invalid-provider-caller');
@@ -503,7 +503,7 @@ test('packed CLI rejects malformed provider limits without creating its default 
       HOME: fakeHome,
       USERPROFILE: fakeHome,
       OPEN_BROWSER: 'false',
-      OLLAMA_TIMEOUT: '300000ms',
+      REDIS_CONNECT_TIMEOUT_MS: 'soon',
     };
     for (const key of [
       'DATA_DIR',
@@ -528,7 +528,7 @@ test('packed CLI rejects malformed provider limits without creating its default 
     assert.notEqual(result.status, 0);
     assert.match(
       `${result.stderr}\n${result.stdout}`,
-      /Invalid Ollama configuration[\s\S]*OLLAMA_TIMEOUT/
+      /Invalid platform configuration[\s\S]*REDIS_CONNECT_TIMEOUT_MS/
     );
     assert.equal(
       fs.existsSync(fakeHome),
@@ -564,7 +564,6 @@ test('packed CLI survives two starts and ignores unrelated caller plugins', asyn
       XDG_CACHE_HOME: xdgCache,
       LOCALAPPDATA: localAppData,
       OPEN_BROWSER: 'false',
-      OLLAMA_BASE_URL: 'http://127.0.0.1:9',
       JWT_SECRET: 'packed-cli-jwt-secret-packed-cli-jwt-secret',
       SESSION_SECRET: 'packed-cli-session-secret',
       TURNSTILE_SITE_KEY: '',
@@ -806,9 +805,9 @@ test('packed maintenance help creates no runtime state', async () => {
       [cliPath, 'migrate-postgres', '--help'],
       { cwd: callerDirectory, env, encoding: 'utf8' }
     );
-  assert.match(recoveryHelp, /alcore recovery-check \[--json\]/);
-  assert.match(backupHelp, /alcore backup create/);
-  assert.match(migrationHelp, /alcore migrate-postgres --source/);
+    assert.match(recoveryHelp, /alcore recovery-check \[--json\]/);
+    assert.match(backupHelp, /alcore backup create/);
+    assert.match(migrationHelp, /alcore migrate-postgres --source/);
 
     const blocked = spawnSync(
       process.execPath,
@@ -895,7 +894,6 @@ test('packed npm artifact serves SPA routes from a dot-directory install', async
         PORT: String(backendPort),
         DATA_DIR: path.join(tempDir, 'spa-runtime-data'),
         SERVE_FRONTEND: 'true',
-        OLLAMA_BASE_URL: 'http://127.0.0.1:9',
         JWT_SECRET: 'test-jwt-secret',
         ENCRYPTION_KEY:
           '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
@@ -1025,7 +1023,6 @@ test('packed npm artifact exposes provider-backed embedding models and requests'
         PORT: String(backendPort),
         DATA_DIR: dataDir,
         OPENAI_API_KEY: 'test-openai-key',
-        OLLAMA_BASE_URL: 'http://127.0.0.1:9',
         JWT_SECRET: 'test-jwt-secret',
         ENABLE_SIGNUP: 'true',
         TURNSTILE_SITE_KEY: '',
@@ -1150,26 +1147,6 @@ test('packed npm artifact exposes provider-backed embedding models and requests'
       const modelIds = modelsPayload.data.map(model => model.id);
       assert.ok(modelIds.includes('plugin:openai:text-embedding-3-small'));
       assert.ok(!modelIds.includes('plugin:openai:gpt-4o-mini'));
-
-      const embedResponse = await fetch(
-        `http://127.0.0.1:${backendPort}/api/ollama/embed`,
-        {
-          method: 'POST',
-          headers: {
-            ...pluginHeaders,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: 'plugin:openai:text-embedding-3-small',
-            input: 'hello from packed npx',
-          }),
-        }
-      );
-      assert.equal(embedResponse.status, 200);
-      const embedPayload = await embedResponse.json();
-
-      assert.equal(embedPayload.success, true);
-      assert.deepEqual(embedPayload.data.embeddings, [[0.11, 0.22, 0.33]]);
 
       const providerUrls = providerRequests.map(request => request.url);
       assert.ok(providerUrls.includes('/openai/v1/models'));
@@ -1318,7 +1295,6 @@ test('packed npm artifact routes TTS through the selected plugin valve from any 
         ...process.env,
         PORT: String(backendPort),
         DATA_DIR: dataDir,
-        OLLAMA_BASE_URL: 'http://127.0.0.1:9',
         JWT_SECRET: 'test-jwt-secret',
         ENABLE_SIGNUP: 'true',
         TURNSTILE_SITE_KEY: '',

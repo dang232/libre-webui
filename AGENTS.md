@@ -40,8 +40,7 @@ npm run dev
 is needed. `npm run build` builds both workspaces.
 
 Docker is optional for ordinary development, but required for Work sandboxes,
-container checks, and team-platform drills. Ollama is optional unless the task
-tests local-model behavior. Copy settings from `backend/.env.example` or
+container checks, and team-platform drills. Copy settings from `backend/.env.example` or
 `frontend/.env.example`; do not inspect or overwrite a developer's real `.env`
 files unless explicitly asked, and never commit them.
 

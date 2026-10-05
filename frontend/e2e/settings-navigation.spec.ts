@@ -45,7 +45,6 @@ test('settings tabs support vertical keyboard navigation and skip disabled tabs'
   await selectSettingsTab(panel, 'models');
   await page.keyboard.press('ArrowDown');
   await expect(panel.getByTestId('settings-tab-generation')).toBeFocused();
-  await expect(panel.getByTestId('settings-tab-model-manager')).toBeDisabled();
 
   await page.keyboard.press('End');
   await expect(tabs.locator('[role="tab"]:enabled').last()).toBeFocused();
@@ -64,10 +63,8 @@ test('settings search keeps disabled sections closed and announces empty results
   const panel = await openSettingsModal(page);
   const search = panel.getByRole('searchbox', { name: 'Search' });
   await search.fill('download');
-  const modelManager = panel.getByTestId('settings-tab-model-manager');
-  await expect(modelManager).toBeDisabled();
-  await expect(modelManager).toHaveAttribute('aria-selected', 'false');
-  await expect(panel.getByRole('tabpanel')).toHaveAccessibleName('Appearance');
+  await expect(panel.getByRole('status')).toHaveText('No results found');
+  await expect(panel.getByRole('tab')).toHaveCount(0);
 
   await search.fill('no-such-setting');
   await expect(panel.getByRole('status')).toHaveText('No results found');

@@ -228,8 +228,6 @@ ENV DOCKER_ENV=true
 ENV DATA_DIR=/app/backend/data
 ENV PLATFORM_PREFLIGHT_TMP_DIR=/app/backend/temp/preflight
 
-# Set Ollama URL to connect to host machine when running in container
-ENV OLLAMA_BASE_URL=http://host.docker.internal:11434
 
 # JWT secret should be provided at runtime via environment variable or Docker secrets
 # Do not set JWT_SECRET here - it will be generated automatically if not provided
