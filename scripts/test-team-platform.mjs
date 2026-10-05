@@ -349,6 +349,37 @@ test(
     const adminToken = signup.data.token;
     assert.equal(signup.data.user.role, 'admin');
 
+    // The chat fixture speaks OpenAI-compatible chat completions. Install
+    // it as a plugin so chat, titles, and Work resolve 'libre-test'
+    // through the plugin path.
+    await request('/api/plugins/install', {
+      token: adminToken,
+      method: 'POST',
+      body: {
+        id: 'libre-team-chat-fixture',
+        name: 'Libre team chat fixture',
+        type: 'completion',
+        endpoint: 'http://fake-ollama:11434/v1/chat/completions',
+        api_mode: 'chat_completions',
+        base_url: 'http://fake-ollama:11434/v1',
+        auth: {
+          header: 'Authorization',
+          prefix: 'Bearer ',
+          key_env: 'LIBRE_TEAM_CHAT_KEY',
+        },
+        model_map: ['libre-test'],
+      },
+    });
+    await request('/api/plugins/libre-team-chat-fixture/credentials', {
+      token: adminToken,
+      method: 'POST',
+      body: { api_key: 'team-chat-fixture-key' },
+    });
+    await request('/api/plugins/activate/libre-team-chat-fixture', {
+      token: adminToken,
+      method: 'POST',
+    });
+
     // The gateway re-resolves the replica set every few seconds and restarts
     // its round-robin cursor when it does, so two back-to-back requests can
     // land on the same replica by chance. Issue fresh tickets until the
@@ -1114,7 +1145,8 @@ test(
       body: {
         message: 'LIBRE_WORK_TOOL_KILL invoke the requested command once.',
         model: 'libre-test',
-        providerType: 'ollama',
+        providerType: 'plugin',
+        providerId: 'libre-team-chat-fixture',
       },
     });
     const workRunId = work.data.activeRun?.id;

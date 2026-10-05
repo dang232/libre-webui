@@ -22,10 +22,6 @@ services:
   libre-webui:
     environment:
       ENABLE_SIGNUP: 'true'
-      OLLAMA_BASE_URL: http://fake-ollama:11434
-      OLLAMA_TIMEOUT: '120000'
-      OLLAMA_LONG_OPERATION_TIMEOUT: '120000'
-      OLLAMA_MAX_CONTEXT: '16384'
       WORK_COMMAND_TIMEOUT_MS: '120000'
     depends_on:
       fake-ollama:
@@ -33,10 +29,6 @@ services:
 
   durable-worker:
     environment:
-      OLLAMA_BASE_URL: http://fake-ollama:11434
-      OLLAMA_TIMEOUT: '120000'
-      OLLAMA_LONG_OPERATION_TIMEOUT: '120000'
-      OLLAMA_MAX_CONTEXT: '16384'
       WORK_COMMAND_TIMEOUT_MS: '120000'
       ALCORE_ENABLE_TEST_FAULT_INJECTION: 'true'
       ALCORE_TEST_FAULT_DELAY_MS: '60000'

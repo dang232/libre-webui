@@ -82,6 +82,176 @@ const server = http.createServer(async (request, response) => {
       });
       return;
     }
+    if (request.method === 'GET' && url.pathname === '/v1/models') {
+      json(response, 200, {
+        object: 'list',
+        data: [
+          {
+            id: 'libre-test',
+            object: 'model',
+            created: 1,
+            owned_by: 'fixture',
+          },
+        ],
+      });
+      return;
+    }
+    if (
+      request.method === 'POST' &&
+      url.pathname === '/v1/chat/completions'
+    ) {
+      const body = await readJson(request);
+      const messages = Array.isArray(body.messages) ? body.messages : [];
+      const content = messages
+        .map(message =>
+          typeof message?.content === 'string' ? message.content : ''
+        )
+        .join('\n');
+      const completionId = `chatcmpl-${Date.now().toString(36)}`;
+      const created = Math.floor(Date.now() / 1000);
+      if (content.includes(workMarker)) {
+        const count = (counts.get(workMarker) || 0) + 1;
+        counts.set(workMarker, count);
+        const hasToolResult = messages.some(
+          message => message?.role === 'tool'
+        );
+        if (hasToolResult) {
+          json(response, 200, {
+            id: completionId,
+            object: 'chat.completion',
+            created,
+            model: body.model || 'libre-test',
+            choices: [
+              {
+                index: 0,
+                message: {
+                  role: 'assistant',
+                  content: 'Work tool recovery completed.',
+                },
+                finish_reason: 'stop',
+              },
+            ],
+            usage: {
+              prompt_tokens: 1,
+              completion_tokens: 1,
+              total_tokens: 2,
+            },
+          });
+        } else {
+          json(response, 200, {
+            id: completionId,
+            object: 'chat.completion',
+            created,
+            model: body.model || 'libre-test',
+            choices: [
+              {
+                index: 0,
+                message: {
+                  role: 'assistant',
+                  content: '',
+                  tool_calls: [
+                    {
+                      id: 'libre-work-tool-call',
+                      type: 'function',
+                      function: {
+                        name: 'run_command',
+                        arguments: JSON.stringify({
+                          command:
+                            'printf ready > /workspace/.libre-work-tool-ready.tmp && mv /workspace/.libre-work-tool-ready.tmp /workspace/.libre-work-tool-ready && sleep 60; printf LIBRE_WORK_TOOL_FINISHED',
+                          timeout_ms: 90000,
+                        }),
+                      },
+                    },
+                  ],
+                },
+                finish_reason: 'tool_calls',
+              },
+            ],
+            usage: {
+              prompt_tokens: 1,
+              completion_tokens: 1,
+              total_tokens: 2,
+            },
+          });
+        }
+        return;
+      }
+      const key = content.includes(delayedMarker)
+        ? delayedMarker
+        : content.includes(authorizationMarker)
+          ? authorizationMarker
+          : content.includes(liveStreamMarker)
+            ? liveStreamMarker
+            : 'ordinary';
+      const count = (counts.get(key) || 0) + 1;
+      counts.set(key, count);
+      if (
+        (key === delayedMarker || key === authorizationMarker) &&
+        count === 1
+      ) {
+        await new Promise(resolve => setTimeout(resolve, 60_000));
+      }
+      const text = `fixture-response:${key}:${count}`;
+      if (body.stream === true) {
+        response.writeHead(200, {
+          'content-type': 'text/event-stream',
+          'cache-control': 'no-cache',
+          connection: 'keep-alive',
+        });
+        const frame = (delta, finish) =>
+          `data: ${JSON.stringify({
+            id: completionId,
+            object: 'chat.completion.chunk',
+            created,
+            model: body.model || 'libre-test',
+            choices: [{ index: 0, delta, finish_reason: finish }],
+          })}\n\n`;
+        if (key === liveStreamMarker) {
+          response.write(frame({ content: 'fixture-live-part-1:' }, null));
+          await new Promise(resolve => setTimeout(resolve, 3_000));
+          response.write(frame({ content: 'fixture-live-part-2' }, null));
+        } else {
+          response.write(frame({ content: text }, null));
+        }
+        response.write(frame({}, 'stop'));
+        response.write(
+          `data: ${JSON.stringify({
+            id: completionId,
+            object: 'chat.completion.chunk',
+            created,
+            model: body.model || 'libre-test',
+            choices: [],
+            usage: {
+              prompt_tokens: 1,
+              completion_tokens: 1,
+              total_tokens: 2,
+            },
+          })}\n\n`
+        );
+        response.write('data: [DONE]\n\n');
+        response.end();
+      } else {
+        json(response, 200, {
+          id: completionId,
+          object: 'chat.completion',
+          created,
+          model: body.model || 'libre-test',
+          choices: [
+            {
+              index: 0,
+              message: { role: 'assistant', content: text },
+              finish_reason: 'stop',
+            },
+          ],
+          usage: {
+            prompt_tokens: 1,
+            completion_tokens: 1,
+            total_tokens: 2,
+          },
+        });
+      }
+      return;
+    }
     if (request.method === 'GET' && url.pathname === '/__stats') {
       json(response, 200, Object.fromEntries(counts));
       return;
