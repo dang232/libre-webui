@@ -63,52 +63,12 @@ The Compose files map `host.docker.internal` through `host-gateway`. Never use
 ports on every host interface instead of keeping them behind Alcore's
 signed proxy.
 
-## Bundled Ollama
-
-Runs Alcore and Ollama in one Compose stack:
-
-```bash
-docker compose up -d
-```
-
-Open [http://localhost:8080](http://localhost:8080).
-
-The Alcore port binds to host loopback by default. Set
-`WEBUI_BIND_ADDRESS=0.0.0.0` only when a trusted LAN or a host reverse proxy must
-reach it, and restrict the port with the host firewall.
-
-Ollama remains private to the Compose network. To make it available to host
-applications on loopback, add the explicit host override:
-
-```bash
-docker compose -f docker-compose.yml -f docker-compose.ollama-host.yml up -d
-```
-
-Set `OLLAMA_BIND_ADDRESS` only when another machine must reach Ollama, and
-protect that port with a firewall and authentication-capable proxy.
-
 ## NVIDIA GPU
 
 Use the GPU Compose file when Docker has NVIDIA runtime access:
 
 ```bash
 docker compose -f docker-compose.gpu.yml up -d
-```
-
-Confirm GPU access from the Ollama container if models are still running on CPU.
-
-## External Ollama
-
-Use this when Ollama is already running on the host or another server:
-
-```bash
-docker compose -f docker-compose.external-ollama.yml up -d
-```
-
-Override the Ollama URL if needed:
-
-```bash
-OLLAMA_BASE_URL=http://192.168.1.10:11434 docker compose -f docker-compose.external-ollama.yml up -d
 ```
 
 ## Socket-Isolated Work
@@ -196,7 +156,6 @@ not need to recompress or cache those paths; pass `Accept-Encoding` through.
 ```bash
 docker compose ps
 docker compose logs -f libre-webui
-docker compose logs -f ollama
 docker compose pull
 docker compose up -d
 ```
@@ -204,7 +163,6 @@ docker compose up -d
 ## Related Docs
 
 - [Work: Isolated Workspaces](./WORKSPACES)
-- [Docker with External Ollama](./DOCKER_EXTERNAL_OLLAMA)
 - [Environment Variables](./ENVIRONMENT_VARIABLES)
 - [Database Encryption](./DATABASE_ENCRYPTION)
 - [Troubleshooting](./TROUBLESHOOTING)

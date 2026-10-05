@@ -1,25 +1,24 @@
 ---
 sidebar_position: 2
 title: 'Quick Start'
-description: 'Get Alcore running with Ollama or provider plugins'
+description: 'Get Alcore running with provider plugins'
 slug: /QUICK_START
 keywords:
-  [Alcore, quick start, installation, setup, ollama, hardware requirements]
+  [Alcore, quick start, installation, setup, providers, hardware requirements]
 ---
 
 # Quick Start
 
 ## Requirements
 
-| Requirement | Minimum  | Recommended                         |
-| ----------- | -------- | ----------------------------------- |
-| Node.js     | 22.22+   | Latest LTS                          |
-| RAM         | 8 GB     | 16 GB+                              |
-| Disk        | 5 GB     | 20 GB+ for models                   |
-| GPU         | Optional | 8 GB+ VRAM for fast local inference |
-| Docker      | Optional | Required for Work tasks             |
+| Requirement | Minimum  | Recommended             |
+| ----------- | -------- | ----------------------- |
+| Node.js     | 22.22+   | Latest LTS              |
+| RAM         | 8 GB     | 16 GB+                  |
+| Disk        | 5 GB     | 20 GB+                  |
+| Docker      | Optional | Required for Work tasks |
 
-Alcore works with CPU-only Ollama, but smaller models are a better fit on CPU. For cloud provider plugins, you only need the relevant API key.
+Connect a provider (see Add Cloud Providers below) to start chatting; you only need the relevant API key.
 
 Chat, documents, artifacts, and provider-backed features do not require Docker.
 Work does: Docker must be installed on the machine running the Alcore
@@ -41,31 +40,6 @@ disabled unless you explicitly set `ENABLE_SIGNUP=true`.
 The packaged launcher keeps persistent state in `~/.libre-webui`. Set an
 absolute `DATA_DIR` to choose another location; relative values are resolved
 from the directory where you run `npx`.
-
-If you already run Ollama, `ollama launch libre-webui` installs the package,
-lets you pick a model, and starts Alcore pointed at it. The same knobs
-are plain flags: `--model llama3.2` chooses the model new accounts start on,
-`--ollama-url http://host:11434` points at another Ollama, and `--no-open`
-skips opening the browser.
-
-## Install Ollama
-
-Install [Ollama](https://ollama.com), then pull a small general model:
-
-```bash
-ollama pull gemma4:12b
-```
-
-Other strong choices are `gemma4:26b` (MoE), `gemma4:31b` (dense), and `qwen3.8:27b`. Use the Model Manager in Alcore to browse installed models, search the live Ollama Library, and pull models without leaving the app.
-
-:::tip Embeddings for documents
-For semantic document search, also install an embedding model:
-
-```bash
-ollama pull nomic-embed-text
-```
-
-:::
 
 ## Add Cloud Providers
 
@@ -102,8 +76,7 @@ The task remains in the sidebar so you can return to the same conversation and
 files later. Stopping a run or preview preserves the workspace. Deleting the
 task permanently deletes its workspace.
 
-Work can use an installed Ollama model, an Ollama Cloud model, or a configured
-chat or completion-provider plugin. When you select a remote provider, Alcore
+Work runs on configured chat or completion-provider plugins. When you select a remote provider, Alcore
 shows a disclosure before the run: the provider receives the
 conversation, tool definitions, and any tool results requested by the model.
 An autonomous run can make multiple paid provider calls.
@@ -122,12 +95,6 @@ docker compose up -d
 Create the first administrator in the browser. No registration flag or restart
 is required; subsequent public registration is closed by default.
 
-If Ollama is already running on the host or another machine:
-
-```bash
-docker compose -f docker-compose.external-ollama.yml up -d
-```
-
 For NVIDIA GPU acceleration, use the GPU compose file provided by the repository.
 
 Repository Compose files mount the host Docker socket so Work is available when
@@ -135,10 +102,6 @@ Docker is installed. This grants the application root-equivalent control of the
 host, so read [Work: Isolated Workspaces](./WORKSPACES) first. On Linux, set
 `DOCKER_GID` in `.env` to the group that owns the socket. Remove the mount if
 Work is not wanted.
-
-Bundled Ollama is also internal-only. Add
-`-f docker-compose.ollama-host.yml` only when another host process needs its API;
-the override binds to loopback by default.
 
 ## Find Your Way Around
 

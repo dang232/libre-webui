@@ -6,7 +6,7 @@ slug: /TROUBLESHOOTING
 keywords:
   [
     Alcore troubleshooting,
-    ollama errors,
+    provider errors,
     docker errors,
     model pull,
     authentication,
@@ -17,7 +17,7 @@ keywords:
 
 # Troubleshooting
 
-Start with the layer that is failing: browser, frontend, backend, Ollama, provider plugin, or deployment networking.
+Start with the layer that is failing: browser, frontend, backend, provider plugin, or deployment networking.
 
 ## Quick Checks
 
@@ -30,12 +30,6 @@ curl http://localhost:3001/health/live
 
 # Backend dependency readiness (SQLite, schema, and writable data storage)
 curl http://localhost:3001/health/ready
-
-# Ollama health
-curl http://localhost:11434/api/tags
-
-# Installed Ollama models
-ollama list
 ```
 
 In development, the frontend usually runs on `http://localhost:5173` and the backend on `http://localhost:3001`. The packaged `npx libre-webui` flow serves the app on `http://localhost:8080`.
@@ -84,7 +78,7 @@ application:
   model providers. Its public response omits error messages and internal
   details.
 - `/health/deep` performs SQLite integrity and foreign-key checks in a bounded
-  worker and aggregates optional server-level provider probes such as Ollama.
+  worker and aggregates optional server-level provider probes.
   An optional provider outage appears as a warning and does not make required
   dependencies unready. The endpoint requires a current administrator bearer
   token and is not suitable for a frequent orchestrator probe.
@@ -206,49 +200,21 @@ If streams connect but drop later, check the idle timeout on any proxy or load
 balancer in front of Traefik. When Traefik itself is enforcing the limit,
 adjust the entry point's `transport.respondingTimeouts` setting.
 
-## Ollama Is Not Detected
+## No Models Listed
 
-**Confirm Ollama is running**
+**Connect a provider**
 
-```bash
-curl http://localhost:11434/api/tags
-```
+Open **Settings → Plugins**, install a chat provider with a valid API key, and activate it. Models appear in the picker once the provider syncs.
 
-**Configure a custom Ollama URL**
+**Check visibility**
 
-Backend `.env`:
-
-```env
-OLLAMA_BASE_URL=http://localhost:11434
-```
-
-If Alcore runs in Docker and Ollama runs on the host, use the external Ollama compose file or point `OLLAMA_BASE_URL` at the host address reachable from the container.
-
-## Model Pull Problems
-
-**Pull from terminal first**
-
-```bash
-ollama pull gemma4:12b
-```
-
-If the terminal pull fails, the problem is outside Alcore.
-
-**Cloud models**
-
-Use the cloud filter in the Model Manager for Ollama Cloud models. Alcore normalizes required cloud suffixes from that flow, so users should not need to manually add `:cloud` for supported cloud entries.
-
-**User cannot pull models**
-
-Administrators can disable model pulls for normal users. Check admin settings if a non-admin user can browse models but cannot install them.
+An administrator may have hidden models from the catalog in **Settings → Defaults → Model Catalog**.
 
 ## Chat Is Slow or Fails
 
 - Use a smaller model.
-- Check loaded models with `ollama ps`.
 - Reduce context length.
 - Reduce max tokens for very long responses.
-- Confirm the model fits in RAM/VRAM.
 - For provider plugins, confirm the API key and provider quota.
 
 ## OpenAI Image Generation Is Unavailable
@@ -402,7 +368,7 @@ The following security and ownership rules also apply:
 
 ### Chat Uses the Wrong Provider or Shows a Provider as Unavailable
 
-The same model ID can exist in Ollama and in more than one plugin. Current Chat
+The same model ID can exist in more than one plugin. Current Chat
 sessions and default-model preferences save the selected provider as well as
 the raw model ID, so similarly named entries are independent choices.
 
@@ -414,10 +380,10 @@ the raw model ID, so similarly named entries are independent choices.
 - Older sessions and preferences may have no provider metadata. Those records
   continue to use legacy name-only routing because Alcore cannot infer
   which provider was originally intended. They appear as "provider not
-  recorded" in model selectors. Reselect the desired Ollama or plugin entry to
+  recorded" in model selectors. Reselect the desired plugin entry to
   pin future requests to it.
 - Persona entries remain labeled `persona:<id>`. Newly selected personas record
-  Ollama as their backing provider; historical persona sessions without
+  their backing provider; historical persona sessions without
   provider metadata remain compatible with legacy routing.
 
 ## Work Problems
@@ -469,8 +435,7 @@ deployment.
 
 ### The Model Lacks Tool Support
 
-Work requires a tool-capable chat model. For Ollama, choose an installed model
-whose reported capabilities include `tools`. For a plugin-backed model:
+Work requires a tool-capable chat model. For a plugin-backed model:
 
 - Confirm the chat or completion plugin is active.
 - Confirm the selected model is in that plugin's configured model list.
@@ -575,13 +540,9 @@ Alcore accepts PDF, Office (DOCX/PPTX/XLSX), Markdown, HTML, code, and CSV files
 
 If search works but semantic retrieval does not:
 
-1. Install an embedding model such as `nomic-embed-text`.
+1. Configure an embedding-capable provider plugin.
 2. Enable embeddings in Settings.
 3. Regenerate embeddings from the document settings or API.
-
-```bash
-ollama pull nomic-embed-text
-```
 
 Keyword search continues to work when embeddings are disabled.
 
@@ -598,14 +559,6 @@ If the artifact needs keyboard input:
 Alcore can bundle common `index.html` + CSS + JavaScript code blocks, but self-contained HTML is still the most reliable output.
 
 ## Docker Problems
-
-**Container cannot reach Ollama**
-
-Use the external Ollama compose file when Ollama is not in the same compose stack:
-
-```bash
-docker compose -f docker-compose.external-ollama.yml up -d
-```
 
 **Data does not persist**
 
@@ -630,7 +583,6 @@ Open an issue with:
 - Install method
 - Operating system
 - Node.js version
-- Ollama version
 - Docker version and `docker info` result for Work problems
 - Backend logs around the failure
 - Browser console errors

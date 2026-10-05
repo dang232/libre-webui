@@ -60,8 +60,7 @@ their own activation state, credential, and allowed generation settings.
 ## Add a Connection Quickly
 
 **Settings > Connections** is a shorter path for the common case: one
-OpenAI-compatible endpoint, one API key. Administrators see a card for the
-local Ollama runtime with its health and version, a list of the existing
+OpenAI-compatible endpoint, one API key. Administrators see a list of the existing
 OpenAI-compatible connections, and a small form to add another.
 
 Adding a connection takes a display name, the full chat completions URL, and
@@ -259,8 +258,7 @@ is read-only; capability labels describe which plugin route lists a model and
 are not health checks.
 
 Model IDs are not globally unique. Chat stores the raw model ID together with
-its exact Ollama or plugin provider identity, so an Ollama model and multiple
-plugins can safely expose the same name. If the saved provider becomes
+its exact provider identity, so multiple plugins can safely expose the same name. If the saved provider becomes
 unavailable, Alcore shows that selection as unavailable instead of
 silently routing the request to another provider.
 
