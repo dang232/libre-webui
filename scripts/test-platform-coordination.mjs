@@ -22,13 +22,6 @@ import {
   summarizePlatformRuntimeConfig,
 } from '../backend/dist/platform/runtimeConfig.js';
 import {
-  getOllamaRuntimeConfig,
-  normalizeOllamaRuntimeEnvironment,
-  OllamaConfigurationError,
-  OLLAMA_RUNTIME_DEFAULTS,
-  resolveOllamaRuntimeConfig,
-} from '../backend/dist/platform/ollamaRuntimeConfig.js';
-import {
   CoordinationUnavailableError,
   LocalCoordinator,
   RedisCoordinator,
@@ -42,76 +35,7 @@ import { sharedRateLimit } from '../backend/dist/middleware/sharedRateLimit.js';
 import { coordinatedRateLimit } from '../backend/dist/middleware/coordinatedRateLimit.js';
 import { ensurePrivateRuntimeDirectory } from '../backend/dist/utils/dataDirectory.js';
 
-test('Ollama runtime configuration has one strict normalized contract', () => {
-  assert.deepEqual(getOllamaRuntimeConfig({}), {
-    ...OLLAMA_RUNTIME_DEFAULTS,
-    blockers: [],
-  });
-
-  const configured = getOllamaRuntimeConfig({
-    OLLAMA_TIMEOUT: ' 1000 ',
-    OLLAMA_LONG_OPERATION_TIMEOUT: '3600000',
-    OLLAMA_MAX_CONTEXT: '2097152',
-  });
-  assert.deepEqual(configured, {
-    timeoutMs: 1_000,
-    longOperationTimeoutMs: 3_600_000,
-    maxContext: 2_097_152,
-    blockers: [],
-  });
-  const normalized = {};
-  normalizeOllamaRuntimeEnvironment(configured, normalized);
-  assert.deepEqual(normalized, {
-    OLLAMA_TIMEOUT: '1000',
-    OLLAMA_LONG_OPERATION_TIMEOUT: '3600000',
-    OLLAMA_MAX_CONTEXT: '2097152',
-  });
-});
-
-test('Ollama runtime configuration rejects malformed, partial, and out-of-range integers', () => {
-  for (const [name, value] of [
-    ['OLLAMA_TIMEOUT', '1000ms'],
-    ['OLLAMA_TIMEOUT', '1e3'],
-    ['OLLAMA_TIMEOUT', '0x1000'],
-    ['OLLAMA_TIMEOUT', 'NaN'],
-    ['OLLAMA_TIMEOUT', '999'],
-    ['OLLAMA_TIMEOUT', '3600001'],
-    ['OLLAMA_TIMEOUT', '9007199254740992'],
-    ['OLLAMA_LONG_OPERATION_TIMEOUT', '0'],
-    ['OLLAMA_LONG_OPERATION_TIMEOUT', '+1000'],
-    ['OLLAMA_MAX_CONTEXT', '127'],
-    ['OLLAMA_MAX_CONTEXT', '2097153'],
-    ['OLLAMA_MAX_CONTEXT', '128tokens'],
-  ]) {
-    const config = resolveOllamaRuntimeConfig({ [name]: value });
-    assert.match(config.blockers.join('\n'), new RegExp(name));
-    assert.throws(
-      () => getOllamaRuntimeConfig({ [name]: value }),
-      OllamaConfigurationError
-    );
-  }
-});
-
-test('Ollama long-operation timeout cannot be shorter than its standard timeout', () => {
-  const config = resolveOllamaRuntimeConfig({
-    OLLAMA_TIMEOUT: '3000000',
-    OLLAMA_LONG_OPERATION_TIMEOUT: '2999999',
-  });
-  assert.match(
-    config.blockers.join('\n'),
-    /OLLAMA_LONG_OPERATION_TIMEOUT must be greater than or equal to OLLAMA_TIMEOUT/
-  );
-  assert.throws(
-    () =>
-      getOllamaRuntimeConfig({
-        OLLAMA_TIMEOUT: '3000000',
-        OLLAMA_LONG_OPERATION_TIMEOUT: '2999999',
-      }),
-    OllamaConfigurationError
-  );
-});
-
-test('application and external-worker entrypoints reject provider limits before creating state', t => {
+test('application and external-worker entrypoints reject malformed durations before creating state', t => {
   for (const entrypoint of ['main.js', 'worker.js']) {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), 'libre-ollama-config-'));
     t.after(() => fs.rmSync(root, { recursive: true, force: true }));
@@ -128,7 +52,7 @@ test('application and external-worker entrypoints reject provider limits before 
           NODE_ENV: 'production',
           DATA_DIR: dataDir,
           PLATFORM_PREFLIGHT_TMP_DIR: preflightDir,
-          OLLAMA_TIMEOUT: '1000milliseconds',
+          REDIS_CONNECT_TIMEOUT_MS: 'soon',
           OPEN_BROWSER: 'false',
         },
         encoding: 'utf8',
@@ -138,7 +62,7 @@ test('application and external-worker entrypoints reject provider limits before 
     assert.notEqual(result.status, 0, `${entrypoint} must fail startup`);
     assert.match(
       `${result.stderr}\n${result.stdout}`,
-      /Invalid Ollama configuration[\s\S]*OLLAMA_TIMEOUT/
+      /Invalid platform configuration[\s\S]*REDIS_CONNECT_TIMEOUT_MS/
     );
     assert.equal(fs.existsSync(dataDir), false);
     assert.equal(fs.existsSync(preflightDir), false);

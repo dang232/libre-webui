@@ -216,11 +216,6 @@ const chatGenerationService = (
       .href
   )
 ).default;
-const ollamaService = (
-  await import(
-    pathToFileURL(path.join(distRoot, 'services', 'ollamaService.js')).href
-  )
-).default;
 const { ChatRequestService } = await import(
   pathToFileURL(path.join(distRoot, 'services', 'chatRequestService.js')).href
 );
@@ -598,16 +593,16 @@ test('malformed provider selections are rejected consistently', () => {
   );
 });
 
-test('provider-qualified targets distinguish Ollama and colliding plugins', async () => {
-  const ollamaTarget = await chatGenerationService.prepareGenerationTarget(
+test('provider-qualified targets resolve removed selections by name while colliding plugins stay exact', async () => {
+  const removedTarget = await chatGenerationService.prepareGenerationTarget(
     sharedModel,
     userId,
     {},
     { providerType: 'ollama' }
   );
-  assert.equal(ollamaTarget.activePlugin, null);
-  assert.equal(ollamaTarget.providerType, 'ollama');
-  assert.equal(ollamaTarget.providerId, undefined);
+  assert.equal(removedTarget.activePlugin?.id, pluginAId);
+  assert.equal(removedTarget.providerType, 'ollama');
+  assert.equal(removedTarget.providerId, undefined);
 
   const pluginBTarget = await chatGenerationService.prepareGenerationTarget(
     sharedModel,
@@ -643,17 +638,9 @@ test('provider-qualified targets distinguish Ollama and colliding plugins', asyn
   assert.equal(legacyTarget.providerId, undefined);
 });
 
-test('plugin, agent, and legacy plugin targets do not probe Ollama defaults', async () => {
-  const originalGetModelDefaults = ollamaService.getModelDefaults;
+test('plugin, agent, and legacy plugin targets merge preferences without model probing', async () => {
   const globalNumCtx = (await preferencesService.getGenerationOptions(userId))
     .num_ctx;
-  const probedModels = [];
-  ollamaService.getModelDefaults = async model => {
-    probedModels.push(model);
-    return { options: { num_ctx: 12345 }, contextCapped: false };
-  };
-
-  try {
     const pluginTarget = await chatGenerationService.prepareGenerationTarget(
       sharedModel,
       userId,
@@ -676,43 +663,20 @@ test('plugin, agent, and legacy plugin targets do not probe Ollama defaults', as
     assert.equal(agentTarget.mergedOptions.num_ctx, globalNumCtx);
     assert.equal(legacyPluginTarget.activePlugin?.id, pluginAId);
     assert.equal(legacyPluginTarget.mergedOptions.num_ctx, globalNumCtx);
-    assert.deepEqual(probedModels, []);
-  } finally {
-    ollamaService.getModelDefaults = originalGetModelDefaults;
-  }
 });
 
-test('explicit Ollama and unclaimed legacy targets retain Ollama defaults', async () => {
-  const originalGetModelDefaults = ollamaService.getModelDefaults;
+test('unclaimed legacy targets merge preferences without model probing', async () => {
   const ollamaOnlyModel = 'chat-provider-ollama-only-model';
-  const probedModels = [];
-  ollamaService.getModelDefaults = async model => {
-    probedModels.push(model);
-    return { options: { num_ctx: 12345 }, contextCapped: false };
-  };
+  const globalNumCtx = (await preferencesService.getGenerationOptions(userId))
+    .num_ctx;
+  const legacyOllamaTarget =
+    await chatGenerationService.prepareGenerationTarget(
+      ollamaOnlyModel,
+      userId
+    );
 
-  try {
-    const explicitOllamaTarget =
-      await chatGenerationService.prepareGenerationTarget(
-        sharedModel,
-        userId,
-        {},
-        { providerType: 'ollama' }
-      );
-    const legacyOllamaTarget =
-      await chatGenerationService.prepareGenerationTarget(
-        ollamaOnlyModel,
-        userId
-      );
-
-    assert.equal(explicitOllamaTarget.activePlugin, null);
-    assert.equal(explicitOllamaTarget.mergedOptions.num_ctx, 12345);
-    assert.equal(legacyOllamaTarget.activePlugin, null);
-    assert.equal(legacyOllamaTarget.mergedOptions.num_ctx, 12345);
-    assert.deepEqual(probedModels, [sharedModel, ollamaOnlyModel]);
-  } finally {
-    ollamaService.getModelDefaults = originalGetModelDefaults;
-  }
+  assert.equal(legacyOllamaTarget.activePlugin, null);
+  assert.equal(legacyOllamaTarget.mergedOptions.num_ctx, globalNumCtx);
 });
 
 test('persisted legacy sessions ignore unpersisted request provider identity', async () => {
@@ -843,7 +807,7 @@ test('exact plugin selection rejects unavailable providers before any request', 
   }
 });
 
-test('an exact plugin failure cannot fall back to Ollama, while legacy routing remains compatible', async () => {
+test('an exact plugin failure surfaces without fallback, and legacy routing fails closed too', async () => {
   const exactTarget = await chatGenerationService.prepareGenerationTarget(
     sharedModel,
     userId,
@@ -855,9 +819,7 @@ test('an exact plugin failure cannot fall back to Ollama, while legacy routing r
     userId
   );
   const originalExecutePluginRequest = pluginService.executePluginRequest;
-  const originalGenerateChatResponse = ollamaService.generateChatResponse;
   const exactPluginIds = [];
-  let ollamaCalls = 0;
 
   pluginService.executePluginRequest = async (
     _model,
@@ -868,15 +830,6 @@ test('an exact plugin failure cannot fall back to Ollama, while legacy routing r
   ) => {
     exactPluginIds.push(pluginId);
     throw new Error('Selected provider failed');
-  };
-  ollamaService.generateChatResponse = async request => {
-    ollamaCalls += 1;
-    return {
-      model: request.model,
-      created_at: new Date().toISOString(),
-      message: { role: 'assistant', content: 'legacy Ollama fallback' },
-      done: true,
-    };
   };
 
   try {
@@ -899,19 +852,15 @@ test('an exact plugin failure cannot fall back to Ollama, while legacy routing r
       chatGenerationService.executeNonStreaming(executionOptions(exactTarget)),
       /Selected provider failed/
     );
-    assert.equal(ollamaCalls, 0);
     assert.deepEqual(exactPluginIds, [pluginBId]);
 
-    const legacyResult = await chatGenerationService.executeNonStreaming(
-      executionOptions(legacyTarget)
+    await assert.rejects(
+      chatGenerationService.executeNonStreaming(executionOptions(legacyTarget)),
+      /Selected provider failed/
     );
-    assert.equal(legacyResult.source, 'ollama');
-    assert.equal(legacyResult.assistantContent, 'legacy Ollama fallback');
-    assert.equal(ollamaCalls, 1);
     assert.deepEqual(exactPluginIds, [pluginBId, pluginAId]);
   } finally {
     pluginService.executePluginRequest = originalExecutePluginRequest;
-    ollamaService.generateChatResponse = originalGenerateChatResponse;
   }
 });
 
@@ -1157,11 +1106,6 @@ test('current-model title generation ignores conflicting request provider metada
         };
       },
     },
-    ollamaService: {
-      async generateResponse() {
-        throw new Error('Exact plugin title generation used Ollama');
-      },
-    },
     now: () => now,
     logger: { error() {} },
   });
@@ -1202,7 +1146,6 @@ test('an exact title provider failure uses only the local title fallback', async
     updatedAt: now,
   };
   const pluginIds = [];
-  let ollamaCalls = 0;
   const service = new TitleGenerationService({
     chatService: {
       getSession: () => session,
@@ -1242,12 +1185,6 @@ test('an exact title provider failure uses only the local title fallback', async
         throw new Error('Selected title provider failed');
       },
     },
-    ollamaService: {
-      async generateResponse() {
-        ollamaCalls += 1;
-        throw new Error('Exact title provider failure used Ollama');
-      },
-    },
     now: () => now,
     logger: { error() {} },
   });
@@ -1262,5 +1199,4 @@ test('an exact title provider failure uses only the local title fallback', async
   assert.equal(result.source, 'fallback');
   assert.equal(result.title, buildFallbackTitle(message));
   assert.deepEqual(pluginIds, [pluginBId]);
-  assert.equal(ollamaCalls, 0);
 });

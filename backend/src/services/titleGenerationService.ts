@@ -333,9 +333,8 @@ export class TitleGenerationService {
       };
     }
 
-    return {
-      title: buildFallbackTitle(message),
-      source: 'fallback',
-    };
+    throw new Error(
+      `No title provider available for model "${target.actualModelName}"`
+    );
   }
 }

@@ -40,9 +40,6 @@ const pluginStreamAdapter = await import(
 const openAIResponsesAdapter = await import(
   pathToFileURL(path.join(distRoot, 'utils', 'openAIResponsesAdapter.js')).href
 );
-const ollamaStreaming = await import(
-  pathToFileURL(path.join(distRoot, 'utils', 'ollamaStreaming.js')).href
-);
 const chatRequestService = await import(
   pathToFileURL(path.join(distRoot, 'services', 'chatRequestService.js')).href
 );
@@ -743,7 +740,7 @@ test('prepareGenerationMessages shares RAG replacement across Ollama and plugin 
 
   assert.equal(result.hasRelevantContext, true);
   assert.equal(result.shouldStreamPlugin, true);
-  assert.deepEqual(result.ollamaMessages, [
+  assert.deepEqual(result.wireMessages, [
     { role: 'system', content: 'persona prompt' },
     { role: 'user', content: 'first' },
     { role: 'assistant', content: 'answer' },
@@ -776,8 +773,8 @@ test('prepareGenerationMessages appends private current messages once', () => {
 
   assert.equal(normal.contextMessages.length, 3);
   assert.equal(normal.contextMessages[2].content, 'new prompt');
-  assert.equal(normal.ollamaMessages[2].content, 'context wrapped new prompt');
-  assert.deepEqual(normal.ollamaMessages[2].images, ['abc123']);
+  assert.equal(normal.wireMessages[2].content, 'context wrapped new prompt');
+  assert.deepEqual(normal.wireMessages[2].images, ['abc123']);
   assert.equal(normal.pluginMessages[2].content, 'context wrapped new prompt');
 
   const regenerated = chatRequestService.prepareGenerationMessages({
@@ -860,7 +857,7 @@ test('ChatRequestService prepares target, persona prompt, and shared messages', 
   ]);
   assert.equal(result.target.actualModelName, 'resolved-model');
   assert.equal(result.actualModelName, 'resolved-model');
-  assert.deepEqual(result.ollamaMessages, [
+  assert.deepEqual(result.wireMessages, [
     { role: 'system', content: 'Persona system' },
     { role: 'user', content: 'hello' },
   ]);
@@ -1618,113 +1615,6 @@ test('streamAnthropicResponse parses text and tool call events', async () => {
   ]);
 });
 
-test('streamOllamaChatResponse streams chunks, extracts stats, and completes once', async () => {
-  const sent = [];
-  const ws = {
-    send(payload) {
-      sent.push(JSON.parse(payload));
-    },
-  };
-  let completeCallbackCalls = 0;
-  const streamSource = {
-    async generateChatStreamResponse(_request, onChunk, onError, onComplete) {
-      onChunk({
-        model: 'llama-test',
-        created_at: '2026-06-21T00:00:00Z',
-        message: { role: 'assistant', content: '', thinking: 'Plan first.' },
-        done: false,
-      });
-      onChunk({
-        model: 'llama-test',
-        created_at: '2026-06-21T00:00:00Z',
-        message: { role: 'assistant', content: 'Hel' },
-        done: false,
-      });
-      onChunk({
-        model: 'llama-test',
-        created_at: '2026-06-21T00:00:01Z',
-        message: { role: 'assistant', content: 'lo' },
-        done: true,
-        total_duration: 100,
-        eval_count: 10,
-        eval_duration: 2_000_000_000,
-      });
-      completeCallbackCalls += 2;
-      onComplete();
-      onComplete();
-      onError(new Error('late error'));
-    },
-  };
-
-  const result = await ollamaStreaming.streamOllamaChatResponse({
-    ws,
-    request: {
-      model: 'llama-test',
-      messages: [{ role: 'user', content: 'hello' }],
-      stream: true,
-    },
-    streamSource,
-    messageId: 'assistant-1',
-  });
-
-  assert.equal(result.completed, true);
-  assert.equal(result.content, 'Hello');
-  assert.equal(result.thinking, 'Plan first.');
-  assert.equal(result.statistics.model, 'llama-test');
-  assert.equal(result.statistics.total_duration, 100);
-  assert.equal(result.statistics.tokens_per_second, 5);
-  assert.equal(completeCallbackCalls, 2);
-  assert.deepEqual(
-    sent.map(message => message.type),
-    ['assistant_chunk', 'assistant_chunk', 'assistant_chunk']
-  );
-  assert.deepEqual(sent[0].data, {
-    content: '',
-    total: '',
-    thinking: 'Plan first.',
-    thinkingTotal: 'Plan first.',
-    done: false,
-    messageId: 'assistant-1',
-  });
-  assert.deepEqual(sent[2].data, {
-    content: 'lo',
-    total: 'Hello',
-    thinkingTotal: 'Plan first.',
-    done: true,
-    messageId: 'assistant-1',
-  });
-});
-
-test('streamOllamaChatResponse sends errors without completing', async () => {
-  const sent = [];
-  const ws = {
-    send(payload) {
-      sent.push(JSON.parse(payload));
-    },
-  };
-  const streamSource = {
-    async generateChatStreamResponse(_request, _onChunk, onError) {
-      onError(new Error('model unavailable'));
-    },
-  };
-
-  const result = await ollamaStreaming.streamOllamaChatResponse({
-    ws,
-    request: {
-      model: 'llama-test',
-      messages: [{ role: 'user', content: 'hello' }],
-      stream: true,
-    },
-    streamSource,
-  });
-
-  assert.equal(result.completed, false);
-  assert.equal(result.content, '');
-  assert.equal(result.error.message, 'model unavailable');
-  assert.deepEqual(sent, [
-    { type: 'error', data: { error: 'model unavailable' } },
-  ]);
-});
 
 test('title generation resolves the current running model sentinel', async () => {
   const { service, session, calls } = createTitleGenerationHarness({
@@ -1782,10 +1672,8 @@ test('title generation uses plugin providers and stores sanitized titles', async
   });
 });
 
-test('title generation falls back to Ollama when no plugin is active', async () => {
-  const { service, updates, calls } = createTitleGenerationHarness({
-    ollamaResponse: "'Ollama Planning?'",
-  });
+test('title generation returns the local fallback when no plugin is active', async () => {
+  const { service, updates, calls } = createTitleGenerationHarness({});
 
   const result = await service.generateTitleForSession({
     sessionId: 'session-1',
@@ -1794,26 +1682,13 @@ test('title generation falls back to Ollama when no plugin is active', async () 
     userId: 'alice',
   });
 
-  assert.equal(result.title, 'Ollama Planning');
-  assert.equal(result.source, 'ollama');
+  assert.equal(result.title, 'Explain how to harden a Linux ...');
+  assert.equal(result.source, 'fallback');
   assert.equal(result.session.updatedAt, 3);
   assert.equal(calls.executePluginRequest.length, 0);
-  assert.equal(calls.generateResponse.length, 1);
-  assert.equal(calls.generateResponse[0].model, 'llama3.3:latest');
-  assert.equal(calls.generateResponse[0].think, false);
-  assert.equal(
-    Object.hasOwn(calls.generateResponse[0].options, 'think'),
-    false
-  );
-  assert.deepEqual(calls.generateResponse[0].options.stop, [
-    '\n',
-    '.',
-    '!',
-    '?',
-  ]);
-  assert.equal(calls.generateResponse[0].options.temperature, 0.3);
-  assert.equal(calls.generateResponse[0].options.num_predict, 20);
-  assert.deepEqual(updates[0].update, { title: 'Ollama Planning' });
+  assert.deepEqual(updates[0].update, {
+    title: 'Explain how to harden a Linux ...',
+  });
 });
 
 test('title generation falls back to the message when providers fail', async () => {
