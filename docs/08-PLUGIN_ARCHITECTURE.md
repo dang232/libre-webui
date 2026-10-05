@@ -9,7 +9,7 @@ keywords:
 
 # Plugins
 
-Alcore uses plugins to connect external AI providers and model capabilities alongside local Ollama.
+Alcore uses plugins to connect external AI providers and model capabilities.
 
 ## Plugin Types
 
@@ -379,16 +379,15 @@ making the request.
 
 ## Exact Provider Selection in Chat
 
-Model IDs are not globally unique. An Ollama model and multiple active plugins
+Model IDs are not globally unique. Multiple active plugins
 can all expose a model named `example-model`. Chat therefore stores the raw
 model ID together with optional provider identity:
 
-- `providerType: "ollama"` identifies the local or configured Ollama route;
 - `providerType: "plugin"` plus `providerId` identifies one exact plugin.
 
 Provider-qualified, URL-encoded values are used only as collision-safe keys in
 model selectors. Requests continue to send the provider's raw model ID.
-Duplicate Ollama/plugin and plugin/plugin model names remain separate choices,
+Duplicate plugin model names remain separate choices,
 and reopening a chat restores the exact choice that was saved.
 
 Explicit provider identity fails closed. If a selected plugin is deactivated,
@@ -401,10 +400,10 @@ Sessions and preferences created before provider identity was stored can have
 `providerType` and `providerId` unset or `null`. These legacy records retain
 their historical name-only routing for compatibility because the original
 provider cannot be reconstructed reliably. The selector shows these records as
-"provider not recorded" rather than guessing an Ollama or plugin label.
+"provider not recorded" rather than guessing a plugin label.
 Selecting a concrete provider entry records an exact provider for subsequent
 requests. New persona selections keep their `persona:<id>` UI identity and are
-recorded as Ollama-backed.
+recorded against their backing provider.
 
 ## Provider Settings and Inheritance
 
@@ -434,8 +433,7 @@ compatible URL to override it for that administrator's provider connection.
 
 ## Plugins in Work
 
-Work can use active `completion` and `chat` plugins in addition to Ollama and
-Ollama Cloud. A plugin-backed Work run is accepted only when:
+Work can use active `completion` and `chat` plugins. A plugin-backed Work run is accepted only when:
 
 - the plugin is active;
 - its model is present in the current user's discovered catalog or the
@@ -444,8 +442,7 @@ Ollama Cloud. A plugin-backed Work run is accepted only when:
 
 Work keeps the selected provider type and plugin ID with both the task and each
 run. Routing is therefore based on the exact saved provider, not only the model
-name. Activating a plugin whose model name matches an Ollama model cannot
-silently redirect an existing task.
+name.
 
 Work adapts tool calls through native OpenAI-compatible, Anthropic, and Gemini
 request/response formats. The selected model must support tool calling even if
@@ -462,7 +459,7 @@ policies before enabling a service for sensitive projects.
 
 ## Embeddings
 
-Embedding-capable plugins can appear in the document embedding settings. Alcore also detects likely Ollama embedding models such as `nomic-embed-text`, `bge`, `e5`, `gte`, and similar model names.
+Embedding-capable plugins can appear in the document embedding settings.
 
 When no embedding model is discovered, the UI falls back to `nomic-embed-text` as the local default candidate.
 

@@ -160,8 +160,7 @@ needed to recreate the matching deployment without placing them in plaintext
 archive metadata.
 
 The bundled team Compose and Helm application/external-worker pairs receive the same resolved
-`OLLAMA_BASE_URL`, `OLLAMA_TIMEOUT`, `OLLAMA_LONG_OPERATION_TIMEOUT`, and
-`OLLAMA_MAX_CONTEXT`. Provider calls for document embeddings, durable chats,
+provider timeouts for document embeddings, durable chats,
 and Work runs execute in the worker, so these values must not diverge between
 processes. Both server entrypoints parse the three numeric values as complete
 base-10 positive integers before creating local state or connecting to shared
@@ -305,15 +304,11 @@ proxy controls.
 
 If callback URLs are not set, Alcore builds defaults from `BASE_URL`.
 
-## Ollama
+## Default Model
 
-| Variable                        | Default                  | Purpose                                                                           |
-| ------------------------------- | ------------------------ | --------------------------------------------------------------------------------- |
-| `OLLAMA_BASE_URL`               | `http://localhost:11434` | Ollama API base URL                                                               |
-| `DEFAULT_MODEL`                 | _(empty)_                | Model new accounts start on until they pick one (`--model` on the CLI)            |
-| `OLLAMA_TIMEOUT`                | `300000`                 | Standard Ollama request timeout (1,000-3,600,000 ms)                              |
-| `OLLAMA_LONG_OPERATION_TIMEOUT` | `900000`                 | Long operation timeout (1,000-3,600,000 ms and not shorter than `OLLAMA_TIMEOUT`) |
-| `OLLAMA_MAX_CONTEXT`            | `32768`                  | Maximum model context adopted automatically (128-2,097,152 tokens)                |
+| Variable        | Default   | Purpose                                                                |
+| --------------- | --------- | ---------------------------------------------------------------------- |
+| `DEFAULT_MODEL` | _(empty)_ | Model new accounts start on until they pick one (`--model` on the CLI) |
 
 ## Web Search
 
@@ -406,7 +401,7 @@ filesystem and environment. Team mode executes durable chat jobs in an
 external worker, so it requires both `AGENT_CLI_MODELS_ENABLED=false` and
 `CODEX_OAUTH_MODELS_ENABLED=false`; startup rejects any other value rather
 than advertising a provider that may exist only on an application replica.
-Use Ollama or a provider plugin whose credentials and routing are stored in
+Use a provider plugin whose credentials and routing are stored in
 shared PostgreSQL or forwarded identically to every application and worker.
 
 On the Docker backend, a host workspace bind-mounts a real directory at
@@ -450,8 +445,7 @@ port rather than exposing this value directly on every host interface.
 
 Keep the runtime image pinned to a reviewed version or digest. Increasing
 concurrency or resource limits raises the amount of runtime capacity one or
-more autonomous runs can consume. `WORK_MAX_AGENT_ROUNDS` applies equally to
-Ollama and plugin-backed runs; there is no lower plugin-only clamp. The
+more autonomous runs can consume. `WORK_MAX_AGENT_ROUNDS` applies equally to all runs; there is no lower plugin-only clamp. The
 tool-call safety budget is `max(128, WORK_MAX_AGENT_ROUNDS × 8)`. When a run
 uses its round budget, Work requests a final no-tools handoff from the model
 and ends in the terminal `needs_input` state instead of returning a raw
@@ -579,7 +573,7 @@ Vite proxies the development origin to the backend on port 3001.
 | Variable                  | Purpose                                             |
 | ------------------------- | --------------------------------------------------- |
 | `CHANGELOG_AI`            | Set to `0` to disable AI-assisted changelog drafts  |
-| `CHANGELOG_AI_MODEL`      | Ollama model for release/changelog generation       |
+| `CHANGELOG_AI_MODEL`      | Model for release/changelog generation       |
 | `CHANGELOG_AI_TIMEOUT_MS` | Timeout for AI changelog generation in milliseconds |
 
 Example:
@@ -602,11 +596,6 @@ BASE_URL=https://librewebui.example
 JWT_SECRET=replace-with-a-long-random-secret
 ENCRYPTION_KEY=replace-with-64-hex-characters
 ENABLE_SIGNUP=false
-
-OLLAMA_BASE_URL=http://ollama:11434
-OLLAMA_TIMEOUT=300000
-OLLAMA_LONG_OPERATION_TIMEOUT=900000
-OLLAMA_MAX_CONTEXT=32768
 
 TURNSTILE_SITE_KEY=...
 TURNSTILE_SECRET_KEY=...
