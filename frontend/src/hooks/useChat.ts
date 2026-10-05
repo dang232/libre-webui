@@ -30,6 +30,7 @@ import { toolsApi, type ToolApprovalScope } from '@/utils/api/toolsApi';
 import websocketService from '@/utils/websocket';
 import { generateId, parseThinkingContent } from '@/utils';
 import { parseArtifacts } from '@/utils/artifactParser';
+import { resolveFinalStreamedContent } from '@/utils/streamContent';
 import {
   trackThinkingProgress,
   takeThinkingDuration,
@@ -594,11 +595,15 @@ export const useChat = (sessionId: string) => {
       setPendingToolApproval(null);
 
       if (completeData && messageId) {
-        // Ensure final update with the complete content
-        const finalContent =
-          streamingContentRef.current || completeData.content;
+        // Persisted text wins over the streaming buffer (see
+        // resolveFinalStreamedContent): a retried attempt would otherwise
+        // display all attempts concatenated.
+        const finalContent = resolveFinalStreamedContent(
+          completeData.content,
+          streamingContentRef.current
+        );
         const finalThinking =
-          streamingThinkingRef.current || completeData.thinking;
+          completeData.thinking || streamingThinkingRef.current;
 
         // Use updateMessageWithStatistics to include generation statistics
         // The backend times the thinking phase for Ollama streams; the local
