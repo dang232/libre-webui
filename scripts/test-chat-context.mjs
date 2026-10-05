@@ -1174,7 +1174,7 @@ test('plugin model routing requires an active plugin and the current user creden
             await assert.rejects(
               chatGenerationService.executeNonStreaming({
                 target: aliceTarget,
-                ollamaMessages: [
+                wireMessages: [
                   { role: 'user', content: 'Finish the answer.' },
                 ],
                 pluginMessages: [],
@@ -1214,7 +1214,7 @@ test('plugin model routing requires an active plugin and the current user creden
             });
             const completed = await chatGenerationService.executeNonStreaming({
               target: aliceTarget,
-              ollamaMessages: [
+              wireMessages: [
                 { role: 'user', content: 'Complete the answer.' },
               ],
               pluginMessages: [],

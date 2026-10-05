@@ -835,7 +835,7 @@ test('an exact plugin failure surfaces without fallback, and legacy routing fail
   try {
     const executionOptions = target => ({
       target,
-      ollamaMessages: [{ role: 'user', content: 'test' }],
+      wireMessages: [{ role: 'user', content: 'test' }],
       pluginMessages: [
         {
           id: 'fallback-message',

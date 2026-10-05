@@ -111,10 +111,10 @@ chatGenerationService.prepareGenerationTarget = async modelName => ({
   activePlugin: null,
   providerType: 'ollama',
 });
-chatGenerationService.executeNonStreaming = async ({ ollamaMessages }) => {
+chatGenerationService.executeNonStreaming = async ({ wireMessages }) => {
   summarizerCalls += 1;
-  lastSummarizerPrompt = ollamaMessages[0].content;
-  assert.match(ollamaMessages[0].content, /Conversation:/);
+  lastSummarizerPrompt = wireMessages[0].content;
+  assert.match(wireMessages[0].content, /Conversation:/);
   return {
     response: {},
     assistantContent: summaryText,

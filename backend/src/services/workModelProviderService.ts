@@ -1655,7 +1655,7 @@ function toAnthropicTools(tools: JsonObject[]): JsonObject[] {
   });
 }
 
-function parseToolArguments(value: unknown): JsonObject {
+export function parseToolArguments(value: unknown): JsonObject {
   return parseToolArgumentsWithStatus(value).arguments;
 }
 

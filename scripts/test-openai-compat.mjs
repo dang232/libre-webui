@@ -66,7 +66,6 @@ const [
   { authService },
   { default: openaiCompatRouter },
   { default: chatGenerationService },
-  { default: ollamaService },
   { default: pluginService },
   tokens,
 ] = await Promise.all([
@@ -74,7 +73,6 @@ const [
   distModule('services/authService.js'),
   distModule('routes/openaiCompat.js'),
   distModule('services/chatGenerationService.js'),
-  distModule('services/ollamaService.js'),
   distModule('services/pluginService.js'),
   distModule('services/apiTokenService.js'),
 ]);
@@ -112,16 +110,14 @@ const baseUrl = `http://127.0.0.1:${port}/v1`;
 
 const originalPrepare = chatGenerationService.prepareGenerationTarget;
 const originalExecute = chatGenerationService.executeNonStreaming;
-const originalGetModels = ollamaService.getModels;
 const originalGetActivePlugins = pluginService.getActivePlugins;
-const originalStreamResponse = ollamaService.generateChatStreamResponse;
+const originalPluginStream = pluginService.executePluginStreamRequest;
 
 after(async () => {
   chatGenerationService.prepareGenerationTarget = originalPrepare;
   chatGenerationService.executeNonStreaming = originalExecute;
-  ollamaService.getModels = originalGetModels;
   pluginService.getActivePlugins = originalGetActivePlugins;
-  ollamaService.generateChatStreamResponse = originalStreamResponse;
+  pluginService.executePluginStreamRequest = originalPluginStream;
   server.close();
   closeDatabase();
   await rm(dataDir, { recursive: true, force: true });
@@ -153,7 +149,6 @@ test('requests without credentials are rejected', async () => {
 });
 
 test('GET /v1/models lists models in the OpenAI list shape', async () => {
-  ollamaService.getModels = async () => [{ name: 'llama-local' }];
   pluginService.getActivePlugins = async () => [
     { id: 'acme', type: 'chat', model_map: ['acme-large'] },
     { id: 'painter', type: 'image', model_map: ['acme-paint'] },
@@ -164,10 +159,7 @@ test('GET /v1/models lists models in the OpenAI list shape', async () => {
   assert.equal(payload.object, 'list');
   assert.deepEqual(
     payload.data.map(entry => [entry.id, entry.object, entry.owned_by]),
-    [
-      ['llama-local', 'model', 'ollama'],
-      ['acme-large', 'model', 'acme'],
-    ]
+    [['acme-large', 'model', 'acme']]
   );
 });
 
@@ -251,19 +243,19 @@ test('a non-streaming completion returns the OpenAI response shape with usage', 
     total_tokens: 19,
   });
   // The multimodal text part flattened into plain content for the provider.
-  assert.equal(sawRequest.ollamaMessages[1].content, 'hello there');
+  assert.equal(sawRequest.wireMessages[1].content, 'hello there');
 });
 
 test('a streaming completion emits OpenAI chunk frames and [DONE]', async () => {
-  ollamaService.generateChatStreamResponse = async (
-    request,
-    onChunk,
-    _onError,
-    onComplete
-  ) => {
-    onChunk({ message: { role: 'assistant', content: 'Hel' } });
-    onChunk({ message: { role: 'assistant', content: 'lo' } });
-    onComplete();
+  chatGenerationService.prepareGenerationTarget = async model => ({
+    actualModelName: model,
+    mergedOptions: {},
+    activePlugin: { id: 'acme' },
+    pluginVariables: {},
+  });
+  pluginService.executePluginStreamRequest = async function* () {
+    yield { type: 'content', content: 'Hel' };
+    yield { type: 'content', content: 'lo' };
   };
   const response = await call('/chat/completions', {
     method: 'POST',

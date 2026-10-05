@@ -42,14 +42,12 @@ const [
   { default: chatService },
   { default: chatGenerationService },
   { default: pluginService },
-  { default: ollamaService },
 ] = await Promise.all([
   distModule('db.js'),
   distModule('services/titleGenerationService.js'),
   distModule('services/chatService.js'),
   distModule('services/chatGenerationService.js'),
   distModule('services/pluginService.js'),
-  distModule('services/ollamaService.js'),
 ]);
 
 // Constructed the same way the chat route builds it.
@@ -57,7 +55,6 @@ const titleGenerationService = new TitleGenerationService({
   chatService,
   chatGenerationService,
   pluginService,
-  ollamaService,
 });
 
 const originalPrepareGenerationTarget =

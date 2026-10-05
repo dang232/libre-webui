@@ -85,13 +85,16 @@ function fixture(overrides = {}) {
       },
       async prepareGenerationTarget(...args) {
         calls.targets.push(args);
+        const requested = args[3];
         return {
           actualModelName: args[0],
           mergedOptions: { think: true, num_predict: 4_096, temperature: 0.9 },
           activePlugin:
-            args[3]?.providerType === 'plugin'
-              ? { id: args[3].providerId }
-              : null,
+            requested?.providerType === 'plugin'
+              ? { id: requested.providerId }
+              : requested == null
+                ? { id: 'summary-provider' }
+                : null,
         };
       },
       extractPluginAssistantContent(response) {
@@ -217,23 +220,16 @@ test('thinking summaries use the selected provider and never mutate the chat', a
   assert.deepEqual(session, before);
 });
 
-test('Ollama summaries disable thinking and propagate cancellation and usage identity', async () => {
+test('removed provider selections reject instead of generating', async () => {
   const { service, calls } = fixture();
-  assert.deepEqual(
-    await service.summarizeForSession({
+  await assert.rejects(
+    service.summarizeForSession({
       ...baseRequest,
       providerType: 'ollama',
     }),
-    { summary: summaryText }
+    /No summary provider available/
   );
-  const [request, signal, usage] = calls.ollama[0];
-  assert.equal(request.model, 'task-model');
-  assert.equal(request.think, false);
-  assert.equal(request.options.think, undefined);
-  assert.equal(request.options.num_predict, 64);
-  assert.equal(request.stream, false);
-  assert.ok(signal instanceof AbortSignal);
-  assert.deepEqual(usage, { userId: 'summary-owner' });
+  assert.equal(calls.ollama.length, 0);
   assert.equal(calls.plugin.length, 0);
 });
 
@@ -277,8 +273,8 @@ test('empty output and failed providers never return the raw excerpt as a fallba
     'x'.repeat(141),
   ]) {
     const item = fixture();
-    item.dependencies.ollamaService.generateChatResponse = async () => ({
-      message: { content: output },
+    item.dependencies.pluginService.executePluginRequest = async () => ({
+      choices: [{ message: { role: 'assistant', content: output } }],
     });
     await assert.rejects(
       item.service.summarizeForSession(baseRequest),
@@ -342,7 +338,7 @@ test('summary cancellation aborts upstream and bounds adapters that ignore abort
   assert.equal(receivedSignal.aborted, true);
 
   const timeout = fixture({ timeoutMs: 10 });
-  timeout.dependencies.ollamaService.generateChatResponse = async () =>
+  timeout.dependencies.pluginService.executePluginRequest = async () =>
     new Promise(() => {});
   // Keep the test runner alive while the service's unref'ed timeout fires.
   const keepAlive = setTimeout(() => {}, 100);

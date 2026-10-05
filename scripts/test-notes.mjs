@@ -262,8 +262,8 @@ test('AI assist proposes without persisting and respects read access', async () 
     activePlugin: null,
     pluginVariables: {},
   });
-  chatGenerationService.executeNonStreaming = async ({ ollamaMessages }) => {
-    sawPrompt = ollamaMessages[0].content;
+  chatGenerationService.executeNonStreaming = async ({ wireMessages }) => {
+    sawPrompt = wireMessages[0].content;
     return { assistantContent: 'polished draft', assistantThinking: '' };
   };
   try {

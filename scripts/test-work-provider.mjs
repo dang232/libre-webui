@@ -102,13 +102,6 @@ const plugin = id => ({
 
 const streamingService = remotePlugin =>
   new WorkModelProviderService({
-    ollama: {
-      isHealthy: async () => false,
-      showModel: async () => ({ capabilities: [] }),
-      generateChatResponse: async () => {
-        throw new Error('Unexpected local request');
-      },
-    },
     plugins: {
       getActivePlugins: () => [remotePlugin],
       getPlugin: id => (id === remotePlugin.id ? remotePlugin : null),
@@ -134,13 +127,6 @@ test('auth-free local plugins are available without a fake API key', async () =>
   const requests = [];
   const usageEvents = [];
   const service = new WorkModelProviderService({
-    ollama: {
-      isHealthy: async () => false,
-      showModel: async () => ({ capabilities: [] }),
-      generateChatResponse: async () => {
-        throw new Error('Unexpected local request');
-      },
-    },
     plugins: {
       getActivePlugins: () => [localPlugin],
       getPlugin: id => (id === localPlugin.id ? localPlugin : null),
@@ -811,90 +797,6 @@ test('Work rejects HTTP-200 Gemini SSE error events', async () => {
     globalThis.fetch = originalFetch;
   }
 });
-
-test('Work aggregates Ollama thinking and content chunks', async () => {
-  let recordedUsageActor;
-  const service = new WorkModelProviderService({
-    ollama: {
-      isHealthy: async () => true,
-      showModel: async () => ({ capabilities: ['tools'] }),
-      generateChatResponse: async () => {
-        throw new Error('Buffered request was not expected');
-      },
-      generateChatStreamResponse: async (
-        request,
-        onChunk,
-        _onError,
-        onComplete,
-        _signal,
-        usage
-      ) => {
-        recordedUsageActor = usage?.userId;
-        onChunk({
-          model: request.model,
-          created_at: new Date().toISOString(),
-          message: {
-            role: 'assistant',
-            content: '',
-            thinking: 'Checking ',
-          },
-          done: false,
-        });
-        onChunk({
-          model: request.model,
-          created_at: new Date().toISOString(),
-          message: {
-            role: 'assistant',
-            content: 'Ready.',
-          },
-          done: true,
-          prompt_eval_count: 5,
-          eval_count: 3,
-        });
-        onComplete();
-      },
-    },
-    plugins: {
-      getActivePlugins: () => [],
-      getPlugin: () => null,
-      getApiKey: () => null,
-      getPluginVariables: () => ({}),
-    },
-    post: async () => {
-      throw new Error('Unexpected plugin request');
-    },
-  });
-  const content = [];
-  const reasoning = [];
-  const usage = [];
-  const response = await service.generateChatStreamResponse(
-    {
-      model: 'local-tools',
-      messages: [{ role: 'user', content: 'Check it.' }],
-      tools: [tool],
-      stream: true,
-    },
-    { providerType: 'ollama' },
-    'test-user',
-    {
-      onContent: chunk => content.push(chunk),
-      onReasoning: chunk => reasoning.push(chunk),
-      onUsage: value => usage.push(value),
-    }
-  );
-
-  assert.equal(content.join(''), 'Ready.');
-  assert.equal(reasoning.join(''), 'Checking ');
-  assert.equal(response.message.content, 'Ready.');
-  assert.equal(response.message.thinking, 'Checking ');
-  assert.equal(recordedUsageActor, 'test-user');
-  assert.deepEqual(usage.at(-1), {
-    promptTokens: 5,
-    completionTokens: 3,
-    totalTokens: 8,
-  });
-});
-
 test('Gemini Work payload and response preserve function calls', () => {
   const { payload } = buildPluginWorkPayload(
     plugin('gemini'),
@@ -984,31 +886,14 @@ test('Gemini Work payload and response preserve function calls', () => {
   assert.equal('tools' in noToolsPayload, false);
 });
 
-test('provider identity keeps colliding local and plugin model routes separate', async () => {
+test('provider identity keeps plugin routes separate and rejects removed providers', async () => {
   const collidingPlugin = {
     ...plugin('remote-collision'),
     active: true,
     model_map: ['shared-model'],
   };
-  const ollamaRequests = [];
   const pluginRequests = [];
   const service = new WorkModelProviderService({
-    ollama: {
-      isHealthy: async () => true,
-      showModel: async modelName => {
-        ollamaRequests.push({ operation: 'show', modelName });
-        return { capabilities: ['completion', 'tools'] };
-      },
-      generateChatResponse: async request => {
-        ollamaRequests.push({ operation: 'chat', modelName: request.model });
-        return {
-          model: request.model,
-          created_at: new Date().toISOString(),
-          message: { role: 'assistant', content: 'local route' },
-          done: true,
-        };
-      },
-    },
     plugins: {
       getActivePlugins: () => [collidingPlugin],
       getPlugin: id => (id === collidingPlugin.id ? collidingPlugin : null),
@@ -1039,21 +924,22 @@ test('provider identity keeps colliding local and plugin model routes separate',
     stream: false,
   };
 
-  await service.assertModelSupportsTools(
-    request.model,
-    { providerType: 'ollama' },
-    'test-user'
+  await assert.rejects(
+    service.assertModelSupportsTools(
+      request.model,
+      { providerType: 'ollama' },
+      'test-user'
+    ),
+    /removed/
   );
-  const local = await service.generateChatResponse(
-    request,
-    { providerType: 'ollama' },
-    'test-user'
+  await assert.rejects(
+    service.generateChatResponse(
+      request,
+      { providerType: 'ollama' },
+      'test-user'
+    ),
+    /removed/
   );
-  assert.equal(local.message.content, 'local route');
-  assert.deepEqual(ollamaRequests, [
-    { operation: 'show', modelName: 'shared-model' },
-    { operation: 'chat', modelName: 'shared-model' },
-  ]);
   assert.equal(pluginRequests.length, 0);
 
   await service.assertModelSupportsTools(
@@ -1068,7 +954,6 @@ test('provider identity keeps colliding local and plugin model routes separate',
   );
   assert.equal(remote.message.content, 'plugin route');
   assert.equal(pluginRequests.length, 1);
-  assert.equal(ollamaRequests.length, 2);
 
   await assert.rejects(
     service.generateChatResponse(
@@ -1082,70 +967,19 @@ test('provider identity keeps colliding local and plugin model routes separate',
   );
 });
 
-// Replayed Work history stores tool-call arguments as JSON strings (the
-// OpenAI-compatible shape). Ollama's native /api/chat rejects that with a
-// 400, so the ollama transport must convert them to objects on the way out.
-const { normalizeChatMessagesForOllama } = await import(
-  pathToFileURL(
-    path.join(repoRoot, 'backend', 'dist', 'services', 'ollamaService.js')
-  ).href
-);
 
-test('replayed tool calls reach native Ollama with object arguments', () => {
-  const messages = [
-    { role: 'user', content: 'create a duck with a tiny hat' },
-    {
-      role: 'assistant',
-      content: '',
-      providerMetadata: { internal: true },
-      tool_calls: [
-        {
-          id: 'call_oia64moe',
-          type: 'function',
-          function: { name: 'list_files', arguments: '{"path":""}' },
-        },
-      ],
-    },
-    {
-      role: 'tool',
-      content: '[]',
-      tool_name: 'list_files',
-      tool_call_id: 'call_oia64moe',
-    },
-    { role: 'user', content: 'add a gun to it' },
-  ];
-
-  const wire = normalizeChatMessagesForOllama(messages);
-
-  assert.deepEqual(wire[1].tool_calls[0].function.arguments, { path: '' });
-  assert.equal(wire[1].tool_calls[0].id, 'call_oia64moe');
-  assert.equal('providerMetadata' in wire[1], false);
-  // Untouched messages come through structurally identical.
-  assert.deepEqual(wire[0], messages[0]);
-  assert.deepEqual(wire[2], messages[2]);
-  // The input is not mutated.
-  assert.equal(typeof messages[1].tool_calls[0].function.arguments, 'string');
-});
-
-test('unparseable or non-object tool arguments degrade to an empty object', () => {
-  const wire = normalizeChatMessagesForOllama([
-    {
-      role: 'assistant',
-      content: '',
-      tool_calls: [
-        { function: { name: 'a', arguments: '{"broken":' } },
-        { function: { name: 'b', arguments: '"just a string"' } },
-        { function: { name: 'c', arguments: '' } },
-        { function: { name: 'd', arguments: { already: 'object' } } },
-      ],
-    },
-  ]);
-
-  const calls = wire[0].tool_calls;
-  assert.deepEqual(calls[0].function.arguments, {});
-  assert.deepEqual(calls[1].function.arguments, {});
-  assert.deepEqual(calls[2].function.arguments, {});
-  assert.deepEqual(calls[3].function.arguments, { already: 'object' });
+test('unparseable or non-object tool arguments degrade to an empty object', async () => {
+  const { parseToolArguments } = await import(
+    pathToFileURL(
+      path.join(repoRoot, 'backend', 'dist', 'services', 'workModelProviderService.js')
+    ).href
+  );
+  assert.deepEqual(parseToolArguments('{"broken":'), {});
+  assert.deepEqual(parseToolArguments('"just a string"'), {});
+  assert.deepEqual(parseToolArguments(''), {});
+  assert.deepEqual(parseToolArguments({ already: 'object' }), {
+    already: 'object',
+  });
 });
 
 test('Work screenshots reach every provider payload as image parts', () => {
