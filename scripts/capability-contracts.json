@@ -79,28 +79,27 @@
         "registration": {
           "kind": "express-mount",
           "file": "backend/src/index.ts",
-          "mount": "/api/ollama",
-          "router": "ollamaRoutes"
+          "mount": "/api/documents",
+          "router": "documentRoutes"
         },
         "routes": [
           {
             "kind": "express-route",
-            "file": "backend/src/routes/ollama.ts",
+            "file": "backend/src/routes/documents.ts",
             "method": "post",
-            "path": "/embed",
+            "path": "/upload",
             "operationPatterns": [
-              "embeddingService\\.generateEmbeddings\\(",
-              "req\\.user\\?\\.userId"
+              "documentService\\.queueDocumentProcessing\\("
             ]
           }
         ],
         "clientCalls": [
           {
             "kind": "http",
-            "file": "frontend/src/utils/api/modelApi.ts",
+            "file": "frontend/src/utils/api/documentsApi.ts",
             "callee": "api",
             "method": "post",
-            "path": "/ollama/embed"
+            "path": "/documents/upload"
           }
         ],
         "discoveryOnly": [
@@ -127,15 +126,12 @@
         ]
       },
       "ui": {
-        "file": "frontend/src/components/ModelManager.tsx",
-        "action": "handleGenerateEmbeddings",
-        "operationPatterns": [
-          "ollamaApi\\.generateEmbeddings\\(",
-          "setEmbeddingsResult\\(embeddings\\)"
-        ],
+        "file": "frontend/src/components/MediaUpload.tsx",
+        "action": "handleDocumentFile",
+        "operationPatterns": ["documentsApi\\.uploadDocument\\("],
         "trigger": {
-          "file": "frontend/src/components/model-manager/ModelManagerModals.tsx",
-          "patterns": ["onClick=\\{handleGenerateEmbeddings\\}"]
+          "file": "frontend/src/components/MediaUpload.tsx",
+          "patterns": ["handleFileSelect"]
         }
       },
       "documentation": [
@@ -143,7 +139,7 @@
           "file": "docs/09-RAG_FEATURE.md",
           "patterns": [
             "Hybrid search\\s+\\| Embeddings enabled in Settings",
-            "You can use local Ollama embedding models or embedding-capable provider plugins\\."
+            "embedding-capable provider plugin"
           ]
         }
       ],

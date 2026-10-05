@@ -19,41 +19,27 @@ image: /img/social/02.png
 
 # Working with AI Models
 
-Alcore can use local Ollama models and plugin-backed cloud models in the same workspace. The Model Manager shows installed Ollama models, running models, live Ollama Library results, Hugging Face GGUF entries, and Ollama Cloud entries where available.
+Alcore runs chats, titles, summaries, and Work on provider models: plugin-backed chat and completion providers, agent CLI models, and personas. There is no bundled local inference — every model comes from a configured provider.
 
 ## Choosing a First Model
 
-Use these as starting points, then switch based on your hardware and task:
+Start from your provider's model list, then switch based on your task:
 
-| Model              | Good for                               | Typical fit                 |
-| ------------------ | -------------------------------------- | --------------------------- |
-| `gemma4:12b`       | Fast general chat                      | 16 GB RAM or 8 GB VRAM      |
-| `qwen3.8:27b`      | General chat, coding, multilingual use | 32 GB RAM or 16-24 GB VRAM  |
-| `gemma4:26b`       | Strong chat with MoE efficiency        | 24 GB RAM or 16 GB VRAM     |
-| `gemma4:31b`       | Highest-quality dense local chat       | 32 GB RAM or 24 GB VRAM     |
-| `nomic-embed-text` | Document embeddings                    | Small local embedding model |
+| Need              | Direction                                |
+| ----------------- | ---------------------------------------- |
+| Fast general chat | Your provider's small current chat model |
+| Coding            | Provider coding models                   |
+| Reasoning         | Provider reasoning models                |
+| Vision            | Provider multimodal models               |
+| Document search   | An embedding-capable provider model      |
+| Text-to-speech    | TTS plugins                              |
 
-Large models such as 30B, 70B, and MoE models can be excellent, but they need much more memory. If you are not sure, start small and move up after the model is working smoothly.
+Provider model names change frequently. In Alcore, use the provider's model discovery where available, or paste the exact model ID from the provider dashboard.
 
-## Model Manager
-
-Open **Settings → Models** to:
-
-- Pull models from Ollama by name.
-- Search the live Ollama Library instead of relying on a static list.
-- View installed and running models.
-- Update every installed Ollama model in one operation.
-- Stop or unload running models.
-- Delete models you no longer need.
-- Pull Hugging Face GGUF models through Ollama when compatible.
-- Pull Ollama Cloud models from the cloud filter.
-
-For Ollama Cloud results, the UI normalizes cloud model names before pulling. If a cloud model requires the `:cloud` or `-cloud` suffix, Alcore applies that for you from the cloud model flow.
-
-## Model Catalog and Visibility
+## Model Catalog
 
 The **Model Catalog** in **Settings → Defaults** lists every chat model you can
-pick, local and provider-backed alike, with a provider badge and a search box.
+pick, with a provider badge and a search box.
 Choose the default model above the catalog to set what new chats start with.
 
 Administrators can star a model to pin it to the top of the catalog and the
@@ -62,13 +48,14 @@ first; removing a star restores the model's manual or provider position.
 
 Administrators get one more control per row: an eye toggle that hides a model from everyone else's model pickers. Hiding trims long catalogs down to the models a server actually wants people using — it is a listing refinement, not an authorization gate, so treat it as curation rather than a security boundary. Administrators always see the full list, with hidden models marked.
 
-## Local vs Cloud Models
+## Provider Models
 
-| Mode             | Strengths                                              | Tradeoffs                                                     |
-| ---------------- | ------------------------------------------------------ | ------------------------------------------------------------- |
-| Local Ollama     | Private, offline after download, predictable cost      | Depends on your CPU/GPU/RAM                                   |
-| Ollama Cloud     | Familiar Ollama workflow without local hardware limits | Requires cloud access and network                             |
-| Provider plugins | Access to managed models from multiple providers       | API keys, provider pricing, and provider privacy policy apply |
+| Source           | Notes                                                         |
+| ---------------- | ------------------------------------------------------------- |
+| Plugin providers | Chat and completion plugins with credentials configured       |
+| Agent CLI models | Chat-only models that run on the host, outside Work sandboxes |
+| Personas         | Reusable system prompts pinned to a backing provider model    |                                                               |
+| Provider plugins | Access to managed models from multiple providers              | API keys, provider pricing, and provider privacy policy apply |
 
 You can keep local models for private work and enable provider plugins for tasks that need larger hosted models.
 
@@ -99,8 +86,6 @@ substitute another provider.
 
 Work needs a chat model that can call tools. It can use:
 
-- An installed Ollama model that advertises the `tools` capability.
-- An Ollama Cloud model available through the configured Ollama endpoint.
 - A model listed by an active chat or completion plugin with credentials
   configured for the current administrator.
 
@@ -111,7 +96,6 @@ cannot capture an identically named Ollama model. If the selected model or
 provider rejects tool calling, the run fails instead of silently switching to
 another provider.
 
-Local Ollama keeps model requests on the configured Ollama infrastructure.
 With a remote model, the configured provider receives the Work system prompt,
 conversation, tool definitions, and tool results. Tool results can include
 source text, command output, or directory listings requested by the model.
@@ -123,30 +107,18 @@ provider's pricing, retention, and training policies before using sensitive
 projects. Alcore shows a remote-provider notice in Work with a per-user
 dismiss control.
 
-## Hardware Guide
-
-| System                              | Practical model range | Notes                           |
-| ----------------------------------- | --------------------- | ------------------------------- |
-| CPU only, 8-16 GB RAM               | 1B-4B                 | Good for light chat and testing |
-| 8 GB VRAM                           | 4B-8B quantized       | Comfortable starting point      |
-| 12-16 GB VRAM                       | 8B-14B quantized      | Good daily driver range         |
-| 24 GB VRAM                          | 14B-32B quantized     | Strong local workstation        |
-| 48 GB+ VRAM or large unified memory | 32B-70B quantized     | Large model experimentation     |
-
-Quantized models use less memory. Q4 quantizations are usually the practical default; Q8 uses more memory for better quality.
-
 ## Task-Based Recommendations
 
-| Task            | Model direction                                                     |
-| --------------- | ------------------------------------------------------------------- |
-| Fast chat       | `gemma4:12b` and other small current models                         |
-| Coding          | Qwen Coder, Codestral, provider coding models                       |
-| Reasoning       | Larger Qwen and Gemma models, provider reasoning models             |
-| Vision          | Multimodal models such as LLaVA, Qwen VL, or provider vision models |
-| Document search | `nomic-embed-text` or another embedding model                       |
-| Text-to-speech  | TTS plugins such as Qwen3-TTS or Kyutai TTS                         |
+| Task            | Model direction           |
+| --------------- | ------------------------- |
+| Fast chat       | Small current models      |
+| Coding          | Provider coding models    |
+| Reasoning       | Provider reasoning models |
+| Vision          | Provider vision models    |
+| Document search | An embedding model        |
+| Text-to-speech  | TTS plugins               |
 
-Provider model names change frequently. In Alcore, use the provider’s model discovery where available, or paste the exact model ID from the provider dashboard.
+Provider model names change frequently. In Alcore, use the provider's model discovery where available, or paste the exact model ID from the provider dashboard.
 
 ## Prompting and Settings
 
@@ -161,26 +133,21 @@ Provider model names change frequently. In Alcore, use the provider’s model di
 
 ## Troubleshooting
 
-**Pull fails**
+**No models listed**
 
-- Confirm Ollama is running: `ollama list`.
-- Try the same pull in a terminal to see Ollama’s raw error.
-- Check disk space before pulling large models.
-- If you are using the Model Manager cloud filter, let Alcore handle cloud suffixes.
+- Connect a provider under Settings → Plugins with valid credentials.
+- Confirm the plugin is active and its models are synced.
+- An administrator may have hidden models from the catalog.
 
 **Responses are slow**
 
-- Try a smaller model or a lower quantization.
-- Check `ollama ps` to see what is loaded.
-- Close other GPU-heavy apps.
+- Try a smaller or faster provider model.
 - Reduce context length.
 
-**Out of memory**
+**Provider errors**
 
-- Move from Q8 to Q4.
-- Use an 8B model instead of a 14B model.
-- Keep only the model you need loaded.
-- On Docker, confirm the container can reach the GPU or the host Ollama instance.
+- Check the provider's status page and your API key quota.
+- Re-sync provider models after changing credentials.
 
 ## Related Docs
 

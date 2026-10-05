@@ -394,7 +394,7 @@
       "documentation": [
         {
           "file": "docs/02-WORKING_WITH_MODELS.md",
-          "patterns": ["## Model Manager"]
+          "patterns": ["## Model Catalog"]
         },
         {
           "file": "docs/35-PROVIDER_CONNECTIONS.md",
@@ -406,12 +406,6 @@
         }
       ],
       "focusedTests": [
-        {
-          "file": "frontend/e2e/model-manager.spec.ts",
-          "runner": "test:e2e",
-          "name": "cloud library pulls append the Ollama cloud suffix automatically",
-          "behaviorPatterns": ["/api/ollama/pull/stream", "gpt-oss:cloud"]
-        },
         {
           "file": "scripts/test-provider-detection-admin.mjs",
           "runner": "test:package",
@@ -453,168 +447,6 @@
         }
       ],
       "backendRoutes": [
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "GET",
-          "path": "/settings"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "PUT",
-          "path": "/settings"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "GET",
-          "path": "/health"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "GET",
-          "path": "/models"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "GET",
-          "path": "/models/access"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "PUT",
-          "path": "/models/access"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "POST",
-          "path": "/models/pull-all"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "GET",
-          "path": "/models/pull-all/stream"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "POST",
-          "path": "/models/pull"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "GET",
-          "path": "/pull/stream"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "DELETE",
-          "path": "/models"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "GET",
-          "path": "/models/show"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "GET",
-          "path": "/models/:modelName/defaults"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "POST",
-          "path": "/models"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "POST",
-          "path": "/models/copy"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "POST",
-          "path": "/models/push"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "POST",
-          "path": "/embed"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "GET",
-          "path": "/running"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "POST",
-          "path": "/models/unload"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "POST",
-          "path": "/models/unload-all"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "GET",
-          "path": "/version"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "POST",
-          "path": "/chat"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "POST",
-          "path": "/chat/stream"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "HEAD",
-          "path": "/blobs/:digest"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "POST",
-          "path": "/blobs/:digest"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "POST",
-          "path": "/embeddings"
-        },
-        {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
-          "method": "GET",
-          "path": "/library"
-        },
         {
           "file": "backend/src/routes/plugins.ts",
           "mount": "/api/plugins",
@@ -778,16 +610,28 @@
           "path": "/:id/sync-models"
         },
         {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
+          "file": "backend/src/routes/models.ts",
+          "mount": "/api/models",
           "method": "GET",
           "path": "/models/visibility"
         },
         {
-          "file": "backend/src/routes/ollama.ts",
-          "mount": "/api/ollama",
+          "file": "backend/src/routes/models.ts",
+          "mount": "/api/models",
           "method": "PUT",
           "path": "/models/visibility"
+        },
+        {
+          "file": "backend/src/routes/models.ts",
+          "mount": "/api/models",
+          "method": "GET",
+          "path": "/models/access"
+        },
+        {
+          "file": "backend/src/routes/models.ts",
+          "mount": "/api/models",
+          "method": "PUT",
+          "path": "/models/access"
         }
       ],
       "contractSurfaces": {

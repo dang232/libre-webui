@@ -49,10 +49,10 @@ Files are processed by the backend and stored with the rest of the application d
 
 Alcore supports two retrieval modes:
 
-| Mode            | When used                      | Notes                                                                       |
-| --------------- | ------------------------------ | --------------------------------------------------------------------------- |
-| Keyword search  | Always available               | BM25 ranking; no embedding model required                                   |
-| Hybrid search   | Embeddings enabled in Settings | Fuses the vector ranking with BM25 through reciprocal-rank fusion           |
+| Mode           | When used                      | Notes                                                             |
+| -------------- | ------------------------------ | ----------------------------------------------------------------- |
+| Keyword search | Always available               | BM25 ranking; no embedding model required                         |
+| Hybrid search  | Embeddings enabled in Settings | Fuses the vector ranking with BM25 through reciprocal-rank fusion |
 
 With embeddings enabled, every query runs both rankings and merges them:
 an exact term match can outrank a semantically similar but vaguer chunk,
@@ -76,13 +76,9 @@ anything.
 
 ## Enable Semantic Search
 
-Install an embedding model:
-
-```bash
-ollama pull nomic-embed-text
-```
-
-Then open Settings and enable embeddings. You can use local Ollama embedding models or embedding-capable provider plugins.
+Configure an embedding-capable provider plugin, then open Settings and
+enable embeddings. Document text is embedded through the configured
+embedding provider when files are ingested.
 
 Default embedding settings:
 
