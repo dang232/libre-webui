@@ -18,9 +18,9 @@
 import { createHash } from 'crypto';
 import type {
   GenerationOptions,
-  OllamaChatMessage,
-  OllamaChatRequest,
-  OllamaChatResponse,
+  ProviderChatMessage,
+  ProviderChatRequest,
+  ProviderChatResponse,
   Plugin,
   PluginApiMode,
 } from '../types/index.js';
@@ -262,11 +262,11 @@ export class WorkModelProviderService {
   }
 
   async generateChatResponse(
-    request: OllamaChatRequest,
+    request: ProviderChatRequest,
     provider: WorkProviderSelection,
     userId: string,
     signal?: AbortSignal
-  ): Promise<OllamaChatResponse> {
+  ): Promise<ProviderChatResponse> {
     if (provider.providerType === 'ollama') {
       throw new WorkModelProviderError(
         'The Ollama provider has been removed.',
@@ -283,12 +283,12 @@ export class WorkModelProviderService {
   }
 
   async generateChatStreamResponse(
-    request: OllamaChatRequest,
+    request: ProviderChatRequest,
     provider: WorkProviderSelection,
     userId: string,
     observer: WorkModelStreamObserver,
     signal?: AbortSignal
-  ): Promise<OllamaChatResponse> {
+  ): Promise<ProviderChatResponse> {
     const streamRequest = { ...request, stream: true };
     if (provider.providerType === 'ollama') {
       throw new WorkModelProviderError(
@@ -377,10 +377,10 @@ export class WorkModelProviderService {
 
   private async generatePluginResponse(
     plugin: Plugin,
-    request: OllamaChatRequest,
+    request: ProviderChatRequest,
     userId: string,
     signal?: AbortSignal
-  ): Promise<OllamaChatResponse> {
+  ): Promise<ProviderChatResponse> {
     validatePluginModel(request.model);
     if (plugin.id === CODEX_OAUTH_PLUGIN_ID) {
       await codexOAuthService.ensureFreshToken(signal);
@@ -478,11 +478,11 @@ export class WorkModelProviderService {
 
   private async generatePluginStream(
     plugin: Plugin,
-    request: OllamaChatRequest,
+    request: ProviderChatRequest,
     userId: string,
     observer: WorkModelStreamObserver,
     signal?: AbortSignal
-  ): Promise<OllamaChatResponse> {
+  ): Promise<ProviderChatResponse> {
     validatePluginModel(request.model);
     if (plugin.id === CODEX_OAUTH_PLUGIN_ID) {
       await codexOAuthService.ensureFreshToken(signal);
@@ -628,7 +628,7 @@ export class WorkModelProviderService {
     model: string,
     status: PluginUsageStatus,
     startedAt: number,
-    response?: OllamaChatResponse,
+    response?: ProviderChatResponse,
     reportedTokens?: ProviderTokenUsage
   ): void {
     const promptTokens = response?.prompt_eval_count;
@@ -658,7 +658,7 @@ export class WorkModelProviderService {
 
 export function buildPluginWorkPayload(
   plugin: Plugin,
-  request: OllamaChatRequest,
+  request: ProviderChatRequest,
   variables: PluginVariables = {},
   apiMode: PluginApiMode = resolvePluginApiConfig(plugin, variables).apiMode,
   providerStateScope?: string
@@ -733,7 +733,7 @@ export function normalizePluginWorkResponse(
   apiMode: PluginApiMode = plugin.api_mode ||
     inferPluginApiMode(plugin.endpoint),
   providerStateScope?: string
-): OllamaChatResponse {
+): ProviderChatResponse {
   if (plugin.id === 'anthropic') {
     return normalizeAnthropicWorkResponse(response, model);
   }
@@ -751,7 +751,7 @@ export function normalizePluginWorkResponse(
 }
 
 export function toOpenAIWorkMessages(
-  messages: OllamaChatMessage[]
+  messages: ProviderChatMessage[]
 ): JsonObject[] {
   let pendingCalls: Array<{ id: string; name: string }> = [];
   const output: JsonObject[] = [];
@@ -832,7 +832,7 @@ export function toOpenAIWorkMessages(
 }
 
 export function toOpenAIResponsesWorkInput(
-  messages: OllamaChatMessage[],
+  messages: ProviderChatMessage[],
   expectedStateScope?: string
 ): JsonObject[] {
   const input: JsonObject[] = [];
@@ -968,7 +968,7 @@ export function toOpenAIResponsesWorkInput(
 
 function buildAnthropicWorkPayload(
   model: string,
-  messages: OllamaChatMessage[],
+  messages: ProviderChatMessage[],
   tools: JsonObject[],
   maxTokens?: number,
   stream = false
@@ -1071,7 +1071,7 @@ function buildAnthropicWorkPayload(
 }
 
 function buildGeminiWorkPayload(
-  messages: OllamaChatMessage[],
+  messages: ProviderChatMessage[],
   tools: JsonObject[],
   params: ReturnType<typeof resolvePluginChatParameters>
 ): JsonObject {
@@ -1185,7 +1185,7 @@ function workImageBase64(image: string): { mediaType: string; data: string } {
 function normalizeOpenAIWorkResponse(
   response: JsonObject,
   model: string
-): OllamaChatResponse {
+): ProviderChatResponse {
   const choices = Array.isArray(response.choices) ? response.choices : [];
   const choice = asObject(choices[0]);
   const message = asObject(choice?.message);
@@ -1217,7 +1217,7 @@ function normalizeOpenAIResponsesWorkResponse(
   response: JsonObject,
   model: string,
   providerStateScope?: string
-): OllamaChatResponse {
+): ProviderChatResponse {
   const normalized = normalizeOpenAIResponsesResponse(
     response,
     model,
@@ -1273,7 +1273,7 @@ function normalizeOpenAIResponsesWorkResponse(
 function normalizeAnthropicWorkResponse(
   response: JsonObject,
   model: string
-): OllamaChatResponse {
+): ProviderChatResponse {
   const blocks = Array.isArray(response.content) ? response.content : [];
   const text: string[] = [];
   const calls: JsonObject[] = [];
@@ -1309,7 +1309,7 @@ function normalizeAnthropicWorkResponse(
 function normalizeGeminiWorkResponse(
   response: JsonObject,
   model: string
-): OllamaChatResponse {
+): ProviderChatResponse {
   const candidates = Array.isArray(response.candidates)
     ? response.candidates
     : [];
@@ -1351,7 +1351,7 @@ function workResponse(
     providerMetadata?: JsonObject;
     doneReason?: string;
   } = {}
-): OllamaChatResponse {
+): ProviderChatResponse {
   return {
     model,
     created_at: new Date().toISOString(),
@@ -1373,7 +1373,7 @@ async function collectPluginWorkStream(
   chunks: AsyncIterable<PluginStreamChunk>,
   model: string,
   observer: WorkModelStreamObserver
-): Promise<OllamaChatResponse> {
+): Promise<ProviderChatResponse> {
   let content = '';
   let reasoning = '';
   let usage: PluginStreamUsage = {};

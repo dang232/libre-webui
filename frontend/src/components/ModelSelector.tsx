@@ -37,7 +37,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { cn } from '@/utils';
-import type { OllamaModel, Persona } from '@/types';
+import type { ChatModel, Persona } from '@/types';
 import { getPersonaAvatarSrc } from '@/utils/personaAvatar';
 import { modelVisibilityKey } from '@/utils/modelVisibility';
 import { useChatStore } from '@/store/chatStore';
@@ -130,7 +130,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
     }))
     .filter(group => group.models.length > 0);
 
-  const getModelValue = (model: OllamaModel): string =>
+  const getModelValue = (model: ChatModel): string =>
     getModelValueOverride?.(model) ?? model.name;
 
   const modelMetadata = useChatStore(state => state.modelMetadata);
@@ -147,7 +147,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
    * Those fallbacks only know the raw `persona:<uuid>` value, which must
    * never reach the trigger label.
    */
-  const personaDisplayName = (model: OllamaModel): string | undefined => {
+  const personaDisplayName = (model: ChatModel): string | undefined => {
     if (!model.name.startsWith('persona:')) return undefined;
     const id = model.name.slice('persona:'.length);
     let decoded = id;
@@ -167,7 +167,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
   };
 
   /** The persona record behind a `persona:<id>` entry, if it is loaded. */
-  const personaForModel = (model: OllamaModel): Persona | undefined => {
+  const personaForModel = (model: ChatModel): Persona | undefined => {
     if (!model.name.startsWith('persona:')) return undefined;
     const id = model.name.slice('persona:'.length);
     let decoded = id;
@@ -249,7 +249,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
     onModelChange(syntheticEvent);
   };
 
-  const getModelIcon = (model: OllamaModel) => {
+  const getModelIcon = (model: ChatModel) => {
     // An administrator-set picture stands in for the generic provider icon.
     const picture = modelMetadata[modelVisibilityKey(model)]?.avatar;
     if (picture && !model.isPersona) {
@@ -287,7 +287,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
     return <Bot className='h-4 w-4 text-gray-500 dark:text-dark-600' />;
   };
 
-  const getModelLabel = (model: OllamaModel) => {
+  const getModelLabel = (model: ChatModel) => {
     if (getModelLabelOverride) {
       return getModelLabelOverride(model);
     }
@@ -320,7 +320,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
       : model.name;
   };
 
-  const getModelSubLabel = (model: OllamaModel) => {
+  const getModelSubLabel = (model: ChatModel) => {
     if (model.isLegacySelection) {
       return model.isUnavailable
         ? t('modelSelector.providerUnavailable', 'provider unavailable')

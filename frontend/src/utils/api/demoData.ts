@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import type { ChatSession, OllamaModel, UserPreferences } from '@/types';
+import type { ChatSession, ChatModel, UserPreferences } from '@/types';
 
-export const DEMO_MODELS: OllamaModel[] = [
+export const DEMO_MODELS: ChatModel[] = [
   {
     name: 'llama3.2:3b',
     size: 2048000000,

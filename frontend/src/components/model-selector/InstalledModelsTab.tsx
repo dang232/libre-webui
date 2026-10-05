@@ -18,7 +18,7 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Cpu, ImageIcon, Plus } from 'lucide-react';
-import type { OllamaModel } from '@/types';
+import type { ChatModel } from '@/types';
 import { cn } from '@/utils';
 import type { ModelGroup } from './types';
 
@@ -26,10 +26,10 @@ interface InstalledModelsTabProps {
   filteredGroups: ModelGroup[];
   selectedModel: string;
   showImageGen: boolean;
-  getModelValue: (model: OllamaModel) => string;
-  getModelIcon: (model: OllamaModel) => ReactNode;
-  getModelLabel: (model: OllamaModel) => string;
-  getModelSubLabel: (model: OllamaModel) => string | null;
+  getModelValue: (model: ChatModel) => string;
+  getModelIcon: (model: ChatModel) => ReactNode;
+  getModelLabel: (model: ChatModel) => string;
+  getModelSubLabel: (model: ChatModel) => string | null;
   onModelSelect: (modelName: string) => void;
   onOpenGallery: () => void;
 }

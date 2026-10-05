@@ -1546,7 +1546,7 @@ const runChannelMention: DurableJobHandler = async context => {
         : undefined,
       context.signal
     );
-    const ollamaMessages = pluginMessages.map(message => ({
+    const wireMessages = pluginMessages.map(message => ({
       role: message.role,
       content: message.content,
     }));
@@ -1578,7 +1578,7 @@ const runChannelMention: DurableJobHandler = async context => {
         signal: context.signal,
         startRound: createToolRoundStarter({
           target,
-          ollamaMessages,
+          wireMessages,
           pluginMessages,
           userId: context.actorUserId,
           ollamaState: {},
@@ -1595,7 +1595,7 @@ const runChannelMention: DurableJobHandler = async context => {
     } else {
       const result = await chatGenerationService.executeNonStreaming({
         target,
-        ollamaMessages,
+        wireMessages,
         pluginMessages,
         userId: context.actorUserId,
         signal: context.signal,
@@ -1874,7 +1874,7 @@ const runEvaluation: DurableJobHandler = async context => {
         ];
         const result = await chatGenerationService.executeNonStreaming({
           target,
-          ollamaMessages: messages.map(message => ({
+          wireMessages: messages.map(message => ({
             role: message.role,
             content: message.content,
           })),

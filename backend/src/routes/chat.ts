@@ -660,7 +660,7 @@ router.post(
 
       const generationResult = await chatGenerationService.executeNonStreaming({
         target: preparedGeneration.target,
-        ollamaMessages: preparedGeneration.ollamaMessages,
+        wireMessages: preparedGeneration.wireMessages,
         pluginMessages: preparedGeneration.pluginMessages,
         userId,
         pluginFallbackPolicy: 'allow',
@@ -1478,7 +1478,7 @@ router.post(
         actualModelName,
         mergedOptions,
         activePlugin,
-        ollamaMessages,
+        wireMessages,
         pluginMessages,
         shouldStreamPlugin,
       } = preparedGeneration;
@@ -1613,7 +1613,7 @@ router.post(
           const generationResult =
             await chatGenerationService.executeNonStreaming({
               target,
-              ollamaMessages,
+              wireMessages,
               pluginMessages,
               userId,
               pluginFallbackPolicy: 'allow',

@@ -16,7 +16,7 @@
  */
 
 import { chatModelSelectionFromKey } from '@/utils/chatModelSelection';
-import type { OllamaModel } from '@/types';
+import type { ChatModel } from '@/types';
 
 export const MAX_COMPARE_MODELS = 3;
 
@@ -27,7 +27,7 @@ export interface CompareTarget {
 }
 
 export const compareTargetsFromKeys = (
-  models: OllamaModel[],
+  models: ChatModel[],
   keys: string[]
 ): CompareTarget[] => {
   const targets: CompareTarget[] = [];

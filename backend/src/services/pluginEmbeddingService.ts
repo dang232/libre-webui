@@ -22,7 +22,7 @@ import {
 import {
   EmbeddingConfig,
   EmbeddingModel,
-  OllamaEmbeddingsResponse,
+  ProviderEmbeddingsResponse,
   Plugin,
 } from '../types/index.js';
 import {
@@ -162,7 +162,7 @@ export class PluginEmbeddingService {
     pluginId?: string,
     userId?: string,
     signal?: AbortSignal
-  ): Promise<OllamaEmbeddingsResponse> {
+  ): Promise<ProviderEmbeddingsResponse> {
     validatePluginModel(model);
 
     const plugin = await this.getPluginForEmbedding(model, pluginId, userId);
@@ -227,7 +227,7 @@ export class PluginEmbeddingService {
         body && typeof body === 'object' ? body : {}
       ) as EmbeddingProviderPayload;
 
-      let result: OllamaEmbeddingsResponse;
+      let result: ProviderEmbeddingsResponse;
       if (
         Array.isArray(body) &&
         body.every(value => typeof value === 'number')

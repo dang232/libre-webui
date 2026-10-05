@@ -17,13 +17,13 @@
 
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import type { OllamaModel } from '@/types';
+import type { ChatModel } from '@/types';
 import {
   chatModelOptionKey,
   chatModelSelectionFromKey,
   chatModelSelectionKeyForModels,
   findChatModelForSelection,
-  isAvailableOllamaModel,
+  isAvailableDirectModel,
   isChatModelSelectionAvailable,
   withUnavailableChatModel,
 } from './chatModelSelection';
@@ -31,8 +31,8 @@ import {
 const model = (
   name: string,
   pluginId?: string,
-  extra: Partial<OllamaModel> = {}
-): OllamaModel => ({
+  extra: Partial<ChatModel> = {}
+): ChatModel => ({
   name,
   model: name,
   size: 0,
@@ -131,7 +131,7 @@ test('resolves explicit providers exactly and keeps legacy records visibly unqua
   );
 });
 
-test('keeps persona UI keys stable and records new persona selections as Ollama-backed', () => {
+test('keeps persona UI keys stable and records new persona selections with the legacy provider key', () => {
   const persona = model('persona:research/team', undefined, {
     isPersona: true,
     personaName: 'Research',
@@ -223,23 +223,23 @@ test('allows legacy routing only while a concrete raw-name match exists', () => 
   assert.equal(isChatModelSelectionAvailable(syntheticOnly, selection), false);
 });
 
-test('only concrete available Ollama entries count as installed models', () => {
-  assert.equal(isAvailableOllamaModel(model('installed')), true);
-  assert.equal(isAvailableOllamaModel(model('plugin-only', 'plugin-a')), false);
+test('only concrete available direct entries count as installed models', () => {
+  assert.equal(isAvailableDirectModel(model('installed')), true);
+  assert.equal(isAvailableDirectModel(model('plugin-only', 'plugin-a')), false);
   assert.equal(
-    isAvailableOllamaModel(
+    isAvailableDirectModel(
       model('legacy', undefined, { isLegacySelection: true })
     ),
     false
   );
   assert.equal(
-    isAvailableOllamaModel(
+    isAvailableDirectModel(
       model('removed', undefined, { isUnavailable: true })
     ),
     false
   );
   assert.equal(
-    isAvailableOllamaModel(
+    isAvailableDirectModel(
       model('persona:one', undefined, { isPersona: true })
     ),
     false

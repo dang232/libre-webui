@@ -20,7 +20,7 @@ import {
   GenerationOptions,
   ChatSession,
   ChatMessage,
-  OllamaModel,
+  ChatModel,
   GenerationStatistics,
   Persona,
   ChatProviderType,
@@ -132,7 +132,7 @@ interface ChatState {
   truncateMessagesFrom: (sessionId: string, messageId: string) => void;
 
   // Models
-  models: OllamaModel[];
+  models: ChatModel[];
   /**
    * Model keys an administrator hid from the pickers
    * (`${pluginId}/${modelName}` for plugin models). Non-administrators never
@@ -749,7 +749,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
       logger.debug('Loading models from API...');
 
-      let allModels: OllamaModel[] = [];
+      let allModels: ChatModel[] = [];
 
       // Load plugin models
       try {
@@ -790,7 +790,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         const { agentCliApi } = await import('@/utils/api');
         const agentResponse = await agentCliApi.getModels();
         if (agentResponse.success && agentResponse.data) {
-          const agentModels: OllamaModel[] = agentResponse.data.map(agent => ({
+          const agentModels: ChatModel[] = agentResponse.data.map(agent => ({
             name: agent.id,
             model: agent.id,
             size: 0,

@@ -26,7 +26,7 @@
  * turns older than the rolling window cost nothing.
  */
 
-import type { ChatMessage, GenerationOptions, OllamaModel } from '@/types';
+import type { ChatMessage, GenerationOptions, ChatModel } from '@/types';
 
 /** The server's estimate, kept in step with `estimateChatTokens`. */
 const MESSAGE_FRAMING_TOKENS = 4;
@@ -96,7 +96,7 @@ export function resolveContextBudget({
   modelDefaults,
   globalOptions,
 }: {
-  model?: Pick<OllamaModel, 'isPlugin' | 'contextLength'> & {
+  model?: Pick<ChatModel, 'isPlugin' | 'contextLength'> & {
     isAgent?: boolean;
   };
   sessionOptions?: Partial<GenerationOptions>;

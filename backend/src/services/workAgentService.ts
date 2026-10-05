@@ -67,7 +67,7 @@ import workTaskService, {
   WorkNotFoundError,
   deriveStatusBlurb,
 } from './workTaskService.js';
-import { OllamaChatMessage, OllamaChatResponse } from '../types/index.js';
+import { ProviderChatMessage, ProviderChatResponse } from '../types/index.js';
 import {
   WorkMessage,
   WorkRun,
@@ -1194,7 +1194,7 @@ export class WorkAgentService {
         let roundInputTokens = 0;
         let roundOutputTokens = 0;
         const roundStartedAt = Date.now();
-        let response: OllamaChatResponse;
+        let response: ProviderChatResponse;
         try {
           await this.assertStableProviderRouting(
             run,
@@ -1777,7 +1777,7 @@ export class WorkAgentService {
       let handoffInputTokens = 0;
       let handoffOutputTokens = 0;
       const handoffStartedAt = Date.now();
-      let handoffResponse: OllamaChatResponse;
+      let handoffResponse: ProviderChatResponse;
       try {
         try {
           await this.assertStableProviderRouting(
@@ -2156,7 +2156,7 @@ export class WorkAgentService {
     peerAgents: readonly { name: string; status?: string }[] = [],
     delegatedBy?: WorkDelegationSource,
     connectedTools: readonly string[] = []
-  ): Promise<OllamaChatMessage[]> {
+  ): Promise<ProviderChatMessage[]> {
     const persisted = restorePersistedWorkContext(
       await workTaskService.getRecentModelContextMessages(task.id, 30),
       provider,
@@ -3163,15 +3163,15 @@ export function restorePersistedWorkContext(
   messages: WorkMessage[],
   provider: Pick<WorkRun, 'providerType' | 'providerId' | 'model'>,
   expectedStateScope?: string
-): OllamaChatMessage[] {
-  const restored: OllamaChatMessage[] = [];
+): ProviderChatMessage[] {
+  const restored: ProviderChatMessage[] = [];
   let pendingGroup:
     | {
-        assistant: OllamaChatMessage;
-        fallback?: OllamaChatMessage;
+        assistant: ProviderChatMessage;
+        fallback?: ProviderChatMessage;
         calls: Array<{ id: string; name: string }>;
         expectedCallIds: Set<string>;
-        results: OllamaChatMessage[];
+        results: ProviderChatMessage[];
         resultIds: Set<string>;
         invalid: boolean;
       }
@@ -3261,7 +3261,7 @@ export function restorePersistedWorkContext(
         continue;
       }
 
-      const assistant: OllamaChatMessage = {
+      const assistant: ProviderChatMessage = {
         role: 'assistant',
         content: message.content,
         ...(responseCalls.length > 0
@@ -3411,7 +3411,7 @@ function objectValue(value: unknown): Record<string, unknown> | undefined {
     : undefined;
 }
 
-function assertCompleteProviderResponse(response: OllamaChatResponse): void {
+function assertCompleteProviderResponse(response: ProviderChatResponse): void {
   if (!response.done_reason?.startsWith('incomplete:')) return;
 
   const reason = response.done_reason.slice('incomplete:'.length) || 'unknown';
@@ -3423,7 +3423,7 @@ function assertCompleteProviderResponse(response: OllamaChatResponse): void {
 }
 
 export function normalizeToolCalls(
-  response: OllamaChatResponse
+  response: ProviderChatResponse
 ): WorkToolCall[] {
   const raw = response.message?.tool_calls;
   if (!Array.isArray(raw)) return [];
@@ -3806,7 +3806,7 @@ function summarizeToolCall(call: WorkToolCall): Record<string, unknown> {
 const WORK_LIVE_SCREENSHOT_MESSAGE_LIMIT = 2;
 
 function retainRecentWorkImages(
-  messages: OllamaChatMessage[],
+  messages: ProviderChatMessage[],
   limit = WORK_LIVE_SCREENSHOT_MESSAGE_LIMIT
 ): void {
   let retained = 0;

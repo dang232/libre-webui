@@ -654,7 +654,7 @@ export function registerWebSocketServer(
             actualModelName,
             mergedOptions,
             activePlugin,
-            ollamaMessages,
+            wireMessages,
             pluginMessages,
             shouldStreamPlugin,
           } = preparedGeneration;
@@ -806,7 +806,7 @@ export function registerWebSocketServer(
                 const generationResult =
                   await chatGenerationService.executeNonStreaming({
                     target: generationTarget,
-                    ollamaMessages,
+                    wireMessages,
                     pluginMessages,
                     userId,
                     pluginFallbackPolicy: 'disabled',

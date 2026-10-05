@@ -33,7 +33,7 @@ import pluginService from '../services/pluginService.js';
 import type {
   ChatMessage,
   GenerationOptions,
-  OllamaChatMessage,
+  ProviderChatMessage,
 } from '../types/index.js';
 import { createLogger } from '../utils/logger.js';
 
@@ -218,7 +218,7 @@ router.post(
         return;
       }
 
-      const ollamaMessages: OllamaChatMessage[] = messages.map(message => ({
+      const wireMessages: ProviderChatMessage[] = messages.map(message => ({
         role: message.role,
         content: message.content,
       }));
@@ -236,7 +236,7 @@ router.post(
       if (!stream) {
         const result = await chatGenerationService.executeNonStreaming({
           target,
-          ollamaMessages,
+          wireMessages,
           pluginMessages,
           userId,
           signal: controller.signal,

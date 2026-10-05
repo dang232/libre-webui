@@ -28,10 +28,10 @@ import { cn } from '@/utils';
 import { Button } from '@/components/ui';
 import { chatModelOptionKey } from '@/utils/chatModelSelection';
 import { MAX_COMPARE_MODELS } from './compareTargets';
-import type { OllamaModel } from '@/types';
+import type { ChatModel } from '@/types';
 
 interface ComposerCompareMenuProps {
-  models: OllamaModel[];
+  models: ChatModel[];
   /** The session's own model key, excluded from the extra-model list. */
   currentModelKey: string;
   selectedKeys: string[];

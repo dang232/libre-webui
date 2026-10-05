@@ -342,7 +342,7 @@ export const planCompaction = async (
     );
     const result = await chatGenerationService.executeNonStreaming({
       target,
-      ollamaMessages: [{ role: 'user', content: prompt }],
+      wireMessages: [{ role: 'user', content: prompt }],
       pluginMessages: [
         {
           id: `compaction-${session.id}`,

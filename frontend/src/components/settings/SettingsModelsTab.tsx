@@ -18,7 +18,7 @@
 import type { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Select, Textarea } from '@/components/ui';
-import type { ChatProviderType, OllamaModel, UserPreferences } from '@/types';
+import type { ChatProviderType, ChatModel, UserPreferences } from '@/types';
 import { SettingsToggle } from './SettingsToggle';
 import {
   chatModelOptionKey,
@@ -35,7 +35,7 @@ interface SelectOption {
 }
 
 interface SettingsModelsTabProps {
-  models: OllamaModel[];
+  models: ChatModel[];
   selectedModel: string;
   selectedProviderType: ChatProviderType | null;
   selectedProviderId: string | null;

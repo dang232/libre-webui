@@ -210,7 +210,7 @@ router.post(
         ];
         const result = await chatGenerationService.executeNonStreaming({
           target,
-          ollamaMessages: messages.map(message => ({
+          wireMessages: messages.map(message => ({
             role: message.role,
             content: message.content,
           })),

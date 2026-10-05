@@ -30,8 +30,8 @@ import type {
   ChatProviderSelection,
   ChatProviderType,
   GenerationOptions,
-  OllamaChatMessage,
-  OllamaChatResponse,
+  ProviderChatMessage,
+  ProviderChatResponse,
   Plugin,
   PluginResponse,
 } from '../types/index.js';
@@ -54,7 +54,7 @@ export type PluginFallbackPolicy = 'allow' | 'disabled';
 
 export interface NonStreamingExecutionOptions {
   target: GenerationTarget;
-  ollamaMessages: OllamaChatMessage[];
+  wireMessages: ProviderChatMessage[];
   pluginMessages: ChatMessage[];
   userId: string;
   pluginFallbackPolicy?: PluginFallbackPolicy;
@@ -62,7 +62,7 @@ export interface NonStreamingExecutionOptions {
 }
 
 export interface NonStreamingExecutionResult {
-  response: OllamaChatResponse;
+  response: ProviderChatResponse;
   assistantContent: string;
   assistantThinking?: string;
   source: 'plugin';
@@ -197,7 +197,7 @@ class ChatGenerationService {
       /** First token to last token: the actual generation. */
       generationNs?: number;
     }
-  ): OllamaChatResponse {
+  ): ProviderChatResponse {
     return {
       model,
       created_at: new Date().toISOString(),
@@ -228,7 +228,7 @@ class ChatGenerationService {
       ...(timings?.generationNs !== undefined
         ? { eval_duration: timings.generationNs }
         : {}),
-    } as OllamaChatResponse;
+    } as ProviderChatResponse;
   }
 
   async executeNonStreaming({

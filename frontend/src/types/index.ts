@@ -370,7 +370,7 @@ export interface ChatModelSelection {
   providerId?: string | null;
 }
 
-export interface OllamaModel {
+export interface ChatModel {
   name: string;
   model?: string;
   size: number;
@@ -646,16 +646,6 @@ export interface EmbeddingPayload {
 
 export interface EmbeddingResponse {
   embeddings: number[][];
-}
-
-export interface RunningModel {
-  name: string;
-  model: string;
-  size: number;
-  digest: string;
-  details?: Record<string, unknown>;
-  expires_at?: string;
-  size_vram?: number;
 }
 
 // Plugin system types

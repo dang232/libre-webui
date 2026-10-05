@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import type { OllamaModel } from '@/types';
+import type { ChatModel } from '@/types';
 
 /**
  * The key an entry uses in the administrator-managed hidden-model set: an
  * Ollama model is keyed by its plain name, a plugin model by
  * `${pluginId}/${modelName}`. Must match the backend's convention.
  */
-export function modelVisibilityKey(model: OllamaModel): string {
+export function modelVisibilityKey(model: ChatModel): string {
   return model.isPlugin && model.pluginId
     ? `${model.pluginId}/${model.name}`
     : model.name;
@@ -34,10 +34,10 @@ export function modelVisibilityKey(model: OllamaModel): string {
  * newly discovered keeps its provider position at the end.
  */
 export function orderModelsByCatalogPriority(
-  models: readonly OllamaModel[],
+  models: readonly ChatModel[],
   order: readonly string[],
   starred: readonly string[]
-): OllamaModel[] {
+): ChatModel[] {
   const priority = new Map<string, number>();
   for (const key of [...starred, ...order]) {
     if (!priority.has(key)) priority.set(key, priority.size);

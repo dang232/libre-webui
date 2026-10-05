@@ -47,7 +47,7 @@ import {
 } from '@/utils/modelVisibility';
 import { getErrorMessage } from '@/store/chatStoreHelpers';
 import { cn } from '@/utils';
-import type { OllamaModel } from '@/types';
+import type { ChatModel } from '@/types';
 
 type CatalogFilter = 'all' | 'local' | 'provider' | 'hidden';
 
@@ -57,7 +57,7 @@ type DropEdge = 'before' | 'after';
 /** Pictures are stored inline, so keep them small enough to serve cheaply. */
 const MAX_AVATAR_BYTES = 192_000;
 
-const providerLabelFor = (model: OllamaModel, fallback: string): string =>
+const providerLabelFor = (model: ChatModel, fallback: string): string =>
   model.isPlugin && model.pluginId ? model.pluginId : fallback;
 
 export const SettingsModelCatalog: React.FC = () => {

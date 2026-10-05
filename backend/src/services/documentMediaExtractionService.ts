@@ -89,7 +89,7 @@ const ocrOneWithVisionModel = async (
   const base64 = image.data.toString('base64');
   const result = await chatGenerationService.executeNonStreaming({
     target,
-    ollamaMessages: [{ role: 'user', content: OCR_PROMPT, images: [base64] }],
+    wireMessages: [{ role: 'user', content: OCR_PROMPT, images: [base64] }],
     pluginMessages: [
       {
         id: `ocr-${Date.now()}`,

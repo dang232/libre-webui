@@ -23,7 +23,7 @@ import type {
   Automation,
   AutomationTarget,
   AutomationTrigger,
-  OllamaModel,
+  ChatModel,
 } from '@/types';
 import type { AutomationPayload } from '@/utils/api/automationsApi';
 import { automationsApi } from '@/utils/api/automationsApi';
@@ -45,7 +45,7 @@ interface AutomationModalProps {
    * that task with the task's own model and runtime.
    */
   fixedWorkTaskId?: string;
-  models: OllamaModel[];
+  models: ChatModel[];
   saving: boolean;
   onClose: () => void;
   onSave: (payload: AutomationPayload) => void;
@@ -57,7 +57,7 @@ const labelClass =
   'mb-1 block text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-dark-500';
 
 /** `providerType[:providerId]` for a picked model; undefined means Auto. */
-const providerOf = (model: OllamaModel): string => {
+const providerOf = (model: ChatModel): string => {
   if (model.isPlugin && model.pluginId) return `plugin:${model.pluginId}`;
   if (model.isAgent && model.agentId) return `agent:${model.agentId}`;
   return 'ollama';

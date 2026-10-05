@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import type { ChatMessage, OllamaChatMessage } from '../types/index.js';
+import type { ChatMessage, ProviderChatMessage } from '../types/index.js';
 import {
   boundedOpenAIResponsesOutputItems,
   OPENAI_RESPONSES_OUTPUT_ITEMS_METADATA_KEY,
@@ -160,13 +160,13 @@ export function stripDataUrlPrefix(image: string): string {
 export function toOllamaMessages(
   messages: readonly ChatContextMessage[],
   options: { latestUserContent?: string; stripImageDataUrls?: boolean } = {}
-): OllamaChatMessage[] {
+): ProviderChatMessage[] {
   const latestUserMessageIndex = options.latestUserContent
     ? getLatestUserMessageIndex(messages)
     : -1;
 
   return messages.map((message, index) => {
-    const ollamaMessage: OllamaChatMessage = {
+    const ollamaMessage: ProviderChatMessage = {
       role: message.role,
       content:
         index === latestUserMessageIndex && options.latestUserContent
@@ -190,9 +190,9 @@ export function toOllamaMessages(
 }
 
 export function withSystemPrompt(
-  messages: readonly OllamaChatMessage[],
+  messages: readonly ProviderChatMessage[],
   systemPrompt?: string
-): OllamaChatMessage[] {
+): ProviderChatMessage[] {
   const prompt = systemPrompt?.trim();
 
   if (!prompt) {

@@ -30,7 +30,7 @@ import type {
   ChatProviderSelection,
   ChatSession,
   GenerationOptions,
-  OllamaChatMessage,
+  ProviderChatMessage,
   Persona,
   UserPreferences,
 } from '../types/index.js';
@@ -91,7 +91,7 @@ export interface PreparedGenerationMessages {
   enhancedContent: string;
   hasRelevantContext: boolean;
   contextMessages: ChatContextMessage[];
-  ollamaMessages: OllamaChatMessage[];
+  wireMessages: ProviderChatMessage[];
   pluginMessages: ChatMessage[];
   shouldStreamPlugin: boolean;
 }
@@ -181,7 +181,7 @@ export function prepareGenerationMessages({
   const usesRelevantContext =
     hasRelevantContext ?? finalEnhancedContent !== content;
 
-  const ollamaMessages = withSystemPrompt(
+  const wireMessages = withSystemPrompt(
     toOllamaMessages(contextMessages, {
       latestUserContent: usesRelevantContext ? finalEnhancedContent : undefined,
     }),
@@ -205,7 +205,7 @@ export function prepareGenerationMessages({
     enhancedContent: finalEnhancedContent,
     hasRelevantContext: usesRelevantContext,
     contextMessages,
-    ollamaMessages,
+    wireMessages,
     pluginMessages,
     shouldStreamPlugin: shouldStream,
   };

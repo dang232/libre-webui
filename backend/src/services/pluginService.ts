@@ -22,7 +22,7 @@ import sanitize from 'sanitize-filename';
 import {
   AudioGenConfig,
   EmbeddingModel,
-  OllamaEmbeddingsResponse,
+  ProviderEmbeddingsResponse,
   Plugin,
   PluginStatus,
   PluginResponse,
@@ -3040,7 +3040,7 @@ export class PluginService {
     pluginId?: string,
     userId?: string,
     signal?: AbortSignal
-  ): Promise<OllamaEmbeddingsResponse> {
+  ): Promise<ProviderEmbeddingsResponse> {
     return this.embeddingService.executeEmbeddingRequest(
       model,
       input,

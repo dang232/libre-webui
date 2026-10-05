@@ -19,12 +19,12 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AvatarUpload } from '@/components/AvatarUpload';
 import { PersonaBackgroundUpload } from '@/components/PersonaBackgroundUpload';
-import type { OllamaModel, PersonaParameters } from '@/types';
+import type { ChatModel, PersonaParameters } from '@/types';
 import type { ExtendedFormData } from './types';
 
 interface PersonaBasicTabProps {
   formData: ExtendedFormData;
-  availableModels: OllamaModel[];
+  availableModels: ChatModel[];
   onFieldChange: <K extends keyof ExtendedFormData>(
     key: K,
     value: ExtendedFormData[K]
@@ -50,7 +50,7 @@ export function PersonaBasicTab({
     [availableModels]
   );
   const providerGroups = useMemo(() => {
-    const groups = new Map<string, OllamaModel[]>();
+    const groups = new Map<string, ChatModel[]>();
     for (const model of availableModels) {
       if (!model.isPlugin) continue;
       const provider = model.pluginName || model.pluginId || 'Provider';

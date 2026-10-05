@@ -25,8 +25,8 @@
 
 import type {
   ChatMessage,
-  OllamaChatMessage,
-  OllamaChatResponse,
+  ProviderChatMessage,
+  ProviderChatResponse,
   ProviderToolSpec,
 } from '../types/index.js';
 import type { PluginStreamChunk } from '../utils/pluginStreamAdapter.js';
@@ -36,11 +36,11 @@ import pluginService from './pluginService.js';
 export interface ToolRoundStarterOptions {
   target: GenerationTarget;
   /** The turn's base context, in each transport's native message shape. */
-  ollamaMessages: OllamaChatMessage[];
+  wireMessages: ProviderChatMessage[];
   pluginMessages: ChatMessage[];
   userId: string;
   /** Receives the Ollama bridge's terminal chunk, when that path runs. */
-  ollamaState: { finalChunk?: OllamaChatResponse };
+  ollamaState: { finalChunk?: ProviderChatResponse };
   signal?: AbortSignal;
 }
 

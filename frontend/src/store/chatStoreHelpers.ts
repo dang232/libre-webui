@@ -18,7 +18,7 @@
 import type {
   ChatMessage,
   ChatSession,
-  OllamaModel,
+  ChatModel,
   Persona,
   Plugin,
 } from '@/types';
@@ -289,7 +289,7 @@ export function buildPersonasById(personas: Persona[]) {
   );
 }
 
-export function buildPersonaModels(personas: Persona[]): OllamaModel[] {
+export function buildPersonaModels(personas: Persona[]): ChatModel[] {
   return personas.map(persona => ({
     name: `persona:${persona.id}`,
     model: persona.model,
@@ -312,7 +312,7 @@ export function buildPersonaModels(personas: Persona[]): OllamaModel[] {
   }));
 }
 
-export function buildPluginModels(plugins: PluginModelSource[]): OllamaModel[] {
+export function buildPluginModels(plugins: PluginModelSource[]): ChatModel[] {
   return plugins
     .filter(
       plugin =>

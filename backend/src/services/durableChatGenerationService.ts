@@ -12,7 +12,7 @@ import type { DurableJobExecutionContext } from '../platform/jobs/embeddedDurabl
 import { DurableJobExecutionError } from '../platform/jobs/durableJobTypes.js';
 import { CHAT_GENERATE_JOB_TYPE } from '../platform/jobs/domainJobContracts.js';
 import type { GenerationOptions } from '../types/index.js';
-import type { OllamaChatResponse } from '../types/index.js';
+import type { ProviderChatResponse } from '../types/index.js';
 import {
   buildChatDocumentContext,
   EMPTY_CHAT_DOCUMENT_CONTEXT,
@@ -177,7 +177,7 @@ const completionAlreadyPublished = async (
 };
 
 interface GeneratedAssistant {
-  response: OllamaChatResponse;
+  response: ProviderChatResponse;
   content: string;
   thinking?: string;
 }
@@ -324,7 +324,7 @@ const streamGeneratedAssistant = async (
           signal: context.signal,
           startRound: createToolRoundStarter({
             target: prepared.target,
-            ollamaMessages: prepared.ollamaMessages,
+            wireMessages: prepared.wireMessages,
             pluginMessages: prepared.pluginMessages,
             userId: input.actorUserId,
             ollamaState: {},
@@ -422,7 +422,7 @@ const streamGeneratedAssistant = async (
   if (prepared.target.activePlugin) {
     const generated = await chatGenerationService.executeNonStreaming({
       target: prepared.target,
-      ollamaMessages: prepared.ollamaMessages,
+      wireMessages: prepared.wireMessages,
       pluginMessages: prepared.pluginMessages,
       userId: input.actorUserId,
       pluginFallbackPolicy: 'allow',
@@ -442,7 +442,7 @@ const streamGeneratedAssistant = async (
   }
 
   if (toolContext) {
-    const bridgeState: { finalChunk?: OllamaChatResponse } = {};
+    const bridgeState: { finalChunk?: ProviderChatResponse } = {};
     const loop = runPluginToolLoop({
       actor: toolContext.actor,
       sessionId: input.sessionId,
@@ -453,7 +453,7 @@ const streamGeneratedAssistant = async (
       signal: context.signal,
       startRound: createToolRoundStarter({
         target: prepared.target,
-        ollamaMessages: prepared.ollamaMessages,
+        wireMessages: prepared.wireMessages,
         pluginMessages: prepared.pluginMessages,
         userId: input.actorUserId,
         ollamaState: bridgeState,

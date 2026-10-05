@@ -18,7 +18,7 @@
 import {
   GenerationOptions,
   GenerationStatistics,
-  OllamaChatResponse,
+  ProviderChatResponse,
 } from '../types/index.js';
 
 /**
@@ -38,7 +38,7 @@ export const mergeGenerationOptions = (
  * Extracts generation statistics from Ollama response
  */
 export const extractStatistics = (
-  response: OllamaChatResponse
+  response: ProviderChatResponse
 ): GenerationStatistics => {
   const stats: GenerationStatistics = {
     ...(response.total_duration !== undefined

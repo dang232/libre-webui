@@ -16,13 +16,13 @@
  */
 
 import type { ChangeEvent, ReactNode, Ref } from 'react';
-import type { OllamaModel, Persona } from '@/types';
+import type { ChatModel, Persona } from '@/types';
 
 export interface ModelGroup {
   type: 'legacy' | 'unavailable' | 'personas' | 'agents' | 'ollama' | 'plugins';
   label: string;
   icon: ReactNode;
-  models: OllamaModel[];
+  models: ChatModel[];
   color: string;
 }
 
@@ -36,7 +36,7 @@ export interface LibraryModel {
 }
 
 export interface ModelSelectorProps {
-  models: OllamaModel[];
+  models: ChatModel[];
   selectedModel: string;
   onModelChange: (event: ChangeEvent<HTMLSelectElement>) => void;
   currentPersona?: Persona | null;
@@ -45,9 +45,9 @@ export interface ModelSelectorProps {
   compact?: boolean;
   showImageGen?: boolean;
   onModelsRefresh?: () => void;
-  getModelValue?: (model: OllamaModel) => string;
-  getModelLabel?: (model: OllamaModel) => string;
-  getModelTitle?: (model: OllamaModel) => string;
+  getModelValue?: (model: ChatModel) => string;
+  getModelLabel?: (model: ChatModel) => string;
+  getModelTitle?: (model: ChatModel) => string;
   triggerRef?: Ref<HTMLButtonElement>;
   triggerTestId?: string;
   selectTestId?: string;

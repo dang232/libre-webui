@@ -29,9 +29,9 @@
 
 import type {
   ChatMessage,
-  OllamaChatMessage,
-  OllamaChatRequest,
-  OllamaChatResponse,
+  ProviderChatMessage,
+  ProviderChatRequest,
+  ProviderChatResponse,
   ProviderToolSpec,
 } from '../types/index.js';
 import type {
@@ -65,10 +65,10 @@ import {
 import { randomUUID } from 'node:crypto';
 
 /** Minimal stream-source contract for the tool-loop bridge. */
-type OllamaChatStreamGenerator = {
+type ProviderChatStreamGenerator = {
   generateChatStreamResponse(
-    request: OllamaChatRequest,
-    onChunk: (chunk: OllamaChatResponse) => void,
+    request: ProviderChatRequest,
+    onChunk: (chunk: ProviderChatResponse) => void,
     onError: (error: Error) => void,
     onComplete: () => void,
     signal?: AbortSignal,
@@ -541,7 +541,7 @@ export function runPluginToolLoop(options: PluginToolLoopOptions): {
 /** Convert the loop's in-turn wire messages into Ollama's native shapes. */
 export const toOllamaExtensionMessages = (
   extension: readonly ChatMessage[]
-): OllamaChatMessage[] =>
+): ProviderChatMessage[] =>
   extension.map(message => {
     if (message.role === 'tool') {
       return {
@@ -551,7 +551,7 @@ export const toOllamaExtensionMessages = (
       };
     }
     return {
-      role: message.role as OllamaChatMessage['role'],
+      role: message.role as ProviderChatMessage['role'],
       content: message.content,
       ...(message.tool_calls?.length
         ? {
@@ -572,9 +572,9 @@ export const toOllamaExtensionMessages = (
  * Ollama does not assign tool-call ids, so the bridge mints them.
  */
 export function ollamaStreamAsPluginChunks(
-  request: OllamaChatRequest,
-  source: OllamaChatStreamGenerator,
-  state: { finalChunk?: OllamaChatResponse },
+  request: ProviderChatRequest,
+  source: ProviderChatStreamGenerator,
+  state: { finalChunk?: ProviderChatResponse },
   signal?: AbortSignal,
   usage?: { userId?: string }
 ): AsyncIterable<PluginStreamChunk> {

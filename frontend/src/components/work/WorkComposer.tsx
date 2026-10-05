@@ -25,13 +25,13 @@ import {
 } from '@/components/composer/composerStyles';
 import { Button } from '@/components/ui';
 import { useDictation } from '@/hooks/useDictation';
-import type { OllamaModel } from '@/types';
+import type { ChatModel } from '@/types';
 import { workModelSelectionKey, type WorkModelOption } from '@/types/work';
 import { cn } from '@/utils';
 
 interface WorkComposerProps {
   models: WorkModelOption[];
-  selectorModels: OllamaModel[];
+  selectorModels: ChatModel[];
   modelKey: string;
   running: boolean;
   loading: boolean;
@@ -50,14 +50,14 @@ interface WorkComposerProps {
   onCancel: () => void | Promise<void>;
 }
 
-const workSelectorModelValue = (model: OllamaModel): string =>
+const workSelectorModelValue = (model: ChatModel): string =>
   workModelSelectionKey({
     model: model.name,
     providerType: model.isPlugin ? 'plugin' : 'ollama',
     providerId: model.isPlugin ? model.pluginId : undefined,
   });
 
-const workSelectorModelLabel = (model: OllamaModel): string => {
+const workSelectorModelLabel = (model: ChatModel): string => {
   const pathSegments = model.name.split('/').filter(Boolean);
   const modelName = pathSegments[pathSegments.length - 1] || model.name;
   const readableModelName =
@@ -66,7 +66,7 @@ const workSelectorModelLabel = (model: OllamaModel): string => {
   return readableModelName;
 };
 
-const modelFromOption = (option: WorkModelOption): OllamaModel => {
+const modelFromOption = (option: WorkModelOption): ChatModel => {
   const providerPrefix = `${option.model} · `;
   return {
     name: option.model,

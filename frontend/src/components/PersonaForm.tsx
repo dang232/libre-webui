@@ -29,7 +29,7 @@ import {
   PersonaBindings,
   PersonaParameters,
   UpdatePersonaRequest,
-  OllamaModel,
+  ChatModel,
   EmbeddingModel,
 } from '@/types';
 import { Brain, Plug, Sliders, Sparkles, User } from 'lucide-react';
@@ -67,7 +67,7 @@ const PersonaForm: React.FC<PersonaFormProps> = ({
   // The chat store's list already merges Ollama and provider (plugin) models;
   // personas can back onto either — the backend routes plugin models by name.
   // Other personas and agent CLIs are not valid persona backends.
-  const availableModels = useMemo<OllamaModel[]>(
+  const availableModels = useMemo<ChatModel[]>(
     () =>
       chatModels.filter(
         model =>

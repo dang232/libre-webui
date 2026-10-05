@@ -17,8 +17,8 @@
 
 import {
   EmbeddingModel,
-  OllamaEmbeddingsRequest,
-  OllamaEmbeddingsResponse,
+  ProviderEmbeddingsRequest,
+  ProviderEmbeddingsResponse,
   Plugin,
 } from '../types/index.js';
 import pluginService from './pluginService.js';
@@ -146,10 +146,10 @@ class EmbeddingService {
   }
 
   async generateEmbeddings(
-    payload: OllamaEmbeddingsRequest,
+    payload: ProviderEmbeddingsRequest,
     userId?: string,
     signal?: AbortSignal
-  ): Promise<OllamaEmbeddingsResponse> {
+  ): Promise<ProviderEmbeddingsResponse> {
     const target = parseModelTarget(payload.model);
     if (target.pluginId) {
       return pluginService.executeEmbeddingRequest(

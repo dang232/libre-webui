@@ -15,11 +15,7 @@
  * limitations under the License.
  */
 
-import type {
-  ChatModelSelection,
-  ChatProviderType,
-  OllamaModel,
-} from '@/types';
+import type { ChatModelSelection, ChatProviderType, ChatModel } from '@/types';
 
 const PERSONA_PREFIX = 'persona:';
 const PLUGIN_PREFIX = 'plugin:';
@@ -36,7 +32,7 @@ const decode = (value: string): string | null => {
 };
 
 export function chatModelSelectionFromModel(
-  model: OllamaModel
+  model: ChatModel
 ): ChatModelSelection {
   if (model.isLegacySelection) {
     return {
@@ -110,7 +106,7 @@ export function chatModelSelectionKey(selection: ChatModelSelection): string {
   return `${LEGACY_PREFIX}${encodeURIComponent(selection.model)}`;
 }
 
-export function chatModelOptionKey(model: OllamaModel): string {
+export function chatModelOptionKey(model: ChatModel): string {
   return chatModelSelectionKey(chatModelSelectionFromModel(model));
 }
 
@@ -166,9 +162,9 @@ export function decodeChatModelSelectionKey(
 }
 
 export function findChatModelForSelection(
-  models: OllamaModel[],
+  models: ChatModel[],
   selection: ChatModelSelection
-): OllamaModel | undefined {
+): ChatModel | undefined {
   if (selection.providerType === 'plugin') {
     return models.find(
       model =>
@@ -207,7 +203,7 @@ export function findChatModelForSelection(
 }
 
 export function chatModelSelectionKeyForModels(
-  models: OllamaModel[],
+  models: ChatModel[],
   selection: ChatModelSelection
 ): string {
   if (!selection.providerType) {
@@ -219,7 +215,7 @@ export function chatModelSelectionKeyForModels(
 }
 
 export function chatModelSelectionFromKey(
-  models: OllamaModel[],
+  models: ChatModel[],
   key: string
 ): ChatModelSelection | null {
   const option = models.find(model => chatModelOptionKey(model) === key);
@@ -228,7 +224,7 @@ export function chatModelSelectionFromKey(
     : decodeChatModelSelectionKey(key);
 }
 
-export function isAvailableOllamaModel(model: OllamaModel): boolean {
+export function isAvailableDirectModel(model: ChatModel): boolean {
   return (
     !model.isPlugin &&
     !model.isPersona &&
@@ -239,7 +235,7 @@ export function isAvailableOllamaModel(model: OllamaModel): boolean {
 }
 
 export function isChatModelSelectionAvailable(
-  models: OllamaModel[],
+  models: ChatModel[],
   selection: ChatModelSelection
 ): boolean {
   if (!selection.model) return false;
@@ -251,9 +247,9 @@ export function isChatModelSelectionAvailable(
 }
 
 export function withUnavailableChatModel(
-  models: OllamaModel[],
+  models: ChatModel[],
   selection: ChatModelSelection
-): OllamaModel[] {
+): ChatModel[] {
   if (!selection.model) {
     return models;
   }

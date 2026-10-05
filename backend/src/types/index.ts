@@ -501,7 +501,7 @@ export interface UserPreferences {
 }
 
 // Ollama Chat Message format
-export interface OllamaChatMessage {
+export interface ProviderChatMessage {
   role: 'system' | 'user' | 'assistant' | 'tool';
   content: string;
   thinking?: string;
@@ -512,9 +512,9 @@ export interface OllamaChatMessage {
   providerMetadata?: Record<string, unknown>;
 }
 
-export interface OllamaChatRequest {
+export interface ProviderChatRequest {
   model: string;
-  messages: OllamaChatMessage[];
+  messages: ProviderChatMessage[];
   tools?: Record<string, unknown>[];
   /** Ollama takes reasoning levels as strings for the models that name them. */
   think?: boolean | 'low' | 'medium' | 'high';
@@ -524,7 +524,7 @@ export interface OllamaChatRequest {
   keep_alive?: string;
 }
 
-export interface OllamaChatResponse {
+export interface ProviderChatResponse {
   model: string;
   created_at: string;
   message: {
@@ -549,7 +549,7 @@ export interface OllamaBlobRequest {
   digest: string;
 }
 
-export interface OllamaModel {
+export interface ChatModel {
   name: string;
   size: number;
   digest: string;
@@ -563,7 +563,7 @@ export interface OllamaModel {
   };
 }
 
-export interface OllamaGenerateRequest {
+export interface ProviderGenerateRequest {
   model: string;
   prompt: string;
   stream?: boolean;
@@ -577,7 +577,7 @@ export interface OllamaGenerateRequest {
   };
 }
 
-export interface OllamaGenerateResponse {
+export interface ProviderGenerateResponse {
   model: string;
   created_at: string;
   response: string;
@@ -621,7 +621,7 @@ export interface OllamaPushRequest {
   stream?: boolean;
 }
 
-export interface OllamaEmbeddingsRequest {
+export interface ProviderEmbeddingsRequest {
   model: string;
   input: string | string[];
   truncate?: boolean;
@@ -629,7 +629,7 @@ export interface OllamaEmbeddingsRequest {
   keep_alive?: string;
 }
 
-export interface OllamaEmbeddingsResponse {
+export interface ProviderEmbeddingsResponse {
   embeddings: number[][];
 }
 

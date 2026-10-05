@@ -17,10 +17,10 @@
 
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import type { OllamaModel } from '@/types';
+import type { ChatModel } from '@/types';
 import { orderModelsByCatalogPriority } from './modelVisibility';
 
-const model = (name: string, pluginId?: string): OllamaModel => ({
+const model = (name: string, pluginId?: string): ChatModel => ({
   name,
   size: 0,
   digest: '',
