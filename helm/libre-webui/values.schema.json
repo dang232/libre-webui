@@ -36,19 +36,12 @@
         "DATABASE_SSL_MODE": {
           "description": "PostgreSQL transport security; managed databases should retain verify-full.",
           "type": "string",
-          "enum": [
-            "disable",
-            "require",
-            "verify-full"
-          ]
+          "enum": ["disable", "require", "verify-full"]
         },
         "POSTGRES_MIGRATION_MODE": {
           "description": "Apply compatible migrations under the advisory leader lock or validate without changing schema.",
           "type": "string",
-          "enum": [
-            "apply",
-            "validate"
-          ]
+          "enum": ["apply", "validate"]
         },
         "POSTGRES_POOL_MAX": {
           "description": "Maximum PostgreSQL connections in each application or worker pod.",
@@ -88,39 +81,15 @@
           "minimum": 60000,
           "maximum": 9007199254740991
         },
-        "OLLAMA_TIMEOUT": {
-          "description": "Standard Ollama request timeout in milliseconds for every application and worker pod.",
-          "type": "integer",
-          "minimum": 1000,
-          "maximum": 3600000
-        },
-        "OLLAMA_LONG_OPERATION_TIMEOUT": {
-          "description": "Long Ollama operation timeout in milliseconds; it must be at least OLLAMA_TIMEOUT.",
-          "type": "integer",
-          "minimum": 1000,
-          "maximum": 3600000
-        },
-        "OLLAMA_MAX_CONTEXT": {
-          "description": "Largest Ollama model context window adopted automatically in each application or worker pod.",
-          "type": "integer",
-          "minimum": 128,
-          "maximum": 2097152
-        },
         "AGENT_CLI_MODELS_ENABLED": {
           "description": "Node-local agent CLIs are unsupported in team mode and must remain false there.",
           "type": "string",
-          "enum": [
-            "false",
-            "true"
-          ]
+          "enum": ["false", "true"]
         },
         "CODEX_OAUTH_MODELS_ENABLED": {
           "description": "Node-local Codex OAuth files are unsupported in team mode and must remain false there.",
           "type": "string",
-          "enum": [
-            "false",
-            "true"
-          ]
+          "enum": ["false", "true"]
         }
       }
     },
@@ -147,9 +116,7 @@
           "minimum": 0
         }
       },
-      "required": [
-        "replicaCount"
-      ]
+      "required": ["replicaCount"]
     },
     "team": {
       "type": "object",
@@ -160,9 +127,7 @@
           "pattern": "^[1-9][0-9]*(Ki|Mi|Gi|Ti)$"
         }
       },
-      "required": [
-        "tempSizeLimit"
-      ]
+      "required": ["tempSizeLimit"]
     }
   }
 }

@@ -9,9 +9,6 @@
 {{- if and $team (or .Values.autoscaling.enabled (gt (int .Values.replicaCount) 0)) (lt (int .Values.worker.replicaCount) 1) }}
 {{- fail "An active team application requires worker.replicaCount>=1; set both application and worker replicas to zero only for full suspension." }}
 {{- end }}
-{{- if lt (int .Values.env.OLLAMA_LONG_OPERATION_TIMEOUT) (int .Values.env.OLLAMA_TIMEOUT) }}
-{{- fail "OLLAMA_LONG_OPERATION_TIMEOUT must be greater than or equal to OLLAMA_TIMEOUT." }}
-{{- end }}
 {{- if and $team (or (ne .Values.env.DATABASE_BACKEND "postgres") (ne .Values.env.BLOB_STORE_BACKEND "s3") (ne .Values.env.VECTOR_STORE_BACKEND "pgvector") (ne .Values.env.COORDINATION_BACKEND "redis") (ne .Values.env.JOB_WORKER_MODE "external")) }}
 {{- fail "Team mode requires PostgreSQL, S3, PGVector, Redis, and an external durable worker." }}
 {{- end }}
@@ -107,20 +104,12 @@ spec:
               value: {{ .Values.env.PORT | quote }}
             - name: TRUST_PROXY
               value: {{ .Values.env.TRUST_PROXY | quote }}
-            - name: OLLAMA_BASE_URL
-              value: {{ include "libre-webui.ollamaUrl" . | quote }}
             - name: CORS_ORIGIN
               value: {{ .Values.env.CORS_ORIGIN | quote }}
             - name: ENABLE_SIGNUP
               value: {{ .Values.env.ENABLE_SIGNUP | quote }}
             - name: JWT_EXPIRES_IN
               value: {{ .Values.env.JWT_EXPIRES_IN | quote }}
-            - name: OLLAMA_TIMEOUT
-              value: {{ .Values.env.OLLAMA_TIMEOUT | quote }}
-            - name: OLLAMA_LONG_OPERATION_TIMEOUT
-              value: {{ .Values.env.OLLAMA_LONG_OPERATION_TIMEOUT | quote }}
-            - name: OLLAMA_MAX_CONTEXT
-              value: {{ .Values.env.OLLAMA_MAX_CONTEXT | quote }}
             - name: AGENT_CLI_MODELS_ENABLED
               value: {{ .Values.env.AGENT_CLI_MODELS_ENABLED | quote }}
             - name: CODEX_OAUTH_MODELS_ENABLED

@@ -7,7 +7,7 @@ image:
   pullPolicy: IfNotPresent
   # Optional digest override; release automation clears the 0.14.1 transition pin.
   tag: ''
-  digest: ""
+  digest: ''
 
 imagePullSecrets: []
 nameOverride: ''
@@ -207,34 +207,3 @@ work:
       - 169.254.0.0/16
       - 'fc00::/7'
       - 'fe80::/10'
-
-# Ollama configuration
-ollama:
-  # Use external Ollama instance
-  external:
-    enabled: false
-    url: 'http://ollama.default.svc.cluster.local:11434'
-
-  # Deploy Ollama as part of this chart
-  bundled:
-    enabled: true
-    image:
-      repository: ollama/ollama
-      tag: latest
-      pullPolicy: IfNotPresent
-    resources:
-      limits:
-        cpu: 2000m
-        memory: 4Gi
-      requests:
-        cpu: 500m
-        memory: 2Gi
-    persistence:
-      enabled: true
-      storageClass: ''
-      accessMode: ReadWriteOnce
-      size: 50Gi
-    # GPU support (NVIDIA)
-    gpu:
-      enabled: false
-      count: 1

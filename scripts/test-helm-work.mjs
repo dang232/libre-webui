@@ -258,19 +258,6 @@ test('the chart keeps solo single-replica safety and admits only a complete team
     ],
     [60_000, Number.MAX_SAFE_INTEGER]
   );
-  for (const name of ['OLLAMA_TIMEOUT', 'OLLAMA_LONG_OPERATION_TIMEOUT']) {
-    assert.deepEqual(
-      [postgresSchema[name].minimum, postgresSchema[name].maximum],
-      [1_000, 3_600_000]
-    );
-  }
-  assert.deepEqual(
-    [
-      postgresSchema.OLLAMA_MAX_CONTEXT.minimum,
-      postgresSchema.OLLAMA_MAX_CONTEXT.maximum,
-    ],
-    [128, 2_097_152]
-  );
   assert.deepEqual(postgresSchema.AGENT_CLI_MODELS_ENABLED.enum, [
     'false',
     'true',
@@ -313,10 +300,6 @@ test('the chart keeps solo single-replica safety and admits only a complete team
     'env.POSTGRES_MIGRATION_LOCK_TIMEOUT_MS=600001',
     'env.BLOB_QUOTA_BYTES_PER_USER=0',
     'env.BLOB_QUOTA_RESERVATION_TTL_MS=59999',
-    'env.OLLAMA_TIMEOUT=999',
-    'env.OLLAMA_LONG_OPERATION_TIMEOUT=3600001',
-    'env.OLLAMA_MAX_CONTEXT=127',
-    'env.OLLAMA_MAX_CONTEXT=2097153',
     'env.TRUST_PROXY=-1',
     'env.TRUST_PROXY=17',
   ]) {
@@ -330,23 +313,6 @@ test('the chart keeps solo single-replica safety and admits only a complete team
       new RegExp(invalid.slice(4, invalid.indexOf('=')))
     );
   }
-  assert.throws(
-    () =>
-      execFileSync(
-        'helm',
-        [
-          'template',
-          'render-test',
-          chartDir,
-          '--set',
-          'env.OLLAMA_TIMEOUT=3000000',
-          '--set',
-          'env.OLLAMA_LONG_OPERATION_TIMEOUT=2999999',
-        ],
-        { encoding: 'utf8', stdio: 'pipe' }
-      ),
-    /OLLAMA_LONG_OPERATION_TIMEOUT/
-  );
   assert.throws(
     () =>
       execFileSync(
@@ -441,8 +407,6 @@ test('the chart keeps solo single-replica safety and admits only a complete team
     '--set',
     'env.BLOB_QUOTA_RESERVATION_TTL_MS=7200000',
     '--set',
-    'env.OLLAMA_MAX_CONTEXT=65536',
-    '--set',
     'env.TRUST_PROXY=2',
     '--set',
     'env.BLOB_STORE_BACKEND=s3',
@@ -458,12 +422,6 @@ test('the chart keeps solo single-replica safety and admits only a complete team
     'env.S3_BUCKET=libre-test',
     '--set',
     'env.S3_REGION=us-east-1',
-    '--set',
-    'ollama.bundled.enabled=false',
-    '--set',
-    'ollama.external.enabled=true',
-    '--set-string',
-    'ollama.external.url=http://ollama.shared.svc:11434',
     '--set',
     'work.enabled=true',
     '--set-string',
@@ -549,10 +507,6 @@ test('the chart keeps solo single-replica safety and admits only a complete team
     ['POSTGRES_MIGRATION_LOCK_TIMEOUT_MS', '45000'],
     ['BLOB_QUOTA_BYTES_PER_USER', '8589934592'],
     ['BLOB_QUOTA_RESERVATION_TTL_MS', '7200000'],
-    ['OLLAMA_BASE_URL', 'http://ollama.shared.svc:11434'],
-    ['OLLAMA_TIMEOUT', '300000'],
-    ['OLLAMA_LONG_OPERATION_TIMEOUT', '900000'],
-    ['OLLAMA_MAX_CONTEXT', '65536'],
     ['WORK_K8S_STORAGE_CLASS', 'fast-storage'],
     [
       'WORK_RUNTIME_IMAGE',

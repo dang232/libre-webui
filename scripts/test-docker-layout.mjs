@@ -59,11 +59,9 @@ const teamBackupTest = fs.readFileSync(
 const composeFiles = [
   'docker-compose.yml',
   'docker-compose.gpu.yml',
-  'docker-compose.external-ollama.yml',
   'docker-compose.socket-proxy.yml',
   'docker-compose.dev.yml',
   'docker-compose.dev.gpu.yml',
-  'docker-compose.dev.external-ollama.yml',
 ];
 
 test('Docker install stages include the root postinstall script before npm ci', () => {
@@ -306,9 +304,6 @@ test('team Compose forwards platform and provider tuning identically to app and 
           REDIS_CONNECT_TIMEOUT_MS: '3500',
           BLOB_QUOTA_BYTES_PER_USER: '8589934592',
           BLOB_QUOTA_RESERVATION_TTL_MS: '7200000',
-          OLLAMA_TIMEOUT: '210000',
-          OLLAMA_LONG_OPERATION_TIMEOUT: '610000',
-          OLLAMA_MAX_CONTEXT: '65536',
         },
       }
     )
@@ -323,9 +318,6 @@ test('team Compose forwards platform and provider tuning identically to app and 
     REDIS_CONNECT_TIMEOUT_MS: '3500',
     BLOB_QUOTA_BYTES_PER_USER: '8589934592',
     BLOB_QUOTA_RESERVATION_TTL_MS: '7200000',
-    OLLAMA_TIMEOUT: '210000',
-    OLLAMA_LONG_OPERATION_TIMEOUT: '610000',
-    OLLAMA_MAX_CONTEXT: '65536',
     AGENT_CLI_MODELS_ENABLED: 'false',
     CODEX_OAUTH_MODELS_ENABLED: 'false',
   };

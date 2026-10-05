@@ -52,70 +52,11 @@ test('private application APIs require authentication', () => {
     'backend/src/routes/documents.ts',
     'backend/src/routes/embeddings.ts',
     'backend/src/routes/huggingfaceHub.ts',
-    'backend/src/routes/ollama.ts',
     'backend/src/routes/personas.ts',
     'backend/src/routes/tts.ts',
   ]) {
     assert.match(read(file), /router\.use\(authenticate\)/, file);
   }
-});
-
-test('Ollama lifecycle operations require the current administrator', () => {
-  const source = read('backend/src/routes/ollama.ts');
-  for (const route of [
-    '/models/pull-all',
-    '/models/pull-all/stream',
-    '/models/copy',
-    '/models/push',
-    '/models/unload',
-    '/models/unload-all',
-  ]) {
-    const start = source.indexOf(`'${route}'`);
-    assert.notEqual(start, -1, route);
-    assert.match(source.slice(start, start + 180), /requireAdmin/, route);
-  }
-
-  // Individual pulls follow the persisted download mode, which fails closed
-  // to admins-only; the mode itself is changed through an admin-only route.
-  for (const route of ['/models/pull', '/pull/stream']) {
-    const start = source.indexOf(`'${route}'`);
-    assert.notEqual(start, -1, route);
-    assert.match(
-      source.slice(start, start + 180),
-      /requireModelDownloadAccess/,
-      route
-    );
-  }
-  const putAccess = source.indexOf("router.put(\n  '/models/access'");
-  assert.notEqual(putAccess, -1);
-  assert.match(source.slice(putAccess, putAccess + 120), /requireAdmin/);
-  const accessService = read('backend/src/services/modelAccessService.ts');
-  assert.match(
-    accessService,
-    /isModelDownloadMode\(value\) \? value : 'admins'/
-  );
-  // The admin-always-allowed rule now lives in the central authorization
-  // service; the per-feature predicate must delegate there.
-  assert.match(accessService, /authorize\(/);
-  assert.match(accessService, /id: 'model-download'/);
-  const authorizationService = read(
-    'backend/src/services/authorizationService.ts'
-  );
-  assert.match(
-    authorizationService,
-    /if \(actor\.role === 'admin'\) return \{ allowed: true, reason: 'admin-role' \};/
-  );
-
-  const deleteRoute = source.slice(
-    source.indexOf("router.delete(\n  '/models'")
-  );
-  assert.match(deleteRoute.slice(0, 180), /requireAdmin/);
-
-  const createRoute = source.slice(source.indexOf('// Create a model'));
-  assert.match(createRoute.slice(0, 220), /requireAdmin/);
-
-  const blobRoute = source.slice(source.indexOf('// Push a blob'));
-  assert.match(blobRoute.slice(0, 220), /requireAdmin/);
 });
 
 test('document data is scoped to the authenticated user', () => {
@@ -545,14 +486,12 @@ fail('unexpected docker command: ' + args.join(' '));
   );
 });
 
-test('local Compose defaults enable Work without publishing Ollama', () => {
+test('local Compose defaults enable Work without publishing model ports', () => {
   for (const file of [
     'docker-compose.yml',
     'docker-compose.gpu.yml',
-    'docker-compose.external-ollama.yml',
     'docker-compose.dev.yml',
     'docker-compose.dev.gpu.yml',
-    'docker-compose.dev.external-ollama.yml',
   ]) {
     const compose = read(file);
     assert.match(compose, /docker\.sock/, file);
@@ -562,10 +501,6 @@ test('local Compose defaults enable Work without publishing Ollama', () => {
     assert.match(compose, /WEBUI_BIND_ADDRESS:-127\.0\.0\.1/, file);
   }
 
-  assert.match(
-    read('docker-compose.ollama-host.yml'),
-    /OLLAMA_BIND_ADDRESS:-127\.0\.0\.1/
-  );
   assert.match(read('deploy/private/docker-compose.work.yml'), /docker\.sock/);
   assert.match(
     read('deploy/private/docker-compose.watchtower.yml'),
@@ -605,12 +540,8 @@ test('private Watchtower opt-in excludes stateful application updates', () => {
   const watchtower = read('deploy/private/docker-compose.watchtower.yml');
 
   assert.match(
-    service('alcore', 'ollama'),
+    service('alcore', 'searxng'),
     /com\.centurylinklabs\.watchtower\.enable: 'false'/
-  );
-  assert.match(
-    service('ollama', 'searxng'),
-    /com\.centurylinklabs\.watchtower\.enable: 'true'/
   );
   assert.match(
     service('searxng', 'cloudflared'),

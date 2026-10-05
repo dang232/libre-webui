@@ -60,19 +60,6 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
-Ollama URL - either external or bundled service
-*/}}
-{{- define "libre-webui.ollamaUrl" -}}
-{{- if .Values.ollama.external.enabled }}
-{{- .Values.ollama.external.url }}
-{{- else if .Values.ollama.bundled.enabled }}
-{{- printf "http://%s-ollama:11434" (include "libre-webui.fullname" .) }}
-{{- else }}
-{{- "http://localhost:11434" }}
-{{- end }}
-{{- end }}
-
-{{/*
 Secret name: an operator-managed existing secret wins over the chart-rendered
 one. The existing secret must carry the same keys the chart would render.
 */}}

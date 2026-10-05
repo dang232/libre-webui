@@ -55,7 +55,7 @@ test('checked-in Helm versions match the application version', () => {
   assert.ok(releaseFiles.includes('helm/libre-webui/values.yaml'));
 });
 
-test('Helm pins the 0.14.1 transition digest without changing Ollama latest', () => {
+test('Helm pins the 0.14.1 transition digest', () => {
   const packageVersion = JSON.parse(
     fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8')
   ).version;
@@ -79,10 +79,6 @@ test('Helm pins the 0.14.1 transition digest without changing Ollama latest', ()
   assert.match(
     deployment,
     /\.Values\.image\.tag[\s\S]*\.Values\.image\.digest[\s\S]*\.Chart\.AppVersion/
-  );
-  assert.match(
-    values,
-    /ollama:[\s\S]*?bundled:[\s\S]*?image:[\s\S]*?tag: latest/
   );
 });
 
