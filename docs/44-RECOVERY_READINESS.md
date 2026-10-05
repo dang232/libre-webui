@@ -147,7 +147,7 @@ the plaintext manifest, and are republished as mode-`0600` configuration on an
 applied restore.
 
 The solo archive does not include Docker Work volumes, Kubernetes PVCs,
-host-bound workspace folders, Ollama models, or external provider state. Keep
+host-bound workspace folders, or external provider state. Keep
 those signed-manifest exclusions visible and snapshot external Work storage
 separately. The team profile uses the separate offline team workflow: a
 PostgreSQL exported snapshot, exact versioned S3 ciphertext objects, PGVector

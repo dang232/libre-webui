@@ -10,8 +10,6 @@ keywords:
     coding agent,
     docker,
     kubernetes,
-    ollama,
-    ollama cloud,
     model provider,
     persistent workspace,
     rtl,
@@ -61,8 +59,8 @@ This release introduces Work as a complete task workflow:
 - Server-owned worker skills that teach the selected model how to inspect,
   edit, verify, and preview efficiently without writing control files into the
   project.
-- Tool-capable local Ollama models, Ollama Cloud models, and configured
-  completion or chat provider plugins.
+- Tool-capable plugin models, agent CLI models, and personas with a
+  tool-capable backing provider model.
 - A responsive Conversation/Workspace split with draggable, keyboard
   accessible sizing on desktop and a focused surface switcher on smaller
   screens.
@@ -87,7 +85,7 @@ flowchart LR
     API["Authenticated /api/work API"]
     DB["Alcore database"]
     AGENT["Native model/tool loop"]
-    PROVIDER["Selected Ollama or plugin provider"]
+    PROVIDER["Selected plugin provider"]
     CONTAINER["Task-scoped sandbox"]
     VOLUME["Task-scoped volume or PVC"]
     PREVIEW["Loopback browser preview"]
@@ -139,18 +137,15 @@ Work needs a configured sandbox backend:
 
 Every backend also needs:
 
-- A tool-capable model exposed through:
-  - a healthy Ollama service, including models reached through Ollama Cloud; or
-  - an active completion/chat plugin with an exact configured model and
-    credentials for the current administrator.
+- A tool-capable model exposed through an active completion/chat plugin
+  with an exact configured model and credentials for the current
+  administrator.
 - Enough runtime storage for the image, generated projects, and project-local
   dependencies.
 - An authenticated account with Work access. Work is admin-only by default;
   an administrator can open it to all active users.
 
-Alcore checks Ollama's advertised model capabilities before creating a
-run and rejects an Ollama model that does not advertise `tools`. Plugin-backed
-models must support their provider's tool-calling protocol. If a selected
+Alcore requires the selected model to support the provider's tool-calling protocol. If a selected
 remote model rejects tools, the run fails; Work does not silently switch to a
 different model or provider.
 
@@ -719,7 +714,7 @@ ambiguity (consecutive unverified expectations trigger one re-grounding
 notice). Loop telemetry — rounds, tool latency, screenshots, fences,
 expectation verdicts — is stamped on every persisted tool record and
 summarized when the run ends. Screenshots reach the model
-as real image content on every provider route — Ollama, Anthropic, Gemini,
+as real image content on every provider route — Anthropic, Gemini,
 and OpenAI-compatible chat and Responses plugins — so the model driving the
 task should be a vision model. If the provider rejects image input (a
 text-only model), the run does not fail: screenshots are dropped for the
@@ -809,16 +804,13 @@ replay.
 
 | Route                    | Validation and behavior                                                                           |
 | ------------------------ | ------------------------------------------------------------------------------------------------- |
-| Local Ollama             | Ollama must be healthy and the exact model must advertise tool support.                           |
-| Ollama Cloud             | Routed explicitly through Ollama; cloud-suffixed models display the remote-provider disclosure.   |
 | Completion/chat plugin   | Plugin must be active, list the exact model, and have a credential for the current administrator. |
 | Anthropic plugin         | Uses Work's Anthropic messages and tool-use adapter.                                              |
 | Gemini plugin            | Uses Work's Gemini contents and function-calling adapter.                                         |
 | Other compatible plugins | Use the OpenAI-style messages, tools, and tool-choice request shape.                              |
 
 Provider type and plugin ID are stored on both the task and each run. A model
-name never chooses the route by itself. Activating a plugin with the same model
-name as an Ollama model cannot intercept an existing task.
+name never chooses the route by itself.
 
 ### What a provider receives
 
@@ -850,7 +842,7 @@ encryption when the deployment's threat model requires encryption at rest.
 
 ### Remote-provider disclosure
 
-Work treats plugin models and Ollama names ending in `:cloud` or `-cloud` as
+Work treats plugin models as
 remote for disclosure purposes. Selecting one opens a dismissible notice that
 explains provider data flow and the possibility of multiple billable calls.
 The dismissal preference is remembered per Alcore user.
@@ -1025,7 +1017,7 @@ inter-container communication disabled
 
 - one Work sandbox cannot open connections to another Work sandbox; and
 - a Work sandbox cannot reach the deployment's own containers on Docker's
-  shared default bridge, including a co-located database or Ollama container
+  shared default bridge, including a co-located database container
   that is not deliberately published.
 
 Alcore refuses to start a networked task if a network with the configured
@@ -1076,7 +1068,7 @@ cloud credentials, browser profiles, the host home directory, or the Docker
 socket into task containers. Code can still transmit any credentials or
 secrets that a user or model writes into `/workspace`.
 
-This sandbox traffic is separate from model traffic. Ollama and plugin
+This sandbox traffic is separate from model traffic. Plugin
 requests are always sent by the Alcore backend to the explicitly selected
 provider route.
 
@@ -1576,7 +1568,7 @@ Run `docker info` as the same operating-system user that starts Alcore. If
 the command is absent or cannot reach the daemon, install/start Docker or fix
 that user's daemon permissions, then reload Work.
 
-Also confirm that either Ollama is healthy or at least one active
+Also confirm that at least one active
 completion/chat plugin has a model and credential configured for the current
 administrator.
 
@@ -1596,8 +1588,7 @@ see the [Kubernetes guide](./KUBERNETES).
 
 ### No Work-compatible models
 
-For Ollama, inspect or choose a model that advertises `tools`. For a plugin,
-confirm that:
+Confirm that:
 
 - its type is completion or chat;
 - it is active;

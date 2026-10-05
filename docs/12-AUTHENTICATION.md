@@ -127,8 +127,8 @@ Administration is divided into five sections:
 - **Users:** accounts, pending registration approvals, account creation and
   editing, deletion, and two-factor recovery.
 - **Groups:** group memberships and the effective-access lookup.
-- **Access & policies:** Work access and runtime policies, Ollama settings,
-  model downloads, web search, Agents, tools, voice permissions, and the
+- **Access & policies:** Work access and runtime policies,
+  web search, Agents, tools, voice permissions, and the
   outgoing mail server for email notifications.
 - **Security:** the instance two-factor policy and the security audit log.
 - **Defaults:** the theme used for sign-in and accounts without a personal

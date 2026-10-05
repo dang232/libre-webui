@@ -14,9 +14,9 @@ const CHANGELOG_TEMPLATE = `## [Unreleased]
 
 `;
 
-const DEFAULT_OLLAMA_BASE_URL =
-  process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434';
-const DEFAULT_OLLAMA_MODEL = process.env.CHANGELOG_AI_MODEL || 'glm-5.2:cloud';
+const DEFAULT_AI_BASE_URL = process.env.CHANGELOG_AI_BASE_URL || '';
+const DEFAULT_AI_MODEL = process.env.CHANGELOG_AI_MODEL || '';
+const DEFAULT_AI_API_KEY = process.env.CHANGELOG_AI_API_KEY || '';
 const DEFAULT_TIMEOUT_MS = Number(
   process.env.CHANGELOG_AI_TIMEOUT_MS || 180000
 );
@@ -96,19 +96,29 @@ function updateChangelogWithSection(changelogPath, releaseSection) {
 }
 
 async function generateAIReleaseNotes(version, evidence, options = {}) {
-  const baseUrl = options.ollamaBaseUrl || DEFAULT_OLLAMA_BASE_URL;
-  const model = options.model || DEFAULT_OLLAMA_MODEL;
+  const baseUrl = (options.aiBaseUrl || DEFAULT_AI_BASE_URL).replace(
+    /\/+$/,
+    ''
+  );
+  const model = options.model || DEFAULT_AI_MODEL;
+  const apiKey = options.apiKey || DEFAULT_AI_API_KEY;
   const timeoutMs = options.timeoutMs || DEFAULT_TIMEOUT_MS;
   const evidenceText = buildEvidenceText(version, evidence);
   const baselineNotes = buildDeterministicReleaseNotes(version, evidence);
 
+  if (!baseUrl || !model) {
+    console.log(
+      '  ℹ️  AI release notes skipped: set CHANGELOG_AI_BASE_URL and CHANGELOG_AI_MODEL to enable'
+    );
+    return null;
+  }
+
   try {
     const response = await postJsonWithTimeout(
-      `${baseUrl}/api/chat`,
+      `${baseUrl}/chat/completions`,
       {
         model,
         stream: false,
-        think: false,
         messages: [
           {
             role: 'system',
@@ -120,26 +130,28 @@ async function generateAIReleaseNotes(version, evidence, options = {}) {
             content: buildAIPrompt(version, evidenceText, baselineNotes),
           },
         ],
-        options: {
-          temperature: 0.2,
-          top_p: 0.9,
-          num_predict: 1800,
-        },
+        temperature: 0.2,
+        top_p: 0.9,
+        max_tokens: 1800,
       },
-      timeoutMs
+      timeoutMs,
+      apiKey
     );
 
-    const text = response?.message?.content || response?.response || '';
+    const text =
+      response?.choices?.[0]?.message?.content ||
+      response?.message?.content ||
+      '';
     const cleaned = cleanAIResponse(text);
     if (isUsableReleaseNotes(cleaned, evidence)) {
-      console.log(`  ✅ Generated release notes with Ollama model ${model}`);
+      console.log(`  ✅ Generated release notes with ${model}`);
       return cleaned;
     }
 
-    console.log(`  ⚠️  Ollama model ${model} returned unusable release notes`);
+    console.log(`  ⚠️  Model ${model} returned unusable release notes`);
   } catch (error) {
     console.log(
-      `  ⚠️  Ollama release notes unavailable (${model}): ${error.message}`
+      `  ⚠️  AI release notes unavailable (${model}): ${error.message}`
     );
   }
 
@@ -570,14 +582,17 @@ function isUsableReleaseNotes(text, evidence) {
   return true;
 }
 
-async function postJsonWithTimeout(url, body, timeoutMs) {
+async function postJsonWithTimeout(url, body, timeoutMs, apiKey) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const response = await fetch(url, {
       method: 'POST',
       signal: controller.signal,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+      },
       body: JSON.stringify(body),
     });
 

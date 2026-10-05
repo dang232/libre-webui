@@ -42,7 +42,7 @@ Alcore's built-in **Work** mode.
 | Runtime                 | Native Alcore model/tool loop plus Docker                         | Separate Libre Claw daemon                                                |
 | Primary scope           | One persistent, isolated coding workspace per task                     | Broader agent runs, memory, approvals, schedules, browser, MCP, and tools |
 | Persistence             | SQLite task history plus a task-owned Docker named volume              | Libre Claw's own run and memory stores                                    |
-| Model routing           | Ollama, Ollama Cloud, or configured Alcore completion/chat plugin | Libre Claw provider, model, and fallback configuration                    |
+| Model routing           | Configured Alcore completion/chat plugin | Libre Claw provider, model, and fallback configuration                    |
 | Availability without it | Work continues normally                                                | Only the `/agents` Libre Claw surface is disconnected                     |
 
 Use Work when a model should build or modify files inside a constrained

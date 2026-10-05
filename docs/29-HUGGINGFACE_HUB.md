@@ -20,7 +20,8 @@ keywords:
 Alcore integrates with Hugging Face in two ways:
 
 - Provider plugin access through Hugging Face Inference Providers.
-- In-app Hub browsing for compatible models, including GGUF models that can be pulled through Ollama.
+- In-app Hub browsing for compatible models, including GGUF file listings
+  you can reference when configuring a provider manually.
 
 ## Configure the Provider Plugin
 
@@ -52,23 +53,14 @@ The in-app browser lets you:
 - Filter by task.
 - Sort by trending, downloads, likes, creation date, or update date.
 - Inspect gated model status.
-- Pull compatible GGUF files through Ollama when supported.
 
 The browser fetches Hub metadata through the backend proxy and caches results for performance.
 The backend requires an active Libre session for Hub discovery, and only a
 current administrator can clear the shared model cache.
 
-## GGUF and Ollama
+## GGUF Files
 
-For local inference, look for GGUF-format models. Alcore can use Ollama-compatible `hf.co/...` model references when a repository exposes suitable GGUF files.
-
-Example pattern:
-
-```bash
-ollama run hf.co/owner/model-repo:tag
-```
-
-Use the UI when possible; it reduces copy/paste mistakes and keeps model metadata visible.
+For manual provider configuration, look for GGUF-format models. Copy the exact `hf.co/...` file reference from the browser and use it where your provider accepts custom model IDs.
 
 ## Inference Provider Routing
 
@@ -99,11 +91,10 @@ Gated models can appear in discovery before your token is allowed to run them.
 - Try another provider route if available.
 - Confirm you accepted gated terms.
 
-**GGUF pull fails**
+**GGUF files unavailable**
 
 - Confirm the repository contains GGUF files.
-- Try the exact `hf.co/...` reference in a terminal with Ollama.
-- Use a smaller quantization if disk or memory is limited.
+- Copy the exact `hf.co/...` reference for manual provider configuration.
 
 ## Related Docs
 

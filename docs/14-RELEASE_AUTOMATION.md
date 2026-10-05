@@ -80,7 +80,7 @@ Update `CHANGELOG.md` manually from the generated section:
 npm run changelog -- update
 ```
 
-By default, changelog generation can ask a local Ollama-compatible model for a
+By default, changelog generation can ask a configured OpenAI-compatible model for a
 polished draft, then validates the result against the collected git evidence.
 If AI is unavailable or the output looks unsafe, the script falls back to a
 deterministic generator.
@@ -89,8 +89,7 @@ Useful overrides:
 
 ```bash
 CHANGELOG_AI=0 npm run release:minor
-CHANGELOG_AI_MODEL=glm-5.2:cloud npm run changelog
-OLLAMA_BASE_URL=http://127.0.0.1:11434 npm run release
+CHANGELOG_AI_BASE_URL=https://your-provider.example/v1 CHANGELOG_AI_MODEL=your-model CHANGELOG_AI_API_KEY=... npm run changelog
 ```
 
 ## Push a Release
@@ -265,8 +264,7 @@ creates the next release, after which the default image resolves to the chart
 The Docker workflow publishes that semantic-version tag to GHCR and Docker Hub
 from the same `v*` release tag. Helm publication waits up to 20 minutes for the
 matching public Docker Hub image and fails instead of publishing a chart with a
-missing default image. The bundled Ollama image remains independently
-configurable and defaults to its upstream `latest` tag.
+missing default image.
 
 ## Conventional Commits
 

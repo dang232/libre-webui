@@ -41,7 +41,7 @@ The development Compose files mount the host Docker socket, so Work functions
 by default when Docker is available. Task containers run on the host daemon and
 show up in `docker ps`. On Linux, set `DOCKER_GID` in `.env` first.
 
-**With External Ollama:**
+**Start the stack:**
 
 ```bash
 # Clone the repository
@@ -51,8 +51,8 @@ cd libre-webui
 # Switch to dev branch
 git checkout dev
 
-# Start the dev image with external Ollama
-docker compose -f docker-compose.dev.external-ollama.yml up -d
+# Start the dev stack
+docker compose -f docker-compose.dev.yml up -d
 ```
 
 **Simple Docker:**
@@ -94,7 +94,7 @@ pending retries. Authentication failures stop automatic reconnection.
    backend.
 2. Start Alcore from source with `npm run dev`.
 3. Sign in as an administrator.
-4. Select **Work** and use a tool-capable Ollama, Ollama Cloud, or configured
+4. Select **Work** and use a tool-capable
    plugin-backed model.
 
 Run the focused backend provider and container-policy tests with:
@@ -116,8 +116,8 @@ The dev branch is updated frequently. To get the latest changes:
 git pull origin dev
 
 # Refresh the dev Compose stack
-docker compose -f docker-compose.dev.external-ollama.yml pull
-docker compose -f docker-compose.dev.external-ollama.yml up -d
+docker compose -f docker-compose.dev.yml pull
+docker compose -f docker-compose.dev.yml up -d
 
 # Or restart simple Docker
 docker pull ghcr.io/libre-webui/libre-webui:dev
@@ -271,8 +271,8 @@ Switch back to the stable `main` branch if you:
 ```bash
 # Switch back to stable
 git checkout main
-docker compose -f docker-compose.external-ollama.yml pull
-docker compose -f docker-compose.external-ollama.yml up -d
+docker compose pull
+docker compose up -d
 ```
 
 ## 🌟 Join the Community

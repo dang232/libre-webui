@@ -12,7 +12,6 @@ keywords:
     hyprland,
     arch linux,
     bar widget,
-    ollama,
     self-hosted ai,
     local ai,
     status widget,

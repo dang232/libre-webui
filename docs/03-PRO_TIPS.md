@@ -71,7 +71,7 @@ Be clear about the boundary: incognito controls persistence, not provider
 exposure. The selected model — local or remote — still receives the full
 conversation, and document context still applies when it is enabled. For a
 conversation that must not leave your infrastructure, combine incognito with a
-local Ollama model.
+provider you operate yourself.
 
 ## Use the Compact Sidebar
 
@@ -225,8 +225,8 @@ Follow progress in **Activity**, then inspect and test the result in **Files**,
 themes, browser-backed unsaved drafts, and formatting for supported file types.
 Use `Cmd/Ctrl + S` to save and `Shift + Alt + F` to format.
 
-Use an installed tool-capable Ollama model when you want model traffic to stay
-on your configured Ollama infrastructure. A remote or cloud model can reduce
+Use a tool-capable plugin model with credentials you control when you want model traffic to stay
+on infrastructure you operate. A remote or cloud model can reduce
 local inference memory pressure, but it can make multiple billable calls and
 receives requested tool results, which may contain workspace data.
 
@@ -314,11 +314,7 @@ Document Chat accepts PDF, Office (DOCX/PPTX/XLSX), Markdown, HTML, code, and CS
 - Keyword search (BM25) is always available.
 - Hybrid search fuses semantic and keyword rankings when embeddings are enabled in Settings and an embedding model is available.
 
-Install `nomic-embed-text` if you want an easy local embedding model:
-
-```bash
-ollama pull nomic-embed-text
-```
+Configure an embedding-capable provider model for document search.
 
 For best results, upload focused documents per chat instead of one huge mixed document set.
 
@@ -344,11 +340,11 @@ the same value.
 
 Leave it unset and nothing is sent, which is what every release before this one
 did. Set it and the server translates the one value for whichever provider
-answers: Ollama takes it in the request body, OpenAI-style providers take a
+answers: providers take a
 reasoning effort, and Anthropic and Gemini take a token budget with room
 reserved for the answer.
 
-Two things are worth knowing. A model Ollama reports as unable to reason never
+Two things are worth knowing. A model that reports itself as unable to reason never
 receives the setting at all, so the control is simply absent for it. And the
 named levels only exist on the models that publish them, such as gpt-oss; on a
 model that reasons without levels, a named level simply behaves as **on**, so a
@@ -370,7 +366,7 @@ per token for what the conversation added since, marked with a `~` when no
 measurement exists yet. A window capped below what the model was trained for
 says so: the meter
 measures the window the request actually runs with, which is
-`OLLAMA_MAX_CONTEXT` (32,768 by default) rather than the model's full trained
+`MAX_CONTEXT` (32,768 by default) rather than the model's full trained
 length. Raise that variable and both the real window and the meter follow.
 
 Provider models show a window only when their model listing publishes one. When

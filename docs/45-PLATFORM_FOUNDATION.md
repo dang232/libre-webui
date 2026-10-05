@@ -455,7 +455,7 @@ Deployment probes now distinguish process liveness from dependency readiness:
   does not wait for optional providers; and
 - `/health/deep` requires a current administrator and runs SQLite integrity and
   foreign-key checks in a bounded worker outside the HTTP event loop. It also
-  aggregates optional server-level provider probes such as Ollama as warnings,
+  aggregates optional server-level provider probes as warnings,
   without changing core readiness.
 
 Run `libre-webui recovery-check --json`; from a source checkout, build the

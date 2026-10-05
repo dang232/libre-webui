@@ -100,8 +100,7 @@ it fails or is cancelled.
 
 Each event records:
 
-- provider/plugin id and a snapshot of its display name (`ollama` and
-  `agent-cli:*` use the same ledger as plugin providers)
+- provider/plugin id and a snapshot of its display name (`agent-cli:*` uses the same ledger as plugin providers)
 - capability (`chat`, `embedding`, `image`, `stt`, `tts`, `audio`, `video`)
 - model
 - status: `success`, `error`, or `cancelled` (an aborted stream counts as

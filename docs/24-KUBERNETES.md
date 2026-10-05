@@ -62,8 +62,7 @@ is unnecessary.
 helm install libre-webui oci://ghcr.io/libre-webui/charts/libre-webui
 ```
 
-The default chart deploys Alcore with persistent storage and a bundled
-Ollama service. The 0.14.1 transition is pinned to its verified
+The default chart deploys Alcore with persistent storage. The 0.14.1 transition is pinned to its verified
 multi-architecture image digest; subsequent charts default to the matching
 semantic `appVersion` image. Set `image.tag` or `image.digest` explicitly only
 when you intentionally want a different image. A non-empty `image.tag` takes
@@ -93,9 +92,6 @@ env:
   POSTGRES_IDLE_TIMEOUT_MS: 30000
   POSTGRES_STATEMENT_TIMEOUT_MS: 30000
   POSTGRES_MIGRATION_LOCK_TIMEOUT_MS: 60000
-  OLLAMA_TIMEOUT: 300000
-  OLLAMA_LONG_OPERATION_TIMEOUT: 900000
-  OLLAMA_MAX_CONTEXT: 32768
   BLOB_STORE_BACKEND: s3
   VECTOR_STORE_BACKEND: pgvector
   COORDINATION_BACKEND: redis
@@ -138,7 +134,7 @@ Do not commit that file or pass production secrets through `--set`. Store it
 with a protected encrypted-values workflow. Scale model providers and Work
 sandbox Pods independently; when `work.enabled=true`, the external team worker
 receives the same runtime image, StorageClass, and `work.env` limits as app pods.
-The worker also receives the same resolved Ollama endpoint, request timeouts,
+The worker also receives the same resolved provider timeouts
 and maximum automatically adopted context as the app, because document
 embeddings, durable chats, and Work runs execute provider calls there.
 An active team application (a positive `replicaCount`, or enabled autoscaling)
@@ -171,17 +167,6 @@ kubectl port-forward svc/libre-webui 8080:8080
 ```
 
 Open [http://localhost:8080](http://localhost:8080).
-
-## External Ollama
-
-Use an existing Ollama endpoint:
-
-```bash
-helm install libre-webui oci://ghcr.io/libre-webui/charts/libre-webui \
-  --set ollama.bundled.enabled=false \
-  --set ollama.external.enabled=true \
-  --set ollama.external.url=http://my-ollama:11434
-```
 
 ## Secrets
 
@@ -235,7 +220,7 @@ networkPolicy:
 The application accepts ingress only on its HTTP container port. The worker
 accepts no ingress. These policies do not restrict egress: application and
 worker processes must still reach the configured PostgreSQL, Redis, S3,
-Ollama, tool, and model-provider endpoints, and operators decide where those
+tool, and model-provider endpoints, and operators decide where those
 services live.
 
 This setting is separate from `work.networkPolicy.enabled`, which controls the
@@ -246,7 +231,7 @@ isolation.
 
 ## Persistence
 
-Keep the Alcore data PVC and Ollama model PVC on persistent storage. Back up the Alcore data volume and the encryption key together.
+Keep the Alcore data PVC on persistent storage. Back up the Alcore data volume and the encryption key together.
 
 Work task workspaces live in their own PVCs in the sandbox namespace, not in
 the Alcore data PVC. Complete Work recovery needs both the database
@@ -281,7 +266,7 @@ those variables, and the callback URLs must match the public domain.
 
 ## Resource Planning
 
-For local Ollama inside the cluster, schedule the Ollama pod on nodes with enough memory and GPU capacity for the models you plan to run. If your cluster already has a dedicated Ollama or inference service, external Ollama is usually simpler.
+Size nodes for the Alcore app and worker pods plus any GPU workloads you run separately. Model inference runs at your configured providers, not in the cluster.
 
 ## Related Docs
 

@@ -15,7 +15,7 @@ to the OpenAI-compatible HTTP API built into
 [MLX LM](https://github.com/ml-explore/mlx-lm).
 
 This path is useful when you want native Metal inference without converting an
-MLX checkpoint to an Ollama or GGUF model.
+MLX checkpoint to a GGUF model.
 
 ## Architecture
 

@@ -82,8 +82,7 @@ previous state as a revision.
 
 Generating a proposal does not persist it. Applying it does. A remote provider
 receives the note content and instruction under that provider's retention,
-privacy, and billing terms; choose a local model when the note must stay on your
-configured Ollama infrastructure. An assist instruction is limited to 4,000
+privacy, and billing terms; choose a provider you operate when the note must stay on your An assist instruction is limited to 4,000
 characters, and a proposal must fit the normal note content limit.
 
 ## Notes as chat tools

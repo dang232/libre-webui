@@ -9,8 +9,8 @@ keywords:
 
 # Private Remote Deployment
 
-This pattern runs Alcore, Ollama, and Cloudflare Tunnel on one Docker host
-without publishing the application or Ollama ports. Cloudflare Access is the
+This pattern runs Alcore and Cloudflare Tunnel on one Docker host
+without publishing the application ports. Cloudflare Access is the
 outer identity boundary; Alcore authentication remains the inner boundary.
 Work and Watchtower are separate, root-equivalent opt-ins.
 
@@ -38,7 +38,7 @@ the client default.
   WebSocket upgrades. Do not add public bypass paths.
 - Alcore requires a current account for application APIs. Model lifecycle
   and Work operations require the current database role to be administrator.
-- The application, Ollama, SearXNG, and cloudflared only use a private Compose
+- The application, SearXNG, and cloudflared only use a private Compose
   network. The host publishes no application ports.
 - The bundled SearXNG service powers optional [web search](./WEB_SEARCH). It
   is internal-only and inert until an administrator enables search in
@@ -281,7 +281,7 @@ copies data into the new volume and writes recovered `runtime.json` and
 stack. Inspect the recovered configuration, update deployment-specific values
 deliberately, and test the restored volume with an isolated stack.
 
-Ollama models can be pulled again. Docker Work volumes, Kubernetes Work PVCs,
+Provider models are re-synced from their providers. Docker Work volumes, Kubernetes Work PVCs,
 and host-bound Work folders are outside the application data directory and
 require their own coordinated snapshots and retention policy.
 
@@ -329,8 +329,7 @@ docker compose \
   up -d
 ```
 
-Watchtower checks Ollama and SearXNG every 30 minutes. Ollama model data remains
-in its named volume, and SearXNG configuration remains in its bind mount. It
+Watchtower checks SearXNG every 30 minutes. SearXNG configuration remains in its bind mount. It
 does not update Alcore, cloudflared, the Work socket proxy, or Work
 sandboxes. A client deployment follows `main`; an experimental instance may
 select `:dev`, but the application still requires the same backup-gated manual

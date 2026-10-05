@@ -182,7 +182,6 @@ import CodeBlock from '@theme/CodeBlock';
           <li><a href="/HUGGINGFACE_HUB">Hugging Face Hub</a></li>
           <li><a href="/KIMI_CODE">Kimi Code</a></li>
           <li><a href="/MLX_APPLE_SILICON">MLX LM on Apple Silicon</a></li>
-          <li><a href="/LOCAL_GPU_STACK">Local GPU Stack</a></li>
         </ul>
       </div>
 
@@ -258,7 +257,6 @@ import CodeBlock from '@theme/CodeBlock';
         <p>{"Choose a supported topology, keep recovery evidence, and use executable contracts to verify what is actually shipped."}</p>
         <ul>
           <li><a href="/DOCKER">Docker</a></li>
-          <li><a href="/DOCKER_EXTERNAL_OLLAMA">Docker with External Ollama</a></li>
           <li><a href="/KUBERNETES">Kubernetes and Helm</a></li>
           <li><a href="/PRIVATE_REMOTE_DEPLOYMENT">Private Remote Deployment</a></li>
           <li><a href="/PLATFORM_FOUNDATION">Platform Foundation and HA</a></li>

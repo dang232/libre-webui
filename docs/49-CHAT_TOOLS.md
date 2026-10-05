@@ -269,8 +269,7 @@ Search queries and requested URLs are sent to Exa when these tools run.
   call the same servers through the same gateway: network-enabled runs
   only, credential-less servers filtered at offer time, side-effecting
   tools gated by Work approvals.
-- Gemini and agent CLI models do not receive tools; Ollama,
-  OpenAI-compatible, Responses-API, and Anthropic providers do.
+- Gemini and agent CLI models do not receive tools; OpenAI-compatible, Responses-API, and Anthropic providers do.
 - Interactive OAuth is MCP-only: an OpenAPI server still uses a static
   per-user credential. The flow is the authorization-code grant with PKCE;
   device-code and client-credentials flows are not offered, and an

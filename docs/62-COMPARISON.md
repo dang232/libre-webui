@@ -13,13 +13,12 @@ keywords:
     license,
     apache 2.0,
     self-hosted ai,
-    ollama,
   ]
 ---
 
 # Open WebUI vs Alcore: A Factual Comparison
 
-Open WebUI and Alcore are both self-hosted web interfaces for working with large language models. Each can connect to local runtimes such as Ollama as well as OpenAI-compatible and other hosted APIs, and each is designed to keep user data on the operator's own infrastructure. This page compares the two projects strictly on publicly documented differences, drawing on each project's official documentation, license text, and public repositories. It does not evaluate code quality, performance, or community sentiment, and it does not recommend one project over the other.
+Open WebUI and Alcore are both self-hosted web interfaces for working with large language models. Open WebUI can connect to local runtimes such as Ollama as well as hosted APIs; Alcore connects to provider plugins (OpenAI-compatible and other hosted APIs), and each is designed to keep user data on the operator's own infrastructure. This page compares the two projects strictly on publicly documented differences, drawing on each project's official documentation, license text, and public repositories. It does not evaluate code quality, performance, or community sentiment, and it does not recommend one project over the other.
 
 All statements below are sourced from the official documentation of [Open WebUI](https://docs.openwebui.com) and [Alcore](https://docs.librewebui.org), the projects' license files, and their public GitHub repositories, as of August 2026. Both projects evolve quickly; verify details against the primary sources before making decisions.
 
@@ -85,7 +84,7 @@ In summary: Open WebUI documents broader enterprise identity integration (LDAP, 
 
 **Open WebUI** documents installation via `pip install open-webui`, Docker (including CUDA and bundled-Ollama image variants), Docker Compose, and Kubernetes via kustomize and Helm, with S3/GCS/Azure Blob storage backends and Redis-backed sessions for horizontal scaling.
 
-**Alcore** documents a [one-command start](https://docs.librewebui.org/quick-start) (`npx libre-webui@latest`), global npm and Homebrew installation, Docker Compose variants (bundled, external, and host-installed Ollama, GPU, socket-proxy, and team with its Work overlay), a published pull-ready image for the Work Computer's GUI sandbox, a [Helm chart](https://docs.librewebui.org/kubernetes) published to an OCI registry with pod-security defaults and optional NetworkPolicies, a documented private-deployment pattern using Cloudflare Tunnel with no published ports, and an Electron [desktop app](https://docs.librewebui.org/electron-desktop-app) for macOS, Windows, and Linux — documented as a client only, without a bundled backend or auto-updates.
+**Alcore** documents a [one-command start](https://docs.librewebui.org/quick-start) (`npx libre-webui@latest`), global npm and Homebrew installation, Docker Compose variants (CPU, GPU, socket-proxy, and team with its Work overlay), a published pull-ready image for the Work Computer's GUI sandbox, a [Helm chart](https://docs.librewebui.org/kubernetes) published to an OCI registry with pod-security defaults and optional NetworkPolicies, a documented private-deployment pattern using Cloudflare Tunnel with no published ports, and an Electron [desktop app](https://docs.librewebui.org/electron-desktop-app) for macOS, Windows, and Linux — documented as a client only, without a bundled backend or auto-updates.
 
 ## Production features
 
