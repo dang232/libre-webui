@@ -2470,7 +2470,9 @@
     "previewUnavailableDescription": "This artifact does not contain renderable preview content. Switch to code view to inspect the source.",
     "versionOf": "Sürüm {{current}} / {{total}}",
     "previousVersion": "Önceki sürüm",
-    "nextVersion": "Sonraki sürüm"
+    "nextVersion": "Sonraki sürüm",
+    "print": "Print",
+    "exportCsv": "Export CSV"
   },
   "personaImportExport": {
     "title": "Personaları İçe ve Dışa Aktar",

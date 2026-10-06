@@ -32,6 +32,8 @@ import {
   GripVertical,
   ChevronLeft,
   ChevronRight,
+  Printer,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { OptimizedSyntaxHighlighter } from '@/components/OptimizedSyntaxHighlighter';
@@ -43,6 +45,11 @@ import {
   buildSvgArtifactDocument,
   SVG_ARTIFACT_SANDBOX,
 } from '@/utils/artifactHtml';
+import {
+  downloadTextFile,
+  requestPreviewTables,
+  tablesToCsv,
+} from '@/utils/artifactExport';
 import { type ArtifactSandboxKind } from '@/utils/artifactRuntimeDocument';
 import { cn } from '@/utils';
 import { createLogger } from '@/utils/logger';
@@ -155,6 +162,7 @@ export const ArtifactSlideOutPanel: React.FC = () => {
   }
   const [copied, setCopied] = useState(false);
   const [viewMode, setViewMode] = useState<'preview' | 'code'>('preview');
+  const [exportableTableCount, setExportableTableCount] = useState(0);
   const panelRef = useRef<HTMLDivElement>(null);
   const prevArtifactIdRef = useRef<string | null>(null);
   const resizeStartXRef = useRef(0);
@@ -162,6 +170,50 @@ export const ArtifactSlideOutPanel: React.FC = () => {
   const resizePointerIdRef = useRef<number | null>(null);
   const resizeFrameRef = useRef<number | null>(null);
   const pendingWidthRef = useRef(panelWidth);
+
+  // Probe the preview for rendered tables so the CSV button only appears
+  // when there is something to export. The frame answers over the sandbox
+  // message channel; retries cover a preview that is still rendering.
+  useEffect(() => {
+    const current = artifactPanelArtifact;
+    if (!artifactPanelOpen || !current) {
+      setExportableTableCount(0);
+      return;
+    }
+    if (
+      current.type !== 'html' &&
+      current.type !== 'react' &&
+      current.type !== 'mermaid'
+    ) {
+      setExportableTableCount(0);
+      return;
+    }
+    let cancelled = false;
+    const probe = async () => {
+      for (let attempt = 0; attempt < 3; attempt++) {
+        if (attempt > 0) {
+          await new Promise(resolve => setTimeout(resolve, 2500));
+        }
+        if (cancelled) return;
+        const frame = panelRef.current?.querySelector(
+          'iframe[data-testid=artifact-html-preview]'
+        );
+        if (!(frame instanceof HTMLIFrameElement)) continue;
+        const tables = await requestPreviewTables(frame, { timeoutMs: 2000 });
+        if (cancelled) return;
+        if (tables && tables.length > 0) {
+          setExportableTableCount(tables.length);
+          return;
+        }
+      }
+      if (!cancelled) setExportableTableCount(0);
+    };
+    setExportableTableCount(0);
+    void probe();
+    return () => {
+      cancelled = true;
+    };
+  }, [artifactPanelOpen, artifactPanelArtifact]);
 
   // Reset view mode when artifact changes (using ref pattern to avoid effect setState)
   const currentArtifactId = artifactPanelArtifact?.id ?? null;
@@ -357,6 +409,32 @@ export const ArtifactSlideOutPanel: React.FC = () => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const printPreview = () => {
+    const frame = panelRef.current?.querySelector(
+      'iframe[data-testid=artifact-html-preview], iframe[data-testid=artifact-svg-preview]'
+    );
+    if (frame instanceof HTMLIFrameElement) {
+      frame.contentWindow?.print();
+    }
+  };
+
+  const downloadCsv = async () => {
+    const frame = panelRef.current?.querySelector(
+      'iframe[data-testid=artifact-html-preview]'
+    );
+    if (!(frame instanceof HTMLIFrameElement)) return;
+    const tables = await requestPreviewTables(frame);
+    if (!tables || tables.length === 0) {
+      setExportableTableCount(0);
+      return;
+    }
+    downloadTextFile(
+      `${artifact.title}.csv`,
+      tablesToCsv(tables),
+      'text/csv;charset=utf-8'
+    );
   };
 
   const getContentType = (type: string) => {
@@ -749,6 +827,34 @@ export const ArtifactSlideOutPanel: React.FC = () => {
             >
               <Download className='h-3.5 w-3.5' />
             </Button>
+
+            {viewMode === 'preview' &&
+              (artifact.type === 'html' ||
+                artifact.type === 'react' ||
+                artifact.type === 'mermaid' ||
+                artifact.type === 'svg') && (
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  onClick={printPreview}
+                  className='h-7 w-7 p-0 hover:bg-gray-100 dark:hover:bg-dark-200'
+                  title={t('artifacts.print')}
+                >
+                  <Printer className='h-3.5 w-3.5' />
+                </Button>
+              )}
+
+            {exportableTableCount > 0 && (
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => void downloadCsv()}
+                className='h-7 w-7 p-0 hover:bg-gray-100 dark:hover:bg-dark-200'
+                title={t('artifacts.exportCsv')}
+              >
+                <FileSpreadsheet className='h-3.5 w-3.5' />
+              </Button>
+            )}
 
             <Button
               variant='ghost'

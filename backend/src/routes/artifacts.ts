@@ -128,6 +128,10 @@ const SANDBOX_HOST_DOCUMENT = `<!DOCTYPE html>
         if (!host || host === window) return;
 
         var frame = null;
+        var MAX_TABLES = 20;
+        var MAX_ROWS = 500;
+        var MAX_COLS = 50;
+        var MAX_CELL_CHARS = 2000;
         function render(markup) {
           if (!frame) {
             frame = document.createElement('iframe');
@@ -137,11 +141,64 @@ const SANDBOX_HOST_DOCUMENT = `<!DOCTYPE html>
           }
           frame.srcdoc = markup;
         }
+        // Snapshot the rendered tables for CSV export. The host and its
+        // srcdoc frame share an origin, so this DOM read is same-origin;
+        // the application that embeds this host is cross-origin and can
+        // only learn the tables by asking here.
+        function snapshotTables() {
+          var out = [];
+          var doc = null;
+          try {
+            doc = frame ? frame.contentDocument : null;
+          } catch (err) {
+            return out;
+          }
+          if (!doc) return out;
+          var tables = doc.querySelectorAll('table');
+          for (var ti = 0; ti < tables.length && out.length < MAX_TABLES; ti++) {
+            var rows = [];
+            var trs = tables[ti].rows;
+            for (var ri = 0; ri < trs.length && rows.length < MAX_ROWS; ri++) {
+              var cells = [];
+              var tds = trs[ri].cells;
+              for (var ci = 0; ci < tds.length && cells.length < MAX_COLS; ci++) {
+                var text = (tds[ci].textContent || '').trim();
+                cells.push(
+                  text.length > MAX_CELL_CHARS
+                    ? text.slice(0, MAX_CELL_CHARS)
+                    : text
+                );
+              }
+              rows.push(cells);
+            }
+            out.push(rows);
+          }
+          return out;
+        }
 
         window.addEventListener('message', function (event) {
           if (event.source !== host) return;
           var data = event.data;
-          if (!data || data.type !== 'libre-artifact:render') return;
+          if (!data) return;
+          if (data.type === 'libre-artifact:tables-request') {
+            if (typeof data.nonce !== 'string' || !data.nonce) return;
+            var tables = [];
+            try {
+              tables = snapshotTables();
+            } catch (err) {
+              tables = [];
+            }
+            host.postMessage(
+              {
+                type: 'libre-artifact:tables',
+                nonce: data.nonce,
+                tables: tables,
+              },
+              '*'
+            );
+            return;
+          }
+          if (data.type !== 'libre-artifact:render') return;
           if (typeof data.html !== 'string') return;
           render(data.html);
         });

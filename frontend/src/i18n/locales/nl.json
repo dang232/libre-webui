@@ -2470,7 +2470,9 @@
     "previewUnavailableDescription": "This artifact does not contain renderable preview content. Switch to code view to inspect the source.",
     "versionOf": "Versie {{current}} van {{total}}",
     "previousVersion": "Vorige versie",
-    "nextVersion": "Volgende versie"
+    "nextVersion": "Volgende versie",
+    "print": "Print",
+    "exportCsv": "Export CSV"
   },
   "personaImportExport": {
     "title": "Personas importeren & exporteren",

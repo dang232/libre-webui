@@ -2470,7 +2470,9 @@
     "previewUnavailableDescription": "This artifact does not contain renderable preview content. Switch to code view to inspect the source.",
     "versionOf": "Версия {{current}} из {{total}}",
     "previousVersion": "Предыдущая версия",
-    "nextVersion": "Следующая версия"
+    "nextVersion": "Следующая версия",
+    "print": "Print",
+    "exportCsv": "Export CSV"
   },
   "personaImportExport": {
     "title": "Импорт и экспорт персон",
