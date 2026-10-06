@@ -23,13 +23,16 @@ import { GenerationStatistics } from '@/types';
 interface GenerationStatsProps {
   statistics: GenerationStatistics;
   className?: string;
+  /** Initial expansion of the details panel. Defaults to collapsed. */
+  defaultExpanded?: boolean;
 }
 
 export const GenerationStats: React.FC<GenerationStatsProps> = ({
   statistics,
   className = '',
+  defaultExpanded = false,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const { t } = useTranslation();
 
   // Helper function to format duration from nanoseconds
@@ -136,12 +139,14 @@ export const GenerationStats: React.FC<GenerationStatsProps> = ({
               </span>{' '}
               {formatDuration(statistics.eval_duration)}
             </div>
-            <div className='text-gray-700 dark:text-dark-700'>
-              <span className='font-medium text-gray-800 dark:text-dark-800'>
-                {t('generationStats.modelLoad')}
-              </span>{' '}
-              {formatDuration(statistics.load_duration)}
-            </div>
+            {statistics.load_duration != null && (
+              <div className='text-gray-700 dark:text-dark-700'>
+                <span className='font-medium text-gray-800 dark:text-dark-800'>
+                  {t('generationStats.modelLoad')}
+                </span>{' '}
+                {formatDuration(statistics.load_duration)}
+              </div>
+            )}
             <div className='text-gray-700 dark:text-dark-700'>
               <span className='font-medium text-gray-800 dark:text-dark-800'>
                 {t('generationStats.totalTime')}
