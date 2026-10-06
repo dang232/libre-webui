@@ -3884,7 +3884,7 @@
     "skip": "تخطَّ الآن — سأقوم بتوصيل النماذج لاحقًا",
     "local": {
       "title": "خادم محلي",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "مفتاح API (اختياري)",
       "test": "اختبار الاتصال",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "API سحابي",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter، والمزيد",
+      "subtitle": "Alcore، والمزيد",
       "keyPlaceholder": "الصق مفتاح API الخاص بـ {{name}}",
       "connect": "اتصال",
       "connecting": "جارٍ الاتصال…",

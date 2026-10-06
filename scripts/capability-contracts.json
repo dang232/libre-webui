@@ -147,17 +147,17 @@
         {
           "file": "scripts/test-plugin-capability-routing.mjs",
           "runner": "test:package",
-          "name": "Hugging Face capabilities ignore the generic Chat endpoint and use task payloads",
+          "name": "capability plugins route to capability endpoints with capability payloads",
           "behaviorPatterns": [
             "embeddings\\.executeEmbeddingRequest\\(",
             "\\{ embeddings: \\[\\[0\\.25, 0\\.75\\]\\] \\}",
-            "'/embedding/sentence-transformers/all-MiniLM-L6-v2'"
+            "'/custom/embeddings'"
           ]
         }
       ],
       "manifest": {
         "exposure": "root-or-capability",
-        "requiresBundledDefinition": true
+        "requiresBundledDefinition": false
       }
     },
     {
@@ -221,17 +221,17 @@
         {
           "file": "scripts/test-image-generation-routing.mjs",
           "runner": "test:package",
-          "name": "image generation uses the selected provider and user-scoped OpenAI settings",
+          "name": "image generation uses the selected provider and user-scoped settings",
           "behaviorPatterns": [
             "service\\.executeImageGenRequest\\(",
             "requests\\[0\\]\\.url, '/v1/images/generations'",
-            "requests\\[0\\]\\.authorization, 'Bearer user-openai-key'"
+            "requests\\[0\\]\\.authorization, 'Bearer user-alcore-key'"
           ]
         }
       ],
       "manifest": {
         "exposure": "root-or-capability",
-        "requiresBundledDefinition": true
+        "requiresBundledDefinition": false
       }
     },
     {
@@ -313,7 +313,7 @@
       ],
       "manifest": {
         "exposure": "root-or-capability",
-        "requiresBundledDefinition": true
+        "requiresBundledDefinition": false
       }
     },
     {
@@ -395,7 +395,7 @@
       ],
       "manifest": {
         "exposure": "root-or-capability",
-        "requiresBundledDefinition": true
+        "requiresBundledDefinition": false
       }
     },
     {
@@ -455,9 +455,9 @@
       ],
       "focusedTests": [
         {
-          "file": "scripts/test-openrouter-media-routing.mjs",
+          "file": "scripts/test-media-generation-routing.mjs",
           "runner": "test:package",
-          "name": "OpenRouter audio-output models stream generated sound bytes",
+          "name": "Audio-output models stream generated sound bytes",
           "behaviorPatterns": [
             "service\\.generate\\('audio-model', 'A warm synth chord'",
             "modalities: \\['text', 'audio'\\]",
@@ -467,7 +467,7 @@
       ],
       "manifest": {
         "exposure": "root-or-capability",
-        "requiresBundledDefinition": true
+        "requiresBundledDefinition": false
       }
     },
     {
@@ -546,7 +546,7 @@
       ],
       "focusedTests": [
         {
-          "file": "scripts/test-openrouter-media-routing.mjs",
+          "file": "scripts/test-media-generation-routing.mjs",
           "runner": "test:package",
           "name": "video generation submits, polls, and downloads through the provider endpoint",
           "behaviorPatterns": [
@@ -557,7 +557,7 @@
           ]
         },
         {
-          "file": "scripts/test-openrouter-media-routing.mjs",
+          "file": "scripts/test-media-generation-routing.mjs",
           "runner": "test:package",
           "name": "prepared video and resume publications resolve lost commit acknowledgements",
           "behaviorPatterns": [
@@ -569,7 +569,7 @@
       ],
       "manifest": {
         "exposure": "root-or-capability",
-        "requiresBundledDefinition": true
+        "requiresBundledDefinition": false
       }
     }
   ]

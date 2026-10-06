@@ -344,77 +344,28 @@ test('packed npm artifact resolves package metadata and frontend dist', async ()
       fs.existsSync(path.join(packedRoot, 'scripts', 'postinstall.js'))
     );
 
-    const kimiPlugin = JSON.parse(
+    const alcorePlugin = JSON.parse(
       fs.readFileSync(
-        path.join(packedRoot, 'plugins', 'kimi-code.json'),
+        path.join(packedRoot, 'plugins', 'alcore.json'),
         'utf8'
       )
     );
-    assert.equal(kimiPlugin.id, 'kimi-code');
-    assert.equal(kimiPlugin.name, 'Kimi Code (Moonshot AI)');
+    assert.equal(alcorePlugin.id, 'alcore');
+    assert.equal(alcorePlugin.name, 'ALcore API Platform');
     assert.equal(
-      kimiPlugin.endpoint,
-      'https://api.kimi.com/coding/v1/chat/completions'
+      alcorePlugin.endpoint,
+      'https://alcore.io.vn/v1/chat/completions'
     );
-    assert.deepEqual(kimiPlugin.auth, {
+    assert.deepEqual(alcorePlugin.auth, {
       header: 'Authorization',
       prefix: 'Bearer ',
-      key_env: 'KIMI_API_KEY',
+      key_env: 'ALCORE_API_KEY',
     });
-    assert.deepEqual(kimiPlugin.model_map, [
-      'k3',
-      'k3-256k',
-      'kimi-for-coding',
-      'kimi-for-coding-highspeed',
-    ]);
+    assert.deepEqual(alcorePlugin.model_map, ['default-chat']);
     assert.deepEqual(
-      kimiPlugin.variables.map(variable => variable.name),
-      ['endpoint', 'max_tokens', 'stream']
+      alcorePlugin.variables.map(variable => variable.name),
+      ['base_url', 'temperature', 'max_tokens', 'stream']
     );
-
-    const mlxPlugin = JSON.parse(
-      fs.readFileSync(path.join(packedRoot, 'plugins', 'mlx-lm.json'), 'utf8')
-    );
-    assert.equal(mlxPlugin.id, 'mlx-lm');
-    assert.equal(mlxPlugin.name, 'MLX LM (Apple Silicon)');
-    assert.equal(
-      mlxPlugin.endpoint,
-      'http://127.0.0.1:8081/v1/chat/completions'
-    );
-    assert.deepEqual(mlxPlugin.auth, {
-      header: '',
-      prefix: '',
-      key_env: '',
-    });
-    assert.ok(
-      mlxPlugin.model_map.includes('prism-ml/Ternary-Bonsai-27B-mlx-2bit')
-    );
-
-    const anthropicPlugin = JSON.parse(
-      fs.readFileSync(
-        path.join(packedRoot, 'plugins', 'anthropic.json'),
-        'utf8'
-      )
-    );
-    assert.deepEqual(anthropicPlugin.model_map, [
-      'claude-fable-5',
-      'claude-haiku-4-5-20251001',
-      'claude-opus-4-5-20251101',
-      'claude-opus-4-6',
-      'claude-opus-4-7',
-      'claude-opus-4-8',
-      'claude-opus-5',
-      'claude-sonnet-4-5-20250929',
-      'claude-sonnet-4-6',
-      'claude-sonnet-5',
-    ]);
-    const anthropicVariables = new Map(
-      anthropicPlugin.variables.map(variable => [variable.name, variable])
-    );
-    assert.equal(anthropicVariables.get('temperature')?.max, 1);
-    assert.equal(anthropicVariables.get('max_tokens')?.default, 16384);
-    assert.equal(anthropicVariables.has('frequency_penalty'), false);
-    assert.equal(anthropicVariables.has('presence_penalty'), false);
 
     const pkg = JSON.parse(
       fs.readFileSync(path.join(packedRoot, 'package.json'), 'utf8')
@@ -960,7 +911,7 @@ test('packed npm artifact serves SPA routes from a dot-directory install', async
   });
 });
 
-test('packed npm artifact exposes provider-backed embedding models and requests', async () => {
+test('packed npm artifact exposes provider-backed embedding models', async () => {
   await withTempPackedProject(async ({ tempDir, packedRoot }) => {
     linkInstalledDependencies(packedRoot);
 
@@ -972,30 +923,11 @@ test('packed npm artifact exposes provider-backed embedding models and requests'
         authorization: req.headers.authorization,
       });
 
-      if (req.method === 'GET' && req.url === '/openai/v1/models') {
+      if (req.method === 'GET' && req.url === '/alcore/v1/models') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(
           JSON.stringify({
             data: [{ id: 'text-embedding-3-small' }, { id: 'gpt-4o-mini' }],
-          })
-        );
-        return;
-      }
-
-      if (req.method === 'POST' && req.url === '/openai/v1/embeddings') {
-        let body = '';
-        for await (const chunk of req) {
-          body += chunk;
-        }
-
-        const payload = JSON.parse(body);
-        assert.equal(payload.model, 'text-embedding-3-small');
-        assert.equal(payload.input, 'hello from packed npx');
-
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(
-          JSON.stringify({
-            data: [{ embedding: [0.11, 0.22, 0.33] }],
           })
         );
         return;
@@ -1006,7 +938,8 @@ test('packed npm artifact exposes provider-backed embedding models and requests'
     });
 
     const providerPort = await startServer(providerServer);
-    const providerEndpoint = `http://127.0.0.1:${providerPort}/openai/v1/chat/completions`;
+    const providerBase = `http://127.0.0.1:${providerPort}/alcore/v1`;
+    const providerEndpoint = `${providerBase}/chat/completions`;
 
     const backendPortServer = http.createServer();
     const backendPort = await startServer(backendPortServer);
@@ -1022,7 +955,7 @@ test('packed npm artifact exposes provider-backed embedding models and requests'
         ...process.env,
         PORT: String(backendPort),
         DATA_DIR: dataDir,
-        OPENAI_API_KEY: 'test-openai-key',
+        ALCORE_API_KEY: 'test-alcore-key',
         JWT_SECRET: 'test-jwt-secret',
         ENABLE_SIGNUP: 'true',
         TURNSTILE_SITE_KEY: '',
@@ -1067,27 +1000,27 @@ test('packed npm artifact exposes provider-backed embedding models and requests'
         'Content-Type': 'application/json',
       };
       const endpointResponse = await fetch(
-        `${backendBaseUrl}/api/plugins/openai/variables`,
+        `${backendBaseUrl}/api/plugins/alcore/variables`,
         {
           method: 'PUT',
           headers: pluginJsonHeaders,
           body: JSON.stringify({
-            variables: { endpoint: providerEndpoint },
+            variables: { base_url: providerBase },
           }),
         }
       );
       assert.equal(endpointResponse.status, 200);
       const credentialResponse = await fetch(
-        `${backendBaseUrl}/api/plugins/openai/credentials`,
+        `${backendBaseUrl}/api/plugins/alcore/credentials`,
         {
           method: 'POST',
           headers: pluginJsonHeaders,
-          body: JSON.stringify({ api_key: 'test-openai-key' }),
+          body: JSON.stringify({ api_key: 'test-alcore-key' }),
         }
       );
       assert.equal(credentialResponse.status, 200);
       const activationResponse = await fetch(
-        `${backendBaseUrl}/api/plugins/activate/openai`,
+        `${backendBaseUrl}/api/plugins/activate/alcore`,
         {
           method: 'POST',
           headers: pluginHeaders,
@@ -1145,15 +1078,14 @@ test('packed npm artifact exposes provider-backed embedding models and requests'
       assert.equal(modelsPayload.success, true);
       assert.ok(Array.isArray(modelsPayload.data));
       const modelIds = modelsPayload.data.map(model => model.id);
-      assert.ok(modelIds.includes('plugin:openai:text-embedding-3-small'));
-      assert.ok(!modelIds.includes('plugin:openai:gpt-4o-mini'));
+      assert.ok(modelIds.includes('plugin:alcore:text-embedding-3-small'));
+      assert.ok(!modelIds.includes('plugin:alcore:gpt-4o-mini'));
 
       const providerUrls = providerRequests.map(request => request.url);
-      assert.ok(providerUrls.includes('/openai/v1/models'));
-      assert.ok(providerUrls.includes('/openai/v1/embeddings'));
+      assert.ok(providerUrls.includes('/alcore/v1/models'));
       assert.ok(
         providerRequests.every(
-          request => request.authorization === 'Bearer test-openai-key'
+          request => request.authorization === 'Bearer test-alcore-key'
         )
       );
 
@@ -1252,6 +1184,44 @@ test('packed npm artifact routes TTS through the selected plugin valve from any 
     const wrongProviderPort = await startServer(wrongProviderServer);
     const wrongProviderEndpoint = `http://127.0.0.1:${wrongProviderPort}/v1/audio/speech`;
 
+    const packedTtsDefinition = {
+      id: 'packed-tts',
+      name: 'Packed TTS fixture',
+      type: 'tts',
+      endpoint: 'http://127.0.0.1:9/unconfigured',
+      auth: { header: '', key_env: '' },
+      model_map: ['tts-1-hd'],
+      capabilities: {
+        tts: {
+          endpoint: 'http://127.0.0.1:9/unconfigured',
+          model_map: ['tts-1-hd'],
+          config: {
+            voices: ['alba'],
+            default_voice: 'alba',
+            formats: ['wav'],
+            default_format: 'wav',
+            no_auth_required: true,
+          },
+        },
+      },
+      variables: [
+        {
+          name: 'endpoint',
+          type: 'string',
+          label: 'API Endpoint',
+          description: 'Override the default API endpoint URL.',
+          default: 'http://127.0.0.1:9/unconfigured',
+        },
+        {
+          name: 'speed',
+          type: 'number',
+          label: 'Speed',
+          description: 'Speech speed multiplier.',
+          default: 1,
+        },
+      ],
+    };
+
     fs.writeFileSync(
       path.join(packedRoot, 'plugins', 'aaa-shared-tts.json'),
       JSON.stringify(
@@ -1324,8 +1294,21 @@ test('packed npm artifact routes TTS through the selected plugin valve from any 
       const authenticatedHeaders = {
         Authorization: `Bearer ${admin.token}`,
       };
+      const authenticatedJsonHeaders = {
+        ...authenticatedHeaders,
+        'Content-Type': 'application/json',
+      };
+      const installResponse = await fetch(
+        `${backendBaseUrl}/api/plugins/install`,
+        {
+          method: 'POST',
+          headers: authenticatedJsonHeaders,
+          body: JSON.stringify(packedTtsDefinition),
+        }
+      );
+      assert.equal(installResponse.status, 200);
       const activationResponse = await fetch(
-        `${backendBaseUrl}/api/plugins/activate/kyutai-tts-1.6b`,
+        `${backendBaseUrl}/api/plugins/activate/packed-tts`,
         {
           method: 'POST',
           headers: authenticatedHeaders,
@@ -1338,11 +1321,11 @@ test('packed npm artifact routes TTS through the selected plugin valve from any 
       });
       assert.equal(modelsResponse.status, 200);
       const modelsPayload = await modelsResponse.json();
-      const kyutaiModels = modelsPayload.data
-        .filter(model => model.plugin === 'kyutai-tts-1.6b')
+      const packedModels = modelsPayload.data
+        .filter(model => model.plugin === 'packed-tts')
         .map(model => model.model)
         .sort();
-      assert.deepEqual(kyutaiModels, ['kyutai-tts-1.6b', 'tts-1-hd']);
+      assert.deepEqual(packedModels, ['tts-1-hd']);
 
       const pluginsResponse = await fetch(`${backendBaseUrl}/api/tts/plugins`, {
         headers: authenticatedHeaders,
@@ -1350,11 +1333,11 @@ test('packed npm artifact routes TTS through the selected plugin valve from any 
       assert.equal(pluginsResponse.status, 200);
       const pluginsPayload = await pluginsResponse.json();
       assert.ok(
-        pluginsPayload.data.some(plugin => plugin.id === 'kyutai-tts-1.6b')
+        pluginsPayload.data.some(plugin => plugin.id === 'packed-tts')
       );
 
       const valveResponse = await fetch(
-        `http://127.0.0.1:${backendPort}/api/plugins/kyutai-tts-1.6b/variables`,
+        `http://127.0.0.1:${backendPort}/api/plugins/packed-tts/variables`,
         {
           method: 'PUT',
           headers: {
@@ -1378,8 +1361,8 @@ test('packed npm artifact routes TTS through the selected plugin valve from any 
           },
           body: JSON.stringify({
             model: 'tts-1-hd',
-            pluginId: 'kyutai-tts-1.6b',
-            input: 'hello from the selected Kyutai provider',
+            pluginId: 'packed-tts',
+            input: 'hello from the selected packed TTS provider',
             voice: 'alba',
             response_format: 'wav',
           }),
@@ -1396,7 +1379,7 @@ test('packed npm artifact routes TTS through the selected plugin valve from any 
       assert.equal(targetRequests[0].url, '/v1/audio/speech');
       assert.deepEqual(JSON.parse(targetRequests[0].body), {
         model: 'tts-1-hd',
-        input: 'hello from the selected Kyutai provider',
+        input: 'hello from the selected packed TTS provider',
         voice: 'alba',
         response_format: 'wav',
         speed: 1,

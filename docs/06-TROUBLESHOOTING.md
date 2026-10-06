@@ -253,8 +253,8 @@ settings under **Settings → Plugins**:
   `/chat/completions` or `/responses`, that suffix also determines the request
   format so an override cannot receive the wrong payload.
 
-Imported plugin JSON supports providers that use an OpenAI Chat Completions,
-OpenAI Responses, Anthropic, or Gemini-compatible wire format. If the provider
+Imported plugin JSON supports providers that use an OpenAI Chat Completions or
+OpenAI Responses-compatible wire format. If the provider
 uses a proprietary payload, streaming event, tool-call, or response format, it
 needs a backend adapter; changing only the endpoint cannot translate it.
 

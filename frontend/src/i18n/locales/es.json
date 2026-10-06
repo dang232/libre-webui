@@ -3884,7 +3884,7 @@
     "skip": "Omitir por ahora — conectaré modelos más tarde",
     "local": {
       "title": "Servidor local",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "Clave de API (opcional)",
       "test": "Probar conexión",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "API en la nube",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter y más",
+      "subtitle": "Alcore y más",
       "keyPlaceholder": "Pega tu clave de API de {{name}}",
       "connect": "Conectar",
       "connecting": "Conectando…",

@@ -3884,7 +3884,7 @@
     "skip": "এখনকার মতো এড়িয়ে যান — আমি পরে মডেল সংযুক্ত করব",
     "local": {
       "title": "লোকাল সার্ভার",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "API কী (ঐচ্ছিক)",
       "test": "সংযোগ পরীক্ষা করুন",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "ক্লাউড API",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter, এবং আরও অনেক কিছু",
+      "subtitle": "Alcore, এবং আরও অনেক কিছু",
       "keyPlaceholder": "আপনার {{name}} API কী পেস্ট করুন",
       "connect": "সংযুক্ত করুন",
       "connecting": "সংযুক্ত করা হচ্ছে…",

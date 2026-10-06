@@ -3884,7 +3884,7 @@
     "skip": "Sleppa í bili — ég tengi líkön síðar",
     "local": {
       "title": "Staðbundinn netþjónn",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "API lykill (valfrjálst)",
       "test": "Prófa tengingu",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "Ský-API",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter og fleiri",
+      "subtitle": "Alcore og fleiri",
       "keyPlaceholder": "Límdu inn {{name}} API lykilinn þinn",
       "connect": "Tengja",
       "connecting": "Tengist…",

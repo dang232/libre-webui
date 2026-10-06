@@ -3884,7 +3884,7 @@
     "skip": "지금은 건너뛰기 — 모델은 나중에 연결할게요",
     "local": {
       "title": "로컬 서버",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "API 키 (선택 사항)",
       "test": "연결 테스트",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "클라우드 API",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter 등",
+      "subtitle": "Alcore 등",
       "keyPlaceholder": "{{name}} API 키를 붙여넣으세요",
       "connect": "연결",
       "connecting": "연결 중…",

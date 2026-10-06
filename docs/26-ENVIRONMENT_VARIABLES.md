@@ -392,14 +392,12 @@ selects Kubernetes when `work.enabled=true`.
 | `VOICE_CLONING_ACCESS_MODE`           | unset (admin toggle, all-users)                                                               | Pin voice cloning to `admins` or `all-users` and lock the admin toggle in User Management                                                     |
 | `TOOLS_PRIVATE_NETWORK_ALLOWLIST`     | unset                                                                                         | Exact hostnames tool servers and webhook targets may resolve to private addresses (comma-separated); pinned                                   |
 | `AGENT_CLI_TIMEOUT_MS`                | `600000`                                                                                      | Time an agent CLI may run before it is killed                                                                                                 |
-| `CODEX_OAUTH_MODELS_ENABLED`          | `true`                                                                                        | Offer the Codex (ChatGPT) provider to admins                                                                                                  |
-| `CODEX_HOME`                          | `~/.codex`                                                                                    | Where the Codex CLI sign-in (`auth.json`) is read from                                                                                        |
 
-Agent CLI binaries and Codex OAuth credentials are node-local. They are
+Agent CLI binaries are node-local. They are
 supported only in a solo process, where discovery and execution see the same
 filesystem and environment. Team mode executes durable chat jobs in an
-external worker, so it requires both `AGENT_CLI_MODELS_ENABLED=false` and
-`CODEX_OAUTH_MODELS_ENABLED=false`; startup rejects any other value rather
+external worker, so it requires `AGENT_CLI_MODELS_ENABLED=false`;
+startup rejects any other value rather
 than advertising a provider that may exist only on an application replica.
 Use a provider plugin whose credentials and routing are stored in
 shared PostgreSQL or forwarded identically to every application and worker.
@@ -413,8 +411,8 @@ This is a deliberate reduction of the Docker sandbox: keep
 through symlinks before they are checked against the roots, and folders such as
 `.ssh`, `.gnupg`, `.aws`, and `.config` are rejected outright.
 
-Agent CLI models expose coding agents already installed on the server (`claude`,
-`codex`) as selectable chat models, so a subscription agent can answer without an
+Agent CLI models expose coding agents already installed on the server
+as selectable chat models, so a subscription agent can answer without an
 API key. Only administrators see them, the CLI runs as the Alcore server
 user, and it inherits that user's agent credentials — treat it as equivalent to
 granting shell access to those agents.
@@ -505,22 +503,12 @@ ignores the interval.
 
 ## Provider Plugin Keys
 
-Provider plugins can use environment keys as deployment-wide defaults:
+The bundled Alcore provider can use an environment key as a
+deployment-wide default:
 
-| Variable              | Provider                                    |
-| --------------------- | ------------------------------------------- |
-| `OPENAI_API_KEY`      | OpenAI and OpenAI TTS                       |
-| `ANTHROPIC_API_KEY`   | Anthropic                                   |
-| `GROQ_API_KEY`        | Groq                                        |
-| `GEMINI_API_KEY`      | Google Gemini                               |
-| `MISTRAL_API_KEY`     | Mistral                                     |
-| `DEEPSEEK_API_KEY`    | DeepSeek                                    |
-| `OPENROUTER_API_KEY`  | OpenRouter                                  |
-| `KIMI_API_KEY`        | Kimi Code by Moonshot AI                    |
-| `GITHUB_API_KEY`      | GitHub Models                               |
-| `HUGGINGFACE_API_KEY` | Hugging Face APIs where configured          |
-| `ELEVENLABS_API_KEY`  | ElevenLabs TTS                              |
-| `COMFYUI_API_KEY`     | ComfyUI deployments that require an API key |
+| Variable         | Provider |
+| ---------------- | -------- |
+| `ALCORE_API_KEY` | Alcore   |
 
 Users can also store provider credentials in the UI when per-user keys are
 preferred. Environment keys are used only with the routing and authentication

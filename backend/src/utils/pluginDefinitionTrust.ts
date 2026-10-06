@@ -26,37 +26,6 @@ export const BUNDLED_PLUGIN_DEFINITION_FINGERPRINTS: Readonly<
   Record<string, string>
 > = Object.freeze({
   alcore: 'f6552cffe57ca9dd67e82f44f0dea83343bd301ac2ff5ab81a497bbde2a170db',
-  anthropic: '4ba7c2344e8404ed78f6d6f622f24307fcc8f5451047d45ee427bb0ab4d1aecf',
-  'codex-oauth':
-    '7337c3dcfb5bc29d6dbd9f4ab2da2fc9a72b859d690ccd207ee0ebeb1e8f38cb',
-  comfyui: 'eaefe81897b58bffdf92bae8f0d0b675a062af276d5379e43147d6a0adaf0f47',
-  deepseek: '32cc8662939e304869f9e02ef3b7c8ced6ffe14c333bea9230bfabe2f2350181',
-  elevenlabs:
-    'de6afcbd123600f484a078227618b5c9687bc56f6e2637b57514349fbcea63d6',
-  gemini: '400de79b1d5b4b876c5ed14d177bd01b7eecbf9d6ce856ae031d98b1c7c8a5ce',
-  github: '482f22da003d73fe0d6684572dc2d959b46d7f8dbecf0f92205c2b4ef2f03817',
-  groq: 'd03908e9caddae5ad838de9967fdc0b5dfb249d13f24391af1c9822fcf28e823',
-  huggingface:
-    'be7e0840746816d6adaf6638a36d1339b7a557f7a2b0994c1574782977578a24',
-  'kimi-code':
-    '0b861caf086e5fdeeb029b6053447e673f2f8e121246d79b8102b157c109b557',
-  'kyutai-tts-1.6b':
-    'd280ba89d43d23c1554c524cbccf4da4a40f9be5672d3e925c87484719d56d2f',
-  'kyutai-tts':
-    '22b48b58b8d7d3021e6c0163771830e2e4e4d973466e700def41fe85ec90644f',
-  'llama-cpp':
-    'df2a449df1f367400999599e48df53b05a104d59e5df269eb13ed1d9720073f8',
-  'longcat-audiodit':
-    'ac898aaad95181722b4f53303edd4939a9f9b0fcd0c5a8126f39fa80e45cba25',
-  mistral: 'a8a188cc75799a4b0a4c8fa4b448a8601b5ed72babc358ee460683459a75fbed',
-  'mlx-lm': 'c5aad700fd557216a1e1eda361c0d67f92d51d1fe46d9c2028354f8ca8f25503',
-  'openai-tts':
-    'ebc3677f4f0ef2ec1628408d59a9e273059cc50d2f9d462e7a3b7f0c4eefe843',
-  openai: 'f7a8104551d63b5fe9a771832d7e99cff5e907de66c443f3440323eeef32423c',
-  openrouter:
-    '83cd1e5918d6c3176bb2929fbed6e325677e5d2e0c1ceda2da7a75f64df8365f',
-  'qwen-tts':
-    '3a663efb46a9a228a78f850996b8006e886a67c32b52d0e31627586f856a9ba9',
 });
 
 const RUNTIME_DEFINITION_FIELDS = new Set([

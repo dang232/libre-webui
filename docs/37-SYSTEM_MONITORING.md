@@ -204,14 +204,6 @@ effective-dated tariffs, spend breakdowns, budgets, alerts, or accounting
 export. Events without a matching tariff or provider-reported usage remain
 visibly unpriced rather than being treated as free.
 
-### OpenRouter attribution
-
-Since 0.18.0, requests to OpenRouter identify the application through
-OpenRouter's app-attribution headers (`HTTP-Referer: https://librewebui.org`,
-an application title, and category hints). These headers are sent only when the
-request goes to `https://openrouter.ai` itself — never to a custom or
-self-hosted route — and they add nothing to what is stored locally.
-
 ## Related Docs
 
 - [Authentication](./AUTHENTICATION)

@@ -3884,7 +3884,7 @@
     "skip": "Lewati dulu — saya akan menghubungkan model nanti",
     "local": {
       "title": "Server lokal",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "API key (opsional)",
       "test": "Uji koneksi",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "API Cloud",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter, dan lainnya",
+      "subtitle": "Alcore, dan lainnya",
       "keyPlaceholder": "Tempel API key {{name}} Anda",
       "connect": "Hubungkan",
       "connecting": "Menghubungkan…",

@@ -55,7 +55,7 @@ Administrators get one more control per row: an eye toggle that hides a model fr
 | Plugin providers | Chat and completion plugins with credentials configured       |
 | Agent CLI models | Chat-only models that run on the host, outside Work sandboxes |
 | Personas         | Reusable system prompts pinned to a backing provider model    |                                                               |
-| Provider plugins | Access to managed models from multiple providers              | API keys, provider pricing, and provider privacy policy apply |
+| Provider plugins | Access to Alcore-hosted models                                | API keys, provider pricing, and provider privacy policy apply |
 
 You can keep local models for private work and enable provider plugins for tasks that need larger hosted models.
 
@@ -89,8 +89,8 @@ Work needs a chat model that can call tools. It can use:
 - A model listed by an active chat or completion plugin with credentials
   configured for the current administrator.
 
-Plugin-backed Work runs use the provider adapter appropriate to the configured
-plugin: OpenAI-compatible, Anthropic, or Gemini. Alcore persists the exact
+Plugin-backed Work runs use the Alcore provider adapter for the configured
+plugin. Alcore persists the exact
 provider type and plugin identifier with the task and each run, so a plugin
 cannot capture an identically named Ollama model. If the selected model or
 provider rejects tool calling, the run fails instead of silently switching to

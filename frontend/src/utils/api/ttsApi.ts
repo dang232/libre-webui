@@ -111,11 +111,11 @@ export const ttsApi = {
     if (isDemoMode()) {
       return createDemoResponse<TTSModel[]>([
         {
-          model: 'tts-1',
-          plugin: 'openai',
+          model: 'alcore-tts-1',
+          plugin: 'alcore',
           config: {
-            voices: ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'],
-            default_voice: 'alloy',
+            voices: ['default'],
+            default_voice: 'default',
             formats: ['mp3', 'opus', 'aac', 'flac', 'wav'],
             default_format: 'mp3',
             max_characters: 4096,
@@ -132,12 +132,12 @@ export const ttsApi = {
     if (isDemoMode()) {
       return createDemoResponse<TTSPlugin[]>([
         {
-          id: 'openai',
-          name: 'OpenAI GPT',
-          models: ['tts-1', 'tts-1-hd'],
+          id: 'alcore',
+          name: 'Alcore TTS',
+          models: ['alcore-tts-1'],
           config: {
-            voices: ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'],
-            default_voice: 'alloy',
+            voices: ['default'],
+            default_voice: 'default',
           },
         },
       ]);
@@ -204,8 +204,8 @@ export const ttsApi = {
   > => {
     if (isDemoMode()) {
       return createDemoResponse({
-        voices: ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'],
-        default_voice: 'alloy',
+        voices: ['default'],
+        default_voice: 'default',
         formats: ['mp3', 'opus', 'aac', 'flac', 'wav'],
         default_format: 'mp3',
         max_characters: 4096,
@@ -281,7 +281,7 @@ export const ttsApi = {
       options.onStart?.();
 
       const response = await ttsApi.generateBase64({
-        model: options.model || 'tts-1',
+        model: options.model || 'alcore-tts-1',
         pluginId: options.pluginId,
         input: text,
         voice: options.voice,

@@ -28,8 +28,8 @@ test('provider speech input discloses its route and transcribes recorded audio',
   const mockApi = await mockLibreWebUiApi(page, {
     sttModels: [
       {
-        model: 'gpt-4o-mini-transcribe',
-        plugin: 'openai',
+        model: 'alcore-transcribe',
+        plugin: 'alcore',
         config: { formats: ['webm'], max_audio_bytes: 25 * 1024 * 1024 },
       },
     ],
@@ -104,15 +104,15 @@ test('provider speech input discloses its route and transcribes recorded audio',
   await page.goto('/c/stt-session');
 
   const source = page.getByLabel('Speech recognition source');
-  await expect(source).toHaveValue('openai:gpt-4o-mini-transcribe');
+  await expect(source).toHaveValue('alcore:alcore-transcribe');
   const microphone = page.getByRole('button', {
-    name: 'Record and send audio to openai for transcription',
+    name: 'Record and send audio to alcore for transcription',
   });
   await expect(microphone).toBeVisible();
   await expect(
     page
       .getByRole('note')
-      .getByText('Record and send audio to openai for transcription', {
+      .getByText('Record and send audio to alcore for transcription', {
         exact: true,
       })
   ).toBeVisible();
@@ -129,9 +129,9 @@ test('provider speech input discloses its route and transcribes recorded audio',
     /^multipart\/form-data;/
   );
   expect(mockApi.sttTranscriptionRequests[0].body).toContain(
-    'gpt-4o-mini-transcribe'
+    'alcore-transcribe'
   );
-  expect(mockApi.sttTranscriptionRequests[0].body).toContain('openai');
+  expect(mockApi.sttTranscriptionRequests[0].body).toContain('alcore');
   expect(mockApi.sttTranscriptionRequests[0].body).toContain('A_OPUS');
   expect(mockApi.sttTranscriptionRequests[0].body).toContain('OpusHead');
 });
@@ -143,8 +143,8 @@ test('invalid provider audio is rejected safely without inserting a transcript',
   await mockLibreWebUiApi(page, {
     sttModels: [
       {
-        model: 'gpt-4o-mini-transcribe',
-        plugin: 'openai',
+        model: 'alcore-transcribe',
+        plugin: 'alcore',
         config: { formats: ['webm'], max_audio_bytes: 25 * 1024 * 1024 },
       },
     ],
@@ -226,7 +226,7 @@ test('invalid provider audio is rejected safely without inserting a transcript',
 
   await page.goto('/c/stt-invalid-media');
   const microphone = page.getByRole('button', {
-    name: 'Record and send audio to openai for transcription',
+    name: 'Record and send audio to alcore for transcription',
   });
   await microphone.click();
   await page.getByTitle('Stop listening').click();
@@ -249,7 +249,7 @@ test('provider transcription remains cancellable while the request is running', 
     sttModels: [
       {
         model: 'cancel-transcription',
-        plugin: 'openai',
+        plugin: 'alcore',
         config: { formats: ['webm'], max_duration_seconds: 300 },
       },
     ],
@@ -320,7 +320,7 @@ test('provider transcription remains cancellable while the request is running', 
   await page.goto('/c/stt-cancel');
   await page
     .getByRole('button', {
-      name: 'Record and send audio to openai for transcription',
+      name: 'Record and send audio to alcore for transcription',
     })
     .click();
   await page.getByTitle('Stop listening').click();
@@ -339,7 +339,7 @@ test('late microphone permission cannot record or upload after chat navigation',
     sttModels: [
       {
         model: 'permission-race',
-        plugin: 'openai',
+        plugin: 'alcore',
         config: { formats: ['webm'], max_duration_seconds: 300 },
       },
     ],
@@ -418,7 +418,7 @@ test('late microphone permission cannot record or upload after chat navigation',
   await page.goto('/c/stt-permission-a');
   await page
     .getByRole('button', {
-      name: 'Record and send audio to openai for transcription',
+      name: 'Record and send audio to alcore for transcription',
     })
     .click();
   await expect(page.getByTitle('Cancel')).toBeVisible();

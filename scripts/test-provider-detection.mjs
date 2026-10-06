@@ -19,32 +19,11 @@ const {
 
 const statusImpl = status => async () => ({ status });
 
-test('openai base URL resolves to the explicit openai candidate', async () => {
+test('a bare base URL yields no vendor candidate without a credential', async () => {
   const candidates = await detectCredential({
-    baseUrl: 'https://api.openai.com/v1',
+    baseUrl: 'https://alcore.io.vn/v1',
   });
-  assert.equal(candidates[0].providerId, 'openai');
-  assert.equal(candidates[0].method, 'explicit');
-  assert.equal(candidates[0].confidence, 1);
-});
-
-test('anthropic endpoint resolves to the explicit anthropic candidate', async () => {
-  const candidates = await detectCredential({
-    baseUrl: 'https://api.anthropic.com/v1/messages',
-  });
-  assert.equal(candidates[0].providerId, 'anthropic');
-  assert.equal(candidates[0].method, 'explicit');
-});
-
-test('google endpoint resolves to gemini via host match', async () => {
-  const candidates = await detectCredential({
-    baseUrl:
-      'https://generativelanguage.googleapis.com/v1beta/' +
-      'models/gemini-2.5-flash:generateContent',
-  });
-  assert.equal(candidates[0].providerId, 'gemini');
-  assert.equal(candidates[0].method, 'base_url');
-  assert.equal(candidates[0].confidence, 0.9);
+  assert.deepEqual(candidates, []);
 });
 
 test('generic compatible URL with mocked /models yields model_discovery', async () => {
@@ -77,17 +56,13 @@ test('unknown URL against a refused port reports unreachable, fast', async () =>
   assert.ok(elapsed < 2000, `took ${elapsed}ms`);
 });
 
-test('a bare sk- key with an unknown URL never resolves openai', async () => {
+test('a bare key with an unknown URL resolves only the generic fallback', async () => {
   const candidates = await detectCredential(
     {
       apiKey: 'sk-fake-key-without-vendor-signal',
       baseUrl: 'https://credentials.example.com/v1',
     },
     { fetchImpl: statusImpl(404) }
-  );
-  assert.equal(
-    candidates.filter(c => c.providerId === 'openai').length,
-    0
   );
   // The 404 proves reachability, so the only candidate is the generic
   // fallback — never a forced vendor fit.
@@ -96,20 +71,19 @@ test('a bare sk- key with an unknown URL never resolves openai', async () => {
   assert.equal(candidates[0].method, 'model_discovery');
 });
 
-test('ambiguous input yields sorted candidates', async () => {
+test('a reachable credential resolves to the generic compatible candidate', async () => {
   const candidates = await detectCredential(
     {
-      apiKey: 'sk-test-ambiguous',
-      baseUrl: 'https://api.openai.com/v1',
+      apiKey: 'test-key-1',
+      baseUrl: 'https://alcore.io.vn/v1',
     },
     { fetchImpl: statusImpl(200) }
   );
-  assert.ok(candidates.length >= 2, JSON.stringify(candidates));
+  assert.ok(candidates.length >= 1, JSON.stringify(candidates));
   for (let i = 1; i < candidates.length; i += 1) {
     assert.ok(candidates[i - 1].confidence >= candidates[i].confidence);
   }
-  assert.equal(candidates[0].providerId, 'openai');
-  assert.equal(candidates[0].method, 'explicit');
+  assert.equal(candidates[0].providerId, 'openai-compatible');
 });
 
 test('validation taxonomy maps 401/403/429/timeout distinctly', async () => {
@@ -152,12 +126,12 @@ test('results never carry secret material', async () => {
   const fakeKey = 'sk-fake-redaction-abcdef123456';
   const fetchImpl = statusImpl(200);
   const candidates = await detectCredential(
-    { apiKey: fakeKey, baseUrl: 'https://api.openai.com/v1' },
+    { apiKey: fakeKey, baseUrl: 'https://alcore.io.vn/v1' },
     { fetchImpl }
   );
   const validation = await validateCredential(
-    { apiKey: fakeKey, baseUrl: 'https://api.openai.com/v1' },
-    'https://api.openai.com/v1',
+    { apiKey: fakeKey, baseUrl: 'https://alcore.io.vn/v1' },
+    'https://alcore.io.vn/v1',
     { fetchImpl }
   );
   const serialized = JSON.stringify({ candidates, validation });
@@ -165,25 +139,15 @@ test('results never carry secret material', async () => {
   assert.ok(!serialized.includes('abcdef123456'));
 });
 
-test('registry facade lists the table and scores fixtures', async () => {
+test('registry facade lists an empty table and scores fixtures by URL', async () => {
   const known = listKnownProviders();
-  assert.equal(known.length, 7);
-  const ids = known.map(p => p.providerId).sort();
-  assert.deepEqual(ids, [
-    'anthropic',
-    'deepseek',
-    'gemini',
-    'groq',
-    'mistral',
-    'openai',
-    'openrouter',
-  ]);
+  assert.deepEqual(known, []);
 
   const fixtures = [
     {
-      id: 'openai',
-      endpoint: 'https://api.openai.com/v1/chat/completions',
-      base_url: 'https://api.openai.com/v1',
+      id: 'alcore',
+      endpoint: 'https://alcore.io.vn/v1/chat/completions',
+      base_url: 'https://alcore.io.vn/v1',
     },
     {
       id: 'custom',
@@ -191,10 +155,10 @@ test('registry facade lists the table and scores fixtures', async () => {
     },
   ];
   const scored = await scoreInstalledPlugins(
-    { baseUrl: 'https://api.openai.com/v1' },
+    { baseUrl: 'https://alcore.io.vn/v1' },
     { plugins: fixtures }
   );
-  assert.equal(scored[0].pluginId, 'openai');
+  assert.equal(scored[0].pluginId, 'alcore');
   assert.equal(scored[0].score, 1);
   assert.equal(scored[scored.length - 1].pluginId, 'custom');
   assert.equal(scored[scored.length - 1].score, 0);
@@ -202,10 +166,10 @@ test('registry facade lists the table and scores fixtures', async () => {
 
 test('resolveProvider returns the top candidate plus validation', async () => {
   const resolved = await resolveProvider(
-    { apiKey: 'k', baseUrl: 'https://api.openai.com/v1' },
+    { apiKey: 'k', baseUrl: 'https://alcore.io.vn/v1' },
     { fetchImpl: statusImpl(200) }
   );
-  assert.equal(resolved.provider.providerId, 'openai');
+  assert.equal(resolved.provider.providerId, 'openai-compatible');
   assert.equal(resolved.validation.status, 'valid');
 
   await assert.rejects(

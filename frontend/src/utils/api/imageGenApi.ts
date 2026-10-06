@@ -91,8 +91,8 @@ export const imageGenApi = {
     if (isDemoMode()) {
       return createDemoResponse<ImageGenModel[]>([
         {
-          model: 'gpt-image-2',
-          plugin: 'openai',
+          model: 'alcore-image-1',
+          plugin: 'alcore',
           config: {
             sizes: ['1024x1024', '1536x1024', '1024x1536'],
             default_size: '1024x1024',
@@ -111,14 +111,9 @@ export const imageGenApi = {
     if (isDemoMode()) {
       return createDemoResponse<ImageGenPlugin[]>([
         {
-          id: 'openai',
-          name: 'OpenAI GPT Image',
-          models: [
-            'gpt-image-2',
-            'gpt-image-1.5',
-            'gpt-image-1',
-            'gpt-image-1-mini',
-          ],
+          id: 'alcore',
+          name: 'Alcore Image',
+          models: ['alcore-image-1'],
           config: {
             sizes: ['1024x1024', '1536x1024', '1024x1536'],
             default_size: '1024x1024',
@@ -195,7 +190,7 @@ export const imageGenApi = {
         id: imageId,
         userId: 'demo',
         prompt: 'Demo image prompt',
-        model: 'dall-e-3',
+        model: 'alcore-image-1',
         imageData: 'https://placehold.co/1024x1024/purple/white?text=Demo',
         createdAt: Date.now(),
       });

@@ -126,7 +126,7 @@ const post = (subpath, body, options = {}) => {
 
 test('admin provider routes reject callers without administrator rights', async () => {
   const unauthenticated = await post('/detect', {
-    baseUrl: 'https://api.openai.com/v1',
+    baseUrl: 'https://alcore.io.vn/v1',
   });
   assert.equal(unauthenticated.status, 401);
   assert.deepEqual(await unauthenticated.json(), {
@@ -136,7 +136,7 @@ test('admin provider routes reject callers without administrator rights', async 
 
   const forbidden = await post(
     '/detect',
-    { baseUrl: 'https://api.openai.com/v1' },
+    { baseUrl: 'https://alcore.io.vn/v1' },
     { token: userToken }
   );
   assert.equal(forbidden.status, 403);
@@ -149,19 +149,16 @@ test('admin provider routes reject callers without administrator rights', async 
   assert.equal(adminEmpty.status, 400);
 });
 
-test('admin provider detect ranks known endpoints without live secrets', async () => {
+test('admin provider detect reports no vendor candidate without a credential', async () => {
   const response = await post(
     '/detect',
-    { baseUrl: 'https://api.openai.com/v1' },
+    { baseUrl: 'https://alcore.io.vn/v1' },
     { token: adminToken }
   );
   assert.equal(response.status, 200);
   const body = await response.json();
   assert.equal(body.success, true);
-  const candidates = body.data.candidates;
-  assert.ok(Array.isArray(candidates) && candidates.length > 0);
-  assert.equal(candidates[0].providerId, 'openai');
-  assert.equal(candidates[0].method, 'explicit');
+  assert.deepEqual(body.data.candidates, []);
   assert.equal(body.data.resolved, undefined);
   assert.ok(!JSON.stringify(body).includes('sk-'));
 });
@@ -236,7 +233,7 @@ test('admin provider inputs are bounded before any outbound call', async () => {
   }
   const crowded = await post(
     '/detect',
-    { baseUrl: 'https://api.openai.com/v1', headers },
+    { baseUrl: 'https://alcore.io.vn/v1', headers },
     { token: adminToken }
   );
   assert.equal(crowded.status, 400);
@@ -261,7 +258,7 @@ test('admin provider validation throttles repeated callers', async () => {
 test('provider credential parsing drops sensitive headers', async () => {
   const parsed = parseCredentialBody(
     {
-      baseUrl: 'https://api.openai.com/v1',
+      baseUrl: 'https://alcore.io.vn/v1',
       headers: {
         Authorization: 'Bearer dropped',
         Cookie: 'session=dropped',

@@ -8,16 +8,14 @@
 import { expect, test } from '@playwright/test';
 import { mockLibreWebUiApi } from './lib/mockApi';
 
-test('Imagine distinguishes OpenRouter sound generation from speech', async ({
-  page,
-}) => {
+test('Imagine distinguishes sound generation from speech', async ({ page }) => {
   const mockApi = await mockLibreWebUiApi(page, {
     mediaModels: {
       video: [],
       audio: [
         {
-          model: 'google/lyria-3-pro-preview',
-          plugin: 'openrouter',
+          model: 'alcore/lyria-sound-preview',
+          plugin: 'alcore',
           mode: 'sound',
           config: {
             voices: ['alloy'],
@@ -27,8 +25,8 @@ test('Imagine distinguishes OpenRouter sound generation from speech', async ({
           },
         },
         {
-          model: 'openai/gpt-4o-mini-tts',
-          plugin: 'openrouter',
+          model: 'alcore/mini-tts',
+          plugin: 'alcore',
           mode: 'speech',
         },
       ],
@@ -44,13 +42,13 @@ test('Imagine distinguishes OpenRouter sound generation from speech', async ({
   const dialog = page.getByRole('dialog', { name: 'Generate media' });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByRole('combobox', { name: 'Model' })).toHaveValue(
-    'sound::openrouter::google/lyria-3-pro-preview'
+    'sound::alcore::alcore/lyria-sound-preview'
   );
   await expect(
     dialog.getByRole('combobox', { name: 'Model' }).locator('option')
   ).toHaveText([
-    'google/lyria-3-pro-preview (openrouter · Sound)',
-    'openai/gpt-4o-mini-tts (openrouter · Speech)',
+    'alcore/lyria-sound-preview (alcore · Sound)',
+    'alcore/mini-tts (alcore · Speech)',
   ]);
 
   await dialog
@@ -60,25 +58,23 @@ test('Imagine distinguishes OpenRouter sound generation from speech', async ({
 
   await expect.poll(() => mockApi.soundGenerationRequests.length).toBe(1);
   expect(mockApi.soundGenerationRequests[0]).toEqual({
-    model: 'google/lyria-3-pro-preview',
-    pluginId: 'openrouter',
+    model: 'alcore/lyria-sound-preview',
+    pluginId: 'alcore',
     prompt: 'Warm analogue synth with a soft rain ambience',
     voice: 'alloy',
     format: 'wav',
   });
 });
 
-test('Imagine exposes JSON-declared LongCat voice cloning fields', async ({
-  page,
-}) => {
-  const model = 'meituan-longcat/LongCat-AudioDiT-1B';
+test('Imagine exposes JSON-declared voice cloning fields', async ({ page }) => {
+  const model = 'alcore/synthetic-voice-1B';
   const mockApi = await mockLibreWebUiApi(page, {
     mediaModels: {
       video: [],
       audio: [
         {
           model,
-          plugin: 'longcat-audiodit',
+          plugin: 'alcore',
           mode: 'speech',
           config: {
             formats: ['wav'],
@@ -155,7 +151,7 @@ test('Imagine exposes JSON-declared LongCat voice cloning fields', async ({
   const request = mockApi.voiceCloneRequests[0];
   expect(request.contentType).toContain('multipart/form-data; boundary=');
   expect(request.body).toContain(model);
-  expect(request.body).toContain('longcat-audiodit');
+  expect(request.body).toContain('alcore');
   expect(request.body).toContain('consented-reference.wav');
   expect(request.body).toContain('This is the exact reference recording.');
   expect(request.body).toContain(

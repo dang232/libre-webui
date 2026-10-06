@@ -151,10 +151,10 @@ test('reasoning support is read from the listing or inferred from the name', () 
   );
   assert.equal(catalog.inferReasoningFromModelId('claude-sonnet-4-5'), true);
   assert.equal(catalog.inferReasoningFromModelId('claude-3-7-sonnet'), true);
-  assert.equal(catalog.inferReasoningFromModelId('gemini-2.0-flash'), false);
+  assert.equal(catalog.inferReasoningFromModelId('gemini-2.0-flash'), undefined);
   assert.equal(
     catalog.inferReasoningFromModelId('gemini-2.5-flash'),
-    true
+    undefined
   );
   assert.equal(catalog.inferReasoningFromModelId('deepseek/deepseek-r1'), true);
   assert.equal(

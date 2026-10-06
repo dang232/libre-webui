@@ -3884,7 +3884,7 @@
     "skip": "Пропустити поки що — підключу моделі пізніше",
     "local": {
       "title": "Локальний сервер",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "API-ключ (необов'язково)",
       "test": "Перевірити з'єднання",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "Хмарний API",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter та інші",
+      "subtitle": "Alcore та інші",
       "keyPlaceholder": "Вставте свій API-ключ {{name}}",
       "connect": "Підключити",
       "connecting": "Підключення…",

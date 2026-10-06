@@ -145,21 +145,21 @@ test('plugin loading refuses symlinked definitions instead of falling back to bu
   const service = new PluginService({ legacyPluginsDirectories: [] });
   const linkedDefinition = path.join(
     testDataDir,
-    'external-openai-definition.json'
+    'external-alcore-definition.json'
   );
-  const writableShadow = path.join(process.env.PLUGINS_DIR, 'openai.json');
+  const writableShadow = path.join(process.env.PLUGINS_DIR, 'alcore.json');
   fs.writeFileSync(
     linkedDefinition,
-    fs.readFileSync(path.join(repoRoot, 'plugins', 'openai.json'))
+    fs.readFileSync(path.join(repoRoot, 'plugins', 'alcore.json'))
   );
   const before = fs.readFileSync(linkedDefinition);
   fs.symlinkSync(linkedDefinition, writableShadow);
   t.after(() => fs.rmSync(writableShadow, { force: true }));
 
-  assert.equal(await service.getPlugin('openai', 'default'), null);
+  assert.equal(await service.getPlugin('alcore', 'default'), null);
   assert.equal(
     (await service.getAllPlugins('default')).some(
-      plugin => plugin.id === 'openai'
+      plugin => plugin.id === 'alcore'
     ),
     false
   );

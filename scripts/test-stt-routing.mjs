@@ -227,7 +227,7 @@ test('STT sends an OpenAI-compatible multipart request to the selected route', a
   }
 });
 
-test('STT sends raw audio to a model-qualified Hugging Face endpoint', async () => {
+test('STT sends raw audio to a model-qualified raw-ingest endpoint', async () => {
   let received;
   const { server, port } = await startServer(async (req, res) => {
     const chunks = [];
@@ -241,7 +241,7 @@ test('STT sends raw audio to a model-qualified Hugging Face endpoint', async () 
     res.end(JSON.stringify({ text: 'raw transcript' }));
   });
   const candidate = plugin(
-    'huggingface',
+    'raw-ingest-provider',
     `http://127.0.0.1:${port}/models/{model}`,
     { request_mode: 'raw' }
   );
@@ -419,25 +419,6 @@ test('STT validates audio structure, codec metadata, duration, MIME, extension, 
       error instanceof STTAudioUploadError &&
       error.code === 'invalid_audio_structure'
   );
-});
-
-test('bundled OpenAI and Hugging Face STT manifests are executable contracts', () => {
-  const openai = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'plugins/openai.json'), 'utf8')
-  );
-  const huggingface = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'plugins/huggingface.json'), 'utf8')
-  );
-  assert.equal(openai.capabilities.stt.config.request_mode, 'multipart');
-  assert.match(openai.capabilities.stt.endpoint, /\/audio\/transcriptions$/);
-  assert.equal(huggingface.capabilities.stt.config.request_mode, 'raw');
-  assert.match(huggingface.capabilities.stt.endpoint, /\{model\}$/);
-  for (const manifest of [openai, huggingface]) {
-    assert.deepEqual(manifest.capabilities.stt.config.formats, ['wav', 'webm']);
-    assert.equal(manifest.capabilities.stt.config.max_duration_seconds, 300);
-    const variable = manifest.capabilities.stt.config.endpoint_variable;
-    assert.ok(manifest.variables.some(entry => entry.name === variable));
-  }
 });
 
 test('STT rejects oversized provider transcripts', async () => {

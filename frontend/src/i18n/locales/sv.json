@@ -3884,7 +3884,7 @@
     "skip": "Hoppa över för nu — jag ansluter modeller senare",
     "local": {
       "title": "Lokal server",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "API-nyckel (valfritt)",
       "test": "Testa anslutning",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "Moln-API",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter med flera",
+      "subtitle": "Alcore med flera",
       "keyPlaceholder": "Klistra in din {{name}}-API-nyckel",
       "connect": "Anslut",
       "connecting": "Ansluter…",

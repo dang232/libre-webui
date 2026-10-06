@@ -9,7 +9,7 @@ keywords:
     audio generation,
     media gallery,
     plugin capabilities,
-    openrouter media,
+    alcore media,
   ]
 ---
 
@@ -49,9 +49,9 @@ Two audio capabilities exist and both end up in the gallery as audio:
 - `tts` is speech: text is read aloud in a selected voice.
 - `audio` is sound: a model generates audio content from a prompt.
 
-OpenRouter (`plugins/openrouter.json`) is currently the only bundled plugin
-that declares `video` and `audio` blocks. When a `models_endpoint` is present,
-the model list refreshes on the normal discovery cycle (see
+The bundled Alcore plugin (`plugins/alcore.json`) declares `video` and
+`audio` blocks. When a `models_endpoint` is present, the model list
+refreshes on the normal discovery cycle (see
 [Environment Variables](./ENVIRONMENT_VARIABLES) for the discovery TTL
 settings); the `model_map` remains the fallback.
 
@@ -65,15 +65,6 @@ saved to the gallery, and the response returns the finished item. **Cancel**
 aborts the browser request and Libre's outbound provider request; a cancelled
 result is not saved. Image generation follows the same disconnect-cancellation
 contract.
-
-For an accepted ComfyUI workflow, Libre sends both the prompt-ID job-cancel
-operation and a prompt-ID queue deletion, then waits up to three seconds for
-that teardown before releasing the request. It never calls ComfyUI's unscoped
-interrupt operation, which could stop another user's workflow. Current ComfyUI
-releases expose `/api/jobs/:promptId/cancel` for a running workflow. On an old
-release without that operation, Libre can still remove the exact pending queue
-item, but cannot safely stop an already-running workflow; upgrade ComfyUI for
-the complete cancellation contract.
 
 TTS plugins can also declare voice cloning. For those models, the Audio panel
 shows a reference-audio upload and, when the provider requires it, an exact
@@ -140,7 +131,7 @@ attach additional reference images for compositing when the model accepts
 more than one input. Editing rides the OpenAI-compatible multipart edits
 contract: a plugin participates by declaring `edit_endpoint` in its image
 capability config, plus optional `supports_mask`, `max_reference_images`,
-`edit_mime_types`, and `max_edit_image_bytes` limits (the bundled OpenAI
+`edit_mime_types`, and `max_edit_image_bytes` limits (the bundled Alcore
 manifest declares all of them).
 
 Every input is validated before any bytes leave the process: declared MIME,

@@ -39,7 +39,6 @@ import {
   toOpenAIResponsesTools,
 } from '../utils/openAIResponsesAdapter.js';
 import {
-  streamAnthropicResponse,
   streamOpenAICompatibleResponse,
   streamOpenAIResponsesResponse,
   type PluginStreamChunk,
@@ -59,9 +58,6 @@ import {
   providerRequest,
 } from '../utils/providerFetch.js';
 import { AGENT_CLI_DEFINITIONS } from './agentCliService.js';
-import codexOAuthService, {
-  CODEX_OAUTH_PLUGIN_ID,
-} from './codexOAuthService.js';
 import pluginService from './pluginService.js';
 import pluginUsageService, {
   normalizeProviderTokenUsage,
@@ -382,17 +378,6 @@ export class WorkModelProviderService {
     signal?: AbortSignal
   ): Promise<ProviderChatResponse> {
     validatePluginModel(request.model);
-    if (plugin.id === CODEX_OAUTH_PLUGIN_ID) {
-      await codexOAuthService.ensureFreshToken(signal);
-      // The codex endpoint only answers as an SSE stream; aggregate it.
-      return this.generatePluginStream(
-        plugin,
-        { ...request, stream: true },
-        userId,
-        {},
-        signal
-      );
-    }
     const variables = await this.dependencies.plugins.getPluginVariables(
       plugin,
       userId
@@ -484,15 +469,12 @@ export class WorkModelProviderService {
     signal?: AbortSignal
   ): Promise<ProviderChatResponse> {
     validatePluginModel(request.model);
-    if (plugin.id === CODEX_OAUTH_PLUGIN_ID) {
-      await codexOAuthService.ensureFreshToken(signal);
-    }
     const variables = await this.dependencies.plugins.getPluginVariables(
       plugin,
       userId
     );
     const apiConfig = resolvePluginApiConfig(plugin, variables);
-    let endpoint = applyModelEndpointTemplate(
+    const endpoint = applyModelEndpointTemplate(
       apiConfig.endpoint,
       request.model
     );
@@ -514,9 +496,6 @@ export class WorkModelProviderService {
             createPluginCredentialFingerprint(apiKey)
           )
         : undefined;
-    if (plugin.id === 'gemini') {
-      endpoint = geminiStreamingEndpoint(endpoint);
-    }
     assertSafePluginEndpoint(endpoint, 'Work model endpoint');
     const headers = buildPluginAuthHeaders(plugin, apiKey, endpoint);
     const { payload, extraHeaders } = buildPluginWorkPayload(
@@ -545,9 +524,7 @@ export class WorkModelProviderService {
       if (
         response.ok &&
         !contentType.includes('text/event-stream') &&
-        !contentType.includes('application/x-ndjson') &&
-        // The codex endpoint streams SSE without any content-type header.
-        plugin.id !== CODEX_OAUTH_PLUGIN_ID
+        !contentType.includes('application/x-ndjson')
       ) {
         const data = (await response.json()) as JsonObject;
         const normalized = normalizePluginWorkResponse(
@@ -574,15 +551,9 @@ export class WorkModelProviderService {
         return normalized;
       }
       const chunks =
-        plugin.id === 'anthropic'
-          ? streamAnthropicResponse(response)
-          : plugin.id === 'gemini'
-            ? streamGeminiWorkResponse(response)
-            : apiConfig.apiMode === 'responses'
-              ? streamOpenAIResponsesResponse(response, providerStateScope, {
-                  allowEmptyTerminalOutput: plugin.id === CODEX_OAUTH_PLUGIN_ID,
-                })
-              : streamOpenAICompatibleResponse(response);
+        apiConfig.apiMode === 'responses'
+          ? streamOpenAIResponsesResponse(response, providerStateScope)
+          : streamOpenAICompatibleResponse(response);
       const normalized = await collectPluginWorkStream(
         chunks,
         request.model,
@@ -665,47 +636,18 @@ export function buildPluginWorkPayload(
 ): { payload: JsonObject; extraHeaders: Record<string, string> } {
   const options = (request.options || {}) as GenerationOptions;
   const params = resolvePluginChatParameters(options, variables);
-  if (plugin.id === 'anthropic') {
-    return {
-      payload: buildAnthropicWorkPayload(
-        request.model,
-        request.messages,
-        request.tools || [],
-        params.maxTokens,
-        Boolean(request.stream)
-      ),
-      extraHeaders: { 'anthropic-version': '2023-06-01' },
-    };
-  }
-  if (plugin.id === 'gemini') {
-    return {
-      payload: buildGeminiWorkPayload(
-        request.messages,
-        request.tools || [],
-        params
-      ),
-      extraHeaders: {},
-    };
-  }
   if (apiMode === 'responses') {
     const sampling = getOpenAICompatibleSamplingParameters(plugin, params);
     const tools = toOpenAIResponsesTools(request.tools || []);
-    // The ChatGPT-backed codex endpoint rejects sampling parameters outright.
-    const supportsSampling = plugin.id !== CODEX_OAUTH_PLUGIN_ID;
     return {
       payload: {
         model: request.model,
         input: toOpenAIResponsesWorkInput(request.messages, providerStateScope),
         ...(tools.length ? { tools, tool_choice: 'auto' } : {}),
-        ...(supportsSampling
-          ? {
-              temperature: sampling.temperature,
-              top_p: sampling.top_p,
-              max_output_tokens: params.maxTokens,
-            }
-          : {}),
-        // The codex endpoint rejects non-streaming requests outright.
-        stream: supportsSampling ? Boolean(request.stream) : true,
+        temperature: sampling.temperature,
+        top_p: sampling.top_p,
+        max_output_tokens: params.maxTokens,
+        stream: Boolean(request.stream),
         store: false,
         include: ['reasoning.encrypted_content'],
       },
@@ -734,12 +676,6 @@ export function normalizePluginWorkResponse(
     inferPluginApiMode(plugin.endpoint),
   providerStateScope?: string
 ): ProviderChatResponse {
-  if (plugin.id === 'anthropic') {
-    return normalizeAnthropicWorkResponse(response, model);
-  }
-  if (plugin.id === 'gemini') {
-    return normalizeGeminiWorkResponse(response, model);
-  }
   if (apiMode === 'responses') {
     return normalizeOpenAIResponsesWorkResponse(
       response,
@@ -966,220 +902,10 @@ export function toOpenAIResponsesWorkInput(
   return input;
 }
 
-function buildAnthropicWorkPayload(
-  model: string,
-  messages: ProviderChatMessage[],
-  tools: JsonObject[],
-  maxTokens?: number,
-  stream = false
-): JsonObject {
-  const system = messages
-    .filter(message => message.role === 'system')
-    .map(message => message.content)
-    .join('\n');
-  const providerMessages: Array<{
-    role: 'user' | 'assistant';
-    content: JsonObject[];
-  }> = [];
-  let pendingCalls: Array<{ id: string; name: string }> = [];
-  let appendToolResult = false;
-
-  for (const [messageIndex, message] of messages.entries()) {
-    if (message.role === 'system') continue;
-    if (message.role === 'assistant') {
-      const blocks: JsonObject[] = [];
-      const toolCalls = normalizeOutboundToolCalls(message.tool_calls);
-      const anthropicThinkingBlocks = toolCalls.flatMap(call => {
-        const metadata = asObject(call.providerMetadata);
-        return Array.isArray(metadata?.anthropicThinkingBlocks)
-          ? metadata.anthropicThinkingBlocks.flatMap(block =>
-              asObject(block) ? [block as JsonObject] : []
-            )
-          : [];
-      });
-      blocks.push(...anthropicThinkingBlocks);
-      if (message.content) blocks.push({ type: 'text', text: message.content });
-      pendingCalls = toolCalls.map(call => ({
-        id: String(call.id),
-        name: String((call.function as JsonObject).name),
-      }));
-      for (const call of toolCalls) {
-        const fn = call.function as JsonObject;
-        blocks.push({
-          type: 'tool_use',
-          id: call.id,
-          name: fn.name,
-          input: parseToolArguments(fn.arguments),
-        });
-      }
-      providerMessages.push({ role: 'assistant', content: blocks });
-      appendToolResult = false;
-      continue;
-    }
-    if (message.role === 'tool') {
-      const matchIndex = pendingCalls.findIndex(
-        call => !message.tool_name || call.name === message.tool_name
-      );
-      const matching =
-        matchIndex >= 0 ? pendingCalls.splice(matchIndex, 1)[0] : undefined;
-      // Anthropic tool_result blocks accept image content natively — the
-      // screenshot rides inside the result itself.
-      const block = {
-        type: 'tool_result',
-        tool_use_id: matching?.id || `work-tool-${messageIndex}`,
-        content: message.images?.length
-          ? [
-              { type: 'text', text: message.content },
-              ...message.images.map(image => {
-                const source = workImageBase64(image);
-                return {
-                  type: 'image',
-                  source: {
-                    type: 'base64',
-                    media_type: source.mediaType,
-                    data: source.data,
-                  },
-                };
-              }),
-            ]
-          : message.content,
-      };
-      const previous = providerMessages[providerMessages.length - 1];
-      if (appendToolResult && previous?.role === 'user') {
-        previous.content.push(block);
-      } else {
-        providerMessages.push({ role: 'user', content: [block] });
-      }
-      appendToolResult = true;
-      continue;
-    }
-    providerMessages.push({
-      role: 'user',
-      content: [{ type: 'text', text: message.content }],
-    });
-    appendToolResult = false;
-  }
-
-  return {
-    model,
-    system: system || undefined,
-    messages: providerMessages,
-    tools: toAnthropicTools(tools),
-    max_tokens: maxTokens ?? 4096,
-    stream,
-  };
-}
-
-function buildGeminiWorkPayload(
-  messages: ProviderChatMessage[],
-  tools: JsonObject[],
-  params: ReturnType<typeof resolvePluginChatParameters>
-): JsonObject {
-  const system = messages
-    .filter(message => message.role === 'system')
-    .map(message => message.content)
-    .join('\n');
-  const contents: Array<{ role: 'user' | 'model'; parts: JsonObject[] }> = [];
-  let pendingCalls: Array<{ id: string; name: string }> = [];
-
-  const append = (role: 'user' | 'model', part: JsonObject) => {
-    const previous = contents[contents.length - 1];
-    if (previous?.role === role) previous.parts.push(part);
-    else contents.push({ role, parts: [part] });
-  };
-
-  for (const [messageIndex, message] of messages.entries()) {
-    if (message.role === 'system') continue;
-    if (message.role === 'assistant') {
-      if (message.content) append('model', { text: message.content });
-      const calls = normalizeOutboundToolCalls(message.tool_calls);
-      pendingCalls = calls.map(call => ({
-        id: String(call.id),
-        name: String((call.function as JsonObject).name),
-      }));
-      for (const call of calls) {
-        const fn = call.function as JsonObject;
-        append('model', {
-          functionCall: {
-            id: call.id,
-            name: fn.name,
-            args: parseToolArguments(fn.arguments),
-          },
-          ...(typeof call.thoughtSignature === 'string'
-            ? { thoughtSignature: call.thoughtSignature }
-            : {}),
-        });
-      }
-      continue;
-    }
-    if (message.role === 'tool') {
-      const matchIndex = pendingCalls.findIndex(
-        call => !message.tool_name || call.name === message.tool_name
-      );
-      const matching =
-        matchIndex >= 0 ? pendingCalls.splice(matchIndex, 1)[0] : undefined;
-      append('user', {
-        functionResponse: {
-          id: matching?.id || `work-tool-${messageIndex}`,
-          name: message.tool_name || matching?.name || 'work_tool',
-          response: { result: message.content },
-        },
-      });
-      // Gemini functionResponse parts are text-only; the screenshot follows
-      // as an inlineData part in the same user turn.
-      for (const image of message.images ?? []) {
-        const source = workImageBase64(image);
-        append('user', {
-          inlineData: { mimeType: source.mediaType, data: source.data },
-        });
-      }
-      continue;
-    }
-    append('user', { text: message.content });
-  }
-
-  return {
-    systemInstruction: system ? { parts: [{ text: system }] } : undefined,
-    contents,
-    ...(tools.length
-      ? {
-          tools: [
-            {
-              functionDeclarations: tools.flatMap(tool => {
-                const fn = asObject(tool.function);
-                return fn
-                  ? [
-                      {
-                        name: fn.name,
-                        description: fn.description,
-                        parameters: fn.parameters,
-                      },
-                    ]
-                  : [];
-              }),
-            },
-          ],
-        }
-      : {}),
-    generationConfig: {
-      temperature: params.temperature,
-      maxOutputTokens: params.maxTokens ?? 4096,
-      topP: params.topP,
-    },
-  };
-}
-
 // Work tool screenshots are raw base64 PNG (the shared wire convention); a
 // data: URL is accepted too and split where a provider needs the parts.
 function workImageDataUrl(image: string): string {
   return image.startsWith('data:') ? image : `data:image/png;base64,${image}`;
-}
-
-function workImageBase64(image: string): { mediaType: string; data: string } {
-  const match = image.match(/^data:([^;]+);base64,(.+)$/);
-  return match
-    ? { mediaType: match[1], data: match[2] }
-    : { mediaType: 'image/png', data: image };
 }
 
 function normalizeOpenAIWorkResponse(
@@ -1270,78 +996,6 @@ function normalizeOpenAIResponsesWorkResponse(
   };
 }
 
-function normalizeAnthropicWorkResponse(
-  response: JsonObject,
-  model: string
-): ProviderChatResponse {
-  const blocks = Array.isArray(response.content) ? response.content : [];
-  const text: string[] = [];
-  const calls: JsonObject[] = [];
-  const thinkingBlocks: JsonObject[] = [];
-  const reasoning: string[] = [];
-  for (const [index, value] of blocks.entries()) {
-    const block = asObject(value);
-    if (block?.type === 'thinking' || block?.type === 'redacted_thinking') {
-      thinkingBlocks.push(block);
-      if (typeof block.thinking === 'string') reasoning.push(block.thinking);
-    }
-    if (block?.type === 'text' && typeof block.text === 'string') {
-      text.push(block.text);
-    }
-    if (block?.type === 'tool_use' && typeof block.name === 'string') {
-      calls.push({
-        id: typeof block.id === 'string' ? block.id : `work-anthropic-${index}`,
-        function: {
-          name: block.name,
-          arguments: asObject(block.input) || {},
-        },
-      });
-    }
-  }
-  if (thinkingBlocks.length > 0 && calls[0]) {
-    calls[0].providerMetadata = {
-      anthropicThinkingBlocks: thinkingBlocks,
-    };
-  }
-  return workResponse(model, text.join(''), calls, reasoning.join(''));
-}
-
-function normalizeGeminiWorkResponse(
-  response: JsonObject,
-  model: string
-): ProviderChatResponse {
-  const candidates = Array.isArray(response.candidates)
-    ? response.candidates
-    : [];
-  const candidate = asObject(candidates[0]);
-  const content = asObject(candidate?.content);
-  const parts = Array.isArray(content?.parts) ? content.parts : [];
-  const text: string[] = [];
-  const reasoning: string[] = [];
-  const calls: JsonObject[] = [];
-  for (const [index, value] of parts.entries()) {
-    const part = asObject(value);
-    if (typeof part?.text === 'string') {
-      if (part.thought === true) reasoning.push(part.text);
-      else text.push(part.text);
-    }
-    const call = asObject(part?.functionCall);
-    if (call && typeof call.name === 'string') {
-      calls.push({
-        id: typeof call.id === 'string' ? call.id : `work-gemini-${index}`,
-        ...(typeof part?.thoughtSignature === 'string'
-          ? { thoughtSignature: part.thoughtSignature }
-          : {}),
-        function: {
-          name: call.name,
-          arguments: asObject(call.args) || {},
-        },
-      });
-    }
-  }
-  return workResponse(model, text.join(''), calls, reasoning.join(''));
-}
-
 function workResponse(
   model: string,
   content: string,
@@ -1411,18 +1065,8 @@ async function collectPluginWorkStream(
       };
       toolCalls.push({
         id: chunk.toolCall.id || `work-plugin-${toolCalls.length}`,
-        ...(typeof metadata?.geminiThoughtSignature === 'string'
-          ? { thoughtSignature: metadata.geminiThoughtSignature }
-          : {}),
-        ...(metadata &&
-        Object.keys(metadata).some(key => key !== 'geminiThoughtSignature')
-          ? {
-              providerMetadata: Object.fromEntries(
-                Object.entries(metadata).filter(
-                  ([key]) => key !== 'geminiThoughtSignature'
-                )
-              ),
-            }
+        ...(Object.keys(metadata).length > 0
+          ? { providerMetadata: metadata }
           : {}),
         function: {
           name: chunk.toolCall.name,
@@ -1441,10 +1085,7 @@ async function collectPluginWorkStream(
 
   if (reasoning && toolCalls[0]) {
     const firstMetadata = asObject(toolCalls[0].providerMetadata) || {};
-    if (
-      !firstMetadata.openAIReasoningContent &&
-      !firstMetadata.anthropicThinkingBlocks
-    ) {
+    if (!firstMetadata.openAIReasoningContent) {
       toolCalls[0].providerMetadata = {
         ...firstMetadata,
         openAIReasoningContent: reasoning,
@@ -1460,119 +1101,6 @@ async function collectPluginWorkStream(
     prompt_eval_count: usage.promptTokens,
     eval_count: usage.completionTokens,
   };
-}
-
-function geminiStreamingEndpoint(endpoint: string): string {
-  const url = new URL(endpoint);
-  url.pathname = url.pathname.replace(
-    /:generateContent$/,
-    ':streamGenerateContent'
-  );
-  url.searchParams.set('alt', 'sse');
-  return url.toString();
-}
-
-async function* streamGeminiWorkResponse(
-  response: Response
-): AsyncGenerator<PluginStreamChunk, void, unknown> {
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `Plugin API error: ${response.status} - ${errorText.slice(0, 200)}`
-    );
-  }
-  if (!response.body) {
-    throw new Error('No response body for streaming');
-  }
-
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
-  let callIndex = 0;
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop() || '';
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed.startsWith('data:')) continue;
-        let payload: JsonObject;
-        try {
-          payload = JSON.parse(trimmed.slice(5).trim()) as JsonObject;
-        } catch {
-          continue;
-        }
-        const streamError = providerStreamErrorMessage(payload);
-        if (streamError) {
-          throw new Error(`Plugin API error: ${streamError}`);
-        }
-        const candidates = Array.isArray(payload.candidates)
-          ? payload.candidates
-          : [];
-        const candidate = asObject(candidates[0]);
-        const candidateContent = asObject(candidate?.content);
-        const parts = Array.isArray(candidateContent?.parts)
-          ? candidateContent.parts
-          : [];
-        for (const rawPart of parts) {
-          const part = asObject(rawPart);
-          if (typeof part?.text === 'string' && part.text) {
-            yield part.thought === true
-              ? { type: 'reasoning', content: part.text }
-              : { type: 'content', content: part.text };
-          }
-          const call = asObject(part?.functionCall);
-          if (call && typeof call.name === 'string') {
-            yield {
-              type: 'tool_call',
-              toolCall: {
-                id:
-                  typeof call.id === 'string'
-                    ? call.id
-                    : `work-gemini-${callIndex++}`,
-                name: call.name,
-                arguments: JSON.stringify(asObject(call.args) || {}),
-                ...(typeof part?.thoughtSignature === 'string'
-                  ? {
-                      providerMetadata: {
-                        geminiThoughtSignature: part.thoughtSignature,
-                      },
-                    }
-                  : {}),
-              },
-            };
-          }
-        }
-        const usageMetadata = asObject(payload.usageMetadata);
-        if (usageMetadata) {
-          const promptTokens =
-            typeof usageMetadata.promptTokenCount === 'number'
-              ? usageMetadata.promptTokenCount
-              : undefined;
-          const completionTokens =
-            typeof usageMetadata.candidatesTokenCount === 'number'
-              ? usageMetadata.candidatesTokenCount
-              : undefined;
-          const totalTokens =
-            typeof usageMetadata.totalTokenCount === 'number'
-              ? usageMetadata.totalTokenCount
-              : promptTokens !== undefined || completionTokens !== undefined
-                ? (promptTokens || 0) + (completionTokens || 0)
-                : undefined;
-          yield {
-            type: 'usage',
-            usage: { promptTokens, completionTokens, totalTokens },
-          };
-        }
-      }
-    }
-    yield { type: 'done' };
-  } finally {
-    reader.releaseLock();
-  }
 }
 
 function normalizeOutboundToolCalls(value: unknown): JsonObject[] {
@@ -1638,23 +1166,6 @@ function normalizeInboundToolCalls(value: unknown): JsonObject[] {
   });
 }
 
-function toAnthropicTools(tools: JsonObject[]): JsonObject[] {
-  return tools.flatMap(tool => {
-    const fn = asObject(tool.function);
-    if (!fn || typeof fn.name !== 'string') return [];
-    return [
-      {
-        name: fn.name,
-        description: fn.description,
-        input_schema: fn.parameters || {
-          type: 'object',
-          properties: {},
-        },
-      },
-    ];
-  });
-}
-
 export function parseToolArguments(value: unknown): JsonObject {
   return parseToolArgumentsWithStatus(value).arguments;
 }
@@ -1703,22 +1214,6 @@ function providerErrorMessage(value: unknown): string {
   if (typeof error?.message === 'string') return error.message;
   if (typeof payload?.message === 'string') return payload.message;
   return 'Request failed.';
-}
-
-function providerStreamErrorMessage(value: unknown): string | undefined {
-  const payload = asObject(value);
-  if (!payload) return undefined;
-  const error = asObject(payload.error);
-  const message =
-    typeof error?.message === 'string'
-      ? error.message
-      : typeof payload.error === 'string'
-        ? payload.error
-        : typeof payload.message === 'string' &&
-            (payload.type === 'error' || payload.status === 'error')
-          ? payload.message
-          : undefined;
-  return message?.slice(0, 500);
 }
 
 function asObject(value: unknown): JsonObject | undefined {

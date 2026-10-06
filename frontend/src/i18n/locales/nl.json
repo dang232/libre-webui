@@ -3884,7 +3884,7 @@
     "skip": "Voorlopig overslaan — ik verbind later modellen",
     "local": {
       "title": "Lokale server",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "API-sleutel (optioneel)",
       "test": "Verbinding testen",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "Cloud-API",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter en meer",
+      "subtitle": "Alcore en meer",
       "keyPlaceholder": "Plak uw {{name}} API-sleutel",
       "connect": "Verbinden",
       "connecting": "Verbinden…",

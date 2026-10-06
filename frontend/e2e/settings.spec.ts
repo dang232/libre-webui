@@ -16,7 +16,7 @@
  */
 
 import { expect, test, type Page } from '@playwright/test';
-import { defaultSystemInfo, mockLibreWebUiApi } from './lib/mockApi';
+import { mockLibreWebUiApi } from './lib/mockApi';
 import {
   openSettingsModal,
   openSettingsTab,
@@ -33,17 +33,17 @@ const providerWorkspaceSystemInfo = {
 
 const createProviderWorkspacePlugins = () => [
   {
-    id: 'openai-cloud',
-    name: 'OpenAI Cloud',
+    id: 'alcore-cloud',
+    name: 'Alcore Cloud',
     type: 'completion' as const,
-    endpoint: 'https://api.openai.com/v1/responses',
+    endpoint: 'https://api.alcore.example/v1/responses',
     api_mode: 'responses' as const,
     auth: {
       header: 'Authorization',
       prefix: 'Bearer ',
-      key_env: 'OPENAI_API_KEY',
+      key_env: 'ALCORE_API_KEY',
     },
-    model_map: ['gpt-cloud'],
+    model_map: ['alcore-chat'],
     active: true,
   },
   {
@@ -77,15 +77,15 @@ const createProviderWorkspacePlugins = () => [
     ],
   },
   {
-    id: 'anthropic-cloud',
-    name: 'Anthropic Cloud',
+    id: 'synthetic-cloud',
+    name: 'Synthetic Cloud',
     type: 'completion' as const,
-    endpoint: 'https://api.anthropic.com/v1/messages',
+    endpoint: 'https://api.synthetic.example/v1/messages',
     auth: {
       header: 'x-api-key',
-      key_env: 'ANTHROPIC_API_KEY',
+      key_env: 'SYNTHETIC_API_KEY',
     },
-    model_map: ['claude-cloud'],
+    model_map: ['synthetic-chat'],
     active: false,
   },
 ];
@@ -141,18 +141,18 @@ test('vision model selection persists the exact provider-qualified model', async
 
   const visionModel = settingsPanel.getByTestId('vision-model-select');
   await expect(visionModel).toBeVisible();
-  await visionModel.selectOption({ label: 'gpt-cloud · OpenAI Cloud' });
+  await visionModel.selectOption({ label: 'alcore-chat · Alcore Cloud' });
 
   await expect
     .poll(() =>
       mockApi.preferenceUpdateRequests.find(
-        request => request.visionModel === 'gpt-cloud'
+        request => request.visionModel === 'alcore-chat'
       )
     )
     .toEqual({
-      visionModel: 'gpt-cloud',
+      visionModel: 'alcore-chat',
       visionProviderType: 'plugin',
-      visionProviderId: 'openai-cloud',
+      visionProviderId: 'alcore-cloud',
     });
 
   await page.reload();
@@ -160,7 +160,7 @@ test('vision model selection persists the exact provider-qualified model', async
   const reloadedSettingsPanel = await openSettingsTab(page, 'models');
   await expect(
     reloadedSettingsPanel.getByTestId('vision-model-select')
-  ).toHaveValue('plugin:openai-cloud:gpt-cloud');
+  ).toHaveValue('plugin:alcore-cloud:alcore-chat');
 });
 
 test('starring a catalog model moves it to the top and persists', async ({
@@ -234,13 +234,13 @@ test('provider workspace searches, selects, and collapses configuration on provi
   const providerList = page.getByTestId('provider-list');
   const providerDetail = page.getByTestId('provider-detail');
   const search = page.getByRole('searchbox', { name: 'Search providers' });
-  const openAiProvider = providerList.getByRole('button', {
-    name: /OpenAI Cloud/,
+  const alcoreProvider = providerList.getByRole('button', {
+    name: /Alcore Cloud/,
   });
 
-  await expect(openAiProvider).toHaveAttribute('aria-current', 'true');
+  await expect(alcoreProvider).toHaveAttribute('aria-current', 'true');
   await expect(
-    providerDetail.getByText('OpenAI Cloud', { exact: true }).first()
+    providerDetail.getByText('Alcore Cloud', { exact: true }).first()
   ).toBeVisible();
   await expect(
     providerDetail.getByRole('button', {
@@ -251,7 +251,7 @@ test('provider workspace searches, selects, and collapses configuration on provi
   await expect(providerDetail.getByLabel(/API endpoint/i)).toHaveCount(0);
 
   await search.fill('gateway');
-  await expect(openAiProvider).toHaveCount(0);
+  await expect(alcoreProvider).toHaveCount(0);
   const localProvider = providerList.getByRole('button', {
     name: /Local AI Gateway/,
   });
@@ -277,14 +277,14 @@ test('provider workspace searches, selects, and collapses configuration on provi
     providerDetail.getByLabel('Temperature', { exact: true })
   ).toHaveCount(0);
 
-  await search.fill('anthropic');
-  const anthropicProvider = providerList.getByRole('button', {
-    name: /Anthropic Cloud/,
+  await search.fill('synthetic');
+  const syntheticProvider = providerList.getByRole('button', {
+    name: /Synthetic Cloud/,
   });
-  await anthropicProvider.click();
-  await expect(anthropicProvider).toHaveAttribute('aria-current', 'true');
+  await syntheticProvider.click();
+  await expect(syntheticProvider).toHaveAttribute('aria-current', 'true');
   await expect(
-    providerDetail.getByText('Anthropic Cloud', { exact: true }).first()
+    providerDetail.getByText('Synthetic Cloud', { exact: true }).first()
   ).toBeVisible();
   await expect(
     providerDetail.getByRole('button', {
@@ -396,7 +396,7 @@ test('parallel provider refreshes retain independent busy state', async ({
     systemInfo: providerWorkspaceSystemInfo,
     plugins: [openAiCloud, localGateway],
     pluginDiscoveryResults: {
-      'openai-cloud': ['gpt-refreshed'],
+      'alcore-cloud': ['alcore-refreshed'],
       'local-gateway': ['gateway-refreshed'],
     },
     pluginDiscoveryDelayMs: 1_800,
@@ -406,8 +406,8 @@ test('parallel provider refreshes retain independent busy state', async ({
   const providerList = page.getByTestId('provider-list');
   const providerDetail = page.getByTestId('provider-detail');
   const catalog = page.getByTestId('provider-model-catalog');
-  const openAiProvider = providerList.getByRole('button', {
-    name: /OpenAI Cloud/,
+  const alcoreProvider = providerList.getByRole('button', {
+    name: /Alcore Cloud/,
   });
   const localProvider = providerList.getByRole('button', {
     name: /Local AI Gateway/,
@@ -423,11 +423,11 @@ test('parallel provider refreshes retain independent busy state', async ({
     .click();
   await expect
     .poll(() => mockApi.pluginDiscoveryRequests)
-    .toEqual(['openai-cloud', 'local-gateway']);
+    .toEqual(['alcore-cloud', 'local-gateway']);
 
-  await openAiProvider.click();
+  await alcoreProvider.click();
   await expect(
-    catalog.getByText('gpt-refreshed', { exact: true })
+    catalog.getByText('alcore-refreshed', { exact: true })
   ).toBeVisible();
 
   await localProvider.click();
@@ -1232,7 +1232,7 @@ test('TTS keeps the selected provider for shared model aliases and generation', 
     ttsModels: [
       {
         model: 'tts-1-hd',
-        plugin: 'openai-tts',
+        plugin: 'alcore-tts',
         config: {
           voices: ['alloy'],
           default_voice: 'alloy',
@@ -1242,7 +1242,7 @@ test('TTS keeps the selected provider for shared model aliases and generation', 
       },
       {
         model: 'tts-1-hd',
-        plugin: 'kyutai-tts-1.6b',
+        plugin: 'synthetic-tts',
         config: {
           voices: ['alba'],
           default_voice: 'alba',
@@ -1253,13 +1253,13 @@ test('TTS keeps the selected provider for shared model aliases and generation', 
     ],
     ttsPlugins: [
       {
-        id: 'openai-tts',
-        name: 'OpenAI TTS',
+        id: 'alcore-tts',
+        name: 'Alcore TTS',
         models: ['tts-1-hd'],
       },
       {
-        id: 'kyutai-tts-1.6b',
-        name: 'Kyutai TTS 1.6B',
+        id: 'synthetic-tts',
+        name: 'Synthetic TTS',
         models: ['tts-1-hd'],
       },
     ],
@@ -1292,14 +1292,14 @@ test('TTS keeps the selected provider for shared model aliases and generation', 
   await page.getByRole('tab', { name: 'Speech' }).click();
 
   const modelSelect = page.getByRole('combobox', { name: 'TTS Model' });
-  await expect(modelSelect).toHaveValue('openai-tts::tts-1-hd');
+  await expect(modelSelect).toHaveValue('alcore-tts::tts-1-hd');
 
   const testButton = page.getByRole('button', { name: 'Test', exact: true });
   await testButton.click();
   await expect.poll(() => mockApi.ttsGenerationRequests.length).toBe(1);
   expect(mockApi.ttsGenerationRequests[0]).toMatchObject({
     model: 'tts-1-hd',
-    pluginId: 'openai-tts',
+    pluginId: 'alcore-tts',
     voice: 'alloy',
     response_format: 'mp3',
   });
@@ -1307,9 +1307,9 @@ test('TTS keeps the selected provider for shared model aliases and generation', 
   mockApi.ttsGenerationRequests.length = 0;
 
   await modelSelect.selectOption({
-    label: 'tts-1-hd (kyutai-tts-1.6b)',
+    label: 'tts-1-hd (synthetic-tts)',
   });
-  await expect(modelSelect).toHaveValue('kyutai-tts-1.6b::tts-1-hd');
+  await expect(modelSelect).toHaveValue('synthetic-tts::tts-1-hd');
   await expect(page.getByRole('combobox', { name: 'Voice' })).toHaveValue(
     'alba'
   );
@@ -1320,7 +1320,7 @@ test('TTS keeps the selected provider for shared model aliases and generation', 
   await expect.poll(() => mockApi.ttsGenerationRequests.length).toBe(1);
   expect(mockApi.ttsGenerationRequests[0]).toMatchObject({
     model: 'tts-1-hd',
-    pluginId: 'kyutai-tts-1.6b',
+    pluginId: 'synthetic-tts',
     voice: 'alba',
     response_format: 'wav',
   });
@@ -1330,15 +1330,15 @@ test('TTS keeps the selected provider for shared model aliases and generation', 
   await page.keyboard.press('Control+,');
   await page.getByRole('tab', { name: 'Speech' }).click();
   await expect(page.getByRole('combobox', { name: 'TTS Model' })).toHaveValue(
-    'kyutai-tts-1.6b::tts-1-hd'
+    'synthetic-tts::tts-1-hd'
   );
 });
 
 test('Speech settings select, test, and delete a saved cloned voice', async ({
   page,
 }) => {
-  const model = 'meituan-longcat/LongCat-AudioDiT-3.5B';
-  const profileId = 'saved-longcat-voice';
+  const model = 'alcore/synthetic-voice-3.5B';
+  const profileId = 'saved-alcore-voice';
   const now = Date.now();
   const mockApi = await mockLibreWebUiApi(page, {
     preferences: {
@@ -1349,14 +1349,14 @@ test('Speech settings select, test, and delete a saved cloned voice', async ({
         voice: '',
         voiceProfileId: profileId,
         speed: 1,
-        pluginId: 'longcat-audiodit',
+        pluginId: 'alcore-tts',
         streamSentences: true,
       },
     },
     ttsModels: [
       {
         model,
-        plugin: 'longcat-audiodit',
+        plugin: 'alcore-tts',
         config: {
           voices: ['narrator'],
           default_voice: 'narrator',
@@ -1369,8 +1369,8 @@ test('Speech settings select, test, and delete a saved cloned voice', async ({
     ],
     ttsPlugins: [
       {
-        id: 'longcat-audiodit',
-        name: 'LongCat AudioDiT',
+        id: 'alcore-tts',
+        name: 'Alcore TTS',
         models: [model],
       },
     ],
@@ -1378,7 +1378,7 @@ test('Speech settings select, test, and delete a saved cloned voice', async ({
       {
         id: profileId,
         name: 'Robin',
-        pluginId: 'longcat-audiodit',
+        pluginId: 'alcore-tts',
         model,
         mimeType: 'audio/wav',
         createdAt: now,
@@ -1425,7 +1425,7 @@ test('Speech settings select, test, and delete a saved cloned voice', async ({
   await expect.poll(() => mockApi.ttsGenerationRequests.length).toBe(1);
   expect(mockApi.ttsGenerationRequests[0]).toMatchObject({
     model,
-    pluginId: 'longcat-audiodit',
+    pluginId: 'alcore-tts',
     voiceProfileId: profileId,
     response_format: 'wav',
   });
@@ -1455,7 +1455,7 @@ test('Speech settings select, test, and delete a saved cloned voice', async ({
 test('Speech settings clear a route-mismatched saved voice preference', async ({
   page,
 }) => {
-  const model = 'meituan-longcat/LongCat-AudioDiT-3.5B';
+  const model = 'alcore/synthetic-voice-3.5B';
   const mockApi = await mockLibreWebUiApi(page, {
     preferences: {
       ttsSettings: {
@@ -1465,14 +1465,14 @@ test('Speech settings clear a route-mismatched saved voice preference', async ({
         voice: '',
         voiceProfileId: 'deleted-profile',
         speed: 1,
-        pluginId: 'longcat-audiodit',
+        pluginId: 'alcore-tts',
         streamSentences: true,
       },
     },
     ttsModels: [
       {
         model,
-        plugin: 'longcat-audiodit',
+        plugin: 'alcore-tts',
         config: {
           voices: ['narrator'],
           default_voice: 'narrator',
@@ -1485,8 +1485,8 @@ test('Speech settings clear a route-mismatched saved voice preference', async ({
     ],
     ttsPlugins: [
       {
-        id: 'longcat-audiodit',
-        name: 'LongCat AudioDiT',
+        id: 'alcore-tts',
+        name: 'Alcore TTS',
         models: [model],
       },
     ],
@@ -1524,7 +1524,7 @@ test('Speech settings clear a route-mismatched saved voice preference', async ({
 test('deleting a selected voice clears live playback when preference persistence fails', async ({
   page,
 }) => {
-  const model = 'meituan-longcat/LongCat-AudioDiT-3.5B';
+  const model = 'alcore/synthetic-voice-3.5B';
   const profileId = 'selected-profile-with-failed-cleanup';
   const now = Date.now();
   const mockApi = await mockLibreWebUiApi(page, {
@@ -1537,14 +1537,14 @@ test('deleting a selected voice clears live playback when preference persistence
         voice: '',
         voiceProfileId: profileId,
         speed: 1,
-        pluginId: 'longcat-audiodit',
+        pluginId: 'alcore-tts',
         streamSentences: true,
       },
     },
     ttsModels: [
       {
         model,
-        plugin: 'longcat-audiodit',
+        plugin: 'alcore-tts',
         config: {
           voices: ['narrator'],
           default_voice: 'narrator',
@@ -1559,7 +1559,7 @@ test('deleting a selected voice clears live playback when preference persistence
       {
         id: profileId,
         name: 'Soon deleted voice',
-        pluginId: 'longcat-audiodit',
+        pluginId: 'alcore-tts',
         model,
         mimeType: 'audio/wav',
         createdAt: now,
@@ -1657,8 +1657,8 @@ test('Speech settings can delete a saved voice after its provider is removed', a
       {
         id: profileId,
         name: 'Retired provider voice',
-        pluginId: 'removed-longcat',
-        model: 'meituan-longcat/LongCat-AudioDiT-3.5B',
+        pluginId: 'removed-voice',
+        model: 'alcore/synthetic-voice-3.5B',
         mimeType: 'audio/wav',
         createdAt: now,
         updatedAt: now,
@@ -1674,7 +1674,7 @@ test('Speech settings can delete a saved voice after its provider is removed', a
   await expect(page.getByText('No TTS Providers')).toBeVisible();
   await expect(page.getByText('Retired provider voice')).toBeVisible();
   await expect(
-    page.getByText('removed-longcat · meituan-longcat/LongCat-AudioDiT-3.5B')
+    page.getByText('removed-voice · alcore/synthetic-voice-3.5B')
   ).toBeVisible();
 
   page.once('dialog', dialog => dialog.accept());

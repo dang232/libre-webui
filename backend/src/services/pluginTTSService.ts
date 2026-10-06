@@ -362,68 +362,16 @@ export class PluginTTSService {
       );
     }
 
-    let payload: Record<string, unknown>;
-    let processedEndpoint: string;
+    let payload: Record<string, unknown> = {
+      model,
+      input,
+      voice,
+      response_format: responseFormat,
+      speed,
+    };
 
-    if (plugin.id === 'elevenlabs') {
-      const elevenLabsVoiceIds: Record<string, string> = {
-        rachel: '21m00Tcm4TlvDq8ikWAM',
-        domi: 'AZnzlk1XvdvUeBnXmlld',
-        bella: 'EXAVITQu4vr4xnSDxMaL',
-        antoni: 'ErXwobaYiN019PkySvjV',
-        elli: 'MF3mGyEYCl7XYWbV9V6O',
-        josh: 'TxGEqnHWrfWFTfGW9XjX',
-        arnold: 'VR6AewLTigWG4xSOukaG',
-        adam: 'pNInz6obpgDQGcFmaJgB',
-        sam: 'yoZ06aMxZJJ28mfd3POQ',
-        nicole: 'piTKgcLEGmPE4e6mEKli',
-        glinda: 'z9fAnlkpzviPz146aGWa',
-        clyde: '2EiwWnXFnvU5JabPnv8n',
-        james: 'ZQe5CZNOzWyzPSCn5a3c',
-        charlotte: 'XB0fDUnXU5powFXDhCwa',
-        lily: 'pFZP5JQG7iQjIQuC4Bku',
-        serena: 'pMsXgVXv3BLzUgSXRplE',
-      };
-
-      const voiceId =
-        elevenLabsVoiceIds[voice.toLowerCase()] ||
-        elevenLabsVoiceIds['rachel'] ||
-        '21m00Tcm4TlvDq8ikWAM';
-
-      processedEndpoint = `${endpoint}/${voiceId}`;
-
-      const formatMap: Record<string, string> = {
-        mp3: 'mp3_44100_128',
-        pcm: 'pcm_16000',
-        ulaw: 'ulaw_8000',
-      };
-      const outputFormat = formatMap[responseFormat] || 'mp3_44100_128';
-      processedEndpoint += `?output_format=${outputFormat}`;
-
-      payload = {
-        text: input,
-        model_id: model,
-        voice_settings: {
-          stability: (ttsVars.stability as number | undefined) ?? 0.5,
-          similarity_boost:
-            (ttsVars.similarity_boost as number | undefined) ?? 0.75,
-        },
-      };
-    } else if (plugin.id === 'huggingface') {
-      payload = { inputs: input };
-      processedEndpoint = applyModelEndpointTemplate(endpoint, model);
-    } else {
-      payload = {
-        model,
-        input,
-        voice,
-        response_format: responseFormat,
-        speed,
-      };
-
-      const sanitizedModel = encodeURIComponent(model);
-      processedEndpoint = endpoint.replace('{model}', sanitizedModel);
-    }
+    const sanitizedModel = encodeURIComponent(model);
+    const processedEndpoint = endpoint.replace('{model}', sanitizedModel);
 
     payload = {
       ...getForwardedTTSVariables(ttsConfig, ttsVars),

@@ -33,8 +33,8 @@ const systemInfo = {
 const now = Date.now();
 const day = 86_400_000;
 const today = Math.floor(now / day) * day;
-const gptModel = 'gpt-5.1';
-const claudeModel = 'claude-sonnet-4.5';
+const gptModel = 'alcore-5.1';
+const claudeModel = 'synthetic-4.5';
 
 const modelUsageFixture = (reportTokens = true): PluginUsageAnalytics => {
   const modelSeries = [
@@ -119,10 +119,10 @@ const modelUsageFixture = (reportTokens = true): PluginUsageAnalytics => {
     series,
     modelSeries,
     plugins: [
-      { pluginId: 'openai', pluginName: 'OpenAI', ...gptTotals },
+      { pluginId: 'alcore', pluginName: 'Alcore', ...gptTotals },
       {
-        pluginId: 'anthropic',
-        pluginName: 'Anthropic',
+        pluginId: 'synthetic',
+        pluginName: 'Synthetic',
         ...claudeTotals,
         calls: claudeTotals.calls + otherTotals.calls,
         tokens: claudeTotals.tokens + otherTotals.tokens,
@@ -131,20 +131,20 @@ const modelUsageFixture = (reportTokens = true): PluginUsageAnalytics => {
     models: [
       {
         model: gptModel,
-        pluginId: 'openai',
-        pluginName: 'OpenAI',
+        pluginId: 'alcore',
+        pluginName: 'Alcore',
         ...gptTotals,
       },
       {
         model: claudeModel,
-        pluginId: 'anthropic',
-        pluginName: 'Anthropic',
+        pluginId: 'synthetic',
+        pluginName: 'Synthetic',
         ...claudeTotals,
       },
       {
-        model: 'claude-haiku-4.5',
-        pluginId: 'anthropic',
-        pluginName: 'Anthropic',
+        model: 'synthetic-haiku-4.5',
+        pluginId: 'synthetic',
+        pluginName: 'Synthetic',
         ...otherTotals,
       },
     ],
@@ -167,7 +167,7 @@ const modelUsageFixture = (reportTokens = true): PluginUsageAnalytics => {
         calls: point.calls,
         models: modelSeries
           .map(model => ({
-            model: model.model ?? 'claude-haiku-4.5',
+            model: model.model ?? 'synthetic-haiku-4.5',
             calls: model.points[index].calls,
           }))
           .filter(model => model.calls > 0)
@@ -354,16 +354,16 @@ test('administrators open provider usage from the user menu', async ({
       })),
       plugins: [
         {
-          pluginId: 'openai',
-          pluginName: 'OpenAI',
+          pluginId: 'alcore',
+          pluginName: 'Alcore',
           calls: 88,
           tokens: 940_000,
           errors: 2,
           averageLatencyMs: 1580,
         },
         {
-          pluginId: 'anthropic',
-          pluginName: 'Anthropic',
+          pluginId: 'synthetic',
+          pluginName: 'Synthetic',
           calls: 40,
           tokens: 300_000,
           errors: 2,
@@ -372,9 +372,9 @@ test('administrators open provider usage from the user menu', async ({
       ],
       models: [
         {
-          model: 'gpt-5.1',
-          pluginId: 'openai',
-          pluginName: 'OpenAI',
+          model: 'alcore-5.1',
+          pluginId: 'alcore',
+          pluginName: 'Alcore',
           calls: 88,
           tokens: 940_000,
           errors: 2,
@@ -445,9 +445,11 @@ test('administrators open provider usage from the user menu', async ({
   await expect(page.getByTestId('plugin-usage-chart')).toBeVisible();
   await expect(page.getByText('1.2M', { exact: true })).toBeVisible();
   await expect(
-    page.getByTestId('usage-model-table').getByText('gpt-5.1', { exact: true })
+    page
+      .getByTestId('usage-model-table')
+      .getByText('alcore-5.1', { exact: true })
   ).toBeVisible();
-  await expect(page.getByText('OpenAI').first()).toBeVisible();
+  await expect(page.getByText('Alcore').first()).toBeVisible();
 });
 
 test('regular users do not receive the provider usage navigation entry', async ({
@@ -544,7 +546,7 @@ test('model colors link the chart and heatmap while highlighting preserves total
   const gptRow = table.locator(
     `[data-testid="usage-model-row"][data-model="${gptModel}"]`
   );
-  await expect(gptRow).toContainText('OpenAI');
+  await expect(gptRow).toContainText('Alcore');
   await expect(gptRow.getByRole('cell').nth(1)).toContainText(
     String(usage.models[0].calls)
   );
@@ -565,8 +567,8 @@ test('model colors link the chart and heatmap while highlighting preserves total
     'background-color',
     gptRgb
   );
-  await expect(providers).toContainText('OpenAI');
-  await expect(providers).toContainText('Anthropic');
+  await expect(providers).toContainText('Alcore');
+  await expect(providers).toContainText('Synthetic');
   await chart.scrollIntoViewIfNeeded();
   await page.screenshot({ path: '/tmp/libre-usage-desktop.png' });
 

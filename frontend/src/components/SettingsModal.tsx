@@ -1665,8 +1665,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     documents: 'upload pdf rag document embedding',
     tts: 'voice speech audio speak read aloud',
     'image-gen': 'image generation size quality style',
-    plugins:
-      'api key provider connection openai anthropic groq gemini deepseek',
+    plugins: 'api key provider connection alcore',
     search: 'web search searxng internet browse sources',
     shortcuts: 'keyboard keys hotkeys shortcut command palette',
     sessions: 'sessions devices sign out logout revoke security login',

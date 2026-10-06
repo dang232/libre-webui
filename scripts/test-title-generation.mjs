@@ -90,7 +90,7 @@ test('a reasoning provider gets room to think and still name the chat', async ()
   chatGenerationService.prepareGenerationTarget = async modelName => ({
     actualModelName: modelName,
     mergedOptions: { temperature: 0.7, num_predict: 20 },
-    activePlugin: { id: 'llama-cpp', model_map: [modelName] },
+    activePlugin: { id: 'local-title-provider', model_map: [modelName] },
     providerType: 'plugin',
   });
 

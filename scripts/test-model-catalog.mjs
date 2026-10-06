@@ -99,11 +99,11 @@ test('the catalog starts empty and every read fails open', async () => {
 test('model order is stored, deduped, and returned in sequence', async () => {
   const saved = await catalog.setModelOrder([
     'qwen3:8b',
-    'openai/gpt-test',
+    'alcore/test-model',
     'qwen3:8b',
     '  llama3.2:3b  ',
   ]);
-  assert.deepEqual(saved, ['qwen3:8b', 'openai/gpt-test', 'llama3.2:3b']);
+  assert.deepEqual(saved, ['qwen3:8b', 'alcore/test-model', 'llama3.2:3b']);
   assert.deepEqual(await catalog.getModelOrder(), saved);
   assert.throws(() => catalog.normalizeModelOrder('nope'));
   assert.throws(() => catalog.normalizeModelOrder([42]));
@@ -112,12 +112,12 @@ test('model order is stored, deduped, and returned in sequence', async () => {
 
 test('starred models are stored, deduped, and returned in priority order', async () => {
   const saved = await catalog.setStarredModels([
-    'openai/gpt-test',
+    'alcore/test-model',
     'qwen3:8b',
-    'openai/gpt-test',
+    'alcore/test-model',
     '  llama3.2:3b  ',
   ]);
-  assert.deepEqual(saved, ['openai/gpt-test', 'qwen3:8b', 'llama3.2:3b']);
+  assert.deepEqual(saved, ['alcore/test-model', 'qwen3:8b', 'llama3.2:3b']);
   assert.deepEqual(await catalog.getStarredModels(), saved);
   assert.throws(() => catalog.normalizeStarredModels('nope'));
   assert.throws(() => catalog.normalizeStarredModels([42]));
@@ -127,12 +127,12 @@ test('starred models are stored, deduped, and returned in priority order', async
 test('a model can carry an administrator label and picture', async () => {
   const saved = await catalog.setModelMetadata({
     'qwen3:8b': { label: 'House model', avatar: PNG },
-    'openai/gpt-test': { label: 'Cloud fallback' },
+    'alcore/test-model': { label: 'Cloud fallback' },
   });
   assert.equal(saved['qwen3:8b'].label, 'House model');
   assert.equal(saved['qwen3:8b'].avatar, PNG);
-  assert.equal(saved['openai/gpt-test'].label, 'Cloud fallback');
-  assert.equal(saved['openai/gpt-test'].avatar, undefined);
+  assert.equal(saved['alcore/test-model'].label, 'Cloud fallback');
+  assert.equal(saved['alcore/test-model'].avatar, undefined);
 
   const read = await catalog.getModelMetadata();
   assert.deepEqual(read, saved, 'metadata survives a round trip');
@@ -141,10 +141,10 @@ test('a model can carry an administrator label and picture', async () => {
 test('clearing a label and picture removes the entry entirely', async () => {
   const saved = await catalog.setModelMetadata({
     'qwen3:8b': { label: '', avatar: '' },
-    'openai/gpt-test': { label: 'Still here' },
+    'alcore/test-model': { label: 'Still here' },
   });
   assert.ok(!('qwen3:8b' in saved), 'an emptied model stops carrying metadata');
-  assert.equal(saved['openai/gpt-test'].label, 'Still here');
+  assert.equal(saved['alcore/test-model'].label, 'Still here');
 });
 
 test('pictures must be image data URLs within the size ceiling', () => {
@@ -179,21 +179,21 @@ test('pictures must be image data URLs within the size ceiling', () => {
 });
 
 test('hidden models, order, stars, and metadata are stored independently', async () => {
-  await catalog.setHiddenModels(['openai/gpt-test']);
-  assert.deepEqual(await catalog.getHiddenModels(), ['openai/gpt-test']);
+  await catalog.setHiddenModels(['alcore/test-model']);
+  assert.deepEqual(await catalog.getHiddenModels(), ['alcore/test-model']);
   // Changing visibility must not disturb the other catalog settings.
   assert.deepEqual(await catalog.getModelOrder(), [
     'qwen3:8b',
-    'openai/gpt-test',
+    'alcore/test-model',
     'llama3.2:3b',
   ]);
   assert.deepEqual(await catalog.getStarredModels(), [
-    'openai/gpt-test',
+    'alcore/test-model',
     'qwen3:8b',
     'llama3.2:3b',
   ]);
   assert.equal(
-    (await catalog.getModelMetadata())['openai/gpt-test'].label,
+    (await catalog.getModelMetadata())['alcore/test-model'].label,
     'Still here'
   );
 });
@@ -219,7 +219,7 @@ test('a reorder survives the round trip the UI makes', async () => {
 });
 
 test('star priority survives the round trip the UI makes', async () => {
-  const wanted = ['gemma3:12b', 'openai/gpt-test'];
+  const wanted = ['gemma3:12b', 'alcore/test-model'];
   const put = await fetch(`${baseUrl}/models/visibility`, {
     method: 'PUT',
     headers: { Authorization: `Bearer ${adminToken}`, ...asJson },
@@ -253,7 +253,7 @@ test('sending only one field leaves the others untouched', async () => {
   );
   assert.deepEqual(
     read.data.starred,
-    ['gemma3:12b', 'openai/gpt-test'],
+    ['gemma3:12b', 'alcore/test-model'],
     'the stars set earlier are still there'
   );
   assert.equal(read.data.metadata['qwen3:8b'].label, 'House');
@@ -271,7 +271,7 @@ test('invalid star settings are rejected without changing saved priority', async
     headers: { Authorization: `Bearer ${adminToken}` },
   });
   const read = await get.json();
-  assert.deepEqual(read.data.starred, ['gemma3:12b', 'openai/gpt-test']);
+  assert.deepEqual(read.data.starred, ['gemma3:12b', 'alcore/test-model']);
 });
 
 test('only administrators can change the catalog', async () => {

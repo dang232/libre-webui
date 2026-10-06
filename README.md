@@ -159,22 +159,7 @@ lock-in.
 Supported integrations include:
 
 - Ollama and Ollama Cloud
-- OpenAI
-- Anthropic
-- Google Gemini
-- Groq
-- Mistral
-- DeepSeek
-- OpenRouter
-- Hugging Face
-- GitHub Models
-- Moonshot AI / Kimi Code
-- ComfyUI
-- ElevenLabs
-- Qwen3-TTS
-- Kyutai TTS
-- MLX LM on Apple Silicon
-- llama.cpp
+- Alcore
 - OpenAI-compatible services
 
 Provider availability can change between releases. See the

@@ -578,15 +578,15 @@ test('Chat drops Responses replay state after provider credential rotation', () 
   const newCredentialFingerprint =
     openAIResponsesAdapter.createPluginCredentialFingerprint('new-api-key');
   const oldStateScope = openAIResponsesAdapter.createOpenAIResponsesStateScope(
-    'openai',
-    'gpt-test',
-    'https://api.openai.com/v1/responses',
+    'alcore',
+    'default-chat',
+    'https://alcore.io.vn/v1/responses',
     oldCredentialFingerprint
   );
   const newStateScope = openAIResponsesAdapter.createOpenAIResponsesStateScope(
-    'openai',
-    'gpt-test',
-    'https://api.openai.com/v1/responses',
+    'alcore',
+    'default-chat',
+    'https://alcore.io.vn/v1/responses',
     newCredentialFingerprint
   );
 
@@ -1245,7 +1245,7 @@ test('plugin validation rejects unsafe models and non-HTTP provider endpoints', 
     pluginValidation.validatePluginModel('kimi-k2.7-code:cloud')
   );
   assert.doesNotThrow(() =>
-    pluginValidation.validatePluginModel('~openai/gpt-latest')
+    pluginValidation.validatePluginModel('~alcore/test-latest')
   );
   assert.throws(
     () => pluginValidation.validatePluginModel('../secret'),
@@ -1267,16 +1267,16 @@ test('plugin validation rejects unsafe models and non-HTTP provider endpoints', 
   );
 });
 
-test('plugin model discovery resolves Anthropic Messages endpoints', () => {
-  const anthropicPlugin = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'plugins', 'anthropic.json'), 'utf8')
+test('plugin model discovery resolves chat endpoints to a models listing', () => {
+  const alcorePlugin = JSON.parse(
+    fs.readFileSync(path.join(repoRoot, 'plugins', 'alcore.json'), 'utf8')
   );
 
   assert.equal(
     pluginValidation.resolvePluginModelsEndpoint(
-      'https://api.anthropic.com/v1/messages'
+      'https://alcore.io.vn/v1/chat/completions'
     ),
-    'https://api.anthropic.com/v1/models'
+    'https://alcore.io.vn/v1/models'
   );
   assert.equal(
     pluginValidation.resolvePluginModelsEndpoint(
@@ -1286,77 +1286,23 @@ test('plugin model discovery resolves Anthropic Messages endpoints', () => {
   );
   assert.deepEqual(
     pluginValidation.buildPluginModelDiscoveryHeaders(
-      anthropicPlugin,
-      'test-anthropic-key'
+      alcorePlugin,
+      'test-alcore-key'
     ),
     {
       Accept: 'application/json',
-      'x-api-key': 'test-anthropic-key',
-      'anthropic-version': '2023-06-01',
+      Authorization: 'Bearer test-alcore-key',
     }
   );
-});
-
-test('Kimi Code plugin omits model-fixed sampling parameters', () => {
-  const plugin = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'plugins', 'kimi-code.json'), 'utf8')
-  );
-  const headers = pluginValidation.buildPluginAuthHeaders(
-    plugin,
-    'test-kimi-key'
-  );
-  const { payload } = pluginChatAdapter.buildPluginChatPayload(
-    plugin,
-    'k3',
-    [
-      {
-        role: 'system',
-        content: 'Be precise.',
-      },
-      {
-        role: 'user',
-        content: 'Review this function.',
-      },
-    ],
-    { temperature: 0.2, top_p: 0.4, num_predict: 8192 },
-    {
-      stream: true,
-      temperature: 0.3,
-      top_p: 0.8,
-      frequency_penalty: 1,
-      presence_penalty: 1,
-    }
-  );
-
-  assert.deepEqual(headers, {
-    'Content-Type': 'application/json',
-    Authorization: 'Bearer test-kimi-key',
-  });
-  assert.equal(
-    plugin.endpoint,
-    'https://api.kimi.com/coding/v1/chat/completions'
-  );
-  assert.equal(payload.model, 'k3');
-  assert.equal('temperature' in payload, false);
-  assert.equal('top_p' in payload, false);
-  assert.equal('frequency_penalty' in payload, false);
-  assert.equal('presence_penalty' in payload, false);
-  assert.equal(payload.max_tokens, 8192);
-  assert.equal(payload.stream, true);
-  assert.deepEqual(payload.messages, [
-    { role: 'system', content: 'Be precise.' },
-    { role: 'user', content: 'Review this function.' },
-  ]);
-  assert.equal('reasoning_effort' in payload, false);
 });
 
 test('non-stream plugin payloads override a persisted streaming preference', () => {
   const plugin = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'plugins', 'kimi-code.json'), 'utf8')
+    fs.readFileSync(path.join(repoRoot, 'plugins', 'alcore.json'), 'utf8')
   );
   const { payload } = pluginChatAdapter.buildPluginChatPayload(
     plugin,
-    'k3',
+    'default-chat',
     [{ role: 'user', content: 'Generate a title.' }],
     { num_predict: 20 },
     { stream: true },
@@ -1364,121 +1310,6 @@ test('non-stream plugin payloads override a persisted streaming preference', () 
   );
 
   assert.equal(payload.stream, false);
-});
-
-test('Kimi Code policy hides obsolete sampling controls after upgrades', () => {
-  const existingPlugin = {
-    id: 'kimi-code',
-    variables: [
-      { name: 'endpoint' },
-      { name: 'temperature' },
-      { name: 'max_tokens' },
-      { name: 'top_p' },
-      { name: 'frequency_penalty' },
-      { name: 'presence_penalty' },
-      { name: 'stream' },
-    ],
-  };
-  const normalized =
-    pluginChatAdapter.applyPluginDefinitionPolicy(existingPlugin);
-
-  assert.deepEqual(
-    normalized.variables.map(variable => variable.name),
-    ['endpoint', 'max_tokens', 'stream']
-  );
-  assert.equal(existingPlugin.variables.length, 7);
-
-  const otherPlugin = { ...existingPlugin, id: 'openai' };
-  assert.equal(
-    pluginChatAdapter.applyPluginDefinitionPolicy(otherPlugin),
-    otherPlugin
-  );
-});
-
-test('buildPluginChatPayload adapts Anthropic multimodal chat requests', () => {
-  const { payload, headers } = pluginChatAdapter.buildPluginChatPayload(
-    { id: 'anthropic' },
-    'claude-opus-4-6',
-    [
-      { role: 'system', content: 'Be concise.' },
-      {
-        role: 'user',
-        content: 'describe',
-        images: ['data:image/png;base64,aGVsbG8='],
-      },
-    ],
-    { temperature: 0.2, num_predict: 128, stop: ['END'] },
-    { top_p: 0.8 }
-  );
-
-  assert.deepEqual(headers, { 'anthropic-version': '2023-06-01' });
-  assert.equal(payload.system, 'Be concise.');
-  assert.equal(payload.model, 'claude-opus-4-6');
-  assert.equal(payload.max_tokens, 128);
-  assert.equal(payload.top_p, 0.8);
-  assert.equal('temperature' in payload, false);
-  assert.equal(payload.stop_sequences[0], 'END');
-  assert.equal(payload.messages.length, 1);
-  assert.equal(payload.messages[0].content[0].type, 'image');
-  assert.equal(payload.messages[0].content[0].source.media_type, 'image/png');
-  assert.equal(payload.messages[0].content[0].source.data, 'aGVsbG8=');
-  assert.deepEqual(payload.messages[0].content[1], {
-    type: 'text',
-    text: 'describe',
-  });
-});
-
-test('buildPluginChatPayload uses Anthropic defaults for Claude Opus 5', () => {
-  const { payload, headers } = pluginChatAdapter.buildPluginChatPayload(
-    { id: 'anthropic' },
-    'claude-opus-5',
-    [{ role: 'user', content: 'Review this change.' }],
-    { temperature: 0.2, num_predict: 128 },
-    { top_p: 0.8 },
-    true
-  );
-
-  assert.deepEqual(headers, { 'anthropic-version': '2023-06-01' });
-  assert.equal(payload.model, 'claude-opus-5');
-  assert.equal(payload.max_tokens, 128);
-  assert.equal(payload.stream, true);
-  assert.equal('temperature' in payload, false);
-  assert.equal('top_p' in payload, false);
-  assert.equal('frequency_penalty' in payload, false);
-  assert.equal('presence_penalty' in payload, false);
-  assert.deepEqual(payload.messages, [
-    { role: 'user', content: 'Review this change.' },
-  ]);
-});
-
-test('convertProviderResponse normalizes Gemini responses', () => {
-  const response = pluginChatAdapter.convertProviderResponse(
-    { id: 'gemini' },
-    {
-      candidates: [
-        {
-          content: {
-            parts: [{ text: 'Hello ' }, { text: 'there' }],
-          },
-          finishReason: 'MAX_TOKENS',
-        },
-      ],
-      usageMetadata: {
-        promptTokenCount: 3,
-        candidatesTokenCount: 4,
-      },
-    },
-    'gemini-test'
-  );
-
-  assert.equal(response.model, 'gemini-test');
-  assert.equal(response.choices[0].message.content, 'Hello there');
-  assert.equal(response.choices[0].finish_reason, 'length');
-  assert.deepEqual(response.usage, {
-    prompt_tokens: 3,
-    completion_tokens: 4,
-    total_tokens: 7,
-  });
 });
 
 test('streamOpenAICompatibleResponse parses content and tool call deltas', async () => {

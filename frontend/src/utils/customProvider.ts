@@ -47,7 +47,7 @@ export function customProviderId(
 
 /**
  * Derive the credential env key for a provider id
- * (`llama-cpp` becomes `LLAMA_CPP_API_KEY`).
+ * (`my-provider` becomes `MY_PROVIDER_API_KEY`).
  */
 export function customKeyEnv(id: string): string {
   return `${id.toUpperCase().replace(/-/g, '_')}_API_KEY`;

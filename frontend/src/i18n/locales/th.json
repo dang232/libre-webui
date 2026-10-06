@@ -3884,7 +3884,7 @@
     "skip": "ข้ามไปก่อน — ฉันจะเชื่อมต่อโมเดลทีหลัง",
     "local": {
       "title": "เซิร์ฟเวอร์ในเครื่อง",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "API Key (ไม่บังคับ)",
       "test": "ทดสอบการเชื่อมต่อ",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "API บนคลาวด์",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter และอื่นๆ",
+      "subtitle": "Alcore และอื่นๆ",
       "keyPlaceholder": "วาง API Key ของ {{name}}",
       "connect": "เชื่อมต่อ",
       "connecting": "กำลังเชื่อมต่อ…",

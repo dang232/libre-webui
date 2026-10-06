@@ -3884,7 +3884,7 @@
     "skip": "暂时跳过 — 我稍后再连接模型",
     "local": {
       "title": "本地服务器",
-      "subtitle": "llama.cpp、vLLM、llama-swap、LM Studio、mlx-lm",
+      "subtitle": "vLLM、llama-swap、LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "API 密钥（可选）",
       "test": "测试连接",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "云端 API",
-      "subtitle": "OpenAI、Anthropic、Groq、OpenRouter 等",
+      "subtitle": "Alcore 等",
       "keyPlaceholder": "粘贴您的 {{name}} API 密钥",
       "connect": "连接",
       "connecting": "连接中…",

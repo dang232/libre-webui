@@ -1,43 +1,33 @@
 ---
 sidebar_position: 4
-title: 'Connect Third-Party and Self-Hosted Providers'
-description: 'Connect bundled, OpenAI-compatible, and self-hosted model APIs through the Alcore Provider connections workspace.'
+title: 'Connect the Alcore Provider'
+description: 'Connect the bundled Alcore provider and self-hosted gateways through the Alcore Provider connections workspace.'
 slug: /PROVIDER_CONNECTIONS
 keywords:
   [
     provider connections,
-    third-party model api,
+    alcore provider,
     self-hosted ai gateway,
-    openai compatible,
-    responses api,
     model discovery,
     custom base url,
   ]
 ---
 
-# Connect Third-Party and Self-Hosted Providers
+# Connect the Alcore Provider
 
 Alcore 0.16.0 adds a focused **Provider connections** workspace inside
-**Settings > Plugins**. Use it to activate a bundled provider, point a
-compatible plugin at another API, inspect the effective model catalog, or
-connect a self-hosted gateway on a trusted network.
+**Settings > Plugins**. Use it to activate the bundled Alcore provider,
+point a compatible plugin at another API, inspect the effective model
+catalog, or connect a self-hosted gateway on a trusted network.
 
 ![Alcore Provider connections with provider search and selection, connection controls, model refresh, and a provider-qualified capability catalog.](./assets/provider-connections-0.16.0.png)
 
-Alcore currently ships support for these provider wire formats:
-
-- OpenAI Chat Completions;
-- OpenAI Responses;
-- Anthropic Messages; and
-- Google Gemini contents and function calling.
-
-The bundled Anthropic and Gemini definitions use dedicated adapters selected by
-their provider identities. A newly imported provider uses OpenAI Chat
-Completions or OpenAI Responses semantics; pointing it at an Anthropic- or
-Gemini-compatible API does not select those bundled adapters. A provider with
-another request, streaming, tool-call, or response shape needs a backend
-adapter. Plugin JSON describes routing and configuration; it does not translate
-an unrelated protocol.
+Alcore ships one bundled provider: **Alcore** (`plugins/alcore.json`).
+It speaks the Alcore-hosted chat, discovery, and media wire formats.
+A newly imported provider uses OpenAI Chat Completions or OpenAI Responses
+semantics. A provider with another request, streaming, tool-call, or
+response shape needs a backend adapter. Plugin JSON describes routing and
+configuration; it does not translate an unrelated protocol.
 
 ## Open Provider Connections
 
@@ -75,28 +65,11 @@ API modes, base URL overrides, per-capability catalogs, generation parameter
 policy — still lives in the fuller **Settings > Plugins** workspace described
 above.
 
-## Codex (ChatGPT Sign-In)
+## Choose the Bundled or an Imported Provider
 
-The bundled **Codex (ChatGPT)** provider needs no API key. When the server has
-a Codex CLI sign-in (`codex login` as the server's operating-system user), the
-provider appears to administrators, offering GPT-6 Astra, GPT-5.6 Sol, Terra,
-Luna, GPT-5.5, and GPT-5.3 Codex Spark through the ChatGPT session, subject to
-the signed-in account's model access. Access tokens are read from the CLI's own
-`auth.json`, refreshed through the same OAuth client the CLI uses, and written
-back so the CLI keeps working; token values never appear in logs.
-
-Because the requests are made by the backend — never from inside a task
-container — these models also power Work with the normal sandboxed tool loop.
-The provider is administrator-only since every call spends the server owner's
-ChatGPT subscription. Hide it entirely with `CODEX_OAUTH_MODELS_ENABLED=false`,
-or point at a different sign-in with `CODEX_HOME`.
-
-## Choose a Bundled or Imported Provider
-
-Alcore includes definitions for OpenAI, Anthropic, Gemini, Groq, Mistral,
-DeepSeek, OpenRouter, Kimi Code by Moonshot AI, Hugging Face, GitHub Models,
-local MLX LM, and other model or media services. Start with a bundled entry when
-its protocol and authentication contract match the service you want to use.
+Alcore includes the **Alcore** definition for the hosted platform. Start with
+it when its protocol and authentication contract match the service you want
+to use.
 
 For another compatible service, an administrator can import a plugin JSON
 definition. This minimal example describes an OpenAI-compatible gateway:
@@ -121,7 +94,7 @@ Import the file from **Settings > Plugins**, activate it, and save the API key
 for the account that will use the connection. Add connection variables to the
 definition when administrators need editable Base URL, path, discovery, or
 capability-specific endpoint fields. The bundled
-[`plugins/openai.json`](https://github.com/libre-webui/libre-webui/blob/main/plugins/openai.json)
+[`plugins/alcore.json`](https://github.com/libre-webui/libre-webui/blob/main/plugins/alcore.json)
 is a complete example.
 
 For an intentionally authless gateway on a trusted network, set both
@@ -137,7 +110,7 @@ OpenAI-compatible completion plugins can use either API mode:
 | `chat_completions` | `/chat/completions`  | `messages`            |
 | `responses`        | `/responses`         | `input`               |
 
-The bundled OpenAI provider exposes **API Mode** in its configuration. Alcore
+The bundled Alcore provider exposes **API Mode** in its configuration. Alcore
 maps completed and streamed Responses output back into Chat and Work,
 including bounded replay state for reasoning and tool calls.
 
@@ -264,10 +237,9 @@ silently routing the request to another provider.
 
 ## Configure Image Generation Separately
 
-The bundled OpenAI provider exposes image generation through
-`https://api.openai.com/v1/images/generations` and currently defaults new
-configurations to `gpt-image-2`. Older GPT Image IDs remain in its fallback
-catalog for compatible existing deployments.
+The bundled Alcore provider exposes image generation through its configured
+image endpoint. New configurations default to the image model declared by the
+Alcore manifest fallback catalog.
 
 Chat and image routes are intentionally isolated. A custom Chat Base URL does
 not automatically receive image requests. Leave `image_endpoint` blank to use
@@ -426,18 +398,9 @@ For detailed routing, credential, replay-state, and authorization behavior,
 read [Plugins](./PLUGIN_ARCHITECTURE). For deployment-specific failures, see
 [Troubleshooting](./TROUBLESHOOTING).
 
-## Community Acknowledgment
-
-This guide and Alcore 0.16.0's Provider connections experience were
-shaped by [ZhengJin (@fangzhengjin)](https://github.com/fangzhengjin), whose
-detailed third-party-provider feedback and AI-assisted UX concept in
-[#163](https://github.com/libre-webui/libre-webui/issues/163) helped define the
-workflow.
-
 ## Related Docs
 
 - [Plugins](./PLUGIN_ARCHITECTURE)
 - [Working with Models](./WORKING_WITH_MODELS)
-- [MLX LM on Apple Silicon](./MLX_APPLE_SILICON)
 - [Work: Isolated Workspaces](./WORKSPACES)
 - [Troubleshooting](./TROUBLESHOOTING)

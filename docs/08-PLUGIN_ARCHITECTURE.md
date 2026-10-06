@@ -3,8 +3,7 @@ sidebar_position: 3
 title: 'Plugins'
 description: 'Plugin system for AI providers, image generation, text-to-speech, speech-to-text, and embeddings.'
 slug: /PLUGIN_ARCHITECTURE
-keywords:
-  [plugins, openai, anthropic, tts, image generation, comfyui, embeddings]
+keywords: [plugins, alcore, tts, image generation, embeddings]
 ---
 
 # Plugins
@@ -17,7 +16,7 @@ Alcore uses plugins to connect external AI providers and model capabilities.
 | ---------------- | ------------------------------------------------ |
 | Chat/completion  | Text and chat models from provider APIs          |
 | Embeddings       | Vector embeddings for document search and memory |
-| Image generation | Image models and ComfyUI-style backends          |
+| Image generation | Image models and compatible image backends       |
 | Text-to-speech   | Voice synthesis providers                        |
 | Speech-to-text   | Transcription providers                          |
 | Audio generation | Sound and audio-generation providers             |
@@ -25,23 +24,12 @@ Alcore uses plugins to connect external AI providers and model capabilities.
 
 Plugins can expose static model maps and, where supported, refresh available models from provider APIs.
 
-## Built-In Provider Families
+## Bundled Provider
 
-Alcore includes provider definitions for common services:
-
-- OpenAI and OpenAI-compatible APIs
-- Anthropic
-- Google Gemini
-- Groq
-- Kimi Code by Moonshot AI
-- Mistral
-- DeepSeek
-- OpenRouter
-- Hugging Face
-- GitHub Models
-- MLX LM for local Apple Silicon inference
-- ComfyUI
-- ElevenLabs
+Alcore ships one bundled provider definition: **Alcore**
+(`plugins/alcore.json`). It covers chat and completion models plus the
+image, speech, transcription, audio, and video capabilities the Alcore
+platform exposes.
 
 Provider catalogs change frequently. The UI should be treated as the source of truth for live model discovery when a plugin supports it.
 
@@ -93,19 +81,10 @@ Credential availability checks wait for the current user's credential lookup.
 They report whether an effective key exists without returning the key; a lookup
 failure returns an error instead of reporting that credentials are available.
 
-Environment examples:
+Environment example:
 
 ```env
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
-GROQ_API_KEY=gsk_...
-GEMINI_API_KEY=...
-MISTRAL_API_KEY=...
-DEEPSEEK_API_KEY=...
-OPENROUTER_API_KEY=sk-or-...
-KIMI_API_KEY=...
-GITHUB_API_KEY=github_pat_...
-ELEVENLABS_API_KEY=...
+ALCORE_API_KEY=...
 ```
 
 For shared deployments, user-level credentials are usually better because each user controls their own provider billing and limits. Environment keys are useful for single-user installs, demos, or managed deployments.
@@ -146,29 +125,27 @@ Many providers expose an OpenAI-compatible API. A plugin can define:
 
 If a provider does not support live model discovery, Alcore uses the configured model map.
 Imported plugin JSON configures providers that already speak one of Alcore's
-supported wire formats: OpenAI Chat Completions, OpenAI Responses,
-Anthropic Messages, or Gemini. JSON alone does not translate an arbitrary
+supported wire formats: OpenAI Chat Completions or OpenAI Responses.
+JSON alone does not translate an arbitrary
 proprietary protocol; a provider with a different request, streaming, tool-call,
 or response shape needs a small backend adapter.
 
-### OpenAI Image Generation
+### Alcore Image Generation
 
-The bundled OpenAI provider exposes the Image API at
-`https://api.openai.com/v1/images/generations`. `gpt-image-2` is the current
-model. The catalog also retains the deprecated `gpt-image-1.5`, `gpt-image-1`,
-and `gpt-image-1-mini` IDs for existing compatible deployments; new
-configurations should select `gpt-image-2`.
+The bundled Alcore provider exposes image generation through its configured
+image endpoint and declares the current image model in its manifest fallback
+catalog.
 
-Image generation uses the same effective OpenAI credential as Chat: the current
+Image generation uses the same effective Alcore credential as Chat: the current
 user's saved key, or the trusted bundled provider's environment fallback. It
 has a separate optional `image_endpoint` override so a custom Chat endpoint
 cannot accidentally receive image requests. Leave `image_endpoint` blank to
-inherit the bundled Image API endpoint.
+inherit the bundled image endpoint.
 
 Image selections are provider-qualified. When two image plugins expose the same
 model ID, Alcore sends the request only to the provider selected in the
-image panel. GPT Image responses use base64 image data; Alcore converts
-that data to an in-app image and saves it to the current user's gallery.
+image panel. Image responses carrying base64 image data are converted
+to an in-app image and saved to the current user's gallery.
 Image API routes require authentication, and direct generation requests must
 include both `pluginId` and `model`. They may set `n` to a JSON integer from 1
 through 10; numeric strings and fractional values are rejected before reaching
@@ -177,7 +154,7 @@ the provider.
 ### Chat Completions and Responses API modes
 
 OpenAI-compatible completion plugins can use either `chat_completions` or
-`responses` request semantics. The bundled OpenAI plugin exposes this choice in
+`responses` request semantics. The bundled Alcore plugin exposes this choice in
 **Settings → Plugins**.
 
 Connection settings are resolved in this order:
@@ -284,12 +261,6 @@ or another variable named by `config.endpoint_variable`. Voice-cloning routes
 can likewise name `config.voice_clone_endpoint_variable`. Leaving those fields
 blank uses the capability endpoint declared by the plugin; a generic Chat
 `endpoint` is never used as a capability override.
-
-The bundled GitHub Models plugin inherits its current
-`models.github.ai/inference/chat/completions` endpoint when its optional
-override is blank. The Hugging Face plugin uses task-specific
-`hf-inference/models/{model}` routes and payloads for embeddings, images, and
-text-to-speech rather than sending those requests to its Chat endpoint.
 
 ### Endpoint Overrides
 
@@ -444,8 +415,8 @@ Work keeps the selected provider type and plugin ID with both the task and each
 run. Routing is therefore based on the exact saved provider, not only the model
 name.
 
-Work adapts tool calls through native OpenAI-compatible, Anthropic, and Gemini
-request/response formats. The selected model must support tool calling even if
+Work adapts tool calls through the provider's OpenAI-compatible
+request/response format. The selected model must support tool calling even if
 the provider offers ordinary chat completions. If the provider rejects tools or
 returns an incompatible response, the run fails without falling back to another
 provider.
@@ -480,5 +451,4 @@ When adding a provider:
 - [Environment Variables](./ENVIRONMENT_VARIABLES)
 - [Working with Models](./WORKING_WITH_MODELS)
 - [Work: Isolated Workspaces](./WORKSPACES)
-- [Kimi Code](./KIMI_CODE)
-- [MLX LM on Apple Silicon](./MLX_APPLE_SILICON)
+- [Connect the Alcore Provider](./PROVIDER_CONNECTIONS)

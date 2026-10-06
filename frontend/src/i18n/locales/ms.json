@@ -3884,7 +3884,7 @@
     "skip": "Langkau buat masa ini — saya akan sambungkan model kemudian",
     "local": {
       "title": "Pelayan tempatan",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "Kunci API (pilihan)",
       "test": "Uji sambungan",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "API Awan",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter dan banyak lagi",
+      "subtitle": "Alcore dan banyak lagi",
       "keyPlaceholder": "Tampal kunci API {{name}} anda",
       "connect": "Sambung",
       "connecting": "Menyambung…",

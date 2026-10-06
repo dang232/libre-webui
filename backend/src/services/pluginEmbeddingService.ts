@@ -27,7 +27,6 @@ import {
 } from '../types/index.js';
 import {
   assertSafePluginEndpoint,
-  applyModelEndpointTemplate,
   buildPluginAuthHeaders,
   resolvePluginOperationEndpoint,
   validatePluginModel,
@@ -128,8 +127,7 @@ export class PluginEmbeddingService {
         continue;
       }
 
-      const provider: EmbeddingModel['provider'] =
-        plugin.id === 'huggingface' ? 'huggingface' : 'openai';
+      const provider: EmbeddingModel['provider'] = 'openai';
       const modelMap =
         embeddingCapability?.model_map ||
         ((plugin.type === 'embedding' ||
@@ -196,10 +194,7 @@ export class PluginEmbeddingService {
       );
     }
 
-    const processedEndpoint =
-      plugin.id === 'huggingface'
-        ? applyModelEndpointTemplate(effectiveEndpoint, model)
-        : getEmbeddingEndpoint(effectiveEndpoint);
+    const processedEndpoint = getEmbeddingEndpoint(effectiveEndpoint);
     assertSafePluginEndpoint(processedEndpoint, 'embedding endpoint');
 
     const apiKey = await this.deps.getApiKey(plugin, userId);
@@ -216,8 +211,7 @@ export class PluginEmbeddingService {
       const response = await providerRequest({
         url: processedEndpoint,
         method: 'POST',
-        json:
-          plugin.id === 'huggingface' ? { inputs: input } : { model, input },
+        json: { model, input },
         headers,
         timeoutMs: 60000,
         signal,

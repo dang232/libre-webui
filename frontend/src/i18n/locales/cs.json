@@ -3884,7 +3884,7 @@
     "skip": "Zatím přeskočit — modely připojím později",
     "local": {
       "title": "Lokální server",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "API klíč (volitelné)",
       "test": "Otestovat připojení",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "Cloudové API",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter a další",
+      "subtitle": "Alcore a další",
       "keyPlaceholder": "Vložte svůj API klíč pro {{name}}",
       "connect": "Připojit",
       "connecting": "Připojování…",

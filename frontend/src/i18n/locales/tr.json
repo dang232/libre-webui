@@ -3884,7 +3884,7 @@
     "skip": "Şimdilik atla — modelleri daha sonra bağlarım",
     "local": {
       "title": "Yerel sunucu",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "API anahtarı (isteğe bağlı)",
       "test": "Bağlantıyı test et",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "Bulut API",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter ve daha fazlası",
+      "subtitle": "Alcore ve daha fazlası",
       "keyPlaceholder": "{{name}} API anahtarınızı yapıştırın",
       "connect": "Bağlan",
       "connecting": "Bağlanıyor…",

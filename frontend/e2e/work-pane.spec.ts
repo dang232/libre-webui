@@ -1116,11 +1116,11 @@ test('offers cloud models and remembers remote disclosure dismissal', async ({
     models: [
       model('llama3.2:3b'),
       model('glm5.2:cloud'),
-      model('gpt-5.4'),
-      model('gpt-5.4', {
+      model('alcore-5.4'),
+      model('alcore-5.4', {
         isPlugin: true,
-        pluginId: 'openai',
-        pluginName: 'OpenAI GPT',
+        pluginId: 'alcore',
+        pluginName: 'Alcore GPT',
       }),
       model('nomic-embed-text'),
     ],
@@ -1152,8 +1152,8 @@ test('offers cloud models and remembers remote disclosure dismissal', async ({
   await expect(selector.locator('option')).toHaveText([
     'llama3.2:3b',
     'glm5.2:cloud',
-    'gpt-5.4',
-    'gpt-5.4',
+    'alcore-5.4',
+    'alcore-5.4',
   ]);
   const optionValues = await selector
     .locator('option')
@@ -1165,12 +1165,12 @@ test('offers cloud models and remembers remote disclosure dismissal', async ({
   const selectorTrigger = page.getByTestId('work-model-selector-trigger');
   await selectorTrigger.click();
   const pluginOption = page.locator(
-    '[data-testid="model-selector-option"][data-model-value="plugin:openai:gpt-5.4"]'
+    '[data-testid="model-selector-option"][data-model-value="plugin:alcore:alcore-5.4"]'
   );
   await expect(pluginOption).toHaveCount(1);
-  await expect(pluginOption).toContainText('via OpenAI GPT');
+  await expect(pluginOption).toContainText('via Alcore GPT');
   await pluginOption.click();
-  await expect(selector).toHaveValue('plugin:openai:gpt-5.4');
+  await expect(selector).toHaveValue('plugin:alcore:alcore-5.4');
   const disclosure = page.getByTestId('work-provider-disclosure-popover');
   await expect(disclosure).toBeVisible();
   await expect(disclosure).toContainText(
@@ -1202,7 +1202,7 @@ test('offers cloud models and remembers remote disclosure dismissal', async ({
   await page.getByTestId('work-model-selector-trigger').click();
   await page
     .locator(
-      '[data-testid="model-selector-option"][data-model-value="plugin:openai:gpt-5.4"]'
+      '[data-testid="model-selector-option"][data-model-value="plugin:alcore:alcore-5.4"]'
     )
     .click();
   await expect(
@@ -1215,9 +1215,9 @@ test('offers cloud models and remembers remote disclosure dismissal', async ({
   expect(mock.workTaskCreateRequests).toEqual([
     {
       message: 'Build with the plugin',
-      model: 'gpt-5.4',
+      model: 'alcore-5.4',
       providerType: 'plugin',
-      providerId: 'openai',
+      providerId: 'alcore',
       networkEnabled: true,
     },
   ]);

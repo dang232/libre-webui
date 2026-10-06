@@ -51,7 +51,7 @@ test('a thinking setting is read only in the forms a provider can use', () => {
 
 test('OpenAI-compatible providers receive a reasoning effort', () => {
   const { payload } = chatAdapter.buildPluginChatPayload(
-    { id: 'openai', name: 'OpenAI' },
+    { id: 'alcore', name: 'ALcore' },
     'gpt-5',
     message('hello'),
     { think: 'high' }
@@ -59,7 +59,7 @@ test('OpenAI-compatible providers receive a reasoning effort', () => {
   assert.equal(payload.reasoning_effort, 'high');
 
   const { payload: quiet } = chatAdapter.buildPluginChatPayload(
-    { id: 'openai', name: 'OpenAI' },
+    { id: 'alcore', name: 'ALcore' },
     'gpt-5',
     message('hello'),
     {}
@@ -72,7 +72,7 @@ test('OpenAI-compatible providers receive a reasoning effort', () => {
 
 test('the Responses API receives the effort in its own shape', () => {
   const { payload } = chatAdapter.buildPluginChatPayload(
-    { id: 'openai', name: 'OpenAI' },
+    { id: 'alcore', name: 'ALcore' },
     'gpt-5',
     message('hello'),
     { think: true },
@@ -83,79 +83,3 @@ test('the Responses API receives the effort in its own shape', () => {
   assert.deepEqual(payload.reasoning, { effort: 'medium', summary: 'auto' });
 });
 
-test('Anthropic receives a budget, and no sampling beside it', () => {
-  const { payload } = chatAdapter.buildPluginChatPayload(
-    { id: 'anthropic', name: 'Anthropic' },
-    'claude-sonnet-4-5',
-    message('hello'),
-    { think: 'medium' }
-  );
-  assert.deepEqual(payload.thinking, {
-    type: 'enabled',
-    budget_tokens: 8192,
-  });
-  assert.ok(
-    payload.max_tokens > 8192,
-    'the answer needs room beyond the reasoning budget'
-  );
-  assert.ok(!('temperature' in payload));
-  assert.ok(!('top_p' in payload));
-
-  // An explicit answer cap is respected: the budget shrinks into it rather
-  // than the cap being silently raised past what the user asked for.
-  const { payload: capped } = chatAdapter.buildPluginChatPayload(
-    { id: 'anthropic', name: 'Anthropic' },
-    'claude-sonnet-4-5',
-    message('hello'),
-    { think: 'medium', num_predict: 4096 }
-  );
-  assert.equal(capped.max_tokens, 4096);
-  assert.equal(capped.thinking.budget_tokens, 4096 - 1024);
-
-  // The model's documented output ceiling bounds max_tokens and the budget:
-  // high thinking on an 8192-ceiling model must not ask for 17408.
-  const { payload: ceilinged } = chatAdapter.buildPluginChatPayload(
-    { id: 'anthropic', name: 'Anthropic' },
-    'claude-3-5-haiku-20241022',
-    message('hello'),
-    { think: 'high' }
-  );
-  assert.equal(ceilinged.max_tokens, 8192);
-  assert.equal(ceilinged.thinking.budget_tokens, 8192 - 1024);
-
-  // Without a thinking setting the sampling behaviour is unchanged.
-  const { payload: sampled } = chatAdapter.buildPluginChatPayload(
-    { id: 'anthropic', name: 'Anthropic' },
-    'claude-sonnet-4-5',
-    message('hello'),
-    { num_predict: 1024 }
-  );
-  assert.ok(!('thinking' in sampled));
-  assert.equal(sampled.max_tokens, 1024);
-  assert.equal(typeof sampled.temperature, 'number');
-});
-
-test('Gemini receives a thinking budget in its generation config', () => {
-  const { payload } = chatAdapter.buildPluginChatPayload(
-    { id: 'gemini', name: 'Gemini' },
-    'gemini-2.5-flash',
-    message('hello'),
-    { think: 'low' }
-  );
-  assert.deepEqual(payload.generationConfig.thinkingConfig, {
-    thinkingBudget: 2048,
-    includeThoughts: true,
-  });
-  assert.ok(
-    payload.generationConfig.maxOutputTokens >= 2048 + 1024,
-    'thinking counts against maxOutputTokens, so the ceiling must hold both'
-  );
-
-  const { payload: quiet } = chatAdapter.buildPluginChatPayload(
-    { id: 'gemini', name: 'Gemini' },
-    'gemini-2.5-flash',
-    message('hello'),
-    {}
-  );
-  assert.ok(!('thinkingConfig' in quiet.generationConfig));
-});

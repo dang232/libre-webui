@@ -119,85 +119,18 @@ export interface KnownProvider {
   keyEnv: string;
 }
 
-// Canonical endpoints below mirror the shipped manifests exactly:
-// openai.json (base_url + endpoint), anthropic.json (endpoint only,
-// base_url derived by stripping the operation path), gemini.json,
-// openrouter.json, deepseek.json, groq.json, mistral.json.
-const KNOWN_PROVIDERS: KnownProvider[] = [
-  {
-    providerId: 'openai',
-    baseUrl: 'https://api.openai.com/v1',
-    endpoint: 'https://api.openai.com/v1/chat/completions',
-    host: 'api.openai.com',
-    authHeader: 'Authorization',
-    keyEnv: 'OPENAI_API_KEY',
-  },
-  {
-    providerId: 'anthropic',
-    baseUrl: 'https://api.anthropic.com/v1',
-    endpoint: 'https://api.anthropic.com/v1/messages',
-    host: 'api.anthropic.com',
-    authHeader: 'x-api-key',
-    keyEnv: 'ANTHROPIC_API_KEY',
-  },
-  {
-    providerId: 'gemini',
-    baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-    endpoint:
-      'https://generativelanguage.googleapis.com/v1beta/' +
-      'models/{model}:generateContent',
-    host: 'generativelanguage.googleapis.com',
-    authHeader: 'x-goog-api-key',
-    keyEnv: 'GEMINI_API_KEY',
-  },
-  {
-    providerId: 'openrouter',
-    baseUrl: 'https://openrouter.ai/api/v1',
-    endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-    host: 'openrouter.ai',
-    authHeader: 'Authorization',
-    keyEnv: 'OPENROUTER_API_KEY',
-  },
-  {
-    providerId: 'deepseek',
-    baseUrl: 'https://api.deepseek.com',
-    endpoint: 'https://api.deepseek.com/chat/completions',
-    host: 'api.deepseek.com',
-    authHeader: 'Authorization',
-    keyEnv: 'DEEPSEEK_API_KEY',
-  },
-  {
-    providerId: 'groq',
-    baseUrl: 'https://api.groq.com/openai/v1',
-    endpoint: 'https://api.groq.com/openai/v1/chat/completions',
-    host: 'api.groq.com',
-    authHeader: 'Authorization',
-    keyEnv: 'GROQ_API_KEY',
-  },
-  {
-    providerId: 'mistral',
-    baseUrl: 'https://api.mistral.ai/v1',
-    endpoint: 'https://api.mistral.ai/v1/chat/completions',
-    host: 'api.mistral.ai',
-    authHeader: 'Authorization',
-    keyEnv: 'MISTRAL_API_KEY',
-  },
-];
+// Only the bundled alcore manifest ships now. Every other endpoint is
+// probed generically and reported as `openai-compatible` when reachable,
+// so the canonical table below stays empty by design.
+const KNOWN_PROVIDERS: KnownProvider[] = [];
 
-// Auth-format hints are additive only: they can raise a URL-based
-// candidate by at most +0.1 and can never create one. Specific
-// prefixes come first; the generic `sk-` fallback is last.
+// No vendor key prefixes remain: every reachable endpoint is validated
+// generically (see detectCredential) instead of being matched to a vendor.
 const CREDENTIAL_HINTS: Array<{
   prefix: string;
   providerId: string;
   boost: number;
-}> = [
-  { prefix: 'sk-ant-', providerId: 'anthropic', boost: 0.1 },
-  { prefix: 'sk-or-', providerId: 'openrouter', boost: 0.1 },
-  { prefix: 'AIza', providerId: 'gemini', boost: 0.1 },
-  { prefix: 'gsk_', providerId: 'groq', boost: 0.1 },
-  { prefix: 'sk-', providerId: 'openai', boost: 0.05 },
-];
+}> = [];
 
 export class ProviderDetectionError extends Error {
   readonly code: string;

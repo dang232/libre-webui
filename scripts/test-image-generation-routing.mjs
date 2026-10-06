@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 import test from 'node:test';
@@ -65,36 +64,6 @@ function startServer(server) {
     });
   });
 }
-
-test('the bundled OpenAI provider declares GPT Image 2 and legacy compatibility', () => {
-  const manifest = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'plugins', 'openai.json'), 'utf8')
-  );
-
-  assert.equal(
-    manifest.capabilities.image.endpoint,
-    'https://api.openai.com/v1/images/generations'
-  );
-  assert.deepEqual(manifest.capabilities.image.model_map, [
-    'gpt-image-2',
-    'gpt-image-1.5',
-    'gpt-image-1',
-    'gpt-image-1-mini',
-  ]);
-  assert.equal(
-    manifest.capabilities.image.config.endpoint_variable,
-    'image_endpoint'
-  );
-  assert.equal(
-    manifest.capabilities.image.config.supports_response_format,
-    false
-  );
-  assert.equal(
-    manifest.variables.find(variable => variable.name === 'image_endpoint')
-      ?.default,
-    undefined
-  );
-});
 
 test('image counts accept only JSON integers from 1 through 10', () => {
   assert.equal(normalizeImageGenerationCount(undefined), undefined);
@@ -178,7 +147,7 @@ test('inactive image providers are excluded from selection and generation', asyn
   );
 });
 
-test('image generation uses the selected provider and user-scoped OpenAI settings', async () => {
+test('image generation uses the selected provider and user-scoped settings', async () => {
   const requests = [];
   const providerServer = http.createServer(async (req, res) => {
     let body = '';
@@ -205,7 +174,7 @@ test('image generation uses the selected provider and user-scoped OpenAI setting
   const imageEndpoint = `http://127.0.0.1:${providerPort}/v1/images/generations`;
   const plugins = [
     imagePlugin('wrong-provider', 'http://127.0.0.1:9/wrong'),
-    imagePlugin('openai', 'https://api.openai.com/v1/images/generations', {
+    imagePlugin('alcore', 'https://alcore.io.vn/v1/images/generations', {
       endpoint_variable: 'image_endpoint',
       supports_response_format: false,
       default_size: '1024x1024',
@@ -219,11 +188,11 @@ test('image generation uses the selected provider and user-scoped OpenAI setting
     getPlugin: id => plugins.find(plugin => plugin.id === id) || null,
     getApiKey: (plugin, userId) => {
       keyLookups.push({ pluginId: plugin.id, userId });
-      return userId === 'user-42' ? 'user-openai-key' : null;
+      return userId === 'user-42' ? 'user-alcore-key' : null;
     },
     getPluginVariables: (plugin, userId) => {
       variableLookups.push({ pluginId: plugin.id, userId });
-      return plugin.id === 'openai' ? { image_endpoint: imageEndpoint } : {};
+      return plugin.id === 'alcore' ? { image_endpoint: imageEndpoint } : {};
     },
     validateEndpointUrl: endpoint =>
       endpoint === imageEndpoint ? endpoint : null,
@@ -235,7 +204,7 @@ test('image generation uses the selected provider and user-scoped OpenAI setting
       models.map(({ model, plugin }) => ({ model, plugin })),
       [
         { model: 'shared-image-model', plugin: 'wrong-provider' },
-        { model: 'shared-image-model', plugin: 'openai' },
+        { model: 'shared-image-model', plugin: 'alcore' },
       ]
     );
 
@@ -243,7 +212,7 @@ test('image generation uses the selected provider and user-scoped OpenAI setting
       'shared-image-model',
       'Draw a small lighthouse',
       {
-        pluginId: 'openai',
+        pluginId: 'alcore',
         userId: 'user-42',
         size: '1024x1024',
         quality: 'high',
@@ -251,18 +220,18 @@ test('image generation uses the selected provider and user-scoped OpenAI setting
       }
     );
 
-    assert.equal(result.pluginId, 'openai');
+    assert.equal(result.pluginId, 'alcore');
     assert.equal(result.images[0].b64_json, 'aW1hZ2UtYnl0ZXM=');
     assert.equal(result.images[0].revised_prompt, 'A refined prompt');
     assert.deepEqual(variableLookups, [
-      { pluginId: 'openai', userId: 'user-42' },
+      { pluginId: 'alcore', userId: 'user-42' },
     ]);
-    assert.equal(keyLookups.at(-1)?.pluginId, 'openai');
+    assert.equal(keyLookups.at(-1)?.pluginId, 'alcore');
     assert.equal(keyLookups.at(-1)?.userId, 'user-42');
     assert.equal(requests.length, 1);
     assert.equal(requests[0].method, 'POST');
     assert.equal(requests[0].url, '/v1/images/generations');
-    assert.equal(requests[0].authorization, 'Bearer user-openai-key');
+    assert.equal(requests[0].authorization, 'Bearer user-alcore-key');
     assert.deepEqual(JSON.parse(requests[0].body), {
       model: 'shared-image-model',
       prompt: 'Draw a small lighthouse',
@@ -391,290 +360,7 @@ test('generic image endpoints containing /prompt keep OpenAI-compatible routing'
   assert.equal(
     typeof requests[0].body.prompt,
     'string',
-    'generic /prompt endpoints must not receive a ComfyUI workflow'
-  );
-});
-
-test('ComfyUI preserves endpoint prefixes and authenticates every request', async () => {
-  const requests = [];
-  const imageBytes = Buffer.from('authenticated-comfy-image');
-  const providerServer = http.createServer(async (req, res) => {
-    const requestUrl = new URL(req.url, 'http://localhost');
-    let body;
-    if (req.method === 'POST') {
-      const chunks = [];
-      for await (const chunk of req) chunks.push(chunk);
-      body = JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}');
-    }
-    requests.push({
-      authorization: req.headers.authorization,
-      method: req.method,
-      pathname: requestUrl.pathname,
-      searchParams: Object.fromEntries(requestUrl.searchParams),
-      body,
-    });
-
-    if (
-      req.method === 'POST' &&
-      requestUrl.pathname === '/tenant/comfy/prompt'
-    ) {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ prompt_id: body.prompt_id }));
-      return;
-    }
-
-    if (
-      req.method === 'GET' &&
-      requestUrl.pathname.startsWith('/tenant/comfy/history/')
-    ) {
-      const promptId = decodeURIComponent(
-        requestUrl.pathname.slice('/tenant/comfy/history/'.length)
-      );
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(
-        JSON.stringify({
-          [promptId]: {
-            outputs: {
-              9: {
-                images: [
-                  {
-                    filename: 'result image.png',
-                    subfolder: 'nested outputs',
-                    type: 'output',
-                  },
-                ],
-              },
-            },
-          },
-        })
-      );
-      return;
-    }
-
-    if (req.method === 'GET' && requestUrl.pathname === '/tenant/comfy/view') {
-      res.writeHead(200, { 'Content-Type': 'image/webp; charset=binary' });
-      res.end(imageBytes);
-      return;
-    }
-
-    res.writeHead(404);
-    res.end();
-  });
-  const providerPort = await startServer(providerServer);
-  const origin = `http://127.0.0.1:${providerPort}`;
-  const plugin = imagePlugin('comfyui', `${origin}/tenant/comfy/prompt`, {
-    supports_response_format: false,
-  });
-  const service = new PluginImageGenerationService({
-    getAllPlugins: () => [plugin],
-    getPlugin: id => (id === plugin.id ? plugin : null),
-    getApiKey: () => 'comfy-proxy-key',
-    getPluginVariables: () => ({}),
-    validateEndpointUrl: endpoint => endpoint,
-  });
-
-  try {
-    const result = await service.executeImageGenRequest(
-      'shared-image-model',
-      'Draw behind an authenticated ComfyUI proxy',
-      { pluginId: plugin.id, userId: 'comfy-user' }
-    );
-
-    assert.equal(result.images[0].b64_json, imageBytes.toString('base64'));
-    assert.equal(result.images[0].mime_type, 'image/webp');
-    assert.equal(result.pluginId, plugin.id);
-  } finally {
-    await new Promise(resolve => providerServer.close(resolve));
-  }
-
-  assert.deepEqual(
-    requests.map(request => [
-      request.method,
-      request.pathname.replace(/\/history\/[^/]+$/, '/history/:promptId'),
-    ]),
-    [
-      ['POST', '/tenant/comfy/prompt'],
-      ['GET', '/tenant/comfy/history/:promptId'],
-      ['GET', '/tenant/comfy/view'],
-    ]
-  );
-  assert.match(requests[0].body.prompt_id, /^[0-9a-f-]{36}$/);
-  assert.ok(
-    requests.every(
-      request => request.authorization === 'Bearer comfy-proxy-key'
-    ),
-    'ComfyUI auth must be sent to prompt, history, and image endpoints'
-  );
-  assert.deepEqual(requests[2].searchParams, {
-    filename: 'result image.png',
-    subfolder: 'nested outputs',
-    type: 'output',
-  });
-});
-
-test('ComfyUI abort cancels only its accepted prompt and awaits teardown', async () => {
-  const requests = [];
-  const accepted = Promise.withResolvers();
-  let promptId;
-  let jobCancellationFinished = false;
-  let queueDeletionFinished = false;
-  const providerServer = http.createServer(async (req, res) => {
-    const requestUrl = new URL(req.url, 'http://localhost');
-    const chunks = [];
-    for await (const chunk of req) chunks.push(chunk);
-    const body = chunks.length
-      ? JSON.parse(Buffer.concat(chunks).toString('utf8'))
-      : undefined;
-    requests.push({ method: req.method, pathname: requestUrl.pathname, body });
-
-    if (req.method === 'POST' && requestUrl.pathname === '/comfy/prompt') {
-      promptId = body.prompt_id;
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ prompt_id: promptId }));
-      accepted.resolve();
-      return;
-    }
-    if (
-      req.method === 'POST' &&
-      requestUrl.pathname ===
-        `/comfy/api/jobs/${encodeURIComponent(promptId)}/cancel`
-    ) {
-      await new Promise(resolve => setTimeout(resolve, 80));
-      jobCancellationFinished = true;
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ cancelled: true }));
-      return;
-    }
-    if (req.method === 'POST' && requestUrl.pathname === '/comfy/queue') {
-      await new Promise(resolve => setTimeout(resolve, 120));
-      queueDeletionFinished = true;
-      res.writeHead(200);
-      res.end();
-      return;
-    }
-    res.writeHead(404);
-    res.end();
-  });
-  const providerPort = await startServer(providerServer);
-  const plugin = imagePlugin(
-    'comfyui',
-    `http://127.0.0.1:${providerPort}/comfy/prompt`,
-    { supports_response_format: false }
-  );
-  const service = new PluginImageGenerationService({
-    getAllPlugins: () => [plugin],
-    getPlugin: id => (id === plugin.id ? plugin : null),
-    getApiKey: () => 'key',
-    getPluginVariables: () => ({}),
-    validateEndpointUrl: endpoint => endpoint,
-  });
-  const controller = new AbortController();
-
-  try {
-    const generation = service.executeImageGenRequest(
-      'shared-image-model',
-      'Cancel this exact workflow',
-      {
-        pluginId: plugin.id,
-        userId: 'comfy-user',
-        signal: controller.signal,
-      }
-    );
-    await accepted.promise;
-    controller.abort(new Error('client stopped image generation'));
-    await assert.rejects(generation, /client stopped image generation/);
-  } finally {
-    await new Promise(resolve => providerServer.close(resolve));
-  }
-
-  assert.equal(jobCancellationFinished, true);
-  assert.equal(queueDeletionFinished, true);
-  assert.deepEqual(
-    requests.find(request => request.pathname === '/comfy/queue').body,
-    { delete: [promptId] }
-  );
-  assert.equal(
-    requests.some(request => request.pathname === '/comfy/interrupt'),
-    false,
-    'cancellation must never use the unrelated-job global interrupt path'
-  );
-});
-
-test('ComfyUI cancels an accepted prompt before its submit response arrives', async () => {
-  const requests = [];
-  const accepted = Promise.withResolvers();
-  const releaseResponse = Promise.withResolvers();
-  let promptId;
-  const providerServer = http.createServer(async (req, res) => {
-    const requestUrl = new URL(req.url, 'http://localhost');
-    const chunks = [];
-    for await (const chunk of req) chunks.push(chunk);
-    const body = chunks.length
-      ? JSON.parse(Buffer.concat(chunks).toString('utf8'))
-      : undefined;
-    requests.push({ pathname: requestUrl.pathname, body });
-    if (requestUrl.pathname === '/comfy/prompt') {
-      promptId = body.prompt_id;
-      accepted.resolve();
-      await releaseResponse.promise;
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ prompt_id: promptId }));
-      return;
-    }
-    if (requestUrl.pathname === `/comfy/api/jobs/${promptId}/cancel`) {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ cancelled: true }));
-      return;
-    }
-    if (requestUrl.pathname === '/comfy/queue') {
-      res.writeHead(200);
-      res.end();
-      return;
-    }
-    res.writeHead(404);
-    res.end();
-  });
-  const providerPort = await startServer(providerServer);
-  const plugin = imagePlugin(
-    'comfyui',
-    `http://127.0.0.1:${providerPort}/comfy/prompt`,
-    { supports_response_format: false }
-  );
-  const service = new PluginImageGenerationService({
-    getAllPlugins: () => [plugin],
-    getPlugin: () => plugin,
-    getApiKey: () => 'key',
-    getPluginVariables: () => ({}),
-    validateEndpointUrl: endpoint => endpoint,
-  });
-  const controller = new AbortController();
-
-  try {
-    const generation = service.executeImageGenRequest(
-      'shared-image-model',
-      'Abort between acceptance and acknowledgement',
-      { pluginId: plugin.id, userId: 'user', signal: controller.signal }
-    );
-    await accepted.promise;
-    controller.abort(new Error('client disconnected before acknowledgement'));
-    await assert.rejects(
-      generation,
-      /client disconnected before acknowledgement/
-    );
-  } finally {
-    releaseResponse.resolve();
-    await new Promise(resolve => providerServer.close(resolve));
-  }
-
-  assert.ok(promptId);
-  assert.ok(
-    requests.some(
-      request => request.pathname === `/comfy/api/jobs/${promptId}/cancel`
-    )
-  );
-  assert.deepEqual(
-    requests.find(request => request.pathname === '/comfy/queue').body,
-    { delete: [promptId] }
+    'generic /prompt endpoints must not receive a workflow payload'
   );
 });
 
@@ -752,8 +438,8 @@ test('image capability models take precedence without duplicating legacy image m
 
 test('invalid capability-specific image endpoint overrides fail closed', async () => {
   const plugin = imagePlugin(
-    'openai',
-    'https://api.openai.com/v1/images/generations',
+    'alcore',
+    'https://alcore.io.vn/v1/images/generations',
     {
       endpoint_variable: 'image_endpoint',
       supports_response_format: false,
@@ -769,7 +455,7 @@ test('invalid capability-specific image endpoint overrides fail closed', async (
 
   await assert.rejects(
     service.executeImageGenRequest('shared-image-model', 'Draw a fox', {
-      pluginId: 'openai',
+      pluginId: 'alcore',
     }),
     /Invalid image endpoint override/
   );

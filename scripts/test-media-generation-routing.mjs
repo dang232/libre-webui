@@ -9,7 +9,7 @@ import express from 'express';
 import { initializeSQLitePlatformStorageFixture } from './lib/platform-storage-fixture.mjs';
 
 process.env.ENCRYPTION_KEY ||= '0'.repeat(64);
-process.env.JWT_SECRET ||= 'openrouter-media-routing-test-secret';
+process.env.JWT_SECRET ||= 'media-generation-routing-test-secret';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
@@ -125,50 +125,7 @@ function dependencies(plugin, recordUsage = () => {}) {
   };
 }
 
-test('bundled OpenRouter manifest maps all generated media APIs', () => {
-  const plugin = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'plugins', 'openrouter.json'), 'utf8')
-  );
-  assert.equal(
-    plugin.capabilities.image.endpoint,
-    'https://openrouter.ai/api/v1/images'
-  );
-  assert.equal(
-    plugin.capabilities.image.models_endpoint,
-    'https://openrouter.ai/api/v1/images/models'
-  );
-  assert.equal(plugin.capabilities.image.config.size_parameter, 'aspect_ratio');
-  assert.equal(
-    plugin.capabilities.image.config.supports_response_format,
-    false
-  );
-  assert.equal(
-    plugin.capabilities.tts.endpoint,
-    'https://openrouter.ai/api/v1/audio/speech'
-  );
-  assert.match(
-    plugin.capabilities.tts.models_endpoint,
-    /output_modalities=speech/
-  );
-  assert.equal(
-    plugin.capabilities.audio.endpoint,
-    'https://openrouter.ai/api/v1/chat/completions'
-  );
-  assert.match(
-    plugin.capabilities.audio.models_endpoint,
-    /output_modalities=audio/
-  );
-  assert.equal(
-    plugin.capabilities.video.endpoint,
-    'https://openrouter.ai/api/v1/videos'
-  );
-  assert.equal(
-    plugin.capabilities.video.models_endpoint,
-    'https://openrouter.ai/api/v1/videos/models'
-  );
-});
-
-test('OpenRouter audio-output models stream generated sound bytes', async () => {
+test('Audio-output models stream generated sound bytes', async () => {
   const app = express();
   app.use(express.json());
   let received;
@@ -186,8 +143,8 @@ test('OpenRouter audio-output models stream generated sound bytes', async () => 
   });
   const server = await listen(app);
   const plugin = {
-    id: 'openrouter',
-    name: 'OpenRouter',
+    id: 'media-provider',
+    name: 'Media provider',
     type: 'completion',
     endpoint: `${server.baseUrl}/chat/completions`,
     auth: { header: 'Authorization', prefix: 'Bearer ', key_env: 'TEST' },
@@ -208,7 +165,7 @@ test('OpenRouter audio-output models stream generated sound bytes', async () => 
   try {
     const service = new PluginAudioGenerationService(dependencies(plugin));
     const result = await service.generate('audio-model', 'A warm synth chord', {
-      pluginId: 'openrouter',
+      pluginId: 'media-provider',
       userId: 'user',
     });
     assert.deepEqual(received, {
@@ -282,7 +239,7 @@ test('generated sound aborts its provider stream and records cancelled usage', a
   }
 });
 
-test('image generation maps the UI size to OpenRouter aspect_ratio and normalizes media_type', async () => {
+test('image generation maps the UI size to aspect_ratio and normalizes media_type', async () => {
   const app = express();
   app.use(express.json());
   let received;
@@ -292,8 +249,8 @@ test('image generation maps the UI size to OpenRouter aspect_ratio and normalize
   });
   const server = await listen(app);
   const plugin = {
-    id: 'openrouter',
-    name: 'OpenRouter',
+    id: 'media-provider',
+    name: 'Media provider',
     type: 'completion',
     endpoint: `${server.baseUrl}/chat/completions`,
     auth: { header: 'Authorization', prefix: 'Bearer ', key_env: 'TEST' },
@@ -320,7 +277,7 @@ test('image generation maps the UI size to OpenRouter aspect_ratio and normalize
       'image-model',
       'hello',
       {
-        pluginId: 'openrouter',
+        pluginId: 'media-provider',
         size: '16:9',
         quality: 'standard',
         response_format: 'url',
@@ -398,7 +355,7 @@ test('image generation aborts its provider request and records cancelled usage',
   }
 });
 
-test('OpenRouter-compatible speech returns raw audio bytes', async () => {
+test('Compatible speech synthesis returns raw audio bytes', async () => {
   const app = express();
   app.use(express.json());
   let received;
@@ -408,8 +365,8 @@ test('OpenRouter-compatible speech returns raw audio bytes', async () => {
   });
   const server = await listen(app);
   const plugin = {
-    id: 'openrouter',
-    name: 'OpenRouter',
+    id: 'media-provider',
+    name: 'Media provider',
     type: 'completion',
     endpoint: `${server.baseUrl}/chat/completions`,
     auth: { header: 'Authorization', prefix: 'Bearer ', key_env: 'TEST' },
@@ -426,7 +383,7 @@ test('OpenRouter-compatible speech returns raw audio bytes', async () => {
   try {
     const service = new PluginTTSService(dependencies(plugin));
     const audio = await service.executeTTSRequest('speech-model', 'Speak', {
-      pluginId: 'openrouter',
+      pluginId: 'media-provider',
       userId: 'user',
     });
     assert.equal(audio.toString(), 'audio-bytes');
@@ -456,8 +413,8 @@ test('video generation submits, polls, and downloads through the provider endpoi
   );
   const server = await listen(app);
   const plugin = {
-    id: 'openrouter',
-    name: 'OpenRouter',
+    id: 'media-provider',
+    name: 'Media provider',
     type: 'completion',
     endpoint: `${server.baseUrl}/chat/completions`,
     auth: { header: 'Authorization', prefix: 'Bearer ', key_env: 'TEST' },
@@ -474,14 +431,14 @@ test('video generation submits, polls, and downloads through the provider endpoi
   try {
     const service = new PluginVideoGenerationService(dependencies(plugin));
     const submitted = await service.submit('video-model', 'A moving scene', {
-      pluginId: 'openrouter',
+      pluginId: 'media-provider',
       userId: 'user',
     });
     assert.equal(submitted.providerJobId, 'job-1');
     const status = await service.poll(
       'video-model',
       'job-1',
-      'openrouter',
+      'media-provider',
       'user'
     );
     assert.equal(status.status, 'completed');
@@ -489,7 +446,7 @@ test('video generation submits, polls, and downloads through the provider endpoi
     const downloaded = await service.download(
       'video-model',
       'job-1',
-      'openrouter',
+      'media-provider',
       'user'
     );
     assert.equal(downloaded.mimeType, 'video/mp4');
@@ -752,7 +709,7 @@ test('Imagine gallery isolates media by user and kind', async () => {
     kind: 'audio',
     prompt: 'hello',
     model: 'speech-model',
-    pluginId: 'openrouter',
+    pluginId: 'media-provider',
     mediaData: 'data:audio/mpeg;base64,YXVkaW8=',
     mimeType: 'audio/mpeg',
   });
@@ -760,7 +717,7 @@ test('Imagine gallery isolates media by user and kind', async () => {
     kind: 'video',
     prompt: 'scene',
     model: 'video-model',
-    pluginId: 'openrouter',
+    pluginId: 'media-provider',
     mediaData: 'data:video/mp4;base64,dmlkZW8=',
     mimeType: 'video/mp4',
   });
@@ -790,7 +747,7 @@ test('deterministic media resolves a committed insert whose acknowledgement is l
       kind: 'video',
       prompt: 'deterministic video',
       model: 'video-model',
-      pluginId: 'openrouter',
+      pluginId: 'media-provider',
       mediaData: 'data:video/mp4;base64,YWNrLWxvc3M=',
       mimeType: 'video/mp4',
     });
@@ -823,7 +780,7 @@ test('prepared video and resume publications resolve lost commit acknowledgement
   let job;
   try {
     job = await mediaGenerationJobService.queueVideoSubmission('default', {
-      pluginId: 'openrouter',
+      pluginId: 'media-provider',
       model: 'video-model',
       prompt: 'prepared publication acknowledgement loss',
       options: { duration: 5 },
@@ -908,7 +865,7 @@ test('a failed cleanup retry cannot resurrect or delete a replacement determinis
     kind: 'video',
     prompt: 'first durable occurrence',
     model: 'video-model',
-    pluginId: 'openrouter',
+    pluginId: 'media-provider',
     mediaData: 'data:video/mp4;base64,Zmlyc3Q=',
     mimeType: 'video/mp4',
   });
@@ -968,7 +925,7 @@ test('a failed cleanup retry cannot resurrect or delete a replacement determinis
     kind: 'video',
     prompt: 'stale retry must not publish',
     model: 'video-model',
-    pluginId: 'openrouter',
+    pluginId: 'media-provider',
     mediaData: 'data:video/mp4;base64,cmVwbGFjZW1lbnQ=',
     mimeType: 'video/mp4',
   });
@@ -1089,7 +1046,7 @@ test('gallery retention sweep deletes only expired media when configured', async
     kind: 'image',
     prompt: 'retention keep',
     model: 'img-model',
-    pluginId: 'openrouter',
+    pluginId: 'media-provider',
     mediaData: `data:image/png;base64,${Buffer.from('keep').toString('base64')}`,
     mimeType: 'image/png',
   });
@@ -1097,7 +1054,7 @@ test('gallery retention sweep deletes only expired media when configured', async
     kind: 'image',
     prompt: 'retention expire',
     model: 'img-model',
-    pluginId: 'openrouter',
+    pluginId: 'media-provider',
     mediaData: `data:image/png;base64,${Buffer.from('old').toString('base64')}`,
     mimeType: 'image/png',
   });

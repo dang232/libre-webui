@@ -3884,7 +3884,7 @@
     "skip": "今はスキップ — モデルは後で接続します",
     "local": {
       "title": "ローカルサーバー",
-      "subtitle": "llama.cpp、vLLM、llama-swap、LM Studio、mlx-lm",
+      "subtitle": "vLLM、llama-swap、LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "APIキー（任意）",
       "test": "接続をテスト",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "クラウドAPI",
-      "subtitle": "OpenAI、Anthropic、Groq、OpenRouterなど",
+      "subtitle": "Alcoreなど",
       "keyPlaceholder": "{{name}}のAPIキーを貼り付け",
       "connect": "接続",
       "connecting": "接続中…",

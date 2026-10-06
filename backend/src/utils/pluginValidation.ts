@@ -16,7 +16,6 @@
  */
 
 import type { Plugin, PluginApiMode } from '../types/index.js';
-import codexOAuthService from '../services/codexOAuthService.js';
 import { createLogger } from './logger.js';
 
 const logger = createLogger('utils:plugin-validation');
@@ -27,10 +26,6 @@ const PLUGIN_API_MODES = new Set<PluginApiMode>([
   'responses',
 ]);
 const MAX_API_PATH_DECODE_PASSES = 8;
-// https://openrouter.ai/docs/app-attribution
-const OPENROUTER_APP_URL = 'https://librewebui.org';
-const OPENROUTER_APP_TITLE = 'Alcore';
-const OPENROUTER_APP_CATEGORIES = 'general-chat,personal-agent';
 export const PLUGIN_MODEL_DISCOVERY_VARIABLES = [
   'endpoint',
   'api_url',
@@ -430,41 +425,10 @@ export function buildPluginAuthHeaders(
 }
 
 export function buildPluginAttributionHeaders(
-  plugin: Pick<Plugin, 'id'>,
-  endpoint: string
+  _plugin: Pick<Plugin, 'id'>,
+  _endpoint: string
 ): Record<string, string> {
-  if (plugin.id === 'codex-oauth') {
-    try {
-      const url = new URL(endpoint);
-      if (url.protocol !== 'https:' || url.hostname !== 'chatgpt.com') {
-        return {};
-      }
-    } catch {
-      return {};
-    }
-    const accountId = codexOAuthService.getCachedAccountId();
-    return {
-      ...(accountId ? { 'ChatGPT-Account-Id': accountId } : {}),
-      'OpenAI-Beta': 'responses=experimental',
-    };
-  }
-
-  if (plugin.id !== 'openrouter') return {};
-
-  try {
-    const url = new URL(endpoint);
-    if (url.protocol !== 'https:' || url.hostname !== 'openrouter.ai') {
-      return {};
-    }
-  } catch {
-    return {};
-  }
-
-  return {
-    'HTTP-Referer': OPENROUTER_APP_URL,
-    'X-OpenRouter-Title': OPENROUTER_APP_TITLE,
-    'X-OpenRouter-Categories': OPENROUTER_APP_CATEGORIES,
-  };
+  return {};
 }
 
 export function pluginRequiresApiKey(plugin: Pick<Plugin, 'auth'>): boolean {
@@ -484,10 +448,6 @@ export function buildPluginModelDiscoveryHeaders(
     headers[plugin.auth.header] = plugin.auth.prefix
       ? `${plugin.auth.prefix}${apiKey}`
       : apiKey;
-  }
-
-  if (plugin.id === 'anthropic') {
-    headers['anthropic-version'] = '2023-06-01';
   }
 
   if (endpoint) {

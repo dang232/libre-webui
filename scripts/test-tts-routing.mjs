@@ -95,7 +95,7 @@ test('TTS routes a shared model alias through the selected plugin and user valve
   const savedEndpoint = `http://127.0.0.1:${providerPort}/v1/audio/speech`;
   const plugins = [
     createPlugin('wrong-provider', 'http://127.0.0.1:9/wrong'),
-    createPlugin('kyutai-tts-1.6b', 'http://127.0.0.1:9/default', {
+    createPlugin('local-tts-provider', 'http://127.0.0.1:9/default', {
       request_variables: ['steps', 'model'],
     }),
   ];
@@ -126,7 +126,7 @@ test('TTS routes a shared model alias through the selected plugin and user valve
       models.map(({ model, plugin }) => ({ model, plugin })),
       [
         { model: 'tts-1-hd', plugin: 'wrong-provider' },
-        { model: 'tts-1-hd', plugin: 'kyutai-tts-1.6b' },
+        { model: 'tts-1-hd', plugin: 'local-tts-provider' },
       ]
     );
 
@@ -134,7 +134,7 @@ test('TTS routes a shared model alias through the selected plugin and user valve
       'tts-1-hd',
       'hello from a user valve',
       {
-        pluginId: 'kyutai-tts-1.6b',
+        pluginId: 'local-tts-provider',
         userId: 'user-42',
         voice: 'alba',
         response_format: 'wav',
@@ -143,9 +143,9 @@ test('TTS routes a shared model alias through the selected plugin and user valve
 
     assert.equal(audio.subarray(0, 4).toString('ascii'), 'RIFF');
     assert.ok(apiKeyLookups.every(lookup => lookup.userId === 'user-42'));
-    assert.equal(apiKeyLookups.at(-1)?.pluginId, 'kyutai-tts-1.6b');
+    assert.equal(apiKeyLookups.at(-1)?.pluginId, 'local-tts-provider');
     assert.deepEqual(variableLookups, [
-      { pluginId: 'kyutai-tts-1.6b', userId: 'user-42' },
+      { pluginId: 'local-tts-provider', userId: 'user-42' },
     ]);
     assert.equal(requests.length, 1);
     assert.equal(requests[0].method, 'POST');

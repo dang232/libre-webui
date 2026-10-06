@@ -68,12 +68,6 @@ function startServer(server) {
   });
 }
 
-function readBundledPlugin(name) {
-  return JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'plugins', `${name}.json`), 'utf8')
-  );
-}
-
 /**
  * Outbound provider calls go through providerRequest, which refuses a 3xx by
  * default. A call may say so explicitly, but it must never opt into following
@@ -118,41 +112,7 @@ function assertProviderRequestsRefuseRedirects(source, filename) {
   }
 }
 
-test('bundled capability manifests use current and isolated endpoints', () => {
-  const github = readBundledPlugin('github');
-  const githubEndpointVariable = github.variables.find(
-    variable => variable.name === 'endpoint'
-  );
-  assert.equal(
-    github.endpoint,
-    'https://models.github.ai/inference/chat/completions'
-  );
-  assert.equal(githubEndpointVariable.default, undefined);
-
-  const huggingface = readBundledPlugin('huggingface');
-  assert.equal(huggingface.capabilities.embeddings, undefined);
-  assert.ok(huggingface.capabilities.embedding);
-  assert.equal(
-    huggingface.capabilities.embedding.config.endpoint_variable,
-    'embedding_endpoint'
-  );
-  assert.equal(
-    huggingface.capabilities.image.config.endpoint_variable,
-    'image_endpoint'
-  );
-  assert.equal(
-    huggingface.capabilities.tts.config.endpoint_variable,
-    'tts_endpoint'
-  );
-  for (const capability of ['embedding', 'image', 'tts']) {
-    assert.match(
-      huggingface.capabilities[capability].endpoint,
-      /\/hf-inference\/models\/\{model\}$/
-    );
-  }
-});
-
-test('Hugging Face capabilities ignore the generic Chat endpoint and use task payloads', async () => {
+test('capability plugins route to capability endpoints with capability payloads', async () => {
   const requests = [];
   const server = http.createServer(async (req, res) => {
     const chunks = [];
@@ -164,19 +124,26 @@ test('Hugging Face capabilities ignore the generic Chat endpoint and use task pa
       body,
     });
 
-    if (req.url?.startsWith('/embedding/')) {
+    if (req.url === '/custom/embeddings') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify([0.25, 0.75]));
       return;
     }
-    if (req.url?.startsWith('/tts/')) {
+    if (req.url === '/capability-tts') {
       res.writeHead(200, { 'Content-Type': 'audio/wav' });
       res.end(Buffer.from('audio-bytes'));
       return;
     }
-    if (req.url?.startsWith('/image/')) {
-      res.writeHead(200, { 'Content-Type': 'image/jpeg; charset=binary' });
-      res.end(Buffer.from('image-bytes'));
+    if (req.url === '/capability-image') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(
+        JSON.stringify([
+          {
+            b64_json: Buffer.from('image-bytes').toString('base64'),
+            mime_type: 'image/jpeg',
+          },
+        ])
+      );
       return;
     }
     res.writeHead(500);
@@ -185,26 +152,26 @@ test('Hugging Face capabilities ignore the generic Chat endpoint and use task pa
   const port = await startServer(server);
   const origin = `http://127.0.0.1:${port}`;
   const plugin = {
-    id: 'huggingface',
-    name: 'Hugging Face',
+    id: 'task-capability-provider',
+    name: 'Task capability provider',
     active: true,
     type: 'completion',
     endpoint: `${origin}/chat/completions`,
     auth: {
       header: 'Authorization',
       prefix: 'Bearer ',
-      key_env: 'HF_TOKEN',
+      key_env: 'CAPABILITY_TEST_KEY',
     },
     model_map: ['chat-model'],
     capabilities: {
       embedding: {
-        endpoint: `${origin}/embedding/{model}`,
-        model_map: ['sentence-transformers/all-MiniLM-L6-v2'],
+        endpoint: `${origin}/custom/embeddings`,
+        model_map: ['acme-embed-1'],
         config: { endpoint_variable: 'embedding_endpoint' },
       },
       tts: {
-        endpoint: `${origin}/tts/{model}`,
-        model_map: ['facebook/mms-tts-eng'],
+        endpoint: `${origin}/capability-tts`,
+        model_map: ['acme-tts-1'],
         config: {
           endpoint_variable: 'tts_endpoint',
           default_voice: 'default',
@@ -212,8 +179,8 @@ test('Hugging Face capabilities ignore the generic Chat endpoint and use task pa
         },
       },
       image: {
-        endpoint: `${origin}/image/{model}`,
-        model_map: ['black-forest-labs/FLUX.1-dev'],
+        endpoint: `${origin}/capability-image`,
+        model_map: ['acme-image-1'],
         config: {
           endpoint_variable: 'image_endpoint',
           default_size: '768x512',
@@ -225,7 +192,7 @@ test('Hugging Face capabilities ignore the generic Chat endpoint and use task pa
     usageEvents: [],
     getAllPlugins: () => [plugin],
     getPlugin: id => (id === plugin.id ? plugin : null),
-    getApiKey: () => 'user-hf-key',
+    getApiKey: () => 'user-capability-key',
     getPluginVariables: () => ({
       endpoint: `${origin}/must-not-receive-capability-requests`,
     }),
@@ -241,17 +208,17 @@ test('Hugging Face capabilities ignore the generic Chat endpoint and use task pa
   try {
     assert.deepEqual(
       await embeddings.executeEmbeddingRequest(
-        'sentence-transformers/all-MiniLM-L6-v2',
+        'acme-embed-1',
         'hello',
-        'huggingface',
+        'task-capability-provider',
         'user-42'
       ),
       { embeddings: [[0.25, 0.75]] }
     );
     assert.equal(
       (
-        await tts.executeTTSRequest('facebook/mms-tts-eng', 'hello', {
-          pluginId: 'huggingface',
+        await tts.executeTTSRequest('acme-tts-1', 'hello', {
+          pluginId: 'task-capability-provider',
           userId: 'user-42',
         })
       ).toString(),
@@ -259,11 +226,11 @@ test('Hugging Face capabilities ignore the generic Chat endpoint and use task pa
     );
     assert.deepEqual(
       await images.executeImageGenRequest(
-        'black-forest-labs/FLUX.1-dev',
+        'acme-image-1',
         'a lighthouse',
         {
           size: '768x512',
-          pluginId: 'huggingface',
+          pluginId: 'task-capability-provider',
           userId: 'user-42',
         }
       ),
@@ -274,8 +241,8 @@ test('Hugging Face capabilities ignore the generic Chat endpoint and use task pa
             mime_type: 'image/jpeg',
           },
         ],
-        model: 'black-forest-labs/FLUX.1-dev',
-        pluginId: 'huggingface',
+        model: 'acme-image-1',
+        pluginId: 'task-capability-provider',
       }
     );
   } finally {
@@ -285,23 +252,34 @@ test('Hugging Face capabilities ignore the generic Chat endpoint and use task pa
   assert.deepEqual(
     requests.map(request => request.url),
     [
-      '/embedding/sentence-transformers/all-MiniLM-L6-v2',
-      '/tts/facebook/mms-tts-eng',
-      '/image/black-forest-labs/FLUX.1-dev',
+      '/custom/embeddings',
+      '/capability-tts',
+      '/capability-image',
     ]
   );
   assert.ok(
-    requests.every(request => request.authorization === 'Bearer user-hf-key')
+    requests.every(
+      request => request.authorization === 'Bearer user-capability-key'
+    )
   );
   assert.deepEqual(JSON.parse(requests[0].body.toString()), {
-    inputs: 'hello',
+    model: 'acme-embed-1',
+    input: 'hello',
   });
   assert.deepEqual(JSON.parse(requests[1].body.toString()), {
-    inputs: 'hello',
+    model: 'acme-tts-1',
+    input: 'hello',
+    voice: 'default',
+    response_format: 'wav',
+    speed: 1,
   });
   assert.deepEqual(JSON.parse(requests[2].body.toString()), {
-    inputs: 'a lighthouse',
-    parameters: { width: 768, height: 512 },
+    model: 'acme-image-1',
+    prompt: 'a lighthouse',
+    size: '768x512',
+    quality: 'standard',
+    n: 1,
+    response_format: 'url',
   });
   assert.deepEqual(
     dependencies.usageEvents.map(usage => ({
@@ -315,24 +293,24 @@ test('Hugging Face capabilities ignore the generic Chat endpoint and use task pa
     [
       {
         capability: 'embedding',
-        pluginId: 'huggingface',
-        model: 'sentence-transformers/all-MiniLM-L6-v2',
+        pluginId: 'task-capability-provider',
+        model: 'acme-embed-1',
         status: 'success',
         inputUnits: 1,
         outputUnits: undefined,
       },
       {
         capability: 'tts',
-        pluginId: 'huggingface',
-        model: 'facebook/mms-tts-eng',
+        pluginId: 'task-capability-provider',
+        model: 'acme-tts-1',
         status: 'success',
         inputUnits: 5,
         outputUnits: undefined,
       },
       {
         capability: 'image',
-        pluginId: 'huggingface',
-        model: 'black-forest-labs/FLUX.1-dev',
+        pluginId: 'task-capability-provider',
+        model: 'acme-image-1',
         status: 'success',
         inputUnits: undefined,
         outputUnits: 1,

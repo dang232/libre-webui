@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-import { randomUUID } from 'crypto';
 import { ImageGenConfig, ImageGenResponse, Plugin } from '../types/index.js';
 import {
   normalizeImageGenerationCount,
@@ -23,12 +22,10 @@ import {
 } from '../utils/imageGenerationValidation.js';
 import {
   assertSafePluginEndpoint,
-  applyModelEndpointTemplate,
   buildPluginAuthHeaders,
   resolvePluginOperationEndpoint,
   validatePluginModel,
 } from '../utils/pluginValidation.js';
-import { createLogger } from '../utils/logger.js';
 import {
   isProviderHttpError,
   isProviderRequestCancelled,
@@ -39,6 +36,8 @@ import {
   providerRequest,
 } from '../utils/providerFetch.js';
 import type { PluginUsageEventInput } from './pluginUsageService.js';
+
+type ImageGenImage = ImageGenResponse['images'][number];
 
 /** A transport-layer failure of an outbound provider request. */
 function isProviderTransportError(error: unknown): error is Error {
@@ -65,14 +64,12 @@ function providerErrorBody(error: unknown): ProviderErrorBody | undefined {
 
 type PluginVariables = Record<string, string | number | boolean>;
 type MaybePromise<T> = T | Promise<T>;
-type ImageGenImage = ImageGenResponse['images'][number];
 
 export interface ImageEditInputImage {
   buffer: Buffer;
   mimeType: string;
   filename: string;
 }
-const logger = createLogger('services:plugin-image-generation');
 
 export interface PluginImageGenerationServiceDependencies {
   getAllPlugins(userId?: string): MaybePromise<Plugin[]>;
@@ -215,11 +212,6 @@ export class PluginImageGenerationService {
       endpoint = validatedEndpoint;
     }
 
-    endpoint =
-      plugin.id === 'huggingface'
-        ? applyModelEndpointTemplate(endpoint, model)
-        : endpoint;
-    const baseUrl = parseImageEndpoint(endpoint);
     const noAuthRequired =
       (imageConfig as Record<string, unknown> | undefined)?.no_auth_required ===
       true;
@@ -284,64 +276,20 @@ export class PluginImageGenerationService {
 
     const startedAt = Date.now();
     try {
-      let result: ImageGenResponse;
-      if (plugin.id === 'comfyui') {
-        result = await executeComfyUIRequest(baseUrl, prompt, {
-          ...options,
-          headers,
-          model,
-          pluginId: plugin.id,
-          pluginVars: imageVars,
-          signal: options.signal,
-        });
-      } else if (plugin.id === 'huggingface') {
-        const [width, height] = String(payload.size)
-          .split('x')
-          .map(value => Number.parseInt(value, 10));
-        const response = await providerRequest<Buffer>({
-          url: endpoint,
-          method: 'POST',
-          json: {
-            inputs: prompt,
-            ...(Number.isInteger(width) && Number.isInteger(height)
-              ? { parameters: { width, height } }
-              : {}),
-          },
-          headers,
-          timeoutMs: 120000,
-          responseType: 'bytes',
-          maxResponseBytes: 50 * 1024 * 1024,
-          signal: options.signal,
-        });
-        const mimeType = normalizeImageMediaType(
-          response.headers['content-type']
-        );
-        result = {
-          images: [
-            {
-              b64_json: Buffer.from(response.data).toString('base64'),
-              ...(mimeType ? { mime_type: mimeType } : {}),
-            },
-          ],
-          model,
-          pluginId: plugin.id,
-        };
-      } else {
-        const response = await providerRequest({
-          url: endpoint,
-          method: 'POST',
-          json: payload,
-          headers,
-          timeoutMs: 300000,
-          maxResponseBytes: 80 * 1024 * 1024,
-          signal: options.signal,
-        });
-        result = {
-          images: normalizeImageGenerationResponse(response.data),
-          model,
-          pluginId: plugin.id,
-        };
-      }
+      const response = await providerRequest({
+        url: endpoint,
+        method: 'POST',
+        json: payload,
+        headers,
+        timeoutMs: 300000,
+        maxResponseBytes: 80 * 1024 * 1024,
+        signal: options.signal,
+      });
+      const result: ImageGenResponse = {
+        images: normalizeImageGenerationResponse(response.data),
+        model,
+        pluginId: plugin.id,
+      };
 
       this.deps.recordUsage?.({
         userId: options.userId,
@@ -739,429 +687,4 @@ function normalizeHttpImageUrl(value: unknown): string | null {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
-}
-
-function parseImageEndpoint(endpoint: string): URL {
-  assertSafePluginEndpoint(endpoint, 'image generation endpoint');
-  return new URL(endpoint);
-}
-
-interface FluxModelConfig {
-  unetFile: string;
-  t5File: string;
-  steps: { draft: number; standard: number; high: number; ultra: number };
-  guidance: number;
-  useCheckpointLoader: boolean;
-}
-
-const fluxModelConfigs: Record<string, FluxModelConfig> = {
-  'flux1-dev': {
-    unetFile: 'flux1-dev.safetensors',
-    t5File: 't5xxl_fp16.safetensors',
-    steps: { draft: 12, standard: 20, high: 28, ultra: 40 },
-    guidance: 3.5,
-    useCheckpointLoader: false,
-  },
-  'flux1-dev-fp8': {
-    unetFile: 'flux1-dev-fp8.safetensors',
-    t5File: 't5xxl_fp8_e4m3fn_scaled.safetensors',
-    steps: { draft: 12, standard: 20, high: 28, ultra: 40 },
-    guidance: 3.5,
-    useCheckpointLoader: false,
-  },
-  'flux1-schnell': {
-    unetFile: 'flux1-schnell.safetensors',
-    t5File: 't5xxl_fp16.safetensors',
-    steps: { draft: 2, standard: 4, high: 6, ultra: 8 },
-    guidance: 0,
-    useCheckpointLoader: false,
-  },
-};
-
-interface ComfyUIHistoryImage {
-  filename: string;
-  subfolder?: string;
-  type?: string;
-}
-
-interface ComfyUIHistoryEntry {
-  outputs?: Record<string, { images?: ComfyUIHistoryImage[] }>;
-}
-
-async function executeComfyUIRequest(
-  baseUrl: URL,
-  prompt: string,
-  options: {
-    size?: string;
-    quality?: string;
-    model?: string;
-    pluginId?: string;
-    pluginVars?: PluginVariables;
-    headers?: Record<string, string>;
-    signal?: AbortSignal;
-  } = {}
-): Promise<ImageGenResponse> {
-  const promptEndpoint = new URL(baseUrl);
-  promptEndpoint.hash = '';
-  const configuredPath = promptEndpoint.pathname.replace(/\/+$/, '');
-  const apiRootPath = configuredPath.endsWith('/prompt')
-    ? configuredPath.slice(0, -'/prompt'.length)
-    : configuredPath;
-  promptEndpoint.pathname = `${apiRootPath}/prompt`;
-  const createOperationUrl = (operationPath: string): URL => {
-    const operationUrl = new URL(promptEndpoint);
-    operationUrl.search = '';
-    operationUrl.hash = '';
-    operationUrl.pathname = `${apiRootPath}/${operationPath}`;
-    return operationUrl;
-  };
-  const requestHeaders = options.headers || {
-    'Content-Type': 'application/json',
-  };
-  const size = options.size || '1024x1024';
-  const [width, height] = size.split('x').map(Number);
-  const model = options.model || 'flux1-dev';
-  const config = fluxModelConfigs[model] || fluxModelConfigs['flux1-dev'];
-  const quality = (options.quality || 'standard') as keyof typeof config.steps;
-  const pVars = options.pluginVars || {};
-  const steps =
-    pVars.steps && (pVars.steps as number) > 0
-      ? (pVars.steps as number)
-      : config.steps[quality] || config.steps.standard;
-
-  const workflow: Record<string, unknown> = {
-    '6': {
-      inputs: {
-        text: prompt,
-        clip: ['11', 0],
-      },
-      class_type: 'CLIPTextEncode',
-      _meta: { title: 'CLIP Text Encode (Prompt)' },
-    },
-    '8': {
-      inputs: {
-        samples: ['13', 0],
-        vae: ['10', 0],
-      },
-      class_type: 'VAEDecode',
-      _meta: { title: 'VAE Decode' },
-    },
-    '9': {
-      inputs: {
-        filename_prefix: `Alcore_${model}`,
-        images: ['8', 0],
-      },
-      class_type: 'SaveImage',
-      _meta: { title: 'Save Image' },
-    },
-    '10': {
-      inputs: {
-        vae_name: 'ae.safetensors',
-      },
-      class_type: 'VAELoader',
-      _meta: { title: 'Load VAE' },
-    },
-    '11': {
-      inputs: {
-        clip_name1: 'clip_l.safetensors',
-        clip_name2: config.t5File,
-        type: 'flux',
-      },
-      class_type: 'DualCLIPLoader',
-      _meta: { title: 'DualCLIPLoader' },
-    },
-    '12': {
-      inputs: {
-        unet_name: config.unetFile,
-        weight_dtype: 'default',
-      },
-      class_type: 'UNETLoader',
-      _meta: { title: 'Load Diffusion Model' },
-    },
-    '13': {
-      inputs: {
-        noise: ['25', 0],
-        guider: ['22', 0],
-        sampler: ['16', 0],
-        sigmas: ['17', 0],
-        latent_image: ['27', 0],
-      },
-      class_type: 'SamplerCustomAdvanced',
-      _meta: { title: 'SamplerCustomAdvanced' },
-    },
-    '16': {
-      inputs: {
-        sampler_name: 'euler',
-      },
-      class_type: 'KSamplerSelect',
-      _meta: { title: 'KSamplerSelect' },
-    },
-    '17': {
-      inputs: {
-        scheduler: 'simple',
-        steps: steps,
-        denoise: 1,
-        model: ['12', 0],
-      },
-      class_type: 'BasicScheduler',
-      _meta: { title: 'BasicScheduler' },
-    },
-    '22': {
-      inputs: {
-        model: ['12', 0],
-        conditioning: config.guidance > 0 ? ['26', 0] : ['6', 0],
-      },
-      class_type: 'BasicGuider',
-      _meta: { title: 'BasicGuider' },
-    },
-    '25': {
-      inputs: {
-        noise_seed:
-          pVars.seed && (pVars.seed as number) >= 0
-            ? (pVars.seed as number)
-            : Math.floor(Math.random() * 1000000000000000),
-      },
-      class_type: 'RandomNoise',
-      _meta: { title: 'RandomNoise' },
-    },
-    '27': {
-      inputs: {
-        width: width,
-        height: height,
-        batch_size: 1,
-      },
-      class_type: 'EmptySD3LatentImage',
-      _meta: { title: 'EmptySD3LatentImage' },
-    },
-  };
-
-  if (config.guidance > 0) {
-    workflow['26'] = {
-      inputs: {
-        guidance:
-          pVars.cfg_scale && (pVars.cfg_scale as number) > 0
-            ? (pVars.cfg_scale as number)
-            : config.guidance,
-        conditioning: ['6', 0],
-      },
-      class_type: 'FluxGuidance',
-      _meta: { title: 'FluxGuidance' },
-    };
-  }
-
-  let promptId: string | undefined;
-  let cancellation: Promise<void> | undefined;
-  const cancelAcceptedPrompt = () => {
-    if (!promptId) return;
-    cancellation ??= cancelComfyUIPrompt(
-      createOperationUrl,
-      promptId,
-      requestHeaders
-    );
-  };
-  options.signal?.addEventListener('abort', cancelAcceptedPrompt, {
-    once: true,
-  });
-
-  try {
-    const clientId = `alcore-${Date.now()}`;
-    const requestedPromptId = randomUUID();
-    // Keep the client-selected ID before dispatch so a disconnect after the
-    // provider accepts, but before the response is received, still has an
-    // exact and safe cancellation target.
-    promptId = requestedPromptId;
-    const promptResponse = await providerRequest<{ prompt_id?: string }>({
-      url: promptEndpoint.toString(),
-      method: 'POST',
-      json: {
-        prompt: workflow,
-        client_id: clientId,
-        prompt_id: requestedPromptId,
-      },
-      headers: requestHeaders,
-      timeoutMs: 10000,
-      signal: options.signal,
-    });
-
-    const acceptedPromptId = promptResponse.data?.prompt_id;
-    if (!acceptedPromptId) {
-      throw new Error('Failed to get prompt ID from ComfyUI');
-    }
-    if (acceptedPromptId !== requestedPromptId) {
-      throw new Error('ComfyUI returned an unexpected prompt ID');
-    }
-    if (options.signal?.aborted) {
-      cancelAcceptedPrompt();
-      await cancellation;
-      throw cancellationReason(options.signal);
-    }
-
-    let completed = false;
-    let attempts = 0;
-    const maxAttempts = 120;
-
-    while (!completed && attempts < maxAttempts) {
-      await abortableDelay(1000, options.signal);
-      attempts++;
-
-      const historyResponse = await providerRequest<
-        Record<string, ComfyUIHistoryEntry>
-      >({
-        url: createOperationUrl(
-          `history/${encodeURIComponent(String(promptId))}`
-        ).toString(),
-        headers: requestHeaders,
-        timeoutMs: 5000,
-        signal: options.signal,
-      });
-
-      const historyEntry = historyResponse.data?.[requestedPromptId];
-      if (historyEntry) {
-        const outputs = historyEntry.outputs;
-        if (outputs && Object.keys(outputs).length > 0) {
-          completed = true;
-
-          for (const nodeId in outputs) {
-            const nodeOutput = outputs[nodeId];
-            if (nodeOutput.images && nodeOutput.images.length > 0) {
-              const imageInfo = nodeOutput.images[0];
-              const imageUrl = createOperationUrl('view');
-              imageUrl.searchParams.set('filename', imageInfo.filename);
-              imageUrl.searchParams.set('subfolder', imageInfo.subfolder || '');
-              imageUrl.searchParams.set('type', imageInfo.type || 'output');
-
-              const imageResponse = await providerRequest<Buffer>({
-                url: imageUrl.toString(),
-                headers: requestHeaders,
-                responseType: 'bytes',
-                timeoutMs: 30000,
-                maxResponseBytes: 50 * 1024 * 1024,
-                signal: options.signal,
-              });
-
-              const base64Image = Buffer.from(imageResponse.data).toString(
-                'base64'
-              );
-              const mimeType = normalizeImageMediaType(
-                imageResponse.headers['content-type']
-              );
-
-              return {
-                images: [
-                  {
-                    b64_json: base64Image,
-                    ...(mimeType ? { mime_type: mimeType } : {}),
-                    revised_prompt: prompt,
-                  },
-                ],
-                model,
-                pluginId: options.pluginId,
-              };
-            }
-          }
-        }
-      }
-    }
-
-    if (!completed) {
-      throw new Error('ComfyUI generation timed out');
-    }
-
-    throw new Error('No image output found from ComfyUI');
-  } catch (error) {
-    if (promptId && options.signal?.aborted) {
-      cancelAcceptedPrompt();
-      await cancellation;
-    }
-    if (isProviderTransportError(error)) {
-      const body = providerErrorBody(error);
-      const message = body?.error || body?.message || error.message;
-      throw new Error(`ComfyUI generation failed: ${String(message)}`);
-    }
-    throw error;
-  } finally {
-    options.signal?.removeEventListener('abort', cancelAcceptedPrompt);
-  }
-}
-
-async function cancelComfyUIPrompt(
-  createOperationUrl: (operationPath: string) => URL,
-  promptId: string,
-  headers: Record<string, string>
-): Promise<void> {
-  const teardown = new AbortController();
-  const timeout = setTimeout(
-    () => teardown.abort(new Error('ComfyUI cancellation timed out')),
-    3000
-  );
-  const encodedPromptId = encodeURIComponent(promptId);
-  try {
-    const [jobCancellation, queueDeletion] = await Promise.allSettled([
-      providerRequest<{ cancelled?: boolean }>({
-        url: createOperationUrl(
-          `api/jobs/${encodedPromptId}/cancel`
-        ).toString(),
-        method: 'POST',
-        json: {},
-        headers,
-        timeoutMs: 2500,
-        signal: teardown.signal,
-      }),
-      providerRequest({
-        url: createOperationUrl('queue').toString(),
-        method: 'POST',
-        json: { delete: [promptId] },
-        headers,
-        timeoutMs: 2500,
-        signal: teardown.signal,
-      }),
-    ]);
-    if (
-      jobCancellation.status === 'rejected' ||
-      jobCancellation.value.data?.cancelled !== true
-    ) {
-      logger.warn(
-        `ComfyUI did not confirm a running-job cancellation for prompt ${promptId}; it may already have finished or the server may need an upgrade`
-      );
-    }
-    if (queueDeletion.status === 'rejected') {
-      logger.warn(
-        `ComfyUI did not confirm queued-job deletion for prompt ${promptId}`
-      );
-    }
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
-function cancellationReason(signal?: AbortSignal): Error {
-  return signal?.reason instanceof Error
-    ? signal.reason
-    : new Error('Image provider request was cancelled');
-}
-
-async function abortableDelay(
-  milliseconds: number,
-  signal?: AbortSignal
-): Promise<void> {
-  if (signal?.aborted) {
-    throw signal.reason instanceof Error
-      ? signal.reason
-      : new Error('Image provider request was cancelled');
-  }
-  await new Promise<void>((resolve, reject) => {
-    const timer = setTimeout(() => {
-      signal?.removeEventListener('abort', abort);
-      resolve();
-    }, milliseconds);
-    const abort = () => {
-      clearTimeout(timer);
-      reject(
-        signal?.reason instanceof Error
-          ? signal.reason
-          : new Error('Image provider request was cancelled')
-      );
-    };
-    signal?.addEventListener('abort', abort, { once: true });
-  });
 }

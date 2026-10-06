@@ -1,14 +1,12 @@
 /*
  * Image edit/inpaint/composite (IMAGE-01).
  *
- * Covers: the bundled OpenAI manifest's edit declaration staying inside its
- * trust anchor, the multipart edit contract (image, mask, prompt, auth),
+ * Covers: the multipart edit contract (image, mask, prompt, auth),
  * capability enforcement (no edit endpoint, mask support, reference-image
  * ceilings), upload validation magic-byte/MIME/size checks, and usage
  * metering for edits.
  */
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 import test from 'node:test';
@@ -28,8 +26,6 @@ const {
   detectImageEditFormat,
   ImageEditUploadError,
 } = await importBuilt('utils/imageEditUpload.js');
-const { getPluginDefinitionFingerprint, BUNDLED_PLUGIN_DEFINITION_FINGERPRINTS } =
-  await importBuilt('utils/pluginDefinitionTrust.js');
 
 const PNG_BYTES = Buffer.concat([
   Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
@@ -84,26 +80,6 @@ const image = (buffer = PNG_BYTES, mimeType = 'image/png') => ({
   buffer,
   mimeType,
   filename: 'source.png',
-});
-
-test('the bundled OpenAI manifest declares editing inside its trust anchor', () => {
-  const manifest = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'plugins', 'openai.json'), 'utf8')
-  );
-  const config = manifest.capabilities.image.config;
-  assert.equal(config.edit_endpoint, 'https://api.openai.com/v1/images/edits');
-  assert.equal(config.supports_mask, true);
-  assert.equal(config.max_reference_images, 4);
-  assert.deepEqual(config.edit_mime_types, [
-    'image/png',
-    'image/jpeg',
-    'image/webp',
-  ]);
-  assert.equal(
-    getPluginDefinitionFingerprint(manifest),
-    BUNDLED_PLUGIN_DEFINITION_FINGERPRINTS.openai,
-    'the shipped trust anchor must match the manifest exactly'
-  );
 });
 
 test('edits post an authorized multipart request and meter usage', async t => {

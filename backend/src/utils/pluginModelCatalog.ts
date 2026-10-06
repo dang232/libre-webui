@@ -144,14 +144,6 @@ export function inferReasoningFromModelId(id: string): boolean | undefined {
     return !/claude-(3-[05]|3-(haiku|sonnet|opus)|2|instant)/.test(tail);
   }
 
-  // Gemini: thinking arrived with 2.5; 2.0 only in the models that carry
-  // "thinking" in the name.
-  if (tail.includes('gemini')) {
-    if (tail.includes('thinking')) return true;
-    const generation = /gemini-(\d+(?:\.\d+)?)/.exec(tail);
-    return generation ? Number(generation[1]) >= 2.5 : undefined;
-  }
-
   // Open reasoning families served through providers.
   if (/(^|[^a-z])r1([^a-z]|$)/.test(tail) || tail.includes('qwq')) return true;
 

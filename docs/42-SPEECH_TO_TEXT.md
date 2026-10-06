@@ -3,7 +3,7 @@ sidebar_position: 42
 title: 'Speech to Text'
 description: 'Transcribe microphone recordings through configured providers.'
 slug: /SPEECH_TO_TEXT
-keywords: [speech to text, transcription, microphone, openai, hugging face]
+keywords: [speech to text, transcription, microphone, alcore]
 ---
 
 # Speech to Text
@@ -15,12 +15,9 @@ and data handling are controlled by the browser vendor and are not necessarily
 on-device. Select a named provider explicitly to use provider-backed STT. When
 the browser service is unavailable, Chat selects the first compatible provider.
 
-Bundled support includes:
-
-- OpenAI transcription models through a multipart
-  `/v1/audio/transcriptions` request; and
-- Hugging Face automatic speech recognition models through its raw-audio
-  inference endpoint.
+Bundled support is provided by the Alcore provider plugin, which serves
+transcription models through a multipart `/v1/audio/transcriptions`
+request.
 
 The browser records only after the user presses the microphone button. Chat
 shows the selected provider and transfer notice before recording. Press the

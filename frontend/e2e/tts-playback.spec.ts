@@ -21,8 +21,8 @@ import { mockLibreWebUiApi } from './lib/mockApi';
 test('batched read-aloud reuses the selected saved voice for every batch', async ({
   page,
 }) => {
-  const model = 'meituan-longcat/LongCat-AudioDiT-3.5B';
-  const voiceProfileId = 'saved-longcat-voice';
+  const model = 'alcore/synthetic-voice-3.5B';
+  const voiceProfileId = 'saved-alcore-voice';
   const spokenText = [
     'The first sentence introduces a calm and measured response.',
     'The second sentence gives the next idea enough room to breathe.',
@@ -40,14 +40,14 @@ test('batched read-aloud reuses the selected saved voice for every batch', async
         voice: '',
         voiceProfileId,
         speed: 1,
-        pluginId: 'longcat-audiodit',
+        pluginId: 'alcore-tts',
         streamSentences: true,
       },
     },
     ttsModels: [
       {
         model,
-        plugin: 'longcat-audiodit',
+        plugin: 'alcore-tts',
         config: {
           voices: [],
           default_voice: '',

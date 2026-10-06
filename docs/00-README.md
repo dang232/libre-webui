@@ -180,8 +180,6 @@ import CodeBlock from '@theme/CodeBlock';
           <li><a href="/PROVIDER_CONNECTIONS">Provider Connections</a></li>
           <li><a href="/PLUGIN_ARCHITECTURE">Provider Plugin Architecture</a></li>
           <li><a href="/HUGGINGFACE_HUB">Hugging Face Hub</a></li>
-          <li><a href="/KIMI_CODE">Kimi Code</a></li>
-          <li><a href="/MLX_APPLE_SILICON">MLX LM on Apple Silicon</a></li>
         </ul>
       </div>
 
@@ -226,9 +224,6 @@ import CodeBlock from '@theme/CodeBlock';
           <li><a href="/VOICE_MODE">Voice Mode</a></li>
           <li><a href="/SPEECH_TO_TEXT">Speech to Text</a></li>
           <li><a href="/MEDIA_GENERATION">Media Generation and Image Editing</a></li>
-          <li><a href="/QWEN3_TTS">Qwen3-TTS</a></li>
-          <li><a href="/KYUTAI_TTS">Kyutai TTS</a></li>
-          <li><a href="/LONGCAT_AUDIODIT">LongCat AudioDiT</a></li>
         </ul>
       </div>
 

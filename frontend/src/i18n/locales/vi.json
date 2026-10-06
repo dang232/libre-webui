@@ -3884,7 +3884,7 @@
     "skip": "Bỏ qua lúc này — tôi sẽ kết nối mô hình sau",
     "local": {
       "title": "Máy chủ cục bộ",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "Khóa API (tùy chọn)",
       "test": "Kiểm tra kết nối",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "API đám mây",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter và nhiều hơn nữa",
+      "subtitle": "Alcore và nhiều hơn nữa",
       "keyPlaceholder": "Dán khóa API {{name}} của bạn",
       "connect": "Kết nối",
       "connecting": "Đang kết nối…",

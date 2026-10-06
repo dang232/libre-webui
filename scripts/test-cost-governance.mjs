@@ -77,6 +77,7 @@ const {
 } = costs;
 
 after(async () => {
+  await persistenceModule.closePersistence?.();
   await rm(dataDir, { recursive: true, force: true });
 });
 
@@ -126,8 +127,8 @@ test('tariff resolution prefers exact models and the newest effective row', asyn
   const base = Date.UTC(2026, 0, 1);
   const oldRate = await costGovernanceService.createTariff(
     {
-      pluginId: 'openai',
-      model: 'gpt-test',
+      pluginId: 'alcore',
+      model: 'alcore-test',
       inputPerMillion: 1,
       outputPerMillion: 2,
       effectiveFrom: base,
@@ -136,8 +137,8 @@ test('tariff resolution prefers exact models and the newest effective row', asyn
   );
   const newRate = await costGovernanceService.createTariff(
     {
-      pluginId: 'openai',
-      model: 'gpt-test',
+      pluginId: 'alcore',
+      model: 'alcore-test',
       inputPerMillion: 2,
       outputPerMillion: 4,
       effectiveFrom: base + 1000,
@@ -145,34 +146,34 @@ test('tariff resolution prefers exact models and the newest effective row', asyn
     admin
   );
   const pluginWide = await costGovernanceService.createTariff(
-    { pluginId: 'openai', inputPerMillion: 10, effectiveFrom: base },
+    { pluginId: 'alcore', inputPerMillion: 10, effectiveFrom: base },
     admin
   );
   const tariffs = await costGovernanceService.listTariffs();
 
   assert.equal(
-    resolveTariff(tariffs, 'openai', 'gpt-test', base + 500)?.id,
+    resolveTariff(tariffs, 'alcore', 'alcore-test', base + 500)?.id,
     oldRate.id,
     'the newest row at or before the event applies'
   );
   assert.equal(
-    resolveTariff(tariffs, 'openai', 'gpt-test', base + 5000)?.id,
+    resolveTariff(tariffs, 'alcore', 'alcore-test', base + 5000)?.id,
     newRate.id
   );
   assert.equal(
-    resolveTariff(tariffs, 'openai', 'other-model', base + 5000)?.id,
+    resolveTariff(tariffs, 'alcore', 'other-model', base + 5000)?.id,
     pluginWide.id,
     'plugin-wide rows back-fill unknown models'
   );
   assert.equal(
-    resolveTariff(tariffs, 'unknown', 'gpt-test', base + 5000),
+    resolveTariff(tariffs, 'unknown', 'alcore-test', base + 5000),
     null
   );
 
   const priced = costForEvent(
     {
-      plugin_id: 'openai',
-      model: 'gpt-test',
+      plugin_id: 'alcore',
+      model: 'alcore-test',
       created_at: base + 5000,
       prompt_tokens: 1_000_000,
       completion_tokens: 500_000,
@@ -198,7 +199,7 @@ test('tariff resolution prefers exact models and the newest effective row', asyn
   );
 
   await assert.rejects(
-    costGovernanceService.createTariff({ pluginId: 'openai' }, admin),
+    costGovernanceService.createTariff({ pluginId: 'alcore' }, admin),
     /At least one price/
   );
 });
@@ -217,16 +218,16 @@ test('cost analytics attribute spend and surface unmetered events', async () => 
   const now = Date.now();
   insertUsage({
     userId: 'cost-user-a',
-    pluginId: 'openai',
-    model: 'gpt-test',
+    pluginId: 'alcore',
+    model: 'alcore-test',
     promptTokens: 1_000_000,
     completionTokens: 0,
     at: now - 1000,
   });
   insertUsage({
     userId: 'cost-user-b',
-    pluginId: 'openai',
-    model: 'gpt-test',
+    pluginId: 'alcore',
+    model: 'alcore-test',
     promptTokens: 0,
     completionTokens: 1_000_000,
     at: now - 900,
@@ -248,7 +249,7 @@ test('cost analytics attribute spend and surface unmetered events', async () => 
   assert.ok(userA && userB);
   assert.ok(Math.abs(userA.usd - 2) < 1e-9, 'input tokens priced at $2/M');
   assert.ok(Math.abs(userB.usd - 4) < 1e-9, 'output tokens priced at $4/M');
-  const model = analytics.byModel.find(row => row.model === 'gpt-test');
+  const model = analytics.byModel.find(row => row.model === 'alcore-test');
   assert.equal(model?.events, 2);
 
   const csv = await costGovernanceService.exportCostsCsv(7, now);
@@ -267,8 +268,8 @@ test('hard budgets block exhausted principals and fail open otherwise', async ()
   const now = Date.now();
   insertUsage({
     userId: 'cost-blocked',
-    pluginId: 'openai',
-    model: 'gpt-test',
+    pluginId: 'alcore',
+    model: 'alcore-test',
     promptTokens: 2_000_000,
     completionTokens: 0,
     at: now - 500,
@@ -309,8 +310,8 @@ test('hard budgets block exhausted principals and fail open otherwise', async ()
   await addGroupMember(group.id, 'cost-grouped', 'cost-admin');
   insertUsage({
     userId: 'cost-grouped',
-    pluginId: 'openai',
-    model: 'gpt-test',
+    pluginId: 'alcore',
+    model: 'alcore-test',
     promptTokens: 2_000_000,
     completionTokens: 0,
     at: now - 400,

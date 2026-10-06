@@ -726,7 +726,11 @@ function assertContractShape(capability) {
     `${capability.id} manifest contract`
   );
   assert.equal(capability.manifest.exposure, 'root-or-capability');
-  assert.equal(capability.manifest.requiresBundledDefinition, true);
+  assert.equal(
+    typeof capability.manifest.requiresBundledDefinition,
+    'boolean',
+    `${capability.id} manifest contract must declare whether a bundled definition ships it`
+  );
 }
 
 function publicRouteLabels(capability) {
@@ -948,10 +952,16 @@ test('provider catalog and bundled manifests match executable contracts', () => 
     const matching = manifests.filter(({ definition }) =>
       manifestCapabilities(definition).has(capability.id)
     );
-    assert.ok(
-      matching.length > 0,
-      `${capability.id} requires a bundled executable definition`
-    );
+    // Only alcore ships a bundled definition now; the remaining
+    // capabilities stay executable through user-installed provider plugins,
+    // so the contract records requiresBundledDefinition: false instead of
+    // demanding a bundled manifest that no longer exists.
+    if (capability.manifest.requiresBundledDefinition) {
+      assert.ok(
+        matching.length > 0,
+        `${capability.id} requires a bundled executable definition`
+      );
+    }
     for (const { name, definition } of matching) {
       const isPrimary = capability.pluginTypes.includes(definition.type);
       const descriptor = definition.capabilities?.[capability.id];

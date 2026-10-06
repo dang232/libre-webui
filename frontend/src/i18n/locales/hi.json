@@ -3884,7 +3884,7 @@
     "skip": "अभी के लिए छोड़ें — मैं बाद में मॉडल कनेक्ट करूँगा",
     "local": {
       "title": "स्थानीय सर्वर",
-      "subtitle": "llama.cpp, vLLM, llama-swap, LM Studio, mlx-lm",
+      "subtitle": "vLLM, llama-swap, LM Studio",
       "nameLabel": "Provider name",
       "keyPlaceholder": "API कुंजी (वैकल्पिक)",
       "test": "कनेक्शन जाँचें",
@@ -3899,7 +3899,7 @@
     },
     "cloud": {
       "title": "क्लाउड API",
-      "subtitle": "OpenAI, Anthropic, Groq, OpenRouter, और अधिक",
+      "subtitle": "Alcore, और अधिक",
       "keyPlaceholder": "अपनी {{name}} API कुंजी पेस्ट करें",
       "connect": "कनेक्ट करें",
       "connecting": "कनेक्ट हो रहा है…",

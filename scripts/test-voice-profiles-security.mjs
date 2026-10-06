@@ -136,17 +136,17 @@ async function waitUntil(predicate, message) {
 
 function clonePlugin() {
   return {
-    id: 'longcat-audiodit',
-    name: 'LongCat AudioDiT',
+    id: 'voice-clone-provider',
+    name: 'Voice clone provider',
     type: 'tts',
     active: true,
     endpoint: 'http://127.0.0.1:9/v1/audio/speech',
     auth: { header: '', prefix: '', key_env: '' },
-    model_map: ['meituan-longcat/LongCat-AudioDiT-3.5B'],
+    model_map: ['acme-voice-clone-1'],
     capabilities: {
       tts: {
         endpoint: 'http://127.0.0.1:9/v1/audio/speech',
-        model_map: ['meituan-longcat/LongCat-AudioDiT-3.5B'],
+        model_map: ['acme-voice-clone-1'],
         config: {
           no_auth_required: true,
           supports_voice_cloning: true,
@@ -168,8 +168,8 @@ function savedVoiceCloneForm({
 } = {}) {
   const form = new FormData();
   form.set('saveVoiceName', name);
-  form.set('pluginId', 'longcat-audiodit');
-  form.set('model', 'meituan-longcat/LongCat-AudioDiT-3.5B');
+  form.set('pluginId', 'voice-clone-provider');
+  form.set('model', 'acme-voice-clone-1');
   form.set('input', 'verify this reusable voice');
   form.set('reference_text', 'exact route transcript');
   form.set('response_format', 'wav');
@@ -196,8 +196,8 @@ function wavAudio(marker = 'reference-secret') {
 function createProfile(userId, overrides = {}) {
   return voiceProfileService.create(userId, {
     name: 'Private voice',
-    pluginId: 'longcat-audiodit',
-    model: 'meituan-longcat/LongCat-AudioDiT-3.5B',
+    pluginId: 'voice-clone-provider',
+    model: 'acme-voice-clone-1',
     routingFingerprint: ROUTING_FINGERPRINT,
     referenceAudio: wavAudio(),
     referenceText: 'exact reference transcript',
@@ -309,8 +309,8 @@ test('profile queries remain bound to the saved provider and model', async () =>
   assert.deepEqual(
     (
       await voiceProfileService.list(ownerId, {
-        pluginId: 'longcat-audiodit',
-        model: 'meituan-longcat/LongCat-AudioDiT-3.5B',
+        pluginId: 'voice-clone-provider',
+        model: 'acme-voice-clone-1',
       })
     ).map(item => item.id),
     [profile.id]
@@ -432,8 +432,8 @@ test('profile storage enforces duplicate names and aggregate audio quota atomica
         Buffer.from('Quota fixture'),
         Buffer.from(`voice-profile:quota-fixture:${quotaOwnerId}:name`, 'utf8')
       ),
-      'longcat-audiodit',
-      'meituan-longcat/LongCat-AudioDiT-3.5B',
+      'voice-clone-provider',
+      'acme-voice-clone-1',
       ROUTING_FINGERPRINT,
       Buffer.from('LWB1fixture'),
       'audio/wav',
@@ -504,7 +504,7 @@ test('HTTP routes require consent, redact secrets, isolate owners, and bind prof
       {
         getCredentialRoutingAuthFingerprint: () => ROUTING_FINGERPRINT,
         getPluginForTTS: (model, pluginId) =>
-          model === 'meituan-longcat/LongCat-AudioDiT-3.5B' &&
+          model === 'acme-voice-clone-1' &&
           (!pluginId || pluginId === plugin.id)
             ? plugin
             : null,
@@ -571,7 +571,7 @@ test('HTTP routes require consent, redact secrets, isolate owners, and bind prof
           method: 'POST',
           headers: { ...attackerHeaders, 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            model: 'meituan-longcat/LongCat-AudioDiT-3.5B',
+            model: 'acme-voice-clone-1',
             pluginId: plugin.id,
             input: 'stolen voice attempt',
             voiceProfileId: profileId,
@@ -606,7 +606,7 @@ test('HTTP routes require consent, redact secrets, isolate owners, and bind prof
             method: 'POST',
             headers: { ...ownerHeaders, 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              model: 'meituan-longcat/LongCat-AudioDiT-3.5B',
+              model: 'acme-voice-clone-1',
               pluginId: plugin.id,
               input: 'ambiguous voice attempt',
               voice: 'preset',
@@ -626,7 +626,7 @@ test('HTTP routes require consent, redact secrets, isolate owners, and bind prof
           method: 'POST',
           headers: { ...ownerHeaders, 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            model: 'meituan-longcat/LongCat-AudioDiT-3.5B',
+            model: 'acme-voice-clone-1',
             pluginId: plugin.id,
             input: 'authorized saved voice',
             voiceProfileId: profileId,
@@ -705,7 +705,7 @@ test('saved-voice generation caps in-flight batches per user and globally across
         method: 'POST',
         headers: headersFor(user),
         body: JSON.stringify({
-          model: 'meituan-longcat/LongCat-AudioDiT-3.5B',
+          model: 'acme-voice-clone-1',
           pluginId: plugin.id,
           input: `concurrent batch ${index}`,
           voiceProfileId: profileId,

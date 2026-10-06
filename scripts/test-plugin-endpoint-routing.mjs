@@ -36,7 +36,7 @@ fs.writeFileSync(
   path.join(process.env.PLUGINS_DIR, '.status.json'),
   JSON.stringify(
     {
-      activePlugins: ['openai', 'legacy-quarantined-provider'],
+      activePlugins: ['alcore', 'legacy-quarantined-provider'],
     },
     null,
     2
@@ -62,11 +62,7 @@ const pluginServiceModule = await import(
   pathToFileURL(path.join(distRoot, 'services', 'pluginService.js')).href
 );
 const { default: pluginService, PluginService } = pluginServiceModule;
-const codexOAuthService = (
-  await import(
-    pathToFileURL(path.join(distRoot, 'services', 'codexOAuthService.js')).href
-  )
-).default;
+
 const pluginVariablesService = (
   await import(
     pathToFileURL(path.join(distRoot, 'services', 'pluginVariablesService.js'))
@@ -140,7 +136,7 @@ after(async () => {
 
 function createPlugin({
   id = 'custom-provider',
-  endpoint = 'https://api.openai.com/v1/chat/completions',
+  endpoint = 'https://alcore.io.vn/v1/chat/completions',
   auth = { header: '', prefix: '', key_env: '' },
 } = {}) {
   return {
@@ -153,12 +149,12 @@ function createPlugin({
     model_map: ['chat-model'],
     capabilities: {
       embedding: {
-        endpoint: 'https://api.openai.com/v1/embeddings',
+        endpoint: 'https://alcore.io.vn/v1/embeddings',
         model_map: ['embedding-model'],
         config: { no_auth_required: true },
       },
       tts: {
-        endpoint: 'https://api.openai.com/v1/audio/speech',
+        endpoint: 'https://alcore.io.vn/v1/audio/speech',
         model_map: ['tts-model'],
         config: {
           voices: ['alloy'],
@@ -169,7 +165,7 @@ function createPlugin({
         },
       },
       image: {
-        endpoint: 'https://api.openai.com/v1/images/generations',
+        endpoint: 'https://alcore.io.vn/v1/images/generations',
         model_map: ['image-model'],
         config: { no_auth_required: true },
       },
@@ -342,34 +338,6 @@ test('every bundled manifest exactly matches the compiled trust anchor', () => {
   }
 });
 
-test('Codex OAuth tokens stay bound to the trusted bundled definition', async () => {
-  const service = new PluginService();
-  const admin = upsertTestUser('codex-oauth-routing-admin', 'admin');
-  const bundledDefinition = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'plugins', 'codex-oauth.json'), 'utf8')
-  );
-  const attackerDefinition = {
-    ...bundledDefinition,
-    endpoint: 'https://attacker.example.test/v1/responses',
-  };
-
-  await withPatchedProperties(
-    codexOAuthService,
-    { getCachedAccessToken: () => 'server-user-oauth-token' },
-    async () => {
-      assert.equal(
-        await service.getApiKey(bundledDefinition, admin.id),
-        'server-user-oauth-token'
-      );
-      assert.equal(await service.getApiKey(attackerDefinition, admin.id), null);
-      await assert.rejects(
-        service.installPlugin(attackerDefinition, admin.id),
-        /Codex OAuth plugin ID is reserved/
-      );
-    }
-  );
-});
-
 test('non-admin runtime retains manifest routing defaults while ignoring stored overrides', async () => {
   const service = new PluginService();
   const pluginId = 'manifest-default-routing-provider';
@@ -435,7 +403,7 @@ test('non-admin runtime retains manifest routing defaults while ignoring stored 
 });
 
 test('legacy global activation migrates once into durable per-user state', async () => {
-  const pluginId = 'openai';
+  const pluginId = 'alcore';
   const quarantinedPluginId = 'legacy-quarantined-provider';
   const database = databaseModule.getDatabase();
   assert.equal(
@@ -733,7 +701,7 @@ test('plugin credential checks await lookup results and report lookup failures',
   const headers = {
     Authorization: `Bearer ${authService.generateToken(user)}`,
   };
-  const url = `${server.baseUrl}/api/plugins/openai/credentials/check`;
+  const url = `${server.baseUrl}/api/plugins/alcore/credentials/check`;
 
   try {
     for (const key of [null, 'credential-check-secret']) {
@@ -741,7 +709,7 @@ test('plugin credential checks await lookup results and report lookup failures',
         pluginService,
         {
           getApiKey: async (plugin, userId) => {
-            assert.equal(plugin.id, 'openai');
+            assert.equal(plugin.id, 'alcore');
             assert.equal(userId, user.id);
             await new Promise(resolve => setImmediate(resolve));
             return key;
@@ -785,8 +753,8 @@ test('plugin routes require authentication and preserve non-admin generation set
   app.use(express.json());
   app.use('/api/plugins', authenticate, pluginRoutes);
   const server = await listen(app);
-  const previousOpenAIKey = process.env.OPENAI_API_KEY;
-  process.env.OPENAI_API_KEY = 'route-environment-secret';
+  const previousAlcoreKey = process.env.ALCORE_API_KEY;
+  process.env.ALCORE_API_KEY = 'route-environment-secret';
 
   try {
     const unauthenticatedRoutes = [
@@ -794,23 +762,23 @@ test('plugin routes require authentication and preserve non-admin generation set
       ['GET', '/active'],
       ['GET', '/active/current'],
       ['GET', '/status/all'],
-      ['GET', '/openai'],
+      ['GET', '/alcore'],
       ['POST', '/upload'],
       ['POST', '/install'],
-      ['PUT', '/openai'],
-      ['DELETE', '/openai'],
-      ['POST', '/activate/openai'],
-      ['POST', '/discover/openai'],
-      ['POST', '/deactivate/openai'],
+      ['PUT', '/alcore'],
+      ['DELETE', '/alcore'],
+      ['POST', '/activate/alcore'],
+      ['POST', '/discover/alcore'],
+      ['POST', '/deactivate/alcore'],
       ['POST', '/deactivate'],
-      ['GET', '/openai/export'],
+      ['GET', '/alcore/export'],
       ['GET', '/credentials/all'],
-      ['POST', '/openai/credentials'],
-      ['DELETE', '/openai/credentials'],
-      ['GET', '/openai/credentials/check'],
-      ['GET', '/openai/variables'],
-      ['PUT', '/openai/variables'],
-      ['DELETE', '/openai/variables'],
+      ['POST', '/alcore/credentials'],
+      ['DELETE', '/alcore/credentials'],
+      ['GET', '/alcore/credentials/check'],
+      ['GET', '/alcore/variables'],
+      ['PUT', '/alcore/variables'],
+      ['DELETE', '/alcore/variables'],
     ];
     for (const [method, routePath] of unauthenticatedRoutes) {
       const response = await fetch(
@@ -844,8 +812,8 @@ test('plugin routes require authentication and preserve non-admin generation set
     for (const [method, routePath, body] of [
       ['POST', '/upload', undefined],
       ['POST', '/install', {}],
-      ['PUT', '/openai', {}],
-      ['DELETE', '/openai', undefined],
+      ['PUT', '/alcore', {}],
+      ['DELETE', '/alcore', undefined],
     ]) {
       const response = await fetch(
         `${server.baseUrl}/api/plugins${routePath}`,
@@ -862,10 +830,10 @@ test('plugin routes require authentication and preserve non-admin generation set
       );
     }
 
-    const openAIPlugin = await pluginService.getPlugin('openai', normalUser.id);
-    assert.ok(openAIPlugin?.variables);
+    const alcorePlugin = await pluginService.getPlugin('alcore', normalUser.id);
+    assert.ok(alcorePlugin?.variables);
     const generationSave = await fetch(
-      `${server.baseUrl}/api/plugins/openai/variables`,
+      `${server.baseUrl}/api/plugins/alcore/variables`,
       {
         method: 'PUT',
         headers: normalHeaders,
@@ -880,7 +848,7 @@ test('plugin routes require authentication and preserve non-admin generation set
     assert.equal(generationSave.status, 200);
 
     const routingSave = await fetch(
-      `${server.baseUrl}/api/plugins/openai/variables`,
+      `${server.baseUrl}/api/plugins/alcore/variables`,
       {
         method: 'PUT',
         headers: normalHeaders,
@@ -898,7 +866,7 @@ test('plugin routes require authentication and preserve non-admin generation set
       ['model_id', 'attacker-model-id'],
     ]) {
       const connectionSave = await fetch(
-        `${server.baseUrl}/api/plugins/openai/variables`,
+        `${server.baseUrl}/api/plugins/alcore/variables`,
         {
           method: 'PUT',
           headers: normalHeaders,
@@ -914,11 +882,11 @@ test('plugin routes require authentication and preserve non-admin generation set
 
     assert.equal(
       await pluginVariablesService.setVariables(
-        'openai',
+        'alcore',
         {
-          endpoint: 'https://legacy.example.test/v1/chat/completions',
+          base_url: 'https://legacy.example.test/v1',
         },
-        openAIPlugin.variables,
+        alcorePlugin.variables,
         normalUser.id
       ),
       true
@@ -932,37 +900,40 @@ test('plugin routes require authentication and preserve non-admin generation set
       )
       .run(
         normalUser.id,
-        'openai',
+        'alcore',
         JSON.stringify(['stale-legacy-route-model']),
         Date.now()
       );
     assert.equal(
       (
-        await pluginService.getPlugin('openai', normalUser.id)
+        await pluginService.getPlugin('alcore', normalUser.id)
       ).model_map.includes('stale-legacy-route-model'),
       false,
       'ignored legacy routing must also suppress its discovered catalog'
     );
     const displayedVariables = await (
-      await fetch(`${server.baseUrl}/api/plugins/openai/variables`, {
+      await fetch(`${server.baseUrl}/api/plugins/alcore/variables`, {
         headers: normalHeaders,
       })
     ).json();
-    assert.equal(displayedVariables.data.endpoint.has_value, false);
-    assert.equal(displayedVariables.data.endpoint.value, '');
+    assert.equal(displayedVariables.data.base_url.has_value, false);
+    assert.equal(
+      displayedVariables.data.base_url.value,
+      'https://alcore.io.vn/v1'
+    );
     const normalUserVariables = await pluginService.getPluginVariables(
-      openAIPlugin,
+      alcorePlugin,
       normalUser.id
     );
-    assert.equal(normalUserVariables.endpoint, '');
+    assert.equal(normalUserVariables.base_url, 'https://alcore.io.vn/v1');
     assert.equal(
-      pluginValidation.resolvePluginApiConfig(openAIPlugin, normalUserVariables)
+      pluginValidation.resolvePluginApiConfig(alcorePlugin, normalUserVariables)
         .endpoint,
-      openAIPlugin.endpoint
+      alcorePlugin.endpoint
     );
 
     const resetResponse = await fetch(
-      `${server.baseUrl}/api/plugins/openai/variables`,
+      `${server.baseUrl}/api/plugins/alcore/variables`,
       {
         method: 'DELETE',
         headers: normalHeaders,
@@ -970,13 +941,16 @@ test('plugin routes require authentication and preserve non-admin generation set
     );
     assert.equal(resetResponse.status, 200);
     const rawVariables = await pluginVariablesService.getVariables(
-      'openai',
-      openAIPlugin.variables,
+      'alcore',
+      alcorePlugin.variables,
       normalUser.id
     );
     assert.equal(rawVariables.temperature.has_value, false);
-    assert.equal(rawVariables.endpoint.value, '');
-    assert.equal(rawVariables.endpoint.has_value, false);
+    assert.equal(
+      rawVariables.base_url.value,
+      'https://alcore.io.vn/v1'
+    );
+    assert.equal(rawVariables.base_url.has_value, false);
     assert.equal(
       databaseModule
         .getDatabase()
@@ -985,26 +959,26 @@ test('plugin routes require authentication and preserve non-admin generation set
            FROM plugin_discovered_models
            WHERE user_id = ? AND plugin_id = ?`
         )
-        .get(normalUser.id, 'openai').count,
+        .get(normalUser.id, 'alcore').count,
       0,
       'reset must purge the discovered catalog tied to legacy routing'
     );
 
     upsertTestUser(normalUser.id, 'admin');
     const promotedVariables = await pluginService.getPluginVariables(
-      openAIPlugin,
+      alcorePlugin,
       normalUser.id
     );
     assert.equal(
-      promotedVariables.endpoint,
-      '',
+      promotedVariables.base_url,
+      'https://alcore.io.vn/v1',
       'account reset must purge dormant routing before a role promotion'
     );
     assert.equal(
-      pluginValidation.resolvePluginApiConfig(openAIPlugin, promotedVariables)
+      pluginValidation.resolvePluginApiConfig(alcorePlugin, promotedVariables)
         .endpoint,
-      openAIPlugin.endpoint,
-      'the bundled API mode must still resolve to the trusted OpenAI endpoint'
+      alcorePlugin.endpoint,
+      'the bundled API mode must still resolve to the trusted bundled endpoint'
     );
 
     const adminUser = upsertTestUser('plugin-route-admin-user', 'admin');
@@ -1022,18 +996,18 @@ test('plugin routes require authentication and preserve non-admin generation set
       )
       .run(
         adminUser.id,
-        'openai',
+        'alcore',
         JSON.stringify(['stale-trusted-route-model']),
         Date.now()
       );
     const adminRoutingSave = await fetch(
-      `${server.baseUrl}/api/plugins/openai/variables`,
+      `${server.baseUrl}/api/plugins/alcore/variables`,
       {
         method: 'PUT',
         headers: adminHeaders,
         body: JSON.stringify({
           variables: {
-            endpoint: 'https://custom.example.test/v1/chat/completions',
+            base_url: 'https://custom.example.test/v1',
           },
         }),
       }
@@ -1047,12 +1021,12 @@ test('plugin routes require authentication and preserve non-admin generation set
            FROM plugin_discovered_models
            WHERE user_id = ? AND plugin_id = ?`
         )
-        .get(adminUser.id, 'openai').count,
+        .get(adminUser.id, 'alcore').count,
       0,
       'changing a trusted route must invalidate its discovered catalog'
     );
     const customAdminPlugin = await pluginService.getPlugin(
-      'openai',
+      'alcore',
       adminUser.id
     );
     assert.equal(
@@ -1065,7 +1039,7 @@ test('plugin routes require authentication and preserve non-admin generation set
       'a user-stored route cannot inherit the deployment environment key'
     );
     const adminRoutingReset = await fetch(
-      `${server.baseUrl}/api/plugins/openai/variables`,
+      `${server.baseUrl}/api/plugins/alcore/variables`,
       {
         method: 'DELETE',
         headers: adminHeaders,
@@ -1074,7 +1048,7 @@ test('plugin routes require authentication and preserve non-admin generation set
     assert.equal(adminRoutingReset.status, 200);
     assert.equal(
       await pluginService.getApiKey(
-        await pluginService.getPlugin('openai', adminUser.id),
+        await pluginService.getPlugin('alcore', adminUser.id),
         adminUser.id
       ),
       'route-environment-secret',
@@ -1082,7 +1056,7 @@ test('plugin routes require authentication and preserve non-admin generation set
     );
 
     const bundledCredentialSave = await fetch(
-      `${server.baseUrl}/api/plugins/openai/credentials`,
+      `${server.baseUrl}/api/plugins/alcore/credentials`,
       {
         method: 'POST',
         headers: adminHeaders,
@@ -1097,23 +1071,22 @@ test('plugin routes require authentication and preserve non-admin generation set
          FROM plugin_credentials
          WHERE user_id = ? AND plugin_id = ?`
       )
-      .get(adminUser.id, 'openai').routing_auth_fingerprint;
+      .get(adminUser.id, 'alcore').routing_auth_fingerprint;
     const boundRouteChange = await fetch(
-      `${server.baseUrl}/api/plugins/openai/variables`,
+      `${server.baseUrl}/api/plugins/alcore/variables`,
       {
         method: 'PUT',
         headers: adminHeaders,
         body: JSON.stringify({
           variables: {
-            endpoint:
-              'https://new-bound-route.example.test/v1/chat/completions',
+            base_url: 'https://new-bound-route.example.test/v1',
           },
         }),
       }
     );
     assert.equal(boundRouteChange.status, 200);
     const changedRoutePlugin = await pluginService.getPlugin(
-      'openai',
+      'alcore',
       adminUser.id
     );
     assert.equal(
@@ -1122,7 +1095,7 @@ test('plugin routes require authentication and preserve non-admin generation set
       'a credential saved for the bundled route cannot follow a later custom route'
     );
     assert.equal(
-      await pluginService.activatePlugin('openai', adminUser.id),
+      await pluginService.activatePlugin('alcore', adminUser.id),
       true
     );
     let changedRouteNetworkRequests = 0;
@@ -1138,7 +1111,7 @@ test('plugin routes require authentication and preserve non-admin generation set
             [{ role: 'user', content: 'Do not send this credential.' }],
             {},
             adminUser.id,
-            'openai'
+            'alcore'
           ),
           /API key not found/
         );
@@ -1146,7 +1119,7 @@ test('plugin routes require authentication and preserve non-admin generation set
     );
     assert.equal(changedRouteNetworkRequests, 0);
     const customCredentialSave = await fetch(
-      `${server.baseUrl}/api/plugins/openai/credentials`,
+      `${server.baseUrl}/api/plugins/alcore/credentials`,
       {
         method: 'POST',
         headers: adminHeaders,
@@ -1161,7 +1134,7 @@ test('plugin routes require authentication and preserve non-admin generation set
          FROM plugin_credentials
          WHERE user_id = ? AND plugin_id = ?`
       )
-      .get(adminUser.id, 'openai').routing_auth_fingerprint;
+      .get(adminUser.id, 'alcore').routing_auth_fingerprint;
     assert.notEqual(customBinding, bundledBinding);
     assert.equal(
       await pluginService.getApiKey(changedRoutePlugin, adminUser.id),
@@ -1169,7 +1142,7 @@ test('plugin routes require authentication and preserve non-admin generation set
     );
     assert.equal(
       (
-        await fetch(`${server.baseUrl}/api/plugins/openai/variables`, {
+        await fetch(`${server.baseUrl}/api/plugins/alcore/variables`, {
           method: 'DELETE',
           headers: adminHeaders,
         })
@@ -1178,7 +1151,7 @@ test('plugin routes require authentication and preserve non-admin generation set
     );
     assert.equal(
       await pluginService.getApiKey(
-        await pluginService.getPlugin('openai', adminUser.id),
+        await pluginService.getPlugin('alcore', adminUser.id),
         adminUser.id
       ),
       'route-environment-secret',
@@ -1186,7 +1159,7 @@ test('plugin routes require authentication and preserve non-admin generation set
     );
     assert.equal(
       (
-        await fetch(`${server.baseUrl}/api/plugins/openai/credentials`, {
+        await fetch(`${server.baseUrl}/api/plugins/alcore/credentials`, {
           method: 'DELETE',
           headers: adminHeaders,
         })
@@ -1194,7 +1167,7 @@ test('plugin routes require authentication and preserve non-admin generation set
       200
     );
     assert.equal(
-      await pluginService.deactivatePlugin('openai', adminUser.id),
+      await pluginService.deactivatePlugin('alcore', adminUser.id),
       true
     );
 
@@ -1292,10 +1265,10 @@ test('plugin routes require authentication and preserve non-admin generation set
     );
     assert.equal(demotedInstall.status, 403);
   } finally {
-    if (previousOpenAIKey === undefined) {
-      delete process.env.OPENAI_API_KEY;
+    if (previousAlcoreKey === undefined) {
+      delete process.env.ALCORE_API_KEY;
     } else {
-      process.env.OPENAI_API_KEY = previousOpenAIKey;
+      process.env.ALCORE_API_KEY = previousAlcoreKey;
     }
     await server.close();
   }
@@ -1303,9 +1276,9 @@ test('plugin routes require authentication and preserve non-admin generation set
 
 test('custom endpoint resolution is full-URL based and fails closed', () => {
   const bundledEndpoint =
-    'https://api.openai.com/v1/chat/completions?bundled=true';
+    'https://alcore.io.vn/v1/chat/completions?bundled=true';
   const customEndpoint =
-    'https://gateway.example.test/openai/v1/chat/completions?preview=true';
+    'https://gateway.example.test/alcore/v1/chat/completions?preview=true';
 
   assert.equal(
     pluginValidation.resolvePluginEndpoint(bundledEndpoint),
@@ -1324,19 +1297,19 @@ test('custom endpoint resolution is full-URL based and fails closed', () => {
   );
   assert.equal(
     pluginValidation.resolvePluginModelsEndpoint(customEndpoint),
-    'https://gateway.example.test/openai/v1/models'
+    'https://gateway.example.test/alcore/v1/models'
   );
   assert.equal(
     pluginValidation.resolvePluginModelsEndpoint(
-      'https://gateway.example.test/openai/v1/chat/completions/'
+      'https://gateway.example.test/alcore/v1/chat/completions/'
     ),
-    'https://gateway.example.test/openai/v1/models'
+    'https://gateway.example.test/alcore/v1/models'
   );
   assert.equal(
     pluginValidation.resolvePluginModelsEndpoint(
-      'https://gateway.example.test/openai/v1/#ignored'
+      'https://gateway.example.test/alcore/v1/#ignored'
     ),
-    'https://gateway.example.test/openai/v1/models'
+    'https://gateway.example.test/alcore/v1/models'
   );
   assert.equal(
     pluginValidation.resolvePluginOperationEndpoint(bundledEndpoint, {
@@ -1383,7 +1356,7 @@ test('custom endpoint resolution is full-URL based and fails closed', () => {
     'http://ai-gateway:8080/v1/chat/completions',
     'http://host.docker.internal:8080/v1/chat/completions',
     'http://gateway.internal:8080/v1/chat/completions',
-    'http://api.openai.com/v1/chat/completions',
+    'http://alcore.io.vn/v1/chat/completions',
     'http://localhost:8080/v1/chat/completions',
     'http://127.0.0.1:8080/v1/chat/completions',
     'http://[::1]:8080/v1/chat/completions',
@@ -1400,7 +1373,7 @@ test('custom endpoint resolution is full-URL based and fails closed', () => {
 
 test('Chat and Work requests use a valid custom endpoint instead of the bundled endpoint', async () => {
   const plugin = createPlugin();
-  const customEndpoint = 'http://ai-gateway:8080/openai/v1/chat/completions';
+  const customEndpoint = 'http://ai-gateway:8080/alcore/v1/chat/completions';
   const requests = [];
 
   await withPatchedProperties(
@@ -1523,7 +1496,7 @@ test('Chat and Work streaming fail closed on redirects', async () => {
       key_env: 'STREAM_REDIRECT_API_KEY',
     },
   });
-  const endpoint = 'http://ai-gateway:8080/openai/v1/chat/completions';
+  const endpoint = 'http://ai-gateway:8080/alcore/v1/chat/completions';
   const requests = [];
   const streamResponse = () =>
     new Response(
@@ -2008,8 +1981,8 @@ test('administrator definition retargeting revokes activation and cannot carry a
 
 test('trusted bundled routing may use an environment credential', async () => {
   const service = new PluginService();
-  const pluginId = 'openai';
-  const keyEnv = 'OPENAI_API_KEY';
+  const pluginId = 'alcore';
+  const keyEnv = 'ALCORE_API_KEY';
   const environmentKey = 'trusted-bundled-environment-secret';
   const customEndpoint =
     'https://ignored-legacy.example.test/v1/chat/completions';
@@ -2118,7 +2091,7 @@ test('trusted bundled routing may use an environment credential', async () => {
         assert.equal(
           await pluginVariablesService.setVariables(
             pluginId,
-            { endpoint: customEndpoint },
+            { base_url: 'https://ignored-legacy.example.test/v1' },
             adminPlugin.variables,
             normalUser.id
           ),
@@ -2178,7 +2151,7 @@ test('trusted bundled routing may use an environment credential', async () => {
       requests.some(
         request =>
           request.operation === 'discover' &&
-          request.endpoint === 'https://api.openai.com/v1/models'
+          request.endpoint === 'https://alcore.io.vn/v1/models'
       )
     );
     assert.ok(
@@ -2216,13 +2189,13 @@ test('trusted bundled routing may use an environment credential', async () => {
 test('Docker-style bundled and legacy directory alias preserves anchored environment fallback', async () => {
   const service = new PluginService();
   const user = upsertTestUser('docker-layout-environment-user', 'user');
-  const previousEnvironmentKey = process.env.OPENAI_API_KEY;
-  process.env.OPENAI_API_KEY = 'docker-layout-environment-secret';
+  const previousEnvironmentKey = process.env.ALCORE_API_KEY;
+  process.env.ALCORE_API_KEY = 'docker-layout-environment-secret';
   service.legacyPluginsDir = service.bundledPluginsDir;
   service.pluginReadDirs = [service.bundledPluginsDir, service.pluginsDir];
 
   try {
-    const plugin = await service.getPlugin('openai', user.id);
+    const plugin = await service.getPlugin('alcore', user.id);
     assert.ok(plugin);
     assert.equal(
       await service.getApiKey(plugin, user.id),
@@ -2230,9 +2203,9 @@ test('Docker-style bundled and legacy directory alias preserves anchored environ
     );
   } finally {
     if (previousEnvironmentKey === undefined) {
-      delete process.env.OPENAI_API_KEY;
+      delete process.env.ALCORE_API_KEY;
     } else {
-      process.env.OPENAI_API_KEY = previousEnvironmentKey;
+      process.env.ALCORE_API_KEY = previousEnvironmentKey;
     }
   }
 });
@@ -2242,10 +2215,10 @@ test('mismatched filenames and duplicate variable names cannot confuse trust res
   const normalUser = upsertTestUser('manifest-ambiguity-normal-user', 'user');
   const adminUser = upsertTestUser('manifest-ambiguity-admin-user', 'admin');
   const bundledDefinition = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'plugins', 'openai.json'), 'utf8')
+    fs.readFileSync(path.join(repoRoot, 'plugins', 'alcore.json'), 'utf8')
   );
   const endpointDefinition = bundledDefinition.variables.find(
-    definition => definition.name === 'endpoint'
+    definition => definition.name === 'base_url'
   );
   assert.ok(endpointDefinition);
   const attackerEndpoint =
@@ -2254,9 +2227,9 @@ test('mismatched filenames and duplicate variable names cannot confuse trust res
     process.env.PLUGINS_DIR,
     'different-filename.json'
   );
-  const exactIdPath = path.join(process.env.PLUGINS_DIR, 'openai.json');
-  const previousEnvironmentKey = process.env.OPENAI_API_KEY;
-  process.env.OPENAI_API_KEY = 'manifest-ambiguity-environment-secret';
+  const exactIdPath = path.join(process.env.PLUGINS_DIR, 'alcore.json');
+  const previousEnvironmentKey = process.env.ALCORE_API_KEY;
+  process.env.ALCORE_API_KEY = 'manifest-ambiguity-environment-secret';
 
   try {
     fs.writeFileSync(
@@ -2274,7 +2247,7 @@ test('mismatched filenames and duplicate variable names cannot confuse trust res
       )
     );
     const safePlugin = (await service.getAllPlugins(normalUser.id)).find(
-      plugin => plugin.id === 'openai'
+      plugin => plugin.id === 'alcore'
     );
     assert.ok(safePlugin);
     const safeVariables = await service.getPluginVariables(
@@ -2307,10 +2280,10 @@ test('mismatched filenames and duplicate variable names cannot confuse trust res
     );
 
     fs.writeFileSync(exactIdPath, fs.readFileSync(mismatchedPath, 'utf8'));
-    assert.equal(await service.getPlugin('openai', normalUser.id), null);
+    assert.equal(await service.getPlugin('alcore', normalUser.id), null);
     assert.equal(
       (await service.getAllPlugins(normalUser.id)).some(
-        plugin => plugin.id === 'openai'
+        plugin => plugin.id === 'alcore'
       ),
       false,
       'an invalid effective same-ID shadow must hide the earlier bundled definition'
@@ -2320,9 +2293,9 @@ test('mismatched filenames and duplicate variable names cannot confuse trust res
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     }
     if (previousEnvironmentKey === undefined) {
-      delete process.env.OPENAI_API_KEY;
+      delete process.env.ALCORE_API_KEY;
     } else {
-      process.env.OPENAI_API_KEY = previousEnvironmentKey;
+      process.env.ALCORE_API_KEY = previousEnvironmentKey;
     }
   }
 });
@@ -2331,9 +2304,9 @@ test('a pre-upgrade same-ID shadow cannot consume a legacy unbound credential', 
   const service = new PluginService();
   const user = upsertTestUser('legacy-shadow-credential-user', 'user');
   const bundledDefinition = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'plugins', 'openai.json'), 'utf8')
+    fs.readFileSync(path.join(repoRoot, 'plugins', 'alcore.json'), 'utf8')
   );
-  const bundledPlugin = await service.getPlugin('openai', user.id);
+  const bundledPlugin = await service.getPlugin('alcore', user.id);
   assert.ok(bundledPlugin);
   const binding = await service.getCredentialRoutingAuthFingerprint(
     bundledPlugin,
@@ -2341,7 +2314,7 @@ test('a pre-upgrade same-ID shadow cannot consume a legacy unbound credential', 
   );
   assert.equal(
     await pluginCredentialsService.setApiKey(
-      'openai',
+      'alcore',
       'legacy-shadow-secret',
       user.id,
       binding
@@ -2355,15 +2328,15 @@ test('a pre-upgrade same-ID shadow cannot consume a legacy unbound credential', 
        SET routing_auth_fingerprint = NULL
        WHERE user_id = ? AND plugin_id = ?`
     )
-    .run(user.id, 'openai');
+    .run(user.id, 'alcore');
   databaseModule
     .getDatabase()
     .prepare(
       `INSERT INTO plugin_activations (user_id, plugin_id, activated_at)
        VALUES (?, ?, ?)`
     )
-    .run(user.id, 'openai', Date.now());
-  const shadowPath = path.join(process.env.PLUGINS_DIR, 'openai.json');
+    .run(user.id, 'alcore', Date.now());
+  const shadowPath = path.join(process.env.PLUGINS_DIR, 'alcore.json');
   fs.writeFileSync(
     shadowPath,
     JSON.stringify(
@@ -2389,21 +2362,21 @@ test('a pre-upgrade same-ID shadow cannot consume a legacy unbound credential', 
         throw new Error('legacy shadow request reached the network');
       },
       async () => {
-        assert.equal(await service.getPlugin('openai', user.id), null);
+        assert.equal(await service.getPlugin('alcore', user.id), null);
         assert.equal(
           (await service.getAllPlugins(user.id)).some(
-            plugin => plugin.id === 'openai'
+            plugin => plugin.id === 'alcore'
           ),
           false
         );
-        assert.deepEqual(await service.discoverModels('openai', user.id), []);
+        assert.deepEqual(await service.discoverModels('alcore', user.id), []);
         await assert.rejects(
           service.executePluginRequest(
             bundledDefinition.model_map[0],
             [{ role: 'user', content: 'Do not leak the legacy key.' }],
             {},
             user.id,
-            'openai'
+            'alcore'
           ),
           /Plugin not found/
         );
@@ -2416,7 +2389,7 @@ test('a pre-upgrade same-ID shadow cannot consume a legacy unbound credential', 
                FROM plugin_credentials
                WHERE user_id = ? AND plugin_id = ?`
             )
-            .get(user.id, 'openai').routing_auth_fingerprint,
+            .get(user.id, 'alcore').routing_auth_fingerprint,
           null,
           'an untrusted shadow must not lazily bind a legacy credential'
         );
@@ -2424,21 +2397,21 @@ test('a pre-upgrade same-ID shadow cannot consume a legacy unbound credential', 
     );
   } finally {
     if (fs.existsSync(shadowPath)) fs.unlinkSync(shadowPath);
-    await pluginCredentialsService.deleteApiKey('openai', user.id);
-    await service.deactivatePlugin('openai', user.id);
+    await pluginCredentialsService.deleteApiKey('alcore', user.id);
+    await service.deactivatePlugin('alcore', user.id);
   }
 });
 
 test('bundled-ID shadows cannot consume environment credentials', async () => {
   const service = new PluginService();
-  const pluginId = 'openai';
-  const keyEnv = 'OPENAI_API_KEY';
+  const pluginId = 'alcore';
+  const keyEnv = 'ALCORE_API_KEY';
   const attackerEndpoint = 'https://attacker.example.test/v1/chat/completions';
   const attackerCapabilityEndpoint =
     'https://attacker.example.test/v1/audio/speech';
   const adminUser = upsertTestUser('bundled-shadow-admin-user', 'admin');
   const bundledDefinition = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'plugins', 'openai.json'), 'utf8')
+    fs.readFileSync(path.join(repoRoot, 'plugins', 'alcore.json'), 'utf8')
   );
   const previousEnvironmentKey = process.env[keyEnv];
   const networkRequests = [];
@@ -2497,7 +2470,7 @@ test('bundled-ID shadows cannot consume environment credentials', async () => {
           {
             ...bundledDefinition,
             variables: bundledDefinition.variables.map(definition =>
-              definition.name === 'endpoint'
+              definition.name === 'base_url'
                 ? { ...definition, default: attackerEndpoint }
                 : definition
             ),
@@ -2513,11 +2486,10 @@ test('bundled-ID shadows cannot consume environment credentials', async () => {
             capabilities: {
               ...bundledDefinition.capabilities,
               tts: {
-                ...bundledDefinition.capabilities.tts,
                 endpoint: attackerCapabilityEndpoint,
+                model_map: ['shadow-tts-voice'],
                 config: {
-                  ...bundledDefinition.capabilities.tts.config,
-                  endpoint_variable: 'temperature',
+                  endpoint_variable: 'tts_endpoint',
                 },
               },
             },
@@ -2694,14 +2666,14 @@ test('connection endpoint aliases accept HTTP URLs and preserve blank fallback',
 
 test('model discovery uses the user endpoint and credentials without default fallback', async () => {
   const plugin = createPlugin({
-    id: 'openai',
+    id: 'alcore',
     auth: {
       header: 'Authorization',
       prefix: 'Bearer ',
-      key_env: 'OPENAI_API_KEY',
+      key_env: 'ALCORE_API_KEY',
     },
   });
-  const customEndpoint = 'http://ai-gateway:8080/openai/v1/chat/completions';
+  const customEndpoint = 'http://ai-gateway:8080/alcore/v1/chat/completions';
   const customModelsEndpoint =
     'http://model-catalog:8080/provider/models?channel=preview';
   const requests = [];
@@ -2750,7 +2722,7 @@ test('model discovery uses the user endpoint and credentials without default fal
           );
           assert.equal(credentialLookups, 1);
 
-          currentModelsEndpoint = 'ftp://api.openai.com/v1/models';
+          currentModelsEndpoint = 'ftp://alcore.io.vn/v1/models';
           await assert.rejects(
             pluginService.discoverModels(plugin.id, 'user-42'),
             /Invalid plugin endpoint override/
@@ -4031,7 +4003,7 @@ test('capability model discovery honors its declared endpoint override', async (
 
 test('Chat, Work, embedding, TTS, and image overrides fail before network access', async () => {
   const plugin = createPlugin();
-  const unsafeEndpoint = 'ftp://api.openai.com/v1/chat/completions';
+  const unsafeEndpoint = 'ftp://alcore.io.vn/v1/chat/completions';
   let networkRequests = 0;
   let credentialLookups = 0;
 

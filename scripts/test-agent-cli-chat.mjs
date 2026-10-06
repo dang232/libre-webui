@@ -81,8 +81,8 @@ test('every agent CLI passes an explicit model through to its argv', () => {
     '-',
   ]);
   assert.deepEqual(
-    definition('opencode').buildArgs('openai/gpt-5.4').slice(-2),
-    ['-m', 'openai/gpt-5.4']
+    definition('opencode').buildArgs('alcore/test-model').slice(-2),
+    ['-m', 'alcore/test-model']
   );
   assert.deepEqual(definition('pi').buildArgs('provider/model').slice(-2), [
     '--model',
@@ -90,7 +90,7 @@ test('every agent CLI passes an explicit model through to its argv', () => {
   ]);
 });
 
-test('Codex lists Astra and GPT-5.5 alongside the bundled ChatGPT model family', async () => {
+test('Codex lists its fixed ChatGPT model family', async () => {
   const binDir = fs.mkdtempSync(path.join(os.tmpdir(), 'codex-model-list-'));
   const binary = path.join(binDir, 'codex');
   // Listing fixed Codex choices only checks the binary; it must not run it.
@@ -100,15 +100,13 @@ test('Codex lists Astra and GPT-5.5 alongside the bundled ChatGPT model family',
   process.env.PATH = binDir;
   try {
     const models = await agentCliService.listAgentModels();
-    const plugin = JSON.parse(
-      fs.readFileSync(
-        path.join(__dirname, '..', 'plugins', 'codex-oauth.json'),
-        'utf8'
-      )
+    const codexDefinition = AGENT_CLI_DEFINITIONS.find(
+      candidate => candidate.id === 'codex'
     );
+    assert.ok(codexDefinition?.modelOptions?.length);
     assert.deepEqual(
       models.map(model => model.id),
-      ['codex', ...plugin.model_map.map(model => `codex:${model}`)]
+      ['codex', ...codexDefinition.modelOptions.map(model => `codex:${model.id}`)]
     );
     assert.equal(
       models.find(model => model.id === 'codex:gpt-6-astra')?.name,
@@ -198,7 +196,7 @@ test('opencode parser emits completed parts once and surfaces error events', () 
 
   const failed = collect();
   parseOpencodeLine(
-    '{"type":"error","timestamp":1,"error":{"name":"ProviderAuthError","data":{"providerID":"openai","message":"Token refresh failed: 401"}}}',
+    '{"type":"error","timestamp":1,"error":{"name":"ProviderAuthError","data":{"providerID":"alcore","message":"Token refresh failed: 401"}}}',
     failed.queue,
     failed.state
   );
@@ -229,7 +227,7 @@ test('listAgentModels expands CLIs into per-model entries with a shared agentId'
     [
       'if [ "$1" = "models" ]; then',
       '  echo "opencode/big-pickle"',
-      '  echo "openai/gpt-5.4"',
+      '  echo "alcore/test-model"',
       '  echo "not a model line"',
       'fi',
     ].join('\n')
@@ -246,7 +244,7 @@ test('listAgentModels expands CLIs into per-model entries with a shared agentId'
       'claude-code:opus',
       'claude-code:haiku',
       'opencode:opencode/big-pickle',
-      'opencode:openai/gpt-5.4',
+      'opencode:alcore/test-model',
     ]);
     assert.ok(
       models.every(
@@ -257,9 +255,9 @@ test('listAgentModels expands CLIs into per-model entries with a shared agentId'
     // opencode has no CLI-default entry: a model is required.
     assert.ok(!ids.includes('opencode'));
     const discovered = models.find(
-      model => model.id === 'opencode:openai/gpt-5.4'
+      model => model.id === 'opencode:alcore/test-model'
     );
-    assert.equal(discovered.name, 'OpenCode · openai/gpt-5.4');
+    assert.equal(discovered.name, 'OpenCode · alcore/test-model');
   } finally {
     process.env.PATH = previousPath;
     fs.rmSync(binDir, { recursive: true, force: true });

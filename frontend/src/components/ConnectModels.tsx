@@ -18,14 +18,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import {
-  Server,
-  Cloud,
-  Check,
-  PlugZap,
-  ChevronRight,
-  KeyRound,
-} from 'lucide-react';
+import { Server, Check, PlugZap, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { pluginApi } from '@/utils/api';
 import { useAuthStore } from '@/store/authStore';
@@ -42,22 +35,9 @@ const logger = createLogger('components:connect-models');
  * every engine — only the default port and the display name differ.
  */
 const LOCAL_PRESETS = [
-  { id: 'llama-cpp', name: 'llama.cpp', baseUrl: 'http://localhost:8080/v1' },
   { id: 'vllm', name: 'vLLM', baseUrl: 'http://localhost:8000/v1' },
   { id: 'llama-swap', name: 'llama-swap', baseUrl: 'http://localhost:8080/v1' },
   { id: 'lm-studio', name: 'LM Studio', baseUrl: 'http://localhost:1234/v1' },
-  { id: 'mlx-lm', name: 'mlx-lm', baseUrl: 'http://localhost:8080/v1' },
-] as const;
-
-/** Bundled cloud plugins that only need an API key to light up. */
-const CLOUD_PROVIDERS = [
-  { id: 'openai', name: 'OpenAI' },
-  { id: 'anthropic', name: 'Anthropic' },
-  { id: 'groq', name: 'Groq' },
-  { id: 'openrouter', name: 'OpenRouter' },
-  { id: 'gemini', name: 'Google Gemini' },
-  { id: 'mistral', name: 'Mistral' },
-  { id: 'deepseek', name: 'DeepSeek' },
 ] as const;
 
 interface ConnectModelsProps {
@@ -75,9 +55,7 @@ export const ConnectModels: React.FC<ConnectModelsProps> = ({
   const loadModels = useChatStore(state => state.loadModels);
   const isAdmin = user?.role === 'admin' || systemInfo?.requiresAuth === false;
 
-  const [openSection, setOpenSection] = useState<'local' | 'cloud' | null>(
-    null
-  );
+  const [openSection, setOpenSection] = useState<'local' | null>(null);
 
   // Local-server form
   const [preset, setPreset] = useState<(typeof LOCAL_PRESETS)[number]>(
@@ -89,13 +67,6 @@ export const ConnectModels: React.FC<ConnectModelsProps> = ({
   const [probing, setProbing] = useState(false);
   const [probedModels, setProbedModels] = useState<string[] | null>(null);
   const [enablingLocal, setEnablingLocal] = useState(false);
-
-  // Cloud form
-  const [cloudProvider, setCloudProvider] = useState<
-    (typeof CLOUD_PROVIDERS)[number] | null
-  >(null);
-  const [cloudKey, setCloudKey] = useState('');
-  const [savingCloud, setSavingCloud] = useState(false);
 
   const handleProbe = async () => {
     setProbing(true);
@@ -185,33 +156,6 @@ export const ConnectModels: React.FC<ConnectModelsProps> = ({
       toast.error(t('connectModels.local.enableFailed'));
     } finally {
       setEnablingLocal(false);
-    }
-  };
-
-  const handleSaveCloud = async () => {
-    if (!cloudProvider || !cloudKey.trim()) return;
-    setSavingCloud(true);
-    try {
-      const saved = await pluginApi.setApiKey(
-        cloudProvider.id,
-        cloudKey.trim()
-      );
-      if (!saved.success) {
-        toast.error(t('connectModels.cloud.saveFailed'));
-        return;
-      }
-      await pluginApi.activatePlugin(cloudProvider.id);
-      await loadModels({ quiet: true });
-      toast.success(
-        t('connectModels.cloud.connected', { name: cloudProvider.name })
-      );
-      setCloudKey('');
-      onDone?.();
-    } catch (error) {
-      logger.error('Failed to connect cloud provider:', error);
-      toast.error(t('connectModels.cloud.saveFailed'));
-    } finally {
-      setSavingCloud(false);
     }
   };
 
@@ -359,94 +303,6 @@ export const ConnectModels: React.FC<ConnectModelsProps> = ({
                   <p className='text-xs text-red-500'>
                     {t('connectModels.local.noModels')}
                   </p>
-                )}
-              </>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* ------------------------------------------------ Cloud API */}
-      <div className={cardClass}>
-        <button
-          type='button'
-          className='flex w-full items-center gap-3 text-start'
-          onClick={() =>
-            setOpenSection(openSection === 'cloud' ? null : 'cloud')
-          }
-        >
-          <div className='rounded-xl border border-gray-200 bg-gray-50 p-2 dark:border-white/10 dark:bg-white/[0.05]'>
-            <Cloud className='h-5 w-5 text-gray-700 dark:text-dark-700' />
-          </div>
-          <div className='min-w-0 flex-1'>
-            <span className='text-sm font-medium text-gray-900 dark:text-dark-900'>
-              {t('connectModels.cloud.title')}
-            </span>
-            <p className='truncate text-xs text-gray-500 dark:text-dark-500'>
-              {t('connectModels.cloud.subtitle')}
-            </p>
-          </div>
-          <ChevronRight
-            className={cn(
-              'h-4 w-4 text-gray-400 transition-transform',
-              openSection === 'cloud' && 'rotate-90'
-            )}
-          />
-        </button>
-
-        {openSection === 'cloud' && (
-          <div className='mt-4 flex flex-col gap-3'>
-            {!isAdmin ? (
-              <p className='text-xs text-gray-500 dark:text-dark-500'>
-                {t('connectModels.adminOnly')}
-              </p>
-            ) : (
-              <>
-                <div className='flex flex-wrap gap-1.5'>
-                  {CLOUD_PROVIDERS.map(candidate => (
-                    <button
-                      key={candidate.id}
-                      type='button'
-                      onClick={() => setCloudProvider(candidate)}
-                      className={cn(
-                        'rounded-full border px-3 py-1 text-xs transition-colors',
-                        cloudProvider?.id === candidate.id
-                          ? 'border-primary-400 bg-primary-500/10 text-primary-600 dark:text-primary-400'
-                          : 'border-gray-200 text-gray-600 hover:border-gray-300 dark:border-white/10 dark:text-dark-600'
-                      )}
-                    >
-                      {candidate.name}
-                    </button>
-                  ))}
-                </div>
-                {cloudProvider && (
-                  <>
-                    <div className='relative'>
-                      <KeyRound className='absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
-                      <input
-                        className={cn(inputClass, 'ps-9')}
-                        value={cloudKey}
-                        onChange={event => setCloudKey(event.target.value)}
-                        placeholder={t('connectModels.cloud.keyPlaceholder', {
-                          name: cloudProvider.name,
-                        })}
-                        type='password'
-                        autoComplete='off'
-                      />
-                    </div>
-                    <div>
-                      <Button
-                        size='sm'
-                        onClick={() => void handleSaveCloud()}
-                        disabled={savingCloud || !cloudKey.trim()}
-                      >
-                        <Check className='me-1.5 h-4 w-4' />
-                        {savingCloud
-                          ? t('connectModels.cloud.connecting')
-                          : t('connectModels.cloud.connect')}
-                      </Button>
-                    </div>
-                  </>
                 )}
               </>
             )}

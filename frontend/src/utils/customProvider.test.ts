@@ -20,10 +20,10 @@ import test from 'node:test';
 import { customKeyEnv, customProviderId } from './customProvider';
 
 test('slugifies provider names into backend-safe ids', () => {
-  assert.equal(customProviderId('llama.cpp', []), 'llama-cpp');
+  assert.equal(customProviderId('acme.gateway', []), 'acme-gateway');
   assert.equal(customProviderId('LM Studio', []), 'lm-studio');
   assert.equal(customProviderId('vLLM', []), 'vllm');
-  assert.equal(customProviderId('mlx-lm', []), 'mlx-lm');
+  assert.equal(customProviderId('alcore-local', []), 'alcore-local');
   assert.equal(customProviderId('  My__Gateway!! v2  ', []), 'my-gateway-v2');
 });
 
@@ -36,16 +36,19 @@ test('truncates long names and falls back when empty', () => {
 });
 
 test('dedupes collisions with numeric suffixes', () => {
-  assert.equal(customProviderId('llama.cpp', ['llama-cpp']), 'llama-cpp-2');
   assert.equal(
-    customProviderId('llama.cpp', ['llama-cpp', 'llama-cpp-2']),
-    'llama-cpp-3'
+    customProviderId('acme.gateway', ['acme-gateway']),
+    'acme-gateway-2'
+  );
+  assert.equal(
+    customProviderId('acme.gateway', ['acme-gateway', 'acme-gateway-2']),
+    'acme-gateway-3'
   );
   assert.equal(customProviderId('custom', ['custom-api']), 'custom');
 });
 
 test('derives key env names from ids', () => {
-  assert.equal(customKeyEnv('llama-cpp'), 'LLAMA_CPP_API_KEY');
+  assert.equal(customKeyEnv('acme-gateway'), 'ACME_GATEWAY_API_KEY');
   assert.equal(customKeyEnv('my-gateway-2'), 'MY_GATEWAY_2_API_KEY');
   assert.equal(customKeyEnv('custom-api'), 'CUSTOM_API_API_KEY');
 });

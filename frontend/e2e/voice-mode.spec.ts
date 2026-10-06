@@ -25,8 +25,8 @@ test('voice mode opens hands-free conversation and transcribes a manual turn', a
   const mockApi = await mockLibreWebUiApi(page, {
     sttModels: [
       {
-        model: 'gpt-4o-mini-transcribe',
-        plugin: 'openai',
+        model: 'alcore-transcribe',
+        plugin: 'alcore',
         config: { formats: ['webm'], max_audio_bytes: 25 * 1024 * 1024 },
       },
     ],
