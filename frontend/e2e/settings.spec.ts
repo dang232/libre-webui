@@ -961,7 +961,10 @@ test('users can activate providers and save keys and generation overrides withou
 test('theme preference survives refresh and retries a failed save', async ({
   page,
 }) => {
-  await mockLibreWebUiApi(page, {
+  // Three full page loads plus settings round-trips is heavier than a
+  // markup-only spec, especially when batch workers share one dev server.
+  test.slow();
+  const mockApi = await mockLibreWebUiApi(page, {
     preferences: {
       theme: {
         mode: 'light',
@@ -987,15 +990,26 @@ test('theme preference survives refresh and retries a failed save', async ({
   const failedSave = page.waitForResponse(
     response =>
       response.url().endsWith('/api/preferences') &&
-      response.request().method() === 'PUT'
+      response.request().method() === 'PUT' &&
+      response.request().postData()?.includes('"mode":"dark"') === true
   );
   await page.getByRole('button', { name: 'Dark', exact: true }).click();
   await expect(html).toHaveClass(/dark/);
   await expect((await failedSave).status()).toBe(500);
+  await expect
+    .poll(() => mockApi.preferenceUpdateRequests.at(-1)?.theme?.mode)
+    .toBe('dark');
 
+  const retriedSave = page.waitForResponse(
+    response =>
+      response.url().endsWith('/api/preferences') &&
+      response.request().method() === 'PUT' &&
+      response.request().postData()?.includes('"mode":"dark"') === true
+  );
   await page.reload();
   await expect(page.getByRole('textbox', { name: 'Message...' })).toBeVisible();
   await expect(html).toHaveClass(/dark/);
+  await expect((await retriedSave).status()).toBe(200);
   await expect
     .poll(() =>
       page.evaluate(() => {
@@ -1020,7 +1034,15 @@ test('theme preference survives refresh and retries a failed save', async ({
   await page.getByRole('button', { name: 'Switch to pure black mode' }).click();
   await page.getByRole('button', { name: 'Switch to celestial mode' }).click();
   await page.getByRole('button', { name: 'Switch to light mode' }).click();
-  await successfulSave;
+  await expect((await successfulSave).status()).toBe(200);
+  await expect
+    .poll(
+      () =>
+        mockApi.preferenceUpdateRequests.find(
+          request => request.theme?.mode === 'light'
+        )?.theme?.mode
+    )
+    .toBe('light');
   await expect(html).not.toHaveClass(/dark/);
 
   await page.reload();

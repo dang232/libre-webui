@@ -65,7 +65,10 @@ const stubStorage = {
 
 const { completeCanonicalCallback, rememberHandoffState } =
   await import('./canonicalHandoff.ts');
-const { ALCORE_AUTH_STATE_KEY } = await import('@/components/AlcoreAuthNotice');
+// The key lives in this import-free leaf; importing it via the sign-in
+// panel drags in react-hot-toast/goober, which needs a real DOM at module
+// scope and crashes under plain node:test with a stub document.
+const { ALCORE_AUTH_STATE_KEY } = await import('@/utils/handoffStateKey');
 
 const seedState = (state: string): void => {
   memStore.set(

@@ -660,8 +660,11 @@
         "defaults": {
           "evidence": [
             {
-              "file": "backend/src/services/ollamaService.ts",
-              "patterns": ["modelDefaultsCache", "getModelDefaults"]
+              "file": "docs/02-WORKING_WITH_MODELS.md",
+              "patterns": [
+                "Choose the default model above the catalog",
+                "## Default Vision Model"
+              ]
             }
           ]
         }
@@ -3283,7 +3286,7 @@
     {
       "id": "authentication",
       "title": "Authentication",
-      "uiRoutes": ["/login", "/auth/alcore/callback"],
+      "uiRoutes": ["/login", "/signup", "/register", "/auth/alcore/callback"],
       "documentation": [
         {
           "file": "docs/12-AUTHENTICATION.md",
@@ -3663,6 +3666,18 @@
         {
           "file": "backend/src/routes/auth.ts",
           "mount": "/api/auth",
+          "method": "GET",
+          "path": "/tokenpanel/status"
+        },
+        {
+          "file": "backend/src/routes/auth.ts",
+          "mount": "/api/auth",
+          "method": "GET",
+          "path": "/tokenpanel/provision-status"
+        },
+        {
+          "file": "backend/src/routes/auth.ts",
+          "mount": "/api/auth",
           "method": "POST",
           "path": "/tokenpanel/portal-token"
         },
@@ -3833,6 +3848,12 @@
           "mount": "/api/auth/alcore",
           "method": "POST",
           "path": "/exchange"
+        },
+        {
+          "file": "backend/src/routes/alcoreAuth.ts",
+          "mount": "/api/auth/alcore",
+          "method": "POST",
+          "path": "/claim"
         }
       ],
       "contractSurfaces": {
@@ -4694,8 +4715,11 @@
           ]
         },
         {
-          "file": "docs/27-QWEN3_TTS.md",
-          "patterns": ["text-to-speech", "Qwen3-TTS"]
+          "file": "docs/57-VOICE_MODE.md",
+          "patterns": [
+            "text-to-speech contracts as the composer's dictation",
+            "Spoken replies use your configured text-to-speech"
+          ]
         },
         {
           "file": "docs/57-VOICE_MODE.md",
