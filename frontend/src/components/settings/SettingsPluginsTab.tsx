@@ -51,6 +51,7 @@ import {
   type PluginProviderCatalogEntry,
 } from '@/utils/pluginProviderCatalog';
 import { getPluginConnectionVariableNames } from '@/utils/pluginVariableOverrides';
+import { formatSpendMicros } from '@/utils/usageMicros';
 
 interface SettingsPluginsTabProps {
   plugins: Plugin[];
@@ -692,6 +693,30 @@ function ProviderModelCatalog({
 }: ProviderModelCatalogProps) {
   const { t } = useTranslation();
 
+  const formatContextWindow = (tokens: number): string => {
+    if (tokens >= 1000000) {
+      const millions = tokens / 1000000;
+      return `${Number.isInteger(millions) ? millions : millions.toFixed(1)}M`;
+    }
+    if (tokens >= 1000) {
+      const thousands = tokens / 1000;
+      return `${Number.isInteger(thousands) ? thousands : thousands.toFixed(1)}K`;
+    }
+    return `${tokens}`;
+  };
+
+  const formatModelPrice = (model: PluginProviderCatalogEntry): string => {
+    const pricing = model.details?.pricing;
+    if (!pricing) return '—';
+    const input = pricing.inputMicrosPerMillion ?? 0;
+    const output = pricing.outputMicrosPerMillion ?? 0;
+    if (input === 0 && output === 0) {
+      return t('settings.plugins.modelFree', { defaultValue: 'Free' });
+    }
+    const currency = pricing.currency ?? 'USD';
+    return `${formatSpendMicros(input, currency)} / ${formatSpendMicros(output, currency)}`;
+  };
+
   return (
     <section data-testid='provider-model-catalog' className='mt-5'>
       <div className='mb-3 flex flex-wrap items-center justify-between gap-2'>
@@ -736,7 +761,7 @@ function ProviderModelCatalog({
         </div>
       ) : (
         <div className='max-h-[26rem] overflow-auto rounded-lg border border-gray-200 dark:border-dark-300'>
-          <table className='w-full min-w-[24rem] text-start text-sm'>
+          <table className='w-full min-w-[36rem] text-start text-sm'>
             <thead className='sticky top-0 z-10 bg-gray-50 text-xs uppercase tracking-wide text-gray-500 dark:bg-dark-50 dark:text-gray-400'>
               <tr>
                 <th scope='col' className='px-3 py-2 text-start font-medium'>
@@ -747,6 +772,21 @@ function ProviderModelCatalog({
                 <th scope='col' className='px-3 py-2 text-start font-medium'>
                   {t('settings.plugins.capabilities', {
                     defaultValue: 'Capabilities',
+                  })}
+                </th>
+                <th scope='col' className='px-3 py-2 text-start font-medium'>
+                  {t('settings.plugins.modelContext', {
+                    defaultValue: 'Context',
+                  })}
+                </th>
+                <th scope='col' className='px-3 py-2 text-start font-medium'>
+                  {t('settings.plugins.modelPrice', {
+                    defaultValue: 'Price / 1M',
+                  })}
+                </th>
+                <th scope='col' className='px-3 py-2 text-start font-medium'>
+                  {t('settings.plugins.modelStatus', {
+                    defaultValue: 'Status',
                   })}
                 </th>
               </tr>
@@ -771,6 +811,29 @@ function ProviderModelCatalog({
                         </span>
                       ))}
                     </div>
+                  </td>
+                  <td className='px-3 py-2.5 font-mono text-xs text-gray-900 dark:text-gray-100'>
+                    {model.contextWindow !== undefined
+                      ? formatContextWindow(model.contextWindow)
+                      : '—'}
+                  </td>
+                  <td className='px-3 py-2.5 font-mono text-xs text-gray-900 dark:text-gray-100'>
+                    {formatModelPrice(model)}
+                  </td>
+                  <td className='px-3 py-2.5'>
+                    {model.details?.deprecated === true ? (
+                      <span className='rounded-md bg-red-50 px-2 py-0.5 text-xs text-red-700 dark:bg-red-950/30 dark:text-red-300'>
+                        {t('settings.plugins.modelDeprecated', {
+                          defaultValue: 'Deprecated',
+                        })}
+                      </span>
+                    ) : model.details?.availability ? (
+                      <span className='rounded-md bg-gray-100 px-2 py-0.5 text-xs text-gray-600 dark:bg-dark-200 dark:text-gray-300'>
+                        {model.details.availability}
+                      </span>
+                    ) : (
+                      '—'
+                    )}
                   </td>
                 </tr>
               ))}

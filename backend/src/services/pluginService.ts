@@ -68,9 +68,11 @@ import {
   inferReasoningFromModelId,
   parseDiscoveredCatalog,
   readModelContextMap,
+  readModelDetailsMap,
   readModelReasoningMap,
   serializeDiscoveredCatalog,
   type PluginModelContextMap,
+  type PluginModelDetailsMap,
   type PluginModelReasoningMap,
 } from '../utils/pluginModelCatalog.js';
 import {
@@ -373,6 +375,11 @@ export class PluginService {
     string,
     PluginModelReasoningMap | null
   >();
+  /** Per-model details (capabilities, pricing, status) the listing stated. */
+  private discoveredModelDetailsCache = new Map<
+    string,
+    PluginModelDetailsMap | null
+  >();
   /** Catalogs stored before context windows were captured. */
   private discoveredCatalogIsLegacy = new Map<string, boolean>();
   private discoveredModelsUpdatedAt = new Map<string, number>();
@@ -529,6 +536,7 @@ export class PluginService {
       ...this.discoveredModelsCache.keys(),
       ...this.discoveredModelContextCache.keys(),
       ...this.discoveredModelReasoningCache.keys(),
+      ...this.discoveredModelDetailsCache.keys(),
       ...this.discoveredModelsUpdatedAt.keys(),
       ...this.discoveryAttemptedAt.keys(),
       ...this.inflightDiscovery.keys(),
@@ -573,6 +581,7 @@ export class PluginService {
       this.discoveredModelsCache.delete(key);
       this.discoveredModelContextCache.delete(key);
       this.discoveredModelReasoningCache.delete(key);
+      this.discoveredModelDetailsCache.delete(key);
       this.discoveredCatalogIsLegacy.delete(key);
       this.discoveredModelsUpdatedAt.delete(key);
       this.discoveryAttemptedAt.delete(key);
@@ -789,21 +798,24 @@ export class PluginService {
         this.discoveredModelsCache.set(cacheKey, null);
         this.discoveredModelContextCache.set(cacheKey, null);
         this.discoveredModelReasoningCache.set(cacheKey, null);
+        this.discoveredModelDetailsCache.set(cacheKey, null);
         return undefined;
       }
 
-      const { models, modelContext, modelReasoning, legacy } =
+      const { models, modelContext, modelReasoning, modelDetails, legacy } =
         parseDiscoveredCatalog(row.models_json);
       this.discoveredCatalogIsLegacy.set(cacheKey, legacy === true);
       if (models.length === 0) {
         this.discoveredModelsCache.set(cacheKey, null);
         this.discoveredModelContextCache.set(cacheKey, null);
         this.discoveredModelReasoningCache.set(cacheKey, null);
+        this.discoveredModelDetailsCache.set(cacheKey, null);
         return undefined;
       }
       this.discoveredModelsCache.set(cacheKey, models);
       this.discoveredModelContextCache.set(cacheKey, modelContext ?? null);
       this.discoveredModelReasoningCache.set(cacheKey, modelReasoning ?? null);
+      this.discoveredModelDetailsCache.set(cacheKey, modelDetails ?? null);
       if (typeof row.updated_at === 'number') {
         this.discoveredModelsUpdatedAt.set(cacheKey, row.updated_at);
       }
@@ -817,6 +829,7 @@ export class PluginService {
       this.discoveredModelsCache.set(cacheKey, null);
       this.discoveredModelContextCache.set(cacheKey, null);
       this.discoveredModelReasoningCache.set(cacheKey, null);
+      this.discoveredModelDetailsCache.set(cacheKey, null);
       return undefined;
     }
   }
@@ -826,7 +839,8 @@ export class PluginService {
     models: string[],
     userId?: string,
     modelContext?: PluginModelContextMap,
-    modelReasoning?: PluginModelReasoningMap
+    modelReasoning?: PluginModelReasoningMap,
+    modelDetails?: PluginModelDetailsMap
   ): Promise<void> {
     await this.ensureCacheInvalidation();
     const effectiveUserId = userId || 'default';
@@ -841,12 +855,14 @@ export class PluginService {
           models: uniqueModels,
           modelContext,
           modelReasoning,
+          modelDetails,
         }),
         updated_at: discoveredAt,
       });
       this.discoveredModelsCache.set(cacheKey, uniqueModels);
       this.discoveredModelContextCache.set(cacheKey, modelContext ?? null);
       this.discoveredModelReasoningCache.set(cacheKey, modelReasoning ?? null);
+      this.discoveredModelDetailsCache.set(cacheKey, modelDetails ?? null);
       this.discoveredCatalogIsLegacy.set(cacheKey, false);
       this.discoveredModelsUpdatedAt.set(cacheKey, discoveredAt);
       await publishPluginCacheInvalidation({
@@ -873,6 +889,9 @@ export class PluginService {
     if (userId) {
       const cacheKey = this.discoveredModelsCacheKey(pluginId, userId);
       this.discoveredModelsCache.set(cacheKey, null);
+      this.discoveredModelContextCache.set(cacheKey, null);
+      this.discoveredModelReasoningCache.set(cacheKey, null);
+      this.discoveredModelDetailsCache.set(cacheKey, null);
       this.discoveredModelsUpdatedAt.delete(cacheKey);
       this.discoveryAttemptedAt.delete(cacheKey);
       try {
@@ -896,6 +915,7 @@ export class PluginService {
     for (const key of this.discoveredModelsCache.keys()) {
       if (key.endsWith(`:${pluginId}`)) {
         this.discoveredModelsCache.delete(key);
+        this.discoveredModelDetailsCache.delete(key);
         this.discoveredModelsUpdatedAt.delete(key);
         this.discoveryAttemptedAt.delete(key);
       }
@@ -1007,6 +1027,7 @@ export class PluginService {
     );
     const modelContext = this.discoveredModelContextCache.get(catalogKey);
     const modelReasoning = this.discoveredModelReasoningCache.get(catalogKey);
+    const modelDetails = this.discoveredModelDetailsCache.get(catalogKey);
 
     return {
       ...plugin,
@@ -1014,6 +1035,7 @@ export class PluginService {
       ...(capabilities ? { capabilities } : {}),
       ...(modelContext ? { model_context: { ...modelContext } } : {}),
       ...(modelReasoning ? { model_reasoning: { ...modelReasoning } } : {}),
+      ...(modelDetails ? { model_details: { ...modelDetails } } : {}),
     };
   }
 
@@ -1883,6 +1905,7 @@ export class PluginService {
         // the only way the application can say how full a conversation is.
         const modelContext = readModelContextMap(entries);
         const modelReasoning = readModelReasoningMap(entries);
+        const modelDetails = readModelDetailsMap(entries);
 
         if (models.length > 0) {
           logger.debug(
@@ -1912,7 +1935,8 @@ export class PluginService {
             models,
             userId,
             modelContext,
-            modelReasoning
+            modelReasoning,
+            modelDetails
           );
           const stored =
             (await this.getDiscoveredModels(pluginId, userId)) || models;

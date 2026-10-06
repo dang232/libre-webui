@@ -894,7 +894,9 @@
         "embedding": "嵌入",
         "image": "图像",
         "speech": "语音",
-        "transcription": "转录"
+        "transcription": "转录",
+        "tools": "Tools",
+        "json": "JSON"
       },
       "exportPlugin": "导出插件",
       "deletePlugin": "删除插件",
@@ -911,7 +913,12 @@
         "removeFailed": "移除 API 密钥失败",
         "enterKey": "请输入 API 密钥"
       },
-      "variables": "Variables"
+      "variables": "Variables",
+      "modelContext": "Context",
+      "modelPrice": "Price / 1M",
+      "modelStatus": "Status",
+      "modelFree": "Free",
+      "modelDeprecated": "Deprecated"
     },
     "generation": {
       "title": "生成选项",

@@ -894,7 +894,9 @@
         "embedding": "Embedding",
         "image": "Imagem",
         "speech": "Fala",
-        "transcription": "Transcrição"
+        "transcription": "Transcrição",
+        "tools": "Tools",
+        "json": "JSON"
       },
       "exportPlugin": "Exportar plugin",
       "deletePlugin": "Excluir plugin",
@@ -911,7 +913,12 @@
         "removeFailed": "Falha ao remover chave de API",
         "enterKey": "Por favor, digite uma chave de API"
       },
-      "variables": "Variables"
+      "variables": "Variables",
+      "modelContext": "Context",
+      "modelPrice": "Price / 1M",
+      "modelStatus": "Status",
+      "modelFree": "Free",
+      "modelDeprecated": "Deprecated"
     },
     "generation": {
       "title": "Opções de Geração",

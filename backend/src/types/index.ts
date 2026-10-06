@@ -16,6 +16,7 @@
  */
 
 import type { ChatToolCall } from './tools.js';
+import type { PluginModelDetailsMap } from '../utils/pluginModelCatalog.js';
 
 export interface GenerationStatistics {
   total_duration?: number; // Total time in nanoseconds
@@ -895,6 +896,12 @@ export interface Plugin {
    * places it in a known family. Absent means unknown, never "no".
    */
   model_reasoning?: Record<string, boolean>;
+  /**
+   * Per-model details the listing stated (capabilities, pricing, status).
+   * Absent for models that report nothing, which is not the same as a
+   * model without capabilities.
+   */
+  model_details?: PluginModelDetailsMap;
   capabilities?: PluginCapabilities; // Multi-capability support
   variables?: PluginVariableDefinition[];
   active?: boolean;

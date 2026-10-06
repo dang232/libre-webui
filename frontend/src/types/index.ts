@@ -700,6 +700,21 @@ export type PluginCapabilities = Partial<
   Record<PluginCapabilityType, PluginCapability>
 >;
 
+export interface PluginModelPricing {
+  readonly currency?: string;
+  readonly inputMicrosPerMillion?: number;
+  readonly outputMicrosPerMillion?: number;
+}
+
+export interface PluginModelDetails {
+  readonly tools?: boolean;
+  readonly jsonMode?: boolean;
+  readonly structuredOutput?: boolean;
+  readonly availability?: string;
+  readonly deprecated?: boolean;
+  readonly pricing?: PluginModelPricing;
+}
+
 export interface Plugin {
   id: string;
   name: string;
@@ -714,6 +729,8 @@ export interface Plugin {
   model_context?: Record<string, number>;
   /** Whether each model reasons, where that is knowable; absent is unknown. */
   model_reasoning?: Record<string, boolean>;
+  /** Per-model details the listing stated; absent is unknown, never "no". */
+  model_details?: Record<string, PluginModelDetails>;
   capabilities?: PluginCapabilities;
   variables?: PluginVariableDefinition[];
   active?: boolean;

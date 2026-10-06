@@ -894,7 +894,9 @@
         "embedding": "Embedding",
         "image": "Gambar",
         "speech": "Suara",
-        "transcription": "Transkripsi"
+        "transcription": "Transkripsi",
+        "tools": "Tools",
+        "json": "JSON"
       },
       "exportPlugin": "Ekspor plugin",
       "deletePlugin": "Hapus plugin",
@@ -911,7 +913,12 @@
         "removeFailed": "Gagal menghapus API key",
         "enterKey": "Silakan masukkan API key"
       },
-      "variables": "Variables"
+      "variables": "Variables",
+      "modelContext": "Context",
+      "modelPrice": "Price / 1M",
+      "modelStatus": "Status",
+      "modelFree": "Free",
+      "modelDeprecated": "Deprecated"
     },
     "generation": {
       "title": "Opsi Pembuatan",

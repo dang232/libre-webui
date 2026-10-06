@@ -894,7 +894,9 @@
         "embedding": "エンベディング",
         "image": "画像",
         "speech": "音声合成",
-        "transcription": "文字起こし"
+        "transcription": "文字起こし",
+        "tools": "Tools",
+        "json": "JSON"
       },
       "exportPlugin": "プラグインをエクスポート",
       "deletePlugin": "プラグインを削除",
@@ -911,7 +913,12 @@
         "removeFailed": "APIキーの削除に失敗しました",
         "enterKey": "APIキーを入力してください"
       },
-      "variables": "Variables"
+      "variables": "Variables",
+      "modelContext": "Context",
+      "modelPrice": "Price / 1M",
+      "modelStatus": "Status",
+      "modelFree": "Free",
+      "modelDeprecated": "Deprecated"
     },
     "generation": {
       "title": "生成オプション",

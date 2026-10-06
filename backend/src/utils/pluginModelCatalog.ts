@@ -84,6 +84,31 @@ export type PluginModelContextMap = Record<string, number>;
 /** Reasoning support by model id, for the models where it is knowable. */
 export type PluginModelReasoningMap = Record<string, boolean>;
 
+/** Per-million-token price in micro-currency units, as providers report it. */
+export interface PluginModelPricing {
+  currency?: string;
+  inputMicrosPerMillion?: number;
+  outputMicrosPerMillion?: number;
+}
+
+/**
+ * What a provider's listing says about one model beyond its identifier.
+ * Every field is present only when the provider stated it: absent means
+ * unknown, never "no" — except an explicit boolean `false`, which is the
+ * provider's own denial and is kept as such.
+ */
+export interface PluginModelDetails {
+  tools?: boolean;
+  jsonMode?: boolean;
+  structuredOutput?: boolean;
+  availability?: string;
+  deprecated?: boolean;
+  pricing?: PluginModelPricing;
+}
+
+/** Per-model details by model id, for the models that report any. */
+export type PluginModelDetailsMap = Record<string, PluginModelDetails>;
+
 /**
  * Whether one listing entry says its model can reason. OpenRouter publishes
  * `supported_parameters` for every model, so on entries that carry the array
@@ -185,10 +210,137 @@ export function readModelContextMap(
   return contexts;
 }
 
+const asNonEmptyString = (value: unknown): string | undefined =>
+  typeof value === 'string' && value.length > 0 ? value : undefined;
+
+const asNonNegativeNumber = (value: unknown): number | undefined =>
+  typeof value === 'number' && Number.isFinite(value) && value >= 0
+    ? value
+    : undefined;
+
+/**
+ * Pricing block shared by the listing and stored forms. Listings use
+ * snake_case keys, the persisted catalog the camelCase normalization —
+ * both spellings are accepted, the listing's winning on conflict.
+ */
+function readModelPricing(value: unknown): PluginModelPricing | undefined {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return undefined;
+  }
+  const record = value as Record<string, unknown>;
+  const currency = asNonEmptyString(record.currency);
+  const inputMicros = asNonNegativeNumber(
+    record.input_micros_per_million ?? record.inputMicrosPerMillion
+  );
+  const outputMicros = asNonNegativeNumber(
+    record.output_micros_per_million ?? record.outputMicrosPerMillion
+  );
+  const parsed: PluginModelPricing = {
+    ...(currency !== undefined ? { currency } : {}),
+    ...(inputMicros !== undefined
+      ? { inputMicrosPerMillion: inputMicros }
+      : {}),
+    ...(outputMicros !== undefined
+      ? { outputMicrosPerMillion: outputMicros }
+      : {}),
+  };
+  return Object.keys(parsed).length > 0 ? parsed : undefined;
+}
+
+/**
+ * The per-model details of one listing entry. Besides the OpenAI-style
+ * `supported_parameters` array, some providers (Alcore included) publish
+ * capabilities as an object (`{ tools: true, json_mode: true, ... }`);
+ * only explicit booleans are recorded, so an absent key stays unknown.
+ * Pricing, availability, and deprecation travel verbatim when present.
+ */
+export function readModelDetails(
+  entry: Record<string, unknown> | undefined
+): PluginModelDetails | undefined {
+  if (!entry) return undefined;
+  const details: PluginModelDetails = {};
+
+  const capabilities = entry.capabilities;
+  if (
+    capabilities &&
+    typeof capabilities === 'object' &&
+    !Array.isArray(capabilities)
+  ) {
+    const record = capabilities as Record<string, unknown>;
+    for (const [source, target] of [
+      ['tools', 'tools'],
+      ['json_mode', 'jsonMode'],
+      ['structured_output', 'structuredOutput'],
+    ] as const) {
+      const flag = record[source];
+      if (typeof flag === 'boolean') {
+        details[target] = flag;
+      }
+    }
+  }
+
+  const availability = asNonEmptyString(entry.availability);
+  if (availability !== undefined) details.availability = availability;
+  if (typeof entry.deprecated === 'boolean') {
+    details.deprecated = entry.deprecated;
+  }
+
+  const pricing = readModelPricing(entry.pricing);
+  if (pricing !== undefined) details.pricing = pricing;
+
+  return Object.keys(details).length > 0 ? details : undefined;
+}
+
+/**
+ * Details in the shape discovery persists them (camelCase keys, no
+ * `capabilities` wrapper). Listings are normalized into this shape by
+ * `readModelDetails`; this validates the stored copy back without
+ * requiring the listing's field names.
+ */
+export function readStoredModelDetails(
+  value: unknown
+): PluginModelDetails | undefined {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return undefined;
+  }
+  const record = value as Record<string, unknown>;
+  const details: PluginModelDetails = {};
+  for (const key of ['tools', 'jsonMode', 'structuredOutput'] as const) {
+    const flag = record[key];
+    if (typeof flag === 'boolean') details[key] = flag;
+  }
+  const availability = asNonEmptyString(record.availability);
+  if (availability !== undefined) details.availability = availability;
+  if (typeof record.deprecated === 'boolean') {
+    details.deprecated = record.deprecated;
+  }
+  const pricing = readModelPricing(record.pricing);
+  if (pricing !== undefined) details.pricing = pricing;
+  return Object.keys(details).length > 0 ? details : undefined;
+}
+
+export function readModelDetailsMap(
+  entries: readonly unknown[]
+): PluginModelDetailsMap {
+  const details: PluginModelDetailsMap = {};
+
+  for (const entry of entries) {
+    if (!entry || typeof entry !== 'object') continue;
+    const record = entry as Record<string, unknown>;
+    const id = record.id;
+    if (typeof id !== 'string' || id.length === 0) continue;
+    const parsed = readModelDetails(record);
+    if (parsed !== undefined) details[id] = parsed;
+  }
+
+  return details;
+}
+
 export interface DiscoveredPluginCatalog {
   models: string[];
   modelContext?: PluginModelContextMap;
   modelReasoning?: PluginModelReasoningMap;
+  modelDetails?: PluginModelDetailsMap;
   /**
    * Whether the catalog was written before context windows were captured. Such
    * a catalog cannot be told apart from a provider that simply publishes none,
@@ -213,6 +365,7 @@ export function serializeDiscoveredCatalog(
     models: catalog.models,
     context: catalog.modelContext ?? {},
     reasoning: catalog.modelReasoning ?? {},
+    details: catalog.modelDetails ?? {},
   });
 }
 
@@ -270,10 +423,23 @@ export function parseDiscoveredCatalog(
     }
   }
 
+  const stored =
+    record.details && typeof record.details === 'object'
+      ? (record.details as Record<string, unknown>)
+      : undefined;
+  const modelDetails: PluginModelDetailsMap = {};
+  if (stored) {
+    for (const [model, entry] of Object.entries(stored)) {
+      const parsed = readStoredModelDetails(entry);
+      if (parsed !== undefined) modelDetails[model] = parsed;
+    }
+  }
+
   return {
     models,
     ...(Object.keys(modelContext).length > 0 ? { modelContext } : {}),
     ...(Object.keys(modelReasoning).length > 0 ? { modelReasoning } : {}),
+    ...(Object.keys(modelDetails).length > 0 ? { modelDetails } : {}),
     ...('reasoning' in record ? {} : { legacy: true }),
   };
 }

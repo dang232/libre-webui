@@ -894,7 +894,9 @@
         "embedding": "Embedding",
         "image": "Hình ảnh",
         "speech": "Giọng nói",
-        "transcription": "Chuyển ngữ"
+        "transcription": "Chuyển ngữ",
+        "tools": "Công cụ",
+        "json": "JSON"
       },
       "exportPlugin": "Xuất plugin",
       "deletePlugin": "Xóa plugin",
@@ -911,7 +913,12 @@
         "removeFailed": "Không thể xóa khóa API",
         "enterKey": "Vui lòng nhập khóa API"
       },
-      "variables": "Variables"
+      "variables": "Variables",
+      "modelContext": "Ngữ cảnh",
+      "modelPrice": "Giá / 1M",
+      "modelStatus": "Trạng thái",
+      "modelFree": "Miễn phí",
+      "modelDeprecated": "Ngừng hỗ trợ"
     },
     "generation": {
       "title": "Tùy chọn tạo nội dung",

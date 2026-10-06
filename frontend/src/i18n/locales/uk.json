@@ -894,7 +894,9 @@
         "embedding": "Вбудовування",
         "image": "Зображення",
         "speech": "Мовлення",
-        "transcription": "Транскрипція"
+        "transcription": "Транскрипція",
+        "tools": "Tools",
+        "json": "JSON"
       },
       "exportPlugin": "Експортувати плагін",
       "deletePlugin": "Видалити плагін",
@@ -911,7 +913,12 @@
         "removeFailed": "Не вдалося видалити API-ключ",
         "enterKey": "Введіть API-ключ"
       },
-      "variables": "Variables"
+      "variables": "Variables",
+      "modelContext": "Context",
+      "modelPrice": "Price / 1M",
+      "modelStatus": "Status",
+      "modelFree": "Free",
+      "modelDeprecated": "Deprecated"
     },
     "generation": {
       "title": "Параметри генерації",

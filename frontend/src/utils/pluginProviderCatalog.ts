@@ -15,10 +15,17 @@
  * limitations under the License.
  */
 
-import type { Plugin, PluginCapabilityType, PluginType } from '@/types';
+import type {
+  Plugin,
+  PluginCapabilityType,
+  PluginModelDetails,
+  PluginType,
+} from '@/types';
 
 export type PluginModelCapability =
   | 'Chat'
+  | 'Tools'
+  | 'Json'
   | 'Embedding'
   | 'Image'
   | 'Video'
@@ -29,10 +36,14 @@ export type PluginModelCapability =
 export interface PluginProviderCatalogEntry {
   id: string;
   capabilities: PluginModelCapability[];
+  details?: PluginModelDetails;
+  contextWindow?: number;
 }
 
 const CAPABILITY_ORDER: PluginModelCapability[] = [
   'Chat',
+  'Tools',
+  'Json',
   'Image',
   'Video',
   'Audio',
@@ -91,12 +102,31 @@ export function buildPluginProviderCatalog(
     );
   }
 
-  return Array.from(catalog, ([id, capabilities]) => ({
-    id,
-    capabilities: CAPABILITY_ORDER.filter(capability =>
-      capabilities.has(capability)
-    ),
-  }));
+  for (const [id, capabilities] of catalog) {
+    const modelDetails = plugin.model_details?.[id];
+    if (modelDetails?.tools === true) capabilities.add('Tools');
+    if (
+      modelDetails?.structuredOutput === true ||
+      modelDetails?.jsonMode === true
+    ) {
+      capabilities.add('Json');
+    }
+  }
+
+  return Array.from(catalog, ([id, capabilities]) => {
+    const modelDetails = plugin.model_details?.[id];
+    const contextWindow = plugin.model_context?.[id];
+    return {
+      id,
+      capabilities: CAPABILITY_ORDER.filter(capability =>
+        capabilities.has(capability)
+      ),
+      ...(modelDetails !== undefined ? { details: modelDetails } : {}),
+      ...(typeof contextWindow === 'number' && contextWindow > 0
+        ? { contextWindow }
+        : {}),
+    };
+  });
 }
 
 export function pluginSupportsModelRefresh(plugin: Plugin): boolean {

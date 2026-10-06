@@ -38,6 +38,7 @@ import {
   readModelContextLength,
   readModelReasoningSupport,
   type PluginModelContextMap,
+  type PluginModelDetailsMap,
   type PluginModelReasoningMap,
 } from '../utils/pluginModelCatalog.js';
 import pluginService, {
@@ -149,6 +150,8 @@ const asStringList = (value: unknown): string[] | undefined => {
  * - `capabilities` containing `completion` / `vision` / `tools` /
  *   `thinking` / `embedding(s)` -> `chat` / `vision` / `tools` /
  *   `reasoning` / `embeddings`
+ * - `capabilities` as an object with boolean `tools` / `json_mode` /
+ *   `structured_output` -> `tools` / `structuredOutput`
  * - `reasoning: true` -> `reasoning`
  *
  * A present `supported_parameters` array is an explicit provider
@@ -230,18 +233,35 @@ export const normalizeListingEntry = (
     }
   }
 
+  // Object-form capabilities (`{ tools: true, json_mode: true }`, as
+  // Alcore publishes) are explicit provider statements: a present
+  // boolean is recorded, an absent key stays `'unknown'`.
+  const capabilityFlags = asRecord(record.capabilities);
+  if (capabilityFlags !== null && !Array.isArray(record.capabilities)) {
+    const flag = (key: string): boolean | undefined => {
+      const value = capabilityFlags[key];
+      return typeof value === 'boolean' ? value : undefined;
+    };
+    const tools = flag('tools');
+    if (tools !== undefined) capabilities.tools = tools;
+    const structured = flag('structured_output') ?? flag('json_mode');
+    if (structured !== undefined) capabilities.structuredOutput = structured;
+  }
+
   return { id: rawId, capabilities, limits };
 };
 
 /**
  * Normalize a stored catalog: identifiers plus the context/reasoning
- * maps discovery persists. Everything the maps do not cover stays
- * `'unknown'` — membership in a model list is not a capability claim.
+ * maps and per-model details discovery persists. Everything the maps do
+ * not cover stays `'unknown'` — membership in a model list is not a
+ * capability claim.
  */
 export const normalizeStoredCatalog = (
   modelIds: readonly unknown[],
   contextMap?: PluginModelContextMap,
-  reasoningMap?: PluginModelReasoningMap
+  reasoningMap?: PluginModelReasoningMap,
+  detailsMap?: PluginModelDetailsMap
 ): NormalizedProviderModel[] => {
   const seen = new Set<string>();
   const normalized: NormalizedProviderModel[] = [];
@@ -264,6 +284,14 @@ export const normalizeStoredCatalog = (
     const reasoning = reasoningMap?.[candidate];
     if (typeof reasoning === 'boolean') {
       capabilities.reasoning = reasoning;
+    }
+    const details = detailsMap?.[candidate];
+    if (typeof details?.tools === 'boolean') {
+      capabilities.tools = details.tools;
+    }
+    const structured = details?.structuredOutput ?? details?.jsonMode;
+    if (typeof structured === 'boolean') {
+      capabilities.structuredOutput = structured;
     }
     normalized.push({ id: candidate, capabilities, limits });
   }

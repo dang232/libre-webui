@@ -894,7 +894,9 @@
         "embedding": "การฝังข้อมูล",
         "image": "รูปภาพ",
         "speech": "เสียงพูด",
-        "transcription": "การถอดเสียง"
+        "transcription": "การถอดเสียง",
+        "tools": "Tools",
+        "json": "JSON"
       },
       "exportPlugin": "ส่งออกปลั๊กอิน",
       "deletePlugin": "ลบปลั๊กอิน",
@@ -911,7 +913,12 @@
         "removeFailed": "ไม่สามารถลบ API Key",
         "enterKey": "กรุณาป้อน API Key"
       },
-      "variables": "Variables"
+      "variables": "Variables",
+      "modelContext": "Context",
+      "modelPrice": "Price / 1M",
+      "modelStatus": "Status",
+      "modelFree": "Free",
+      "modelDeprecated": "Deprecated"
     },
     "generation": {
       "title": "ตัวเลือกการสร้าง",

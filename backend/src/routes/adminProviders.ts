@@ -595,7 +595,8 @@ router.get(
       const models = normalizeStoredCatalog(
         plugin.model_map,
         plugin.model_context,
-        plugin.model_reasoning
+        plugin.model_reasoning,
+        plugin.model_details
       );
       res.json({
         success: true,
@@ -656,7 +657,8 @@ router.post(
       const models = normalizeStoredCatalog(
         afterIds,
         after?.model_context,
-        after?.model_reasoning
+        after?.model_reasoning,
+        after?.model_details
       );
       logger.debug(
         'Provider model sync for %s finished with outcome %s (%d models)',

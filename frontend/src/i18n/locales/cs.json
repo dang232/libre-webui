@@ -894,7 +894,9 @@
         "embedding": "Embedding",
         "image": "Obrázek",
         "speech": "Řeč",
-        "transcription": "Přepis"
+        "transcription": "Přepis",
+        "tools": "Tools",
+        "json": "JSON"
       },
       "exportPlugin": "Exportovat zásuvný modul",
       "deletePlugin": "Smazat zásuvný modul",
@@ -911,7 +913,12 @@
         "removeFailed": "Nepodařilo se odstranit API klíč",
         "enterKey": "Zadejte API klíč"
       },
-      "variables": "Variables"
+      "variables": "Variables",
+      "modelContext": "Context",
+      "modelPrice": "Price / 1M",
+      "modelStatus": "Status",
+      "modelFree": "Free",
+      "modelDeprecated": "Deprecated"
     },
     "generation": {
       "title": "Možnosti generování",

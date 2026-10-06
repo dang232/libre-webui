@@ -98,6 +98,62 @@ test('keeps declared non-chat capability models out of the chat list', () => {
   assert.deepEqual(getPluginChatModels(plugin), ['chat-model']);
 });
 
+test('attaches discovered tools and structured-output badges', () => {
+  assert.deepEqual(
+    buildPluginProviderCatalog({
+      ...plugin,
+      model_map: ['chat-model'],
+      capabilities: {
+        completion: {
+          endpoint: 'https://provider.example/v1/chat/completions',
+          model_map: ['chat-model'],
+        },
+      },
+      model_details: {
+        'chat-model': {
+          tools: true,
+          jsonMode: true,
+          structuredOutput: true,
+          availability: 'preview',
+          deprecated: false,
+          pricing: {
+            currency: 'USD',
+            inputMicrosPerMillion: 0,
+            outputMicrosPerMillion: 0,
+          },
+        },
+      },
+      model_context: { 'chat-model': 2000000 },
+    }),
+    [
+      {
+        id: 'chat-model',
+        capabilities: ['Chat', 'Tools', 'Json'],
+        details: {
+          tools: true,
+          jsonMode: true,
+          structuredOutput: true,
+          availability: 'preview',
+          deprecated: false,
+          pricing: {
+            currency: 'USD',
+            inputMicrosPerMillion: 0,
+            outputMicrosPerMillion: 0,
+          },
+        },
+        contextWindow: 2000000,
+      },
+    ]
+  );
+});
+
+test('leaves models without discovered details badge-free', () => {
+  assert.deepEqual(buildPluginProviderCatalog(plugin)[1], {
+    id: 'chat-model',
+    capabilities: ['Chat'],
+  });
+});
+
 test('drops discovered non-chat model families from the chat list', () => {
   assert.deepEqual(
     getPluginChatModels({

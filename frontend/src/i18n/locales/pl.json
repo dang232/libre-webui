@@ -894,7 +894,9 @@
         "embedding": "Embedding",
         "image": "Obraz",
         "speech": "Mowa",
-        "transcription": "Transkrypcja"
+        "transcription": "Transkrypcja",
+        "tools": "Tools",
+        "json": "JSON"
       },
       "exportPlugin": "Eksportuj wtyczkę",
       "deletePlugin": "Usuń wtyczkę",
@@ -911,7 +913,12 @@
         "removeFailed": "Nie udało się usunąć klucza API",
         "enterKey": "Wprowadź klucz API"
       },
-      "variables": "Variables"
+      "variables": "Variables",
+      "modelContext": "Context",
+      "modelPrice": "Price / 1M",
+      "modelStatus": "Status",
+      "modelFree": "Free",
+      "modelDeprecated": "Deprecated"
     },
     "generation": {
       "title": "Opcje generowania",

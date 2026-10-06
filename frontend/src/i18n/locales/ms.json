@@ -894,7 +894,9 @@
         "embedding": "Pembenaman",
         "image": "Imej",
         "speech": "Ucapan",
-        "transcription": "Transkripsi"
+        "transcription": "Transkripsi",
+        "tools": "Tools",
+        "json": "JSON"
       },
       "exportPlugin": "Eksport plugin",
       "deletePlugin": "Padam plugin",
@@ -911,7 +913,12 @@
         "removeFailed": "Gagal membuang kunci API",
         "enterKey": "Sila masukkan kunci API"
       },
-      "variables": "Variables"
+      "variables": "Variables",
+      "modelContext": "Context",
+      "modelPrice": "Price / 1M",
+      "modelStatus": "Status",
+      "modelFree": "Free",
+      "modelDeprecated": "Deprecated"
     },
     "generation": {
       "title": "Pilihan Penjanaan",
