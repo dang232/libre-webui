@@ -100,6 +100,39 @@ const recordsQuery = (query?: UsageRecordsQuery): string => {
 };
 
 /**
+ * The BFF forwards the upstream JSON verbatim, so list endpoints arrive
+ * wrapped (`{days: [...]}` / `{items: [...]}`) while this client promises
+ * bare arrays. Unwrap the known envelopes here, at the typed boundary:
+ * unknown shapes pass through untouched so the panel's own checks still
+ * fail loud instead of rendering a silent empty list.
+ */
+const pickList = <T>(
+  value: unknown,
+  keys: readonly string[]
+): T[] | undefined => {
+  if (Array.isArray(value)) return value as T[];
+  if (value !== null && typeof value === 'object') {
+    for (const key of keys) {
+      const nested = (value as Record<string, unknown>)[key];
+      if (Array.isArray(nested)) return nested as T[];
+    }
+  }
+  return undefined;
+};
+
+const withUnwrappedList = <T>(
+  body: ApiResponse<unknown>,
+  keys: readonly string[]
+): ApiResponse<T[]> => {
+  if (!body || typeof body !== 'object' || body.success !== true)
+    return body as ApiResponse<T[]>;
+  const list = pickList<T>(body.data, keys);
+  return list === undefined
+    ? (body as ApiResponse<T[]>)
+    : { ...body, data: list };
+};
+
+/**
  * Usage + requests via the Libre BFF (`GET /api/tokenpanel/usage/*`).
  * The panel sends no window by default, so the server default window
  * applies identically on both sides of the BFF (no silent widening).
@@ -113,11 +146,15 @@ export const tokenpanelUsageApi = {
   daily(query?: UsageWindowQuery): Promise<ApiResponse<UsageDayShape[]>> {
     return api
       .get(`/tokenpanel/usage/daily${windowQuery(query)}`)
-      .then(response => response.data);
+      .then(response =>
+        withUnwrappedList<UsageDayShape>(response.data, ['days'])
+      );
   },
   records(query?: UsageRecordsQuery): Promise<ApiResponse<UsageRecordShape[]>> {
     return api
       .get(`/tokenpanel/usage/records${recordsQuery(query)}`)
-      .then(response => response.data);
+      .then(response =>
+        withUnwrappedList<UsageRecordShape>(response.data, ['items'])
+      );
   },
 };

@@ -209,17 +209,28 @@ const resolveIdempotencyKey = (provided: unknown): string => {
   return resolved;
 };
 
-/** Active subscription + plan — passthrough of `GET /me/subscription`. */
-export const getSubscription = (
+/** Active subscription + plan — passthrough of `GET /me/subscription`.
+ * A missing subscription is an expected state, not a failure: upstream
+ * answers 404 not_found, which maps to nulls so the panel renders its
+ * empty state instead of failing the whole Account section. */
+export const getSubscription = async (
   userId: string,
   sessionToken?: string
-): Promise<unknown> =>
-  forwardGet(
-    userId,
-    '/public/customers/me/subscription',
-    'subscription',
-    sessionToken
-  );
+): Promise<unknown> => {
+  try {
+    return await forwardGet(
+      userId,
+      '/public/customers/me/subscription',
+      'subscription',
+      sessionToken
+    );
+  } catch (error) {
+    if (error instanceof TokenpanelAccountError && error.status === 404) {
+      return { subscription: null, plan: null };
+    }
+    throw error;
+  }
+};
 
 /**
  * Buy a plan from existing balance — forwards `{planId, billing?}` only.

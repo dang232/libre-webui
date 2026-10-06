@@ -193,6 +193,22 @@ test('subscription subscribe round-trips: write then re-read equal', async () =>
   assert.equal(plans.items[0].price.amountMicros, PLAN_PRICE);
 });
 
+test('missing subscription reads as nulls instead of failing the section', async () => {
+  const created = await signup('account_nosub', 'nosub@example.test');
+  const stub = makeUpstreamStub();
+  stubFetch((url, init) => {
+    if (url.endsWith('/public/customers/me/subscription')) {
+      return jsonResponse(404, { error: 'not_found' });
+    }
+    return stub.responder(url, init);
+  });
+  calls.length = 0;
+
+  const result = await account.getSubscription(created.user.id);
+  assert.equal(result.subscription, null);
+  assert.equal(result.plan, null);
+});
+
 test('budget update round-trips: write then re-read equal, micros exact', async () => {
   const created = await signup('account_budget', 'budget@example.test');
   const stub = makeUpstreamStub();
