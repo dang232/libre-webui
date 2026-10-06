@@ -551,6 +551,17 @@ type MockOptions = {
     avatar?: string | null;
     preferences?: Partial<typeof defaultPreferences>;
   }>;
+  /**
+   * Drive the manual signup flow through email verification: signup answers
+   * with a pending OTP challenge (no token) and POST /auth/verify-otp
+   * completes it. `code` is accepted, `expiredCode` reports an expired code,
+   * anything else is rejected as invalid.
+   */
+  signupOtp?: {
+    code?: string;
+    expiredCode?: string;
+    expiresInSeconds?: number;
+  };
   sessions?: MockSession[];
   folders?: MockFolder[];
   models?: MockModel[];
@@ -780,6 +791,12 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
   };
   const authRole = options.authRole ?? 'admin';
   const authUsers = options.authUsers ?? [];
+  const signupOtp = options.signupOtp;
+  const otpCode = signupOtp?.code ?? '123456';
+  const otpExpiredCode = signupOtp?.expiredCode ?? '000000';
+  const otpExpiresInSeconds = signupOtp?.expiresInSeconds ?? 300;
+  let pendingOtpSignup: { username: string; email: string | null } | null =
+    null;
   const sessions = structuredClone(options.sessions ?? []);
   const folders = structuredClone(options.folders ?? []);
   let models = options.models ?? defaultModels;
@@ -1822,6 +1839,18 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
           username: string;
           email?: string;
         };
+        if (signupOtp) {
+          pendingOtpSignup = {
+            username: credentials.username,
+            email: credentials.email || null,
+          };
+          await fulfillJson(route, {
+            otpRequired: true,
+            email: credentials.email || '',
+            expiresInSeconds: otpExpiresInSeconds,
+          });
+          return;
+        }
         const approvalRequired = systemInfo.userCount > 0;
         const user = {
           id: `signup-${credentials.username}`,
@@ -1848,6 +1877,76 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
             ? { user, approvalRequired: true, systemInfo }
             : { user, token: 'signup-token', systemInfo }
         );
+        return;
+      }
+
+      if (path === '/auth/verify-otp' && method === 'POST') {
+        const payload = route.request().postDataJSON() as {
+          email?: string;
+          code?: string;
+        };
+        const code = (payload.code || '').trim();
+        if (!signupOtp) {
+          await route.fulfill({
+            status: 400,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              success: false,
+              message: 'Email verification is not required for this account',
+            }),
+          });
+          return;
+        }
+        if (code === otpExpiredCode) {
+          await route.fulfill({
+            status: 410,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              success: false,
+              message: 'Verification code expired',
+            }),
+          });
+          return;
+        }
+        if (code !== otpCode) {
+          await route.fulfill({
+            status: 400,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              success: false,
+              message: 'Invalid verification code',
+            }),
+          });
+          return;
+        }
+        const pending = pendingOtpSignup;
+        const verifiedUsername = pending?.username ?? 'signup-user';
+        const verifiedEmail = pending?.email ?? payload.email ?? null;
+        const verifiedUser = {
+          id: `signup-${verifiedUsername}`,
+          username: verifiedUsername,
+          email: verifiedEmail,
+          role: 'user' as const,
+          status: 'active' as const,
+          avatar: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        authUsers.push({
+          id: verifiedUser.id,
+          username: verifiedUser.username,
+          email: verifiedUser.email,
+          role: verifiedUser.role,
+          status: verifiedUser.status,
+          token: 'signup-token',
+        });
+        managedUsers = [verifiedUser, ...managedUsers];
+        pendingOtpSignup = null;
+        await fulfillJson(route, {
+          user: verifiedUser,
+          token: 'signup-token',
+          systemInfo,
+        });
         return;
       }
 

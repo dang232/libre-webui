@@ -92,6 +92,25 @@ export const isMfaChallenge = (
 ): data is MfaChallengeResponse =>
   !!data && (data as MfaChallengeResponse).mfaRequired === true;
 
+/**
+ * Manual signup asked for email verification: no token yet, the emailed
+ * 6-digit code must be confirmed via verifyOtp first.
+ */
+export interface SignupOtpPendingResponse {
+  otpRequired: true;
+  email: string;
+  /** Seconds before a fresh code can be requested. */
+  expiresInSeconds?: number;
+}
+
+export const isSignupOtpPending = (
+  data: SignupResponse | SignupOtpPendingResponse | undefined
+): data is SignupOtpPendingResponse =>
+  !!data && (data as SignupOtpPendingResponse).otpRequired === true;
+
+/** Manual signup either completes immediately, waits for admin approval, or waits for email verification. */
+export type SignupResult = SignupResponse | SignupOtpPendingResponse;
+
 /** One registered passkey (public metadata only). */
 export interface PasskeyRecord {
   id: string;
@@ -142,7 +161,7 @@ export const authApi = {
     password: string;
     email?: string;
     turnstileToken?: string;
-  }): Promise<ApiResponse<SignupResponse>> => {
+  }): Promise<ApiResponse<SignupResult>> => {
     if (isDemoMode()) {
       return createDemoResponse<LoginResponse>({
         user: {
@@ -167,6 +186,17 @@ export const authApi = {
     }
 
     return api.post('/auth/signup', credentials).then(res => res.data);
+  },
+
+  /**
+   * Confirm a pending manual signup with the emailed 6-digit code.
+   * Resolves to the same login pair as an immediate signup on success.
+   */
+  verifyOtp: (payload: {
+    email: string;
+    code: string;
+  }): Promise<ApiResponse<LoginResponse>> => {
+    return api.post('/auth/verify-otp', payload).then(res => res.data);
   },
 
   logout: (): Promise<ApiResponse<void>> => {

@@ -96,7 +96,22 @@
       "signupFailed": "Échec de l'inscription",
       "tryAgain": "Échec de l'inscription. Veuillez réessayer.",
       "usernameRequired": "Le nom d'utilisateur et le mot de passe sont requis",
-      "passwordMismatch": "Les mots de passe ne correspondent pas"
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "otpTitle": "Check your email",
+      "otpSubtitle": "We sent a 6-digit code to {{email}}.",
+      "otpSubtitleNoEmail": "We sent a 6-digit code to your email address.",
+      "otpCodeLabel": "6-digit code",
+      "otpCodePlaceholder": "123456",
+      "otpVerify": "Verify code",
+      "otpVerifying": "Verifying...",
+      "otpResend": "Resend code",
+      "otpResending": "Sending new code...",
+      "otpResendCooldown": "Resend code in {{seconds}}s",
+      "otpInvalidCode": "That code is not valid. Check and try again.",
+      "otpExpiredCode": "That code has expired. Request a new one below.",
+      "otpSent": "Verification code sent. Check your email.",
+      "otpResent": "A new verification code is on its way.",
+      "otpBackToSignup": "Back to sign up"
     },
     "logout": {
       "button": "Déconnexion",

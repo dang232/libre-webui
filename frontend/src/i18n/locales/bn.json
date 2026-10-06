@@ -96,7 +96,22 @@
       "signupFailed": "সাইন আপ ব্যর্থ",
       "tryAgain": "সাইন আপ ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।",
       "usernameRequired": "ব্যবহারকারীর নাম এবং পাসওয়ার্ড প্রয়োজন",
-      "passwordMismatch": "পাসওয়ার্ড মিলছে না"
+      "passwordMismatch": "পাসওয়ার্ড মিলছে না",
+      "otpTitle": "Check your email",
+      "otpSubtitle": "We sent a 6-digit code to {{email}}.",
+      "otpSubtitleNoEmail": "We sent a 6-digit code to your email address.",
+      "otpCodeLabel": "6-digit code",
+      "otpCodePlaceholder": "123456",
+      "otpVerify": "Verify code",
+      "otpVerifying": "Verifying...",
+      "otpResend": "Resend code",
+      "otpResending": "Sending new code...",
+      "otpResendCooldown": "Resend code in {{seconds}}s",
+      "otpInvalidCode": "That code is not valid. Check and try again.",
+      "otpExpiredCode": "That code has expired. Request a new one below.",
+      "otpSent": "Verification code sent. Check your email.",
+      "otpResent": "A new verification code is on its way.",
+      "otpBackToSignup": "Back to sign up"
     },
     "logout": {
       "button": "লগ আউট",

@@ -96,7 +96,22 @@
       "signupFailed": "Registreringen misslyckades",
       "tryAgain": "Registreringen misslyckades. Försök igen.",
       "usernameRequired": "Användarnamn och lösenord krävs",
-      "passwordMismatch": "Lösenorden matchar inte"
+      "passwordMismatch": "Lösenorden matchar inte",
+      "otpTitle": "Check your email",
+      "otpSubtitle": "We sent a 6-digit code to {{email}}.",
+      "otpSubtitleNoEmail": "We sent a 6-digit code to your email address.",
+      "otpCodeLabel": "6-digit code",
+      "otpCodePlaceholder": "123456",
+      "otpVerify": "Verify code",
+      "otpVerifying": "Verifying...",
+      "otpResend": "Resend code",
+      "otpResending": "Sending new code...",
+      "otpResendCooldown": "Resend code in {{seconds}}s",
+      "otpInvalidCode": "That code is not valid. Check and try again.",
+      "otpExpiredCode": "That code has expired. Request a new one below.",
+      "otpSent": "Verification code sent. Check your email.",
+      "otpResent": "A new verification code is on its way.",
+      "otpBackToSignup": "Back to sign up"
     },
     "logout": {
       "button": "Logga ut",

@@ -362,3 +362,140 @@ test('password login requires and submits a Turnstile token', async ({
     turnstileToken: 'verified-login-token',
   });
 });
+
+test('manual signup verifies the emailed code before signing in', async ({
+  page,
+}) => {
+  await mockLibreWebUiApi(page, {
+    systemInfo: {
+      requiresAuth: true,
+      hasUsers: true,
+      userCount: 1,
+      signupEnabled: true,
+      version: '0.17.0-e2e',
+      turnstile: { enabled: false },
+    },
+    signupOtp: { code: '123456', expiresInSeconds: 60 },
+  });
+
+  await page.goto('/login');
+  await page.getByRole('button', { name: 'Sign up here' }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Create Account' })
+  ).toBeVisible();
+
+  await page.getByLabel('Username').fill('otpuser');
+  await page.getByLabel(/email/i).fill('otpuser@example.test');
+  await page.getByLabel('Password', { exact: true }).fill('Passw0rdBasic');
+  await page.getByLabel('Confirm Password').fill('Passw0rdBasic');
+
+  const signupRequest = page.waitForRequest(request =>
+    request.url().endsWith('/api/auth/signup')
+  );
+  await page.getByRole('button', { name: 'Create Account' }).click();
+  await signupRequest;
+
+  // Pending signup (no token) lands on the OTP step, not in the app.
+  await expect(page.getByTestId('signup-otp-step')).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Check your email' })
+  ).toBeVisible();
+  await expect(page.getByText('otpuser@example.test')).toBeVisible();
+  await expect(page.getByTestId('signup-otp-cooldown')).toContainText(
+    'Resend code in'
+  );
+  await expect(page).toHaveURL(/\/login$/);
+
+  const verifyButton = page.getByRole('button', { name: 'Verify code' });
+  await expect(verifyButton).toBeDisabled();
+  await page.getByTestId('signup-otp-input').fill('123456');
+
+  const verifyRequest = page.waitForRequest(request =>
+    request.url().endsWith('/api/auth/verify-otp')
+  );
+  await verifyButton.click();
+  expect((await verifyRequest).postDataJSON()).toEqual({
+    email: 'otpuser@example.test',
+    code: '123456',
+  });
+
+  // The verified pair completes login exactly like an instant signup.
+  await expect(page.getByTestId('home-page')).toBeVisible();
+  await expect(page).not.toHaveURL(/\/login$/);
+});
+
+test('signup OTP surfaces wrong-code and expired-code errors', async ({
+  page,
+}) => {
+  await mockLibreWebUiApi(page, {
+    systemInfo: {
+      requiresAuth: true,
+      hasUsers: true,
+      userCount: 1,
+      signupEnabled: true,
+      version: '0.17.0-e2e',
+      turnstile: { enabled: false },
+    },
+    signupOtp: {
+      code: '123456',
+      expiredCode: '000000',
+      expiresInSeconds: 120,
+    },
+  });
+
+  await page.goto('/login');
+  await page.getByRole('button', { name: 'Sign up here' }).click();
+  await page.getByLabel('Username').fill('otpuser');
+  await page.getByLabel(/email/i).fill('otpuser@example.test');
+  await page.getByLabel('Password', { exact: true }).fill('Passw0rdBasic');
+  await page.getByLabel('Confirm Password').fill('Passw0rdBasic');
+  await page.getByRole('button', { name: 'Create Account' }).click();
+  await expect(page.getByTestId('signup-otp-step')).toBeVisible();
+
+  await page.getByTestId('signup-otp-input').fill('999999');
+  await page.getByRole('button', { name: 'Verify code' }).click();
+  await expect(page.getByTestId('signup-otp-error')).toContainText('not valid');
+  await expect(page.getByTestId('signup-otp-step')).toBeVisible();
+  await expect(page).toHaveURL(/\/login$/);
+
+  await page.getByTestId('signup-otp-input').fill('000000');
+  await page.getByRole('button', { name: 'Verify code' }).click();
+  await expect(page.getByTestId('signup-otp-error')).toContainText('expired');
+  // An expired code unlocks resending immediately.
+  await expect(page.getByTestId('signup-otp-resend')).toBeVisible();
+});
+
+test('signup OTP resends a fresh code after the cooldown', async ({ page }) => {
+  await mockLibreWebUiApi(page, {
+    systemInfo: {
+      requiresAuth: true,
+      hasUsers: true,
+      userCount: 1,
+      signupEnabled: true,
+      version: '0.17.0-e2e',
+      turnstile: { enabled: false },
+    },
+    signupOtp: { code: '123456', expiresInSeconds: 5 },
+  });
+
+  await page.goto('/login');
+  await page.getByRole('button', { name: 'Sign up here' }).click();
+  await page.getByLabel('Username').fill('otpuser');
+  await page.getByLabel(/email/i).fill('otpuser@example.test');
+  await page.getByLabel('Password', { exact: true }).fill('Passw0rdBasic');
+  await page.getByLabel('Confirm Password').fill('Passw0rdBasic');
+  await page.getByRole('button', { name: 'Create Account' }).click();
+  await expect(page.getByTestId('signup-otp-step')).toBeVisible();
+
+  const resendButton = page.getByTestId('signup-otp-resend');
+  await expect(resendButton).toBeVisible({ timeout: 15000 });
+  const resendRequest = page.waitForRequest(request =>
+    request.url().endsWith('/api/auth/signup')
+  );
+  await resendButton.click();
+  await resendRequest;
+  await expect(
+    page.getByText('A new verification code is on its way.')
+  ).toBeVisible();
+  await expect(page.getByTestId('signup-otp-cooldown')).toBeVisible();
+});
