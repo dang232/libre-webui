@@ -278,6 +278,58 @@ export async function* streamOpenAICompatibleResponse(
   }
 }
 
+/**
+ * Clock for stream timing measurement. Tests inject a fake; production
+ * uses wall-clock time.
+ */
+export interface StreamTimingClock {
+  now(): number;
+}
+
+const systemStreamTimingClock: StreamTimingClock = {
+  now: () => Date.now(),
+};
+
+/**
+ * Attach client-measured wall-clock timings to usage chunks that carry
+ * none. OpenAI-compatible providers report token counts but (outside the
+ * llama.cpp family) no generation timings, which left speed and durations
+ * blank on every streamed provider reply. The measured split mirrors the
+ * non-streaming provider path: request start to first token reads as
+ * prompt time, first token to the usage chunk as generation time.
+ * Server-reported timings always win; chunks that already carry them pass
+ * through untouched.
+ */
+export async function* withMeasuredStreamTimings(
+  chunks: AsyncIterable<PluginStreamChunk>,
+  clock: StreamTimingClock = systemStreamTimingClock
+): AsyncGenerator<PluginStreamChunk, void, unknown> {
+  const startedAt = clock.now();
+  let firstTokenAt: number | undefined;
+  for await (const chunk of chunks) {
+    if (
+      firstTokenAt === undefined &&
+      (chunk.type === 'content' || chunk.type === 'reasoning') &&
+      chunk.content
+    ) {
+      firstTokenAt = clock.now();
+    }
+    if (chunk.type === 'usage' && chunk.timings === undefined) {
+      const now = clock.now();
+      yield {
+        ...chunk,
+        timings: {
+          promptMs: Math.max((firstTokenAt ?? now) - startedAt, 0),
+          predictedMs:
+            firstTokenAt === undefined ? 0 : Math.max(now - firstTokenAt, 0),
+        },
+      };
+      continue;
+    }
+    yield chunk;
+  }
+}
+
 function pluginStreamError(
   payload: Record<string, unknown>
 ): string | undefined {

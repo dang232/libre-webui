@@ -76,6 +76,7 @@ import {
 import {
   streamOpenAICompatibleResponse,
   streamOpenAIResponsesResponse,
+  withMeasuredStreamTimings,
   type PluginStreamChunk,
 } from '../utils/pluginStreamAdapter.js';
 import {
@@ -2715,7 +2716,10 @@ export class PluginService {
     const forward = async function* (
       chunks: AsyncIterable<PluginStreamChunk>
     ): AsyncGenerator<PluginStreamChunk, void, unknown> {
-      for await (const chunk of chunks) {
+      // Providers that report no timings of their own get client-measured
+      // wall-clock timings here, so every consumer downstream (chat
+      // statistics, tool loop, durable generation) sees durations.
+      for await (const chunk of withMeasuredStreamTimings(chunks)) {
         captureUsage(chunk);
         yield chunk;
       }
