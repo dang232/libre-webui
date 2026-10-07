@@ -612,18 +612,7 @@
       "originUnknown": "محادثة أخرى"
     },
     "delegate": {
-      "action": "Run as Work task",
-      "title": "Run as Work task",
-      "subtitle": "The agent works on this goal in an isolated workspace with files, shell, and tools.",
-      "goalLabel": "Goal",
-      "folderLabel": "Host folder (optional)",
-      "folderHint": "Admins only. Must be inside an allowlisted root; mounts read-write at /workspace.",
-      "folderPlaceholder": "/data/reports",
-      "submit": "Start task",
-      "creating": "Starting…",
-      "created": "Work task started",
-      "failed": "Could not start the Work task",
-      "unsupportedProvider": "This chat's provider cannot run Work tasks"
+      "action": "Run as Work task"
     },
     "sharedReadOnly": "مشاركة من {{owner}} — عرض فقط"
   },
