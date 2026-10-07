@@ -612,18 +612,7 @@
       "originUnknown": "cuộc trò chuyện khác"
     },
     "delegate": {
-      "action": "Chạy dưới dạng tác vụ Work",
-      "title": "Chạy dưới dạng tác vụ Work",
-      "subtitle": "Agent thực hiện mục tiêu này trong không gian làm việc riêng biệt với tệp, shell và công cụ.",
-      "goalLabel": "Mục tiêu",
-      "folderLabel": "Thư mục máy chủ (tùy chọn)",
-      "folderHint": "Chỉ quản trị viên. Phải nằm trong thư mục được cho phép; gắn đọc-ghi tại /workspace.",
-      "folderPlaceholder": "/data/reports",
-      "submit": "Bắt đầu tác vụ",
-      "creating": "Đang bắt đầu…",
-      "created": "Đã bắt đầu tác vụ Work",
-      "failed": "Không thể bắt đầu tác vụ Work",
-      "unsupportedProvider": "Nhà cung cấp của cuộc trò chuyện này không thể chạy tác vụ Work"
+      "action": "Chạy dưới dạng tác vụ Work"
     },
     "sharedReadOnly": "Được {{owner}} chia sẻ — chỉ xem"
   },

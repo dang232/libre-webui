@@ -187,6 +187,34 @@ export default function WorkPage() {
     [models]
   );
   const [draftModelKey, setDraftModelKey] = useState('');
+  // Goal delegated from chat via navigate('/work', { state: { delegatedWorkGoal } }).
+  // It seeds the landing composer once when that composer is empty; the
+  // clearing effect below removes it via history replace so back and refresh
+  // never reseed. File drafts in workDrafts are keyed by task id and path,
+  // so a landing (task-less) composer has no stored draft to consult.
+  const delegatedRaw = (
+    location.state as { delegatedWorkGoal?: unknown } | null
+  )?.delegatedWorkGoal;
+  const delegatedGoal =
+    typeof delegatedRaw === 'string' && delegatedRaw.trim()
+      ? delegatedRaw.trim()
+      : null;
+  useEffect(() => {
+    const state = location.state as Record<string, unknown> | null;
+    if (!state || !('delegatedWorkGoal' in state)) return;
+    const rest = { ...state };
+    delete rest.delegatedWorkGoal;
+    navigate(`${location.pathname}${location.search}${location.hash}`, {
+      replace: true,
+      state: rest,
+    });
+  }, [
+    location.hash,
+    location.pathname,
+    location.search,
+    location.state,
+    navigate,
+  ]);
   const [mobileSurfaceState, setMobileSurfaceState] = useState<{
     locationKey: string;
     value: MobileSurface;
@@ -1602,6 +1630,9 @@ export default function WorkPage() {
               <WorkComposer
                 variant='landing'
                 dictationOwnerKey='landing'
+                initialMessage={
+                  !taskId && delegatedGoal ? delegatedGoal : undefined
+                }
                 models={modelOptions}
                 selectorModels={models}
                 modelKey={freshModel?.key || ''}

@@ -41,6 +41,8 @@ interface WorkComposerProps {
   mentionAgents?: Array<{ id: string; name: string }>;
   /** Dictation ownership: a recording dies when this changes (task id). */
   dictationOwnerKey?: string;
+  /** Delegated goal seeding the new-task composer once when empty. */
+  initialMessage?: string;
   remoteDisclosureDismissed: boolean;
   remoteDisclosureSaving: boolean;
   onModelChange: (modelKey: string) => void | Promise<void>;
@@ -96,6 +98,7 @@ export function WorkComposer({
   disabled = false,
   mentionAgents,
   dictationOwnerKey,
+  initialMessage,
   remoteDisclosureDismissed,
   remoteDisclosureSaving,
   onModelChange,
@@ -105,7 +108,19 @@ export function WorkComposer({
   onCancel,
 }: WorkComposerProps) {
   const { t } = useTranslation();
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState(initialMessage ?? '');
+  const appliedInitialRef = useRef<string | null>(initialMessage ?? null);
+  useEffect(() => {
+    if (!initialMessage) return;
+    if (appliedInitialRef.current === initialMessage) return;
+    // Seed only an empty composer so typed text and unsent drafts win.
+    if (message.trim()) {
+      appliedInitialRef.current = initialMessage;
+      return;
+    }
+    appliedInitialRef.current = initialMessage;
+    setMessage(initialMessage);
+  }, [initialMessage, message]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   // Dictated text appends to whatever was typed before the mic started.
   const dictationBaseRef = useRef('');
