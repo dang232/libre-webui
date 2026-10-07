@@ -67,6 +67,8 @@ import { useAuthStore } from '@/store/authStore';
 import { useAppStore } from '@/store/appStore';
 import { useChat } from '@/hooks/useChat';
 import { chatApi, documentsApi, imageGenApi, searchApi } from '@/utils/api';
+import { workApi } from '@/utils/api/workApi';
+import { DelegateWorkDialog } from '@/components/DelegateWorkDialog';
 import { cn, generateId } from '@/utils';
 import type { ChatSession, ThinkingPreference } from '@/types';
 import { createLogger } from '@/utils/logger';
@@ -803,6 +805,60 @@ export const ChatPage: React.FC = () => {
     [currentSessionIdForFork, navigate, t]
   );
 
+  const [delegateGoal, setDelegateGoal] = useState<string | null>(null);
+  const [delegateBusy, setDelegateBusy] = useState(false);
+  const [delegateError, setDelegateError] = useState<string | null>(null);
+
+  const handleDelegateToWork = useCallback(
+    (messageId: string) => {
+      const message = currentSession?.messages.find(
+        candidate => candidate.id === messageId
+      );
+      const goal = message?.content?.trim() ?? '';
+      if (!goal) return;
+      setDelegateError(null);
+      setDelegateGoal(goal);
+    },
+    [currentSession]
+  );
+
+  const submitDelegateWork = useCallback(
+    async (input: { goal: string; hostPath?: string }) => {
+      if (
+        !selectedModel ||
+        (selectedProviderType !== 'ollama' && selectedProviderType !== 'plugin')
+      ) {
+        setDelegateError(t('chat.delegate.unsupportedProvider'));
+        return;
+      }
+      setDelegateBusy(true);
+      setDelegateError(null);
+      try {
+        const response = await workApi.createTask({
+          message: input.goal,
+          model: selectedModel,
+          providerType: selectedProviderType,
+          ...(selectedProviderId ? { providerId: selectedProviderId } : {}),
+          networkEnabled: true,
+          ...(input.hostPath ? { hostPath: input.hostPath } : {}),
+        });
+        if (response.success && response.data) {
+          toast.success(t('chat.delegate.created'));
+          setDelegateGoal(null);
+          navigate(`/work/${response.data.id}`);
+        } else {
+          setDelegateError(response.error || t('chat.delegate.failed'));
+        }
+      } catch (error) {
+        logger.error('Failed to delegate the chat to a Work task:', error);
+        setDelegateError(t('chat.delegate.failed'));
+      } finally {
+        setDelegateBusy(false);
+      }
+    },
+    [navigate, selectedModel, selectedProviderId, selectedProviderType, t]
+  );
+
   if (!currentSession) {
     const hasAdvancedFeatures = welcomeImages.length > 0;
 
@@ -1191,6 +1247,7 @@ export const ChatPage: React.FC = () => {
               onSelectBranch={selectBranch}
               onEditResend={editAndResendMessage}
               onFork={handleFork}
+              onDelegate={handleDelegateToWork}
               followUpSuggestions={followUpSuggestions}
               onFollowUpSelect={suggestion => handleSendMessage(suggestion)}
               className='flex-1'
@@ -1223,6 +1280,21 @@ export const ChatPage: React.FC = () => {
             />
           )}
           <ChatSourcesPanel session={currentSession} />
+          {delegateGoal !== null && (
+            <DelegateWorkDialog
+              initialGoal={delegateGoal}
+              isAdmin={user?.role === 'admin'}
+              busy={delegateBusy}
+              error={delegateError}
+              onClose={() => {
+                if (!delegateBusy) {
+                  setDelegateGoal(null);
+                  setDelegateError(null);
+                }
+              }}
+              onSubmit={input => void submitDelegateWork(input)}
+            />
+          )}
           <ChatControlsPanel
             session={currentSession}
             open={controlsOpen}

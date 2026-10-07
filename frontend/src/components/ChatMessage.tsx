@@ -54,6 +54,7 @@ import {
   History,
   RefreshCw,
   GitFork,
+  Briefcase,
   Undo2,
   Copy,
   Check,
@@ -107,6 +108,7 @@ interface ChatMessageProps {
   onRegenerate?: () => void;
   onEditResend?: (messageId: string, content: string) => void;
   onFork?: (messageId: string) => void;
+  onDelegate?: (messageId: string) => void;
 }
 
 interface ChatAvatarProps {
@@ -211,6 +213,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
   isLastAssistantMessage = false,
   onRegenerate,
   onFork,
+  onDelegate,
   onEditResend,
 }) => {
   const { t, i18n } = useTranslation();
@@ -1218,6 +1221,16 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                     data-testid='fork-from-message'
                   >
                     <GitFork className='h-3.5 w-3.5' />
+                  </button>
+                )}
+                {onDelegate && (
+                  <button
+                    onClick={() => onDelegate(message.id)}
+                    className='flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-dark-200 dark:hover:text-dark-800'
+                    title={t('chat.delegate.action')}
+                    data-testid='delegate-work-from-message'
+                  >
+                    <Briefcase className='h-3.5 w-3.5' />
                   </button>
                 )}
               </div>

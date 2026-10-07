@@ -419,7 +419,10 @@
           "file": "scripts/test-provider-detection-admin.mjs",
           "runner": "test:package",
           "name": "admin provider detect reports no vendor candidate without a credential",
-          "behaviorPatterns": ["body\\.data\\.candidates, \\[\\]", "body\\.data\\.resolved, undefined"]
+          "behaviorPatterns": [
+            "body\\.data\\.candidates, \\[\\]",
+            "body\\.data\\.resolved, undefined"
+          ]
         },
         {
           "file": "scripts/test-provider-detection-admin.mjs",

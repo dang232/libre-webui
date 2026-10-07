@@ -66,6 +66,7 @@ interface ChatMessagesProps {
   onSelectBranch?: (messageId: string) => void;
   onEditResend?: (messageId: string, content: string) => void;
   onFork?: (messageId: string) => void;
+  onDelegate?: (messageId: string) => void;
   followUpSuggestions?: string[];
   onFollowUpSelect?: (suggestion: string) => void;
 }
@@ -120,6 +121,7 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
   onSelectBranch,
   onEditResend,
   onFork,
+  onDelegate,
   followUpSuggestions,
   onFollowUpSelect,
 }) => {
@@ -630,6 +632,7 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
                   onRegenerate={isLastAssistantGroup ? onRegenerate : undefined}
                   onEditResend={isStreaming ? undefined : onEditResend}
                   onFork={isStreaming ? undefined : onFork}
+                  onDelegate={isStreaming ? undefined : onDelegate}
                   className={groupIndex === 0 ? 'mt-3 sm:mt-4' : ''}
                 />
               );
