@@ -87,7 +87,7 @@ test('a real location moves solar noon with longitude and refines day length', (
   // runner's timezone puts solar noon near midnight, a +40 minute shift
   // wraps past 0 and a raw subtraction reads it as -1400.
   const noonShift =
-    ((west.solarNoon - here.solarNoon - 40) % MINUTES_PER_DAY +
+    (((west.solarNoon - here.solarNoon - 40) % MINUTES_PER_DAY) +
       MINUTES_PER_DAY) %
     MINUTES_PER_DAY;
   const noonDistance = Math.min(noonShift, MINUTES_PER_DAY - noonShift);
