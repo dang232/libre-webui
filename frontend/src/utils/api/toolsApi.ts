@@ -170,7 +170,11 @@ export const toolsApi = {
     api.delete(`/tools/servers/${serverId}/oauth`).then(res => res.data),
 
   listApprovals: (): Promise<
-    ApiResponse<{ pending: ToolApprovalView[]; standing: ToolApprovalView[] }>
+    ApiResponse<{
+      pending: ToolApprovalView[];
+      standing: ToolApprovalView[];
+      denied: ToolApprovalView[];
+    }>
   > => api.get('/tools/approvals').then(res => res.data),
 
   decideApproval: (

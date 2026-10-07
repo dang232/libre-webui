@@ -3616,7 +3616,10 @@
         "once": "一度",
         "session": "このチャット",
         "always": "常に"
-      }
+      },
+      "deniedTitle": "Standing denials",
+      "deniedDescription": "Tools you told the model to keep asking about. Revoke one to lift the block.",
+      "deniedEmpty": "No standing denials."
     },
     "templatesTitle": "テンプレートから始める",
     "templates": {

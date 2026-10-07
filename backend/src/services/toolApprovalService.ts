@@ -243,6 +243,20 @@ export async function listStandingApprovals(
   return rows.map(mapApprovalRow);
 }
 
+/**
+ * Standing denials: the tools this person told the model never to run
+ * without asking first. The blacklist twin of the standing approvals.
+ */
+export async function listStandingDeniedApprovals(
+  userId: string
+): Promise<ToolApproval[]> {
+  const rows = await approvals().listDeniedByOwner(
+    userId,
+    MAX_LISTED_APPROVALS
+  );
+  return rows.map(mapApprovalRow);
+}
+
 /** Revoke a standing (or pending) approval the user owns. */
 export async function revokeApproval(
   userId: string,

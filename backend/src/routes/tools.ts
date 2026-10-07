@@ -40,6 +40,7 @@ import {
   decideApproval,
   listPendingApprovals,
   listStandingApprovals,
+  listStandingDeniedApprovals,
   revokeApproval,
 } from '../services/toolApprovalService.js';
 import {
@@ -535,11 +536,15 @@ router.delete('/servers/:id/oauth', async (req: AuthenticatedRequest, res) => {
 router.get('/approvals', async (req: AuthenticatedRequest, res) => {
   try {
     const userId = userIdOf(req);
-    const [pending, standing] = await Promise.all([
+    const [pending, standing, denied] = await Promise.all([
       listPendingApprovals(userId),
       listStandingApprovals(userId),
+      listStandingDeniedApprovals(userId),
     ]);
-    res.json({ success: true, data: { pending, standing } } as ApiResponse);
+    res.json({
+      success: true,
+      data: { pending, standing, denied },
+    } as ApiResponse);
   } catch (error) {
     sendToolError(res, error, 'Failed to list approvals');
   }

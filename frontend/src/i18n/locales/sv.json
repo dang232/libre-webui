@@ -3616,7 +3616,10 @@
         "once": "En gång",
         "session": "Den här chatten",
         "always": "Alltid"
-      }
+      },
+      "deniedTitle": "Standing denials",
+      "deniedDescription": "Tools you told the model to keep asking about. Revoke one to lift the block.",
+      "deniedEmpty": "No standing denials."
     },
     "templatesTitle": "Börja från en mall",
     "templates": {

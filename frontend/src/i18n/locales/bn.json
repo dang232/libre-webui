@@ -3631,7 +3631,10 @@
         "once": "একবার",
         "session": "এই চ্যাট",
         "always": "সবসময়"
-      }
+      },
+      "deniedTitle": "Standing denials",
+      "deniedDescription": "Tools you told the model to keep asking about. Revoke one to lift the block.",
+      "deniedEmpty": "No standing denials."
     },
     "templatesTitle": "টেমপ্লেট থেকে শুরু করুন",
     "templates": {

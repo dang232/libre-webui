@@ -3616,7 +3616,10 @@
         "once": "一次",
         "session": "本对话",
         "always": "始终"
-      }
+      },
+      "deniedTitle": "Standing denials",
+      "deniedDescription": "Tools you told the model to keep asking about. Revoke one to lift the block.",
+      "deniedEmpty": "No standing denials."
     },
     "templatesTitle": "从模板开始",
     "templates": {

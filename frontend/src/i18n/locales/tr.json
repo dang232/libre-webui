@@ -3616,7 +3616,10 @@
         "once": "Bir kez",
         "session": "Bu sohbet",
         "always": "Her zaman"
-      }
+      },
+      "deniedTitle": "Standing denials",
+      "deniedDescription": "Tools you told the model to keep asking about. Revoke one to lift the block.",
+      "deniedEmpty": "No standing denials."
     },
     "templatesTitle": "Bir şablonla başlayın",
     "templates": {

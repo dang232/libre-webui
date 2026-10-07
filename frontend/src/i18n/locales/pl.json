@@ -3616,7 +3616,10 @@
         "once": "Raz",
         "session": "Ten czat",
         "always": "Zawsze"
-      }
+      },
+      "deniedTitle": "Standing denials",
+      "deniedDescription": "Tools you told the model to keep asking about. Revoke one to lift the block.",
+      "deniedEmpty": "No standing denials."
     },
     "templatesTitle": "Zacznij od szablonu",
     "templates": {

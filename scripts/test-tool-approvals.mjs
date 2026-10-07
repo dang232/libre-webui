@@ -402,6 +402,40 @@ test('an elapsed request expires and drops out of the pending list', async () =>
 
 // === 6. Revocation ===
 
+test('standing denials list separately from standing approvals', async () => {
+  const pending = await pendingFor({ toolName: 'wipe_disk' });
+  const denied = await approvals.decideApproval(ALICE, pending.id, {
+    approve: false,
+    scope: 'always',
+  });
+  assert.equal(denied.status, 'denied');
+  assert.equal(denied.scope, 'always');
+
+  const listed = await approvals.listStandingDeniedApprovals(ALICE);
+  assert.equal(
+    listed.some(entry => entry.id === denied.id),
+    true,
+    'the always denial is listed'
+  );
+  assert.equal(
+    (await approvals.listStandingApprovals(ALICE)).some(
+      entry => entry.id === denied.id
+    ),
+    false,
+    'a denial never appears among approvals'
+  );
+  assert.equal((await approvals.listStandingDeniedApprovals(BOB)).length, 0);
+
+  assert.equal(await approvals.revokeApproval(ALICE, denied.id), true);
+  assert.equal(
+    (await approvals.listStandingDeniedApprovals(ALICE)).some(
+      entry => entry.id === denied.id
+    ),
+    false,
+    'revoking removes the denial'
+  );
+});
+
 test('revoking a standing approval removes it', async () => {
   const standing = await approvals.findStandingApproval(
     ALICE,

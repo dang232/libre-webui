@@ -2682,6 +2682,21 @@ class SQLiteToolApprovalRepository implements ToolApprovalRepository {
       .all(userId, maximum) as StoredToolApprovalRecord[];
   }
 
+  async listDeniedByOwner(
+    userId: string,
+    maximum: number
+  ): Promise<StoredToolApprovalRecord[]> {
+    return this.database
+      .prepare(
+        `SELECT * FROM tool_approvals
+         WHERE user_id = ? AND status = 'denied'
+           AND scope IN ('session', 'always')
+         ORDER BY resolved_at DESC
+         LIMIT ?`
+      )
+      .all(userId, maximum) as StoredToolApprovalRecord[];
+  }
+
   async expirePending(now: number): Promise<number> {
     return this.database
       .prepare(

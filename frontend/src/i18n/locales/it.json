@@ -3616,7 +3616,10 @@
         "once": "Una volta",
         "session": "Questa chat",
         "always": "Sempre"
-      }
+      },
+      "deniedTitle": "Standing denials",
+      "deniedDescription": "Tools you told the model to keep asking about. Revoke one to lift the block.",
+      "deniedEmpty": "No standing denials."
     },
     "templatesTitle": "Parti da un modello",
     "templates": {

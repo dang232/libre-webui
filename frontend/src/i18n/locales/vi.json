@@ -3616,7 +3616,10 @@
         "once": "Một lần",
         "session": "Cuộc trò chuyện này",
         "always": "Luôn luôn"
-      }
+      },
+      "deniedTitle": "Từ chối đã lưu",
+      "deniedDescription": "Các công cụ bạn yêu cầu mô hình luôn phải hỏi trước khi chạy. Thu hồi để gỡ chặn.",
+      "deniedEmpty": "Không có từ chối nào."
     },
     "templatesTitle": "Bắt đầu từ một mẫu",
     "templates": {

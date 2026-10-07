@@ -3003,6 +3003,21 @@ class PostgresToolApprovalRepository implements ToolApprovalRepository {
     return result.rows.map(toolApproval);
   }
 
+  async listDeniedByOwner(
+    userId: string,
+    maximum: number
+  ): Promise<StoredToolApprovalRecord[]> {
+    const result = await this.database.query<NumericRow>(
+      `SELECT * FROM tool_approvals
+        WHERE user_id = $1 AND status = 'denied'
+          AND scope IN ('session', 'always')
+        ORDER BY resolved_at DESC
+        LIMIT $2`,
+      [userId, maximum]
+    );
+    return result.rows.map(toolApproval);
+  }
+
   async expirePending(now: number): Promise<number> {
     return changes(
       (

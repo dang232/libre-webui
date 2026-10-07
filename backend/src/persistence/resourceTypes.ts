@@ -812,6 +812,10 @@ export interface ToolApprovalRepository {
     userId: string,
     maximum: number
   ): Promise<StoredToolApprovalRecord[]>;
+  listDeniedByOwner(
+    userId: string,
+    maximum: number
+  ): Promise<StoredToolApprovalRecord[]>;
   expirePending(now: number): Promise<number>;
   deleteByOwner(approvalId: string, userId: string): Promise<boolean>;
 }

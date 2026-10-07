@@ -3616,7 +3616,10 @@
         "once": "Einu sinni",
         "session": "Þetta spjall",
         "always": "Alltaf"
-      }
+      },
+      "deniedTitle": "Standing denials",
+      "deniedDescription": "Tools you told the model to keep asking about. Revoke one to lift the block.",
+      "deniedEmpty": "No standing denials."
     },
     "templatesTitle": "Byrjaðu á sniðmáti",
     "templates": {

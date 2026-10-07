@@ -3616,7 +3616,10 @@
         "once": "Один раз",
         "session": "Цей чат",
         "always": "Завжди"
-      }
+      },
+      "deniedTitle": "Standing denials",
+      "deniedDescription": "Tools you told the model to keep asking about. Revoke one to lift the block.",
+      "deniedEmpty": "No standing denials."
     },
     "templatesTitle": "Почніть із шаблону",
     "templates": {

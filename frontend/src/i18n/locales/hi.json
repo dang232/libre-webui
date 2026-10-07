@@ -3616,7 +3616,10 @@
         "once": "एक बार",
         "session": "यह चैट",
         "always": "हमेशा"
-      }
+      },
+      "deniedTitle": "Standing denials",
+      "deniedDescription": "Tools you told the model to keep asking about. Revoke one to lift the block.",
+      "deniedEmpty": "No standing denials."
     },
     "templatesTitle": "टेम्पलेट से शुरू करें",
     "templates": {

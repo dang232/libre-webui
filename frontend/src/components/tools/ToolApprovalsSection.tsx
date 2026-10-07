@@ -23,6 +23,7 @@ import { formatTimestamp } from '@/utils';
 
 interface ToolApprovalsSectionProps {
   approvals: ToolApprovalView[];
+  denied: ToolApprovalView[];
   servers: ToolServerView[];
   revoking: string | null;
   onRevoke: (approvalId: string) => void;
@@ -31,10 +32,12 @@ interface ToolApprovalsSectionProps {
 /**
  * Standing approvals: the grants that let a side-effecting tool run without
  * asking again. Everything here is revocable, which is the point of showing
- * it at all.
+ * it at all. Denials below are the blacklist twin: tools the person told
+ * the model to keep asking about, revocable the same way.
  */
 export const ToolApprovalsSection: React.FC<ToolApprovalsSectionProps> = ({
   approvals,
+  denied,
   servers,
   revoking,
   onRevoke,
@@ -83,6 +86,50 @@ export const ToolApprovalsSection: React.FC<ToolApprovalsSectionProps> = ({
                 disabled={revoking === approval.id}
                 onClick={() => onRevoke(approval.id)}
                 data-testid='tool-approval-revoke'
+              >
+                {t('toolsPage.approvals.revoke')}
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <h3 className='mb-1 mt-6 text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-dark-500'>
+        {t('toolsPage.approvals.deniedTitle')}
+      </h3>
+      <p className='mb-3 text-[12px] text-gray-500 dark:text-dark-500'>
+        {t('toolsPage.approvals.deniedDescription')}
+      </p>
+      {denied.length === 0 ? (
+        <p className='rounded-2xl border border-dashed border-black/[0.08] px-4 py-6 text-center text-[12px] text-gray-400 dark:border-white/[0.08] dark:text-dark-500'>
+          {t('toolsPage.approvals.deniedEmpty')}
+        </p>
+      ) : (
+        <div className='space-y-1.5' data-testid='tool-denials'>
+          {denied.map(denial => (
+            <div
+              key={denial.id}
+              data-testid='tool-denial-row'
+              className='flex flex-wrap items-center justify-between gap-3 rounded-xl border border-black/[0.05] bg-white/50 px-3 py-2 dark:border-white/[0.06] dark:bg-dark-100/50'
+            >
+              <div className='min-w-0 flex-[1_1_16rem]'>
+                <p className='break-words text-[13px] text-gray-900 [overflow-wrap:anywhere] dark:text-dark-900'>
+                  <code>{denial.toolName}</code>
+                  {' · '}
+                  {serverName(denial.serverId)}
+                </p>
+                <p className='truncate text-[11px] text-gray-400 dark:text-dark-500'>
+                  {t(`toolsPage.approvals.scope.${denial.scope}`)}
+                  {' · '}
+                  {formatTimestamp(denial.createdAt, i18n.language)}
+                </p>
+              </div>
+              <Button
+                size='sm'
+                variant='outline'
+                disabled={revoking === denial.id}
+                onClick={() => onRevoke(denial.id)}
+                data-testid='tool-denial-revoke'
               >
                 {t('toolsPage.approvals.revoke')}
               </Button>

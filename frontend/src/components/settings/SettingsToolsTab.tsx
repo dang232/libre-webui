@@ -47,6 +47,7 @@ export const SettingsToolsTab: React.FC = () => {
   const isAdmin = useAuthStore(state => state.isAdmin());
   const [servers, setServers] = useState<ToolServerView[]>([]);
   const [approvals, setApprovals] = useState<ToolApprovalView[]>([]);
+  const [denied, setDenied] = useState<ToolApprovalView[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<ToolServerView | null>(null);
@@ -97,6 +98,7 @@ export const SettingsToolsTab: React.FC = () => {
         }
         if (approvalsResponse.success && approvalsResponse.data) {
           setApprovals(approvalsResponse.data.standing);
+          setDenied(approvalsResponse.data.denied ?? []);
         }
       })
       .catch(error => {
@@ -157,6 +159,7 @@ export const SettingsToolsTab: React.FC = () => {
       const response = await toolsApi.revokeApproval(approvalId);
       if (!response.success) throw new Error(response.error);
       setApprovals(current => current.filter(item => item.id !== approvalId));
+      setDenied(current => current.filter(item => item.id !== approvalId));
       toast.success(t('toolsPage.approvals.revoked'));
     } catch (error) {
       logger.error('Failed to revoke the approval:', error);
@@ -225,6 +228,7 @@ export const SettingsToolsTab: React.FC = () => {
 
       <ToolApprovalsSection
         approvals={approvals}
+        denied={denied}
         servers={servers}
         revoking={revoking}
         onRevoke={approvalId => void handleRevoke(approvalId)}

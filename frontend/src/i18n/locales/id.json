@@ -3616,7 +3616,10 @@
         "once": "Sekali",
         "session": "Obrolan ini",
         "always": "Selalu"
-      }
+      },
+      "deniedTitle": "Standing denials",
+      "deniedDescription": "Tools you told the model to keep asking about. Revoke one to lift the block.",
+      "deniedEmpty": "No standing denials."
     },
     "templatesTitle": "Mulai dari templat",
     "templates": {
