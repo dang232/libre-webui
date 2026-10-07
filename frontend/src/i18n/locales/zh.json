@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "关闭远程提供商提示",
       "remoteDismissFailed": "无法保存远程提供商偏好设置。",
       "noModelSelected": "尚未选择兼容工作模式的模型。",
-      "mentionAgents": "提及智能体"
+      "mentionAgents": "提及智能体",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "工作区已就绪",

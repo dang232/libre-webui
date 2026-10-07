@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "रिमोट प्रोवाइडर सूचना हटाएँ",
       "remoteDismissFailed": "रिमोट प्रोवाइडर की पसंद सेव नहीं की जा सकी।",
       "noModelSelected": "काम के अनुकूल कोई मॉडल चुना नहीं गया है।",
-      "mentionAgents": "किसी एजेंट का उल्लेख करें"
+      "mentionAgents": "किसी एजेंट का उल्लेख करें",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "वर्कस्पेस तैयार है",

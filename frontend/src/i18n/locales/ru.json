@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "Скрыть уведомление об удалённом провайдере",
       "remoteDismissFailed": "Не удалось сохранить настройку удалённого провайдера.",
       "noModelSelected": "Не выбрана модель, совместимая с режимом «Работа».",
-      "mentionAgents": "Упомянуть агента"
+      "mentionAgents": "Упомянуть агента",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "Рабочее пространство готово",

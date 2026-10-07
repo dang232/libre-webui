@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "Masquer l'avis sur le fournisseur distant",
       "remoteDismissFailed": "Impossible d'enregistrer la préférence du fournisseur distant.",
       "noModelSelected": "Aucun modèle compatible avec le mode Travail n'est sélectionné.",
-      "mentionAgents": "Mentionner un agent"
+      "mentionAgents": "Mentionner un agent",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "Espace de travail prêt",

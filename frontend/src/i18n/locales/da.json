@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "Skjul meddelelsen om fjernudbyderen",
       "remoteDismissFailed": "Indstillingen for fjernudbyderen kunne ikke gemmes.",
       "noModelSelected": "Der er ikke valgt en model, der er kompatibel med Arbejde.",
-      "mentionAgents": "Nævn en agent"
+      "mentionAgents": "Nævn en agent",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "Arbejdsområdet er klar",

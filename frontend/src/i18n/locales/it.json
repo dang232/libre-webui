@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "Nascondi avviso sul fornitore remoto",
       "remoteDismissFailed": "Impossibile salvare la preferenza del fornitore remoto.",
       "noModelSelected": "Non è selezionato alcun modello compatibile con la modalità Lavoro.",
-      "mentionAgents": "Menziona un agente"
+      "mentionAgents": "Menziona un agente",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "Spazio di lavoro pronto",

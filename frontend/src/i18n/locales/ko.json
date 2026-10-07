@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "원격 제공자 안내 닫기",
       "remoteDismissFailed": "원격 제공자 설정을 저장할 수 없습니다.",
       "noModelSelected": "선택된 작업 호환 모델이 없습니다.",
-      "mentionAgents": "에이전트 멘션"
+      "mentionAgents": "에이전트 멘션",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "워크스페이스 준비 완료",

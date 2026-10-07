@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "リモートプロバイダーの通知を閉じる",
       "remoteDismissFailed": "リモートプロバイダーの設定を保存できませんでした。",
       "noModelSelected": "作業対応モデルが選択されていません。",
-      "mentionAgents": "エージェントをメンション"
+      "mentionAgents": "エージェントをメンション",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "ワークスペースの準備ができました",
