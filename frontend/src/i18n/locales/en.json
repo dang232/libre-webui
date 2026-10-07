@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "Dismiss remote provider notice",
       "remoteDismissFailed": "Could not save the remote provider preference.",
       "noModelSelected": "No Work-compatible model is selected.",
-      "mentionAgents": "Mention an agent"
+      "mentionAgents": "Mention an agent",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "Workspace ready",

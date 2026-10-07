@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "রিমোট প্রোভাইডারের নোটিশ খারিজ করুন",
       "remoteDismissFailed": "রিমোট প্রোভাইডারের পছন্দ সংরক্ষণ করা যায়নি।",
       "noModelSelected": "কাজের সঙ্গে সামঞ্জস্যপূর্ণ কোনো মডেল নির্বাচন করা নেই।",
-      "mentionAgents": "একজন এজেন্টকে উল্লেখ করুন"
+      "mentionAgents": "একজন এজেন্টকে উল্লেখ করুন",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "ওয়ার্কস্পেস প্রস্তুত",

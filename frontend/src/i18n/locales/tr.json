@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "Uzak sağlayıcı bildirimini kapat",
       "remoteDismissFailed": "Uzak sağlayıcı tercihi kaydedilemedi.",
       "noModelSelected": "Çalışma ile uyumlu bir model seçilmedi.",
-      "mentionAgents": "Bir ajandan bahset"
+      "mentionAgents": "Bir ajandan bahset",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "Çalışma alanı hazır",

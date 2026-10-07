@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "Loka tilkynningu um fjartengdan þjónustuaðila",
       "remoteDismissFailed": "Ekki tókst að vista val fyrir fjartengdan þjónustuaðila.",
       "noModelSelected": "Ekkert líkan sem styður Vinnu er valið.",
-      "mentionAgents": "Nefna fulltrúa"
+      "mentionAgents": "Nefna fulltrúa",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "Vinnusvæði tilbúið",

@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "Đóng thông báo về nhà cung cấp từ xa",
       "remoteDismissFailed": "Không thể lưu tùy chọn nhà cung cấp từ xa.",
       "noModelSelected": "Chưa chọn mô hình tương thích với chế độ Công việc.",
-      "mentionAgents": "Nhắc đến một agent"
+      "mentionAgents": "Nhắc đến một agent",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "Không gian làm việc đã sẵn sàng",

@@ -15,7 +15,15 @@
  * limitations under the License.
  */
 
-import { ArrowUp, CircleAlert, Loader2, Mic, Square, X } from 'lucide-react';
+import {
+  ArrowUp,
+  CircleAlert,
+  Loader2,
+  Mic,
+  Paperclip,
+  Square,
+  X,
+} from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ModelSelector } from '@/components/ModelSelector';
@@ -28,6 +36,13 @@ import { useDictation } from '@/hooks/useDictation';
 import type { ChatModel } from '@/types';
 import { workModelSelectionKey, type WorkModelOption } from '@/types/work';
 import { cn } from '@/utils';
+import {
+  WORK_ATTACHMENT_MAX_FILES,
+  partitionWorkAttachmentCandidates,
+  readWorkAttachmentDraft,
+  type WorkAttachmentDraft,
+  type WorkAttachmentRejectionNote,
+} from '@/utils/workAttachments';
 
 interface WorkComposerProps {
   models: WorkModelOption[];
@@ -48,7 +63,7 @@ interface WorkComposerProps {
   onModelChange: (modelKey: string) => void | Promise<void>;
   onDismissRemoteDisclosure: () => Promise<boolean>;
   onModelsRefresh: () => void | Promise<void>;
-  onSubmit: (message: string) => Promise<boolean>;
+  onSubmit: (message: string, files: WorkAttachmentDraft[]) => Promise<boolean>;
   onCancel: () => void | Promise<void>;
 }
 
@@ -135,6 +150,52 @@ export function WorkComposer({
     ownerKey: dictationOwnerKey,
   });
   const dictationActive = dictation.phase !== 'idle';
+  const [attachments, setAttachments] = useState<WorkAttachmentDraft[]>([]);
+  const [attachError, setAttachError] = useState<string | null>(null);
+  const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const rejectionMessage = (note: WorkAttachmentRejectionNote): string => {
+    if (note.reason === 'too-large') {
+      return t('work.composer.attachments.attachTooLarge', {
+        defaultValue: '"{{name}}" exceeds the 1 MB attachment limit.',
+        name: note.name,
+      });
+    }
+    if (note.reason === 'too-many') {
+      return t('work.composer.attachments.attachTooMany', {
+        defaultValue: 'Only {{max}} files can be attached at once.',
+        max: WORK_ATTACHMENT_MAX_FILES,
+      });
+    }
+    return t('work.composer.attachments.attachUnreadable', {
+      defaultValue: '"{{name}}" could not be attached (empty or binary).',
+      name: note.name,
+    });
+  };
+  const addFiles = async (list: FileList | File[]): Promise<void> => {
+    const incoming = Array.from(list);
+    if (!incoming.length) return;
+    setAttachError(null);
+    const { accepted, rejected } = partitionWorkAttachmentCandidates(
+      incoming,
+      attachments.length
+    );
+    const notes = [...rejected];
+    const drafts: WorkAttachmentDraft[] = [];
+    for (const file of accepted) {
+      const result = await readWorkAttachmentDraft(file);
+      if ('draft' in result) drafts.push(result.draft);
+      else notes.push(result.rejected);
+    }
+    if (drafts.length) {
+      setAttachments(previous => [...previous, ...drafts]);
+    }
+    const first = notes[0];
+    if (first) setAttachError(rejectionMessage(first));
+  };
+  const removeAttachment = (index: number): void => {
+    setAttachments(previous => previous.filter((_, i) => i !== index));
+  };
   const desktopModelTriggerRef = useRef<HTMLButtonElement>(null);
   const mobileModelTriggerRef = useRef<HTMLButtonElement>(null);
   const selectedModel = models.find(item => item.key === modelKey);
@@ -184,7 +245,11 @@ export function WorkComposer({
     if (!trimmed || loading || disabled || (!running && !selectedModel)) {
       return;
     }
-    if (await onSubmit(trimmed)) setMessage('');
+    if (await onSubmit(trimmed, attachments)) {
+      setMessage('');
+      setAttachments([]);
+      setAttachError(null);
+    }
   };
 
   // @-mention picker over the user's other hired agents. The mention is
@@ -354,8 +419,75 @@ export function WorkComposer({
         )}
         <div
           data-testid='work-composer-surface'
-          className={composerSurfaceClass}
+          className={cn(
+            composerSurfaceClass,
+            dragActive && 'ring-2 ring-primary-500'
+          )}
+          onDragOver={event => {
+            if (Array.from(event.dataTransfer.types).includes('Files')) {
+              event.preventDefault();
+              setDragActive(true);
+            }
+          }}
+          onDragLeave={() => setDragActive(false)}
+          onDrop={event => {
+            event.preventDefault();
+            setDragActive(false);
+            if (event.dataTransfer.files.length) {
+              void addFiles(event.dataTransfer.files);
+            }
+          }}
         >
+          {attachments.length > 0 && (
+            <div
+              data-testid='work-attachment-list'
+              className='flex flex-wrap gap-1.5 px-2 pt-2'
+            >
+              {attachments.map((file, index) => (
+                <span
+                  key={`${file.name}-${index}`}
+                  data-testid='work-attachment-chip'
+                  className='inline-flex max-w-full items-center gap-1 rounded-lg border border-line bg-surface-subtle px-2 py-1 text-xs text-ink'
+                >
+                  <span className='max-w-[180px] truncate'>{file.name}</span>
+                  <button
+                    type='button'
+                    data-testid='work-attachment-remove'
+                    aria-label={t(
+                      'work.composer.attachments.removeAttachment',
+                      { defaultValue: 'Remove attachment' }
+                    )}
+                    onClick={() => removeAttachment(index)}
+                    className='inline-flex h-4 w-4 shrink-0 items-center justify-center rounded text-ink-muted transition-colors hover:text-ink'
+                  >
+                    <X className='h-3 w-3' />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+          {attachError && (
+            <p
+              role='alert'
+              className='px-2 pt-1.5 text-xs text-error-600 dark:text-error-400'
+            >
+              {attachError}
+            </p>
+          )}
+          <input
+            ref={fileInputRef}
+            data-testid='work-attach-input'
+            type='file'
+            multiple
+            accept='.txt,.md,.markdown,.csv,.tsv,.json,.jsonl,.log,.yaml,.yml,.toml,.xml,.html,.css,.js,.jsx,.ts,.tsx,.py,.sh,.sql,.graphql,.ini,.cfg,.env,.tex,.rst,.java,.c,.h,.cpp,.hpp,.cs,.go,.rs,.rb,.php,.swift,.kt'
+            className='hidden'
+            onChange={event => {
+              if (event.target.files?.length) {
+                void addFiles(event.target.files);
+              }
+              event.currentTarget.value = '';
+            }}
+          />
           <textarea
             ref={textareaRef}
             data-testid='work-composer-input'
@@ -458,6 +590,23 @@ export function WorkComposer({
               />
             </div>
 
+            <Button
+              data-testid='work-attach-button'
+              type='button'
+              variant='ghost'
+              size='sm'
+              disabled={disabled}
+              title={t('work.composer.attachments.attachFiles', {
+                defaultValue: 'Attach files',
+              })}
+              aria-label={t('work.composer.attachments.attachFiles', {
+                defaultValue: 'Attach files',
+              })}
+              onClick={() => fileInputRef.current?.click()}
+              className='flex h-9 w-9 shrink-0 touch-manipulation items-center justify-center rounded-full p-0 text-ink-muted transition-colors duration-150 hover:bg-surface-subtle hover:text-ink'
+            >
+              <Paperclip className='h-4 w-4' />
+            </Button>
             {dictation.supported && (
               <Button
                 data-testid='work-voice-input'

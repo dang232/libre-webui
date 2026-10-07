@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "ปิดประกาศผู้ให้บริการระยะไกล",
       "remoteDismissFailed": "ไม่สามารถบันทึกการตั้งค่าผู้ให้บริการระยะไกลได้",
       "noModelSelected": "ยังไม่ได้เลือกโมเดลที่รองรับโหมดงาน",
-      "mentionAgents": "กล่าวถึงเอเจนต์"
+      "mentionAgents": "กล่าวถึงเอเจนต์",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "พื้นที่ทำงานพร้อมแล้ว",

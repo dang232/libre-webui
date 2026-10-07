@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "Hinweis zum Remote-Anbieter ausblenden",
       "remoteDismissFailed": "Die Einstellung für den Remote-Anbieter konnte nicht gespeichert werden.",
       "noModelSelected": "Es ist kein mit Arbeit kompatibles Modell ausgewählt.",
-      "mentionAgents": "Agent erwähnen"
+      "mentionAgents": "Agent erwähnen",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "Arbeitsbereich bereit",

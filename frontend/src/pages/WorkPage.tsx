@@ -58,6 +58,7 @@ import {
 import { cn, formatRelativeTime } from '@/utils';
 import { preferencesApi, workApi } from '@/utils/api';
 import { clearWorkDraft, clearWorkTaskDrafts } from '@/utils/workDrafts';
+import type { WorkAttachmentDraft } from '@/utils/workAttachments';
 import { workStatusPresentation } from '@/utils/workStatus';
 
 type MobileSurface = 'conversation' | 'workspace';
@@ -742,23 +743,55 @@ export default function WorkPage() {
     navigate('/work');
   };
 
-  const submitMessage = async (message: string): Promise<boolean> => {
+  const submitMessage = async (
+    message: string,
+    files: WorkAttachmentDraft[] = []
+  ): Promise<boolean> => {
     if (selectedTask && !confirmWorkspaceDiscard()) return false;
     if (selectedTask && workspaceDirty) {
       discardSelectedDraft();
       clearSelectedFile();
       setWorkspaceDirty(false);
     }
+    // Staged composer files land in the workspace through the existing
+    // file endpoint before the run sees the message, so the agent finds
+    // them with its first listing. A fresh task starts its run on create,
+    // so landing uploads race that first step and merely usually win it.
+    const uploadComposerFiles = async (taskId: string): Promise<void> => {
+      for (const file of files) {
+        try {
+          const saved = await workApi.saveFile(taskId, file.name, file.content);
+          if (!saved.success) {
+            const detail =
+              (saved as { error?: unknown; message?: unknown }).error ??
+              (saved as { message?: unknown }).message;
+            throw new Error(
+              typeof detail === 'string' && detail ? detail : 'upload failed'
+            );
+          }
+        } catch (uploadError) {
+          toast.error(
+            t('work.composer.attachments.attachUploadFailed', {
+              defaultValue: '"{{name}}" could not be uploaded: {{error}}',
+              name: file.name,
+              error: errorMessage(uploadError, 'unknown error'),
+            })
+          );
+        }
+      }
+    };
     try {
       if (selectedTask && isWorkTaskActive(selectedTask)) {
         // The agent is working: the message joins the running conversation
         // at the next round boundary instead of requiring a stop.
+        await uploadComposerFiles(selectedTask.id);
         const sent = await workApi.sendRunMessage(selectedTask.id, message);
         if (!sent.success) {
           throw new Error(sent.message || 'The message could not be sent.');
         }
         await loadTask(selectedTask.id);
       } else if (selectedTask) {
+        await uploadComposerFiles(selectedTask.id);
         await startRun(selectedTask.id, {
           message,
           model: selectedTask.model,
@@ -785,6 +818,7 @@ export default function WorkPage() {
           ...(policyId ? { policyId } : {}),
           ...(personaId ? { personaId, isAgent: true } : {}),
         });
+        await uploadComposerFiles(task.id);
         navigate(`/work/${task.id}`);
       }
       return true;

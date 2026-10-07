@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "Tutup pemberitahuan penyedia jarak jauh",
       "remoteDismissFailed": "Tidak dapat menyimpan preferensi penyedia jarak jauh.",
       "noModelSelected": "Tidak ada model kompatibel Kerja yang dipilih.",
-      "mentionAgents": "Sebut agen"
+      "mentionAgents": "Sebut agen",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "Ruang kerja siap",

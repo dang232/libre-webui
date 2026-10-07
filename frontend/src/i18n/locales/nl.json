@@ -2777,7 +2777,15 @@
       "remoteDismissLabel": "Melding over externe aanbieder verbergen",
       "remoteDismissFailed": "De voorkeur voor de externe aanbieder kon niet worden opgeslagen.",
       "noModelSelected": "Er is geen model geselecteerd dat de Werk-modus ondersteunt.",
-      "mentionAgents": "Een agent vermelden"
+      "mentionAgents": "Een agent vermelden",
+      "attachments": {
+        "attachFiles": "Attach files",
+        "removeAttachment": "Remove attachment",
+        "attachTooLarge": "\"{{name}}\" exceeds the 1 MB attachment limit.",
+        "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
+        "attachTooMany": "Only {{max}} files can be attached at once.",
+        "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
+      }
     },
     "conversation": {
       "ready": "Werkruimte gereed",
