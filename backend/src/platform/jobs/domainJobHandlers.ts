@@ -1350,6 +1350,12 @@ const runAutomation: DurableJobHandler = async context => {
       // search; the generation pipeline only honors it when search is
       // available and the owner is authorized.
       webSearch: true,
+      // ...and always request tools for the same reason. The loop only
+      // runs when the owner passes the tools gate with a non-empty
+      // catalog; read-only tools run freely while side-effecting calls
+      // expire back to denials unattended, so a scheduled run can browse
+      // but never acts alone.
+      tools: true,
     });
     if (!queued) {
       throw new Error('The automation chat session is no longer available');

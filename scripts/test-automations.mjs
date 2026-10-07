@@ -831,3 +831,57 @@ test('a webhook body reaches the run as a trigger payload', async () => {
   const plainJob = automationJobsFor(automation.id).at(-1);
   assert.equal(plainJob.payload.value.triggerPayload, undefined);
 });
+
+test('a scheduled chat run requests web search and tools', async () => {
+  const createResponse = await fetch(baseUrl, {
+    method: 'POST',
+    headers: headersFor(ownerToken),
+    body: JSON.stringify({
+      name: 'News briefing',
+      instructions: 'Summarize the news.',
+      triggers: [{ kind: 'daily', hour: 7, minute: 0 }],
+      provider: 'ollama',
+      model: 'test-model',
+    }),
+  });
+  const automation = (await createResponse.json()).data;
+  const rotated = await fetch(`${baseUrl}/${automation.id}/webhook-secret`, {
+    method: 'POST',
+    headers: headersFor(ownerToken),
+  });
+  const { secret } = (await rotated.json()).data;
+  const fired = await fetch(`${baseUrl}/${automation.id}/webhook`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${secret}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({}),
+  });
+  assert.equal(fired.status, 202);
+  const job = automationJobsFor(automation.id).at(-1);
+
+  const chatService = chatServiceModule.default;
+  const realCreateSession = chatService.createSession;
+  const realQueue = chatService.queueDurableGeneration;
+  let sent;
+  chatService.createSession = async () => ({
+    id: 'tools-flag-session',
+  });
+  chatService.queueDurableGeneration = async input => {
+    sent = input;
+    return true;
+  };
+  try {
+    await executeAutomationJob(job.payload.value, 'automation-owner');
+  } finally {
+    chatService.createSession = realCreateSession;
+    chatService.queueDurableGeneration = realQueue;
+  }
+  assert.equal(sent.webSearch, true);
+  assert.equal(
+    sent.tools,
+    true,
+    'scheduled runs ask for the tool loop, gated downstream'
+  );
+});
