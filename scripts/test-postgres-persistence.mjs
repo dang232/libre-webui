@@ -3570,7 +3570,7 @@ test(
       resumed.tables.every(row => row.status === 'verified'),
       true
     );
-    assert.equal(resumed.targetSchemaVersion, 33);
+    assert.equal(resumed.targetSchemaVersion, 32);
     const resumedState = await target.query(
       `SELECT
          (SELECT MAX(version)::text FROM libre_schema_migrations)
@@ -3583,7 +3583,7 @@ test(
          (SELECT COUNT(*)::text FROM work_messages) AS work_messages`
     );
     assert.deepEqual(resumedState.rows[0], {
-      schema_version: '33',
+      schema_version: '32',
       import_status: 'complete',
       journal_count: String(dryRun.tables.length),
       work_journal: '1',
