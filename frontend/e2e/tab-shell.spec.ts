@@ -388,7 +388,7 @@ for (const { language, theme } of [
     await page.addInitScript(value => {
       localStorage.setItem('i18nextLng', value);
       localStorage.setItem(
-        'libre-webui-tabs',
+        'alcore-tabs',
         JSON.stringify({
           state: {
             tabs: [
