@@ -16,6 +16,7 @@
  */
 
 import React, { useState } from 'react';
+import { AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/utils';
 import { formatTokenCount, type ContextUsage } from '@/utils/contextUsage';
@@ -43,7 +44,7 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
  * hover away rather than a click into settings.
  */
 /** Isolate a numeric run so RTL text cannot visually reorder it. */
-const bidiIsolate = (text: string): string => `⁨${text}⁩`;
+const bidiIsolate = (text: string): string => `\u2068${text}\u2069`;
 
 export const ContextMeter: React.FC<ContextMeterProps> = ({
   usage,
@@ -88,7 +89,7 @@ export const ContextMeter: React.FC<ContextMeterProps> = ({
 
   return (
     <div
-      className='relative flex-shrink-0'
+      className='relative shrink-0'
       onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}
       onFocus={() => setVisible(true)}
@@ -110,7 +111,7 @@ export const ContextMeter: React.FC<ContextMeterProps> = ({
             }
           : {})}
         className={cn(
-          'touch-target flex h-9 w-9 items-center justify-center rounded-full text-ink-muted outline-none',
+          'touch-target relative flex h-9 w-9 items-center justify-center rounded-full text-ink-muted outline-hidden',
           'transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-primary-500/40',
           // Past four fifths the summarizer is close enough to warn about;
           // at the window the conversation is losing history.
@@ -145,6 +146,10 @@ export const ContextMeter: React.FC<ContextMeterProps> = ({
             />
           )}
         </svg>
+        {/* Color alone must not carry the warning. */}
+        {ratio >= 0.8 && (
+          <AlertTriangle className='absolute inset-e-0 top-0 h-3 w-3' />
+        )}
       </span>
 
       {visible && (
@@ -153,15 +158,15 @@ export const ContextMeter: React.FC<ContextMeterProps> = ({
           className={cn(
             'pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 -translate-x-1/2',
             'whitespace-nowrap rounded-2xl bg-surface/95 px-4 py-3 text-center shadow-lv3 backdrop-blur-xl',
-            'border border-black/[0.06] dark:border-white/[0.08] dark:bg-dark-100/95',
+            'border border-black/6 dark:border-white/8 dark:bg-dark-100/95',
             'animate-scale-in'
           )}
         >
-          <p className='text-[13px] text-gray-500 dark:text-dark-600'>
+          <p className='text-[13px] text-ink-muted'>
             {t('chat.context.title')}
           </p>
           {hasBudget && (
-            <p className='text-[13px] text-gray-500 dark:text-dark-600'>
+            <p className='text-[13px] text-ink-muted'>
               {t('chat.context.full', { percent })}
             </p>
           )}
@@ -169,9 +174,7 @@ export const ContextMeter: React.FC<ContextMeterProps> = ({
             {tokenLine}
           </p>
           {cappedLine && (
-            <p className='mt-1 text-[11px] text-gray-400 dark:text-dark-500'>
-              {cappedLine}
-            </p>
+            <p className='mt-1 text-[11px] text-ink-muted'>{cappedLine}</p>
           )}
         </div>
       )}

@@ -65,8 +65,17 @@ function fixture(overrides = {}) {
     plugin: [],
     ollama: [],
     resolved: [],
+    dsh: [],
   };
   const dependencies = {
+    async resolveDshProviderTarget(...args) {
+      calls.dsh.push(args);
+      return {
+        model: 'underlying-model',
+        providerType: 'plugin',
+        providerId: 'exact-dsh-provider',
+      };
+    },
     chatService: {
       async getSession(...args) {
         calls.session.push(args);
@@ -575,3 +584,32 @@ test('disconnecting a thinking summary request cancels its provider signal', asy
       pluginResponse(summaryText);
   }
 });
+
+test('an explicitly selected task persona can summarize with its backing plugin', async () => {
+  const item = fixture();
+  item.dependencies.chatGenerationService.prepareGenerationTarget = async (
+    ...args
+  ) => {
+    item.calls.targets.push(args);
+    return {
+      actualModelName: 'persona-backing-model',
+      providerType: 'plugin',
+      activePlugin: { id: 'persona-provider' },
+      mergedOptions: { think: true },
+    };
+  };
+  assert.deepEqual(
+    await item.service.summarizeForSession({
+      ...baseRequest,
+      requestedModel: 'persona:task-persona',
+      providerType: 'ollama',
+    }),
+    { summary: summaryText }
+  );
+  assert.equal(item.calls.targets[0][0], 'persona:task-persona');
+  assert.equal(item.calls.targets[0][3], undefined);
+  assert.equal(item.calls.plugin[0][0], 'persona-backing-model');
+  assert.equal(item.calls.plugin[0][4], 'persona-provider');
+  assert.equal(item.calls.ollama.length + item.calls.dsh.length, 0);
+});
+

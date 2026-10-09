@@ -16,7 +16,7 @@
  */
 
 import React, { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-hot-toast';
 import { useAuthStore } from '@/store/authStore';
@@ -39,10 +39,19 @@ import { isDemoMode } from '@/utils/demoMode';
 import { useOAuthProviders } from '@/hooks/useOAuthProviders';
 import { cn } from '@/utils';
 import { createLogger } from '@/utils/logger';
+import {
+  clearExplicitLogout,
+  resolvePostLoginPath,
+} from '@/utils/postLoginPath';
 import { TurnstileWidget } from '@/components/TurnstileWidget';
 import { AlcoreAuthNotice } from '@/components/AlcoreAuthNotice';
 
 const logger = createLogger('components:login-form');
+
+interface FormError {
+  message: string;
+  field: 'username' | 'password' | 'credentials' | 'mfaCode' | null;
+}
 
 interface LoginFormProps {
   onLogin?: () => void;
@@ -131,7 +140,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   } | null>(null);
   const [recoveryCodes, setRecoveryCodes] = useState<string[] | null>(null);
   const [pendingLogin, setPendingLogin] = useState<LoginResponse | null>(null);
+  // Toasts vanish; the inline alert keeps the failure readable and tied to
+  // the fields that caused it.
+  const [formError, setFormError] = useState<FormError | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const navigateAfterLogin = () => {
+    const destination = resolvePostLoginPath(location.state);
+    clearExplicitLogout();
+    navigate(destination);
+  };
   const { login, systemInfo } = useAuthStore();
   const turnstileSiteKey = systemInfo?.turnstile?.siteKey;
   const isTurnstileEnabled = Boolean(
@@ -145,19 +163,52 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     [isLoading, isTurnstileEnabled, turnstileToken]
   );
 
+  const showError = (message: string, field: FormError['field'] = null) => {
+    setFormError({ message, field });
+    toast.error(message);
+  };
+  const clearFieldError = (...fields: Array<FormError['field']>) =>
+    setFormError(current =>
+      current && fields.includes(current.field) ? null : current
+    );
+  const fieldErrorProps = (field: 'username' | 'password' | 'mfaCode') =>
+    formError &&
+    (formError.field === field ||
+      (formError.field === 'credentials' && field !== 'mfaCode'))
+      ? { 'aria-invalid': true as const, 'aria-describedby': 'login-error' }
+      : {};
+  const errorAlert = formError && (
+    <p
+      id='login-error'
+      role='alert'
+      data-testid='login-error'
+      className='rounded-xl border border-error-700/30 bg-error-500/10 px-3 py-2 text-start text-sm text-error-700 dark:text-error-400'
+    >
+      {formError.message}
+    </p>
+  );
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setFormError(null);
     const loginUsername = isDemo ? DEMO_CREDENTIALS.username : username.trim();
     const loginPassword = isDemo ? DEMO_CREDENTIALS.password : password;
 
     if (!loginUsername || !loginPassword) {
-      toast.error(t('auth.login.enterBoth'));
+      showError(
+        t('auth.login.enterBoth'),
+        !loginUsername ? 'username' : 'password'
+      );
       return;
     }
 
     if (isTurnstileEnabled && !turnstileToken) {
-      toast.error(t('auth.login.verificationFailed'));
+      showError(
+        t(
+          'auth.login.verificationFailed',
+          'Security verification failed. Please refresh and try again.'
+        )
+      );
       return;
     }
 
@@ -185,7 +236,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             if (enrollResponse.success && enrollResponse.data) {
               setEnrollment(enrollResponse.data);
             } else {
-              toast.error(enrollResponse.message || t('auth.mfa.enrollFailed'));
+              showError(enrollResponse.message || t('auth.mfa.enrollFailed'));
               setMfaChallenge(null);
             }
           }
@@ -198,13 +249,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         );
         toast.success(t('auth.login.loginSuccess'));
         onLogin?.();
-        navigate('/');
+        navigateAfterLogin();
       } else if (response.message === 'network_error') {
         // A transport failure surfaced as a message is offline, never
         // bad credentials.
         toast.error(t('auth.login.offline'));
       } else {
-        toast.error(response.message || t('auth.login.loginFailed'));
+        showError(
+          response.message || t('auth.login.loginFailed'),
+          'credentials'
+        );
       }
     } catch (error: unknown) {
       logger.error('Login error:', error);
@@ -219,7 +273,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       } else if (isOfflineLoginError(error)) {
         toast.error(t('auth.login.offline'));
       } else {
-        toast.error(t('auth.login.checkCredentials'));
+        showError(t('auth.login.checkCredentials'), 'credentials');
       }
     } finally {
       setTurnstileToken('');
@@ -231,7 +285,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     login(data.user, data.token, data.systemInfo);
     toast.success(t('auth.login.loginSuccess'));
     onLogin?.();
-    navigate('/');
+    navigateAfterLogin();
   };
 
   const handleMfaSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -249,7 +303,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           setPendingLogin(loginData);
           setRecoveryCodes(codes);
         } else {
-          toast.error(response.message || t('auth.mfa.invalidCode'));
+          showError(response.message || t('auth.mfa.invalidCode'), 'mfaCode');
         }
         return;
       }
@@ -260,18 +314,18 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       if (response.success && response.data) {
         completeLogin(response.data);
       } else {
-        toast.error(response.message || t('auth.mfa.invalidCode'));
+        showError(response.message || t('auth.mfa.invalidCode'), 'mfaCode');
       }
     } catch (error: unknown) {
       const apiError = error as { response?: { data?: { message?: string } } };
       const message = apiError.response?.data?.message;
       if (message && /challenge/i.test(message)) {
         // The 5-minute challenge expired: back to the password step.
-        toast.error(t('auth.mfa.challengeExpired'));
+        showError(t('auth.mfa.challengeExpired'));
         setMfaChallenge(null);
         setEnrollment(null);
       } else {
-        toast.error(message || t('auth.mfa.invalidCode'));
+        showError(message || t('auth.mfa.invalidCode'), 'mfaCode');
       }
     } finally {
       setMfaCode('');
@@ -284,7 +338,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     try {
       const optionsResponse = await authApi.passkeyLoginOptions();
       if (!optionsResponse.success || !optionsResponse.data) {
-        toast.error(optionsResponse.message || t('auth.passkeys.signInFailed'));
+        showError(optionsResponse.message || t('auth.passkeys.signInFailed'));
         return;
       }
       const credential = await getPasskeyAssertion(
@@ -298,7 +352,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         localStorage.removeItem('auth-token');
         completeLogin(response.data);
       } else {
-        toast.error(response.message || t('auth.passkeys.signInFailed'));
+        showError(response.message || t('auth.passkeys.signInFailed'));
       }
     } catch (error: unknown) {
       const domError = error as { name?: string };
@@ -310,7 +364,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       }
       const apiError = error as { response?: { data?: { message?: string } } };
       logger.error('Passkey login error:', error);
-      toast.error(
+      showError(
         apiError.response?.data?.message || t('auth.passkeys.signInFailed')
       );
     } finally {
@@ -335,7 +389,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   );
 
   const inputClass =
-    'h-11 w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink shadow-subtle outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-line-strong focus:ring-2 focus:ring-primary-500/35 disabled:cursor-not-allowed disabled:bg-surface-subtle disabled:text-ink-muted motion-reduce:transition-none';
+    'h-11 w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink shadow-subtle outline-hidden transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 disabled:cursor-not-allowed disabled:bg-surface-subtle disabled:text-ink-muted motion-reduce:transition-none';
 
   if (recoveryCodes && pendingLogin) {
     return (
@@ -358,7 +412,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <button
           type='button'
           onClick={() => completeLogin(pendingLogin)}
-          className='flex h-11 w-full items-center justify-center rounded-xl border border-transparent bg-ink px-4 text-sm font-medium text-ink-inverse shadow-subtle transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none'
+          className='flex h-11 w-full items-center justify-center rounded-xl border border-transparent bg-ink px-4 text-sm font-medium text-ink-inverse shadow-subtle transition-opacity hover:opacity-90 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none'
         >
           {t('auth.mfa.recoveryCodesSaved')}
         </button>
@@ -425,8 +479,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               autoComplete='one-time-code'
               autoFocus
               dir='ltr'
+              {...fieldErrorProps('mfaCode')}
               value={mfaCode}
-              onChange={e => setMfaCode(e.target.value)}
+              onChange={e => {
+                setMfaCode(e.target.value);
+                clearFieldError('mfaCode');
+              }}
               className={inputClass}
               placeholder={t('auth.mfa.codePlaceholder')}
               required
@@ -436,7 +494,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <button
             type='submit'
             disabled={isLoading || !mfaCode.trim()}
-            className='flex h-11 w-full items-center justify-center rounded-xl border border-transparent bg-ink px-4 text-sm font-medium text-ink-inverse shadow-subtle transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none'
+            className='flex h-11 w-full items-center justify-center rounded-xl border border-transparent bg-ink px-4 text-sm font-medium text-ink-inverse shadow-subtle transition-opacity hover:opacity-90 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none'
           >
             {isLoading ? (
               <div className='flex items-center'>
@@ -447,12 +505,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               t('auth.mfa.verifyButton')
             )}
           </button>
+          {errorAlert}
           <button
             type='button'
             onClick={() => {
               setMfaChallenge(null);
               setEnrollment(null);
               setMfaCode('');
+              setFormError(null);
             }}
             className='w-full text-center text-sm font-medium text-ink-muted transition-colors hover:text-ink'
           >
@@ -508,10 +568,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <input
             id='username'
             type='text'
+            autoComplete='username'
+            autoCapitalize='none'
+            spellCheck={false}
+            {...fieldErrorProps('username')}
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={e => {
+              setUsername(e.target.value);
+              clearFieldError('username', 'credentials');
+            }}
             onKeyDown={handleKeyDown}
-            className='h-11 w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink shadow-subtle outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-line-strong focus:ring-2 focus:ring-primary-500/35 disabled:cursor-not-allowed disabled:bg-surface-subtle disabled:text-ink-muted motion-reduce:transition-none'
+            className='h-11 w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink shadow-subtle outline-hidden transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 disabled:cursor-not-allowed disabled:bg-surface-subtle disabled:text-ink-muted motion-reduce:transition-none'
             placeholder={t('auth.login.usernamePlaceholder')}
             required
             disabled={isLoading || isDemo}
@@ -529,10 +596,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             <input
               id='password'
               type={showPassword ? 'text' : 'password'}
+              autoComplete='current-password'
+              {...fieldErrorProps('password')}
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={e => {
+                setPassword(e.target.value);
+                clearFieldError('password', 'credentials');
+              }}
               onKeyDown={handleKeyDown}
-              className='h-11 w-full rounded-xl border border-line bg-surface px-3 pe-11 text-sm text-ink shadow-subtle outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-line-strong focus:ring-2 focus:ring-primary-500/35 disabled:cursor-not-allowed disabled:bg-surface-subtle disabled:text-ink-muted motion-reduce:transition-none'
+              className='h-11 w-full rounded-xl border border-line bg-surface px-3 pe-11 text-sm text-ink shadow-subtle outline-hidden transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 disabled:cursor-not-allowed disabled:bg-surface-subtle disabled:text-ink-muted motion-reduce:transition-none'
               placeholder={t('auth.login.passwordPlaceholder')}
               required
               disabled={isLoading || isDemo}
@@ -540,13 +612,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             <button
               type='button'
               onClick={() => setShowPassword(!showPassword)}
-              className='absolute inset-y-0 end-0 flex items-center pe-3 text-ink-muted transition-colors hover:text-ink disabled:cursor-not-allowed disabled:opacity-50'
+              className='absolute inset-y-0 inset-e-0 flex items-center pe-3 text-ink-muted transition-colors hover:text-ink disabled:cursor-not-allowed disabled:opacity-50'
               disabled={isLoading || isDemo}
               aria-label={
                 showPassword
                   ? t('auth.login.hideCharacters')
                   : t('auth.login.revealCharacters')
               }
+              aria-pressed={showPassword}
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -566,7 +639,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <button
           type='submit'
           disabled={submitDisabled}
-          className='flex h-11 w-full items-center justify-center rounded-xl border border-transparent bg-ink px-4 text-sm font-medium text-ink-inverse shadow-subtle transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none'
+          className='flex h-11 w-full items-center justify-center rounded-xl border border-transparent bg-ink px-4 text-sm font-medium text-ink-inverse shadow-subtle transition-opacity hover:opacity-90 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none'
         >
           {isLoading ? (
             <div className='flex items-center'>
@@ -580,15 +653,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             </div>
           )}
         </button>
+        {errorAlert}
       </form>
-
       {!isDemo && passkeysSupported() && systemInfo?.passkeysInUse && (
         <button
           type='button'
           data-testid='passkey-signin-button'
           onClick={handlePasskeyLogin}
           disabled={isLoading}
-          className='mt-3 flex h-11 w-full items-center justify-center rounded-xl border border-line bg-surface px-4 text-sm font-medium text-ink shadow-subtle transition-colors hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none'
+          className='mt-3 flex h-11 w-full items-center justify-center rounded-xl border border-line bg-surface px-4 text-sm font-medium text-ink shadow-subtle transition-colors hover:bg-surface-subtle focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none'
         >
           <KeyRound size={16} className='me-2' />
           {t('auth.passkeys.signInButton')}
@@ -631,6 +704,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               <p className='text-sm text-ink-muted'>
                 {t('auth.login.noAccount')}{' '}
                 <button
+                  type='button'
                   onClick={onShowSignup}
                   className='font-medium text-primary-600 transition-colors hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300'
                 >

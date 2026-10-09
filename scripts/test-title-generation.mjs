@@ -146,3 +146,177 @@ test('an empty answer still falls back rather than failing', async () => {
   assert.equal(result.source, 'fallback');
   assert.ok(result.title.length > 0, 'the chat still gets a name');
 });
+
+function dshTitleFixture(overrides = {}) {
+  const calls = {
+    ownership: [],
+    resolved: [],
+    prepared: [],
+    plugin: [],
+    ollama: [],
+    updates: [],
+  };
+  const owned = {
+    id: 'dsh-title-session',
+    model: 'dsh',
+    providerType: 'agent',
+    providerId: 'dsh',
+    title: 'New Chat',
+    messages: [],
+    createdAt: 1,
+    updatedAt: 1,
+  };
+  const dependencies = {
+    chatService: {
+      async getSession(id, actor) {
+        calls.ownership.push([id, actor]);
+        return id === owned.id && actor === 'dsh-admin'
+          ? structuredClone(owned)
+          : undefined;
+      },
+      async updateSession(id, updates, actor) {
+        calls.updates.push([id, updates, actor]);
+        return { ...owned, ...updates };
+      },
+    },
+    async resolveDshProviderTarget(model, actor) {
+      calls.resolved.push([model, actor]);
+      return {
+        model: 'shared-model',
+        providerType: 'plugin',
+        providerId: 'exact-provider',
+      };
+    },
+    chatGenerationService: {
+      async resolveActualModelName(model) {
+        return model;
+      },
+      async prepareGenerationTarget(model, actor, options, provider) {
+        calls.prepared.push([model, actor, options, provider]);
+        return {
+          actualModelName: model,
+          providerType: provider?.providerType,
+          providerId: provider?.providerId,
+          activePlugin:
+            provider?.providerType === 'plugin'
+              ? { id: provider.providerId }
+              : null,
+          mergedOptions: {
+            ...options,
+            think: true,
+            tools: [{ name: 'forbidden_tool' }],
+          },
+        };
+      },
+      extractPluginAssistantContent: response =>
+        response.choices[0].message.content,
+    },
+    pluginService: {
+      async executePluginRequest(...args) {
+        calls.plugin.push(args);
+        return {
+          choices: [
+            {
+              message: {
+                content:
+                  '<think>private title reasoning</think> Focused title.',
+              },
+            },
+          ],
+        };
+      },
+    },
+    ollamaService: {
+      async generateResponse(...args) {
+        calls.ollama.push(args);
+        return { response: 'Focused local title' };
+      },
+    },
+    logger: { error() {} },
+    ...overrides,
+  };
+  return {
+    calls,
+    owned,
+    dependencies,
+    service: new TitleGenerationService(dependencies),
+  };
+}
+
+const dshTitleRequest = {
+  sessionId: 'dsh-title-session',
+  requestedModel: 'dsh',
+  message: 'Explain the project configuration',
+  userId: 'dsh-admin',
+  providerType: 'agent',
+  providerId: 'dsh',
+};
+
+test('a real Ollama model named dsh does not invoke the harness resolver', async () => {
+  const fixture = dshTitleFixture();
+  const result = await fixture.service.generateTitleForSession({
+    ...dshTitleRequest,
+    providerType: 'ollama',
+    providerId: null,
+  });
+  assert.equal(result.source, 'ollama');
+  assert.equal(fixture.calls.ollama[0][0].model, 'dsh');
+  assert.deepEqual(fixture.calls.resolved, []);
+});
+
+test('title ownership and unsupported agents are checked before DSH/provider work', async () => {
+  const fixture = dshTitleFixture();
+  assert.equal(
+    await fixture.service.generateTitleForSession({
+      ...dshTitleRequest,
+      userId: 'other-user',
+    }),
+    null
+  );
+  assert.equal(
+    fixture.calls.resolved.length + fixture.calls.prepared.length,
+    0
+  );
+  await assert.rejects(
+    fixture.service.generateTitleForSession({
+      ...dshTitleRequest,
+      requestedModel: 'codex',
+      providerId: 'codex',
+    }),
+    { name: 'ChatProviderSelectionError' }
+  );
+  assert.equal(
+    fixture.calls.resolved.length +
+      fixture.calls.prepared.length +
+      fixture.calls.updates.length,
+    0
+  );
+});
+
+test('an explicitly selected task persona can use its backing plugin for a title', async () => {
+  const fixture = dshTitleFixture();
+  fixture.dependencies.chatGenerationService.prepareGenerationTarget = async (
+    ...args
+  ) => {
+    fixture.calls.prepared.push(args);
+    return {
+      actualModelName: 'persona-backing-model',
+      providerType: 'plugin',
+      activePlugin: { id: 'persona-provider' },
+      mergedOptions: { think: true },
+    };
+  };
+  const result = await fixture.service.generateTitleForSession({
+    ...dshTitleRequest,
+    requestedModel: 'persona:task-persona',
+    providerType: 'ollama',
+    providerId: null,
+  });
+  assert.equal(result.source, 'plugin');
+  assert.equal(fixture.calls.prepared[0][0], 'persona:task-persona');
+  assert.equal(fixture.calls.prepared[0][3], undefined);
+  assert.equal(fixture.calls.plugin[0][0], 'persona-backing-model');
+  assert.equal(fixture.calls.plugin[0][4], 'persona-provider');
+  assert.equal(fixture.calls.ollama.length + fixture.calls.resolved.length, 0);
+});
+

@@ -14,34 +14,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import React from 'react';
 import { cn } from '@/utils';
-
 interface SwitchProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
   disabled?: boolean;
   className?: string;
+  id?: string;
+  /** A switch has no visible text of its own; callers must name it. */
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
+  'aria-describedby'?: string;
+  'data-testid'?: string;
 }
-
 export const Switch: React.FC<SwitchProps> = ({
   checked,
   onChange,
   disabled = false,
   className = '',
+  id,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  'aria-describedby': ariaDescribedBy,
+  'data-testid': testId,
 }) => {
   return (
     <button
       type='button'
       role='switch'
+      id={id}
       aria-checked={checked}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledBy}
+      aria-describedby={ariaDescribedBy}
       aria-disabled={disabled || undefined}
+      data-testid={testId}
       disabled={disabled}
       onClick={() => onChange(!checked)}
       className={cn(
-        'relative inline-flex h-6 w-11 flex-shrink-0 items-center justify-center rounded-full bg-transparent',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:focus-visible:ring-primary-400',
+        'relative inline-flex h-6 w-11 shrink-0 items-center justify-center rounded-full bg-transparent',
+        'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:focus-visible:ring-primary-400',
         disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
         className
       )}

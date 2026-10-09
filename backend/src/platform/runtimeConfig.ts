@@ -308,6 +308,11 @@ export const resolvePlatformRuntimeConfig = (
         'Team mode requires AGENT_CLI_MODELS_ENABLED=false because agent binaries and their credentials are node-local and cannot be routed safely through the external durable worker.'
       );
     }
+    if (env.CODEX_OAUTH_MODELS_ENABLED !== 'false') {
+      blockers.push(
+        'Team mode requires CODEX_OAUTH_MODELS_ENABLED=false because the Codex OAuth token file is node-local and cannot be routed safely through the external durable worker.'
+      );
+    }
   }
 
   return {

@@ -992,7 +992,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
             selectedModel: defaultModel,
             selectedProviderType: defaultProviderType || null,
             selectedProviderId:
-              defaultProviderType === 'plugin'
+              defaultProviderType === 'plugin' ||
+              defaultProviderType === 'agent'
                 ? defaultProviderId || null
                 : null,
           });

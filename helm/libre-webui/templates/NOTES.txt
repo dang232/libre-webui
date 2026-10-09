@@ -24,15 +24,4 @@ To access Alcore:
    Then open: http://localhost:8080
 {{- end }}
 
-{{- if .Values.ollama.bundled.enabled }}
-
-Ollama is bundled and running in your cluster.
-To pull models, exec into the Ollama pod:
-   kubectl exec -it --namespace {{ .Release.Namespace }} deployment/{{ include "libre-webui.fullname" . }}-ollama -- ollama pull llama3.2
-{{- else if .Values.ollama.external.enabled }}
-
-Using external Ollama at: {{ .Values.ollama.external.url }}
-Make sure Ollama is accessible from within the cluster.
-{{- end }}
-
 For more information, visit: https://librewebui.org

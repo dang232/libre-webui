@@ -21,6 +21,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { PluginUsageAnalytics } from '../../src/utils/api/pluginApi';
 import type { SystemDiagnostics } from '../../src/utils/api/systemApi';
+import type { WorkCapabilities } from '../../src/types/work';
 
 const latestReleaseVersion = readFileSync(
   path.resolve(
@@ -47,6 +48,9 @@ type MockSystemInfo = {
   passkeysInUse?: boolean;
   version: string;
   turnstile?: { enabled: boolean; siteKey?: string };
+  agentCliModelsEnabled?: boolean;
+  /** Who may use the embedded Strands engine. */
+  strandsAccess?: 'disabled' | 'admins' | 'all-users';
   defaultTheme?: {
     mode: 'light' | 'dark' | 'amoled' | 'celestial';
     accent?: string;
@@ -314,9 +318,13 @@ type MockChatStream = {
   finalChunk?: string;
   chunkDelayMs?: number;
   completionDelayMs?: number;
+  holdOpen?: boolean;
   duplicateCompletion?: boolean;
-  /** Dispatch a terminal generation error frame instead of streaming. */
-  failWith?: { error: string; code?: string; delayMs?: number };
+  /**
+   * Dispatch a terminal generation error frame instead of streaming (object form),
+   * or end the stream with this generation error instead of a completion (string form).
+   */
+  failWith?: string | { error: string; code?: string; delayMs?: number };
 };
 
 type MockWorkRecoveryItem = {
@@ -358,6 +366,7 @@ type MockWorkAdminOverview = {
 };
 
 type MockWorkCapabilities = {
+  strands?: WorkCapabilities['strands'];
   available: boolean;
   runtime: 'docker' | 'kubernetes';
   image: string;
@@ -507,9 +516,17 @@ export interface MockEmailSettings {
   from: string;
   rejectUnauthorized: boolean;
   appUrl: string;
+  emailTheme: 'light' | 'dark';
   configured: boolean;
   sources: Record<
-    'host' | 'port' | 'security' | 'username' | 'password' | 'from' | 'appUrl',
+    | 'host'
+    | 'port'
+    | 'security'
+    | 'username'
+    | 'password'
+    | 'from'
+    | 'appUrl'
+    | 'emailTheme',
     'stored' | 'env' | 'default'
   >;
 }
@@ -525,6 +542,7 @@ const defaultEmailSettings: MockEmailSettings = {
   from: '',
   rejectUnauthorized: true,
   appUrl: '',
+  emailTheme: 'light',
   configured: false,
   sources: {
     host: 'default',
@@ -534,6 +552,7 @@ const defaultEmailSettings: MockEmailSettings = {
     password: 'default',
     from: 'default',
     appUrl: 'default',
+    emailTheme: 'default',
   },
 };
 
@@ -628,6 +647,10 @@ export const defaultSystemInfo: MockSystemInfo = {
   userCount: 1,
   version: '0.10.0-e2e',
   turnstile: { enabled: false },
+  // Strands is off by default in production. The mock opens it to admins so
+  // suites exercising the section do not have to state it every time; suites
+  // asserting the disabled state override it.
+  strandsAccess: 'admins',
 };
 
 const defaultModels: MockModel[] = [
@@ -904,8 +927,9 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
         finalChunk: options.chatStream.finalChunk,
         chunkDelayMs: options.chatStream.chunkDelayMs ?? 40,
         completionDelayMs: options.chatStream.completionDelayMs ?? 40,
+        holdOpen: options.chatStream.holdOpen ?? false,
         duplicateCompletion: options.chatStream.duplicateCompletion ?? false,
-        ...(options.chatStream.failWith
+        ...(options.chatStream.failWith !== undefined
           ? { failWith: options.chatStream.failWith }
           : {}),
       }
@@ -1216,11 +1240,14 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
     const durableGenerations = new Map<
       string,
       {
+        sessionId: string;
         assistantMessageId: string;
         jobId: string;
         cancelled: boolean;
+        completed: boolean;
       }
     >();
+    const cancelledIdentities = new Set<string>();
     const requestUrl = (input: RequestInfo | URL): URL =>
       new URL(
         typeof input === 'string'
@@ -1242,9 +1269,9 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
       init?: RequestInit
     ): AbortSignal | undefined =>
       init?.signal ?? (input instanceof Request ? input.signal : undefined);
-    const jsonResponse = (data: unknown): Response =>
+    const jsonResponse = (data: unknown, status = 200): Response =>
       new Response(JSON.stringify({ success: true, data }), {
-        status: 200,
+        status,
         headers: { 'content-type': 'application/json' },
       });
 
@@ -1275,10 +1302,14 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
         const sent = window as unknown as Record<string, unknown>;
         ((sent.__libreChatStreams ||= []) as unknown[]).push(body);
         const jobId = `e2e-chat-job-${nextDurableJobId++}`;
-        durableGenerations.set(body.assistantMessageId, {
+        const sessionId = decodeURIComponent(generationMatch[1]);
+        const identity = JSON.stringify([sessionId, body.assistantMessageId]);
+        durableGenerations.set(identity, {
+          sessionId,
           assistantMessageId: body.assistantMessageId,
           jobId,
-          cancelled: false,
+          cancelled: cancelledIdentities.has(identity),
+          completed: false,
         });
         return jsonResponse({
           jobId,
@@ -1291,7 +1322,12 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
       );
       if (eventsMatch && method === 'GET') {
         const assistantMessageId = url.searchParams.get('generation') || '';
-        const generation = durableGenerations.get(assistantMessageId);
+        const generation = durableGenerations.get(
+          JSON.stringify([
+            decodeURIComponent(eventsMatch[1]),
+            assistantMessageId,
+          ])
+        );
         if (!generation) {
           return new Response(
             JSON.stringify({ success: false, error: 'Generation not found' }),
@@ -1307,7 +1343,10 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
             ]
           : ['Mock assistant response'];
         if (streamConfig?.failWith) {
-          const failure = streamConfig.failWith;
+          const failure =
+            typeof streamConfig.failWith === 'string'
+              ? { error: streamConfig.failWith }
+              : streamConfig.failWith;
           const failBody = new ReadableStream<Uint8Array>({
             start(controller) {
               const encoder = new TextEncoder();
@@ -1378,19 +1417,30 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
               );
               timers.push(timer);
             });
+            if (streamConfig?.holdOpen) return;
             const finalContent = total;
             const completionTimer = window.setTimeout(
               () => {
                 if (settled || generation.cancelled) return;
                 settled = true;
+                generation.completed = true;
                 signal?.removeEventListener('abort', abort);
-                const completion = {
-                  type: 'done',
-                  messageId: assistantMessageId,
-                  content: finalContent,
-                  role: 'assistant',
-                  timestamp: Date.now(),
-                };
+                const completion = streamConfig?.failWith
+                  ? {
+                      type: 'error',
+                      messageId: assistantMessageId,
+                      error:
+                        typeof streamConfig.failWith === 'string'
+                          ? streamConfig.failWith
+                          : streamConfig.failWith.error,
+                    }
+                  : {
+                      type: 'done',
+                      messageId: assistantMessageId,
+                      content: finalContent,
+                      role: 'assistant',
+                      timestamp: Date.now(),
+                    };
                 const block = `id: ${pieces.length + 1}\ndata: ${JSON.stringify(completion)}\n\n`;
                 controller.enqueue(
                   encoder.encode(
@@ -1417,13 +1467,39 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
         });
       }
 
+      const identityCancelMatch = url.pathname.match(
+        /^\/api\/chat\/sessions\/([^/]+)\/generations\/([^/]+)\/cancel$/
+      );
+      if (identityCancelMatch && method === 'POST') {
+        const sessionId = decodeURIComponent(identityCancelMatch[1]);
+        const assistantMessageId = decodeURIComponent(identityCancelMatch[2]);
+        const identity = JSON.stringify([sessionId, assistantMessageId]);
+        const generation = durableGenerations.get(identity);
+        if (!generation?.completed) {
+          cancelledIdentities.add(identity);
+          if (generation) generation.cancelled = true;
+        }
+        const decision = generation?.completed
+          ? { completed: true }
+          : generation
+            ? { jobId: generation.jobId, state: 'cancelled' }
+            : { pending: true };
+        const sent = window as unknown as Record<string, unknown>;
+        ((sent.__libreChatIdentityCancels ||= []) as unknown[]).push({
+          sessionId,
+          assistantMessageId,
+          decision,
+        });
+        return jsonResponse(decision, 202);
+      }
+
       const cancelMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/cancel$/);
       if (cancelMatch && method === 'POST') {
         const jobId = decodeURIComponent(cancelMatch[1]);
         const generation = [...durableGenerations.values()].find(
           candidate => candidate.jobId === jobId
         );
-        if (generation) generation.cancelled = true;
+        if (generation && !generation.completed) generation.cancelled = true;
         const sent = window as unknown as Record<string, unknown>;
         ((sent.__libreChatCancels ||= []) as unknown[]).push({ jobId });
         return jsonResponse({ cancelled: true });
@@ -1500,7 +1576,10 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
         };
 
         if (streamConfig?.failWith) {
-          const failure = streamConfig.failWith;
+          const failure =
+            typeof streamConfig.failWith === 'string'
+              ? { error: streamConfig.failWith }
+              : streamConfig.failWith;
           window.setTimeout(() => {
             dispatch('error', {
               error: failure.error,
@@ -1547,8 +1626,19 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
           );
         });
 
+        if (streamConfig.holdOpen) return;
         window.setTimeout(
           () => {
+            if (streamConfig.failWith) {
+              dispatch('error', {
+                error:
+                  typeof streamConfig.failWith === 'string'
+                    ? streamConfig.failWith
+                    : streamConfig.failWith.error,
+                sessionId: message.data?.sessionId,
+              });
+              return;
+            }
             const completion = {
               content: cumulativeChunks[cumulativeChunks.length - 1].total,
               role: 'assistant',
@@ -3226,7 +3316,11 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
         });
         return;
       }
-      if (path === '/email/settings' || path === '/email/test') {
+      if (
+        path === '/email/settings' ||
+        path === '/email/test' ||
+        path === '/email/preview'
+      ) {
         const emailUser = authUserForRoute(route) ?? options.currentUser;
         const isAdmin = emailUser?.role === 'admin';
         const view = () => ({
@@ -3243,6 +3337,7 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
                 from: emailSettings.from,
                 rejectUnauthorized: emailSettings.rejectUnauthorized,
                 appUrl: emailSettings.appUrl,
+                emailTheme: emailSettings.emailTheme,
                 configured: emailSettings.configured,
                 sources: emailSettings.sources,
               }
@@ -3264,6 +3359,36 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
           });
           return;
         }
+        if (method === 'POST' && path === '/email/preview') {
+          const body = route.request().postDataJSON() as {
+            emailTheme: 'light' | 'dark';
+            heading: string;
+          };
+          const dark = body.emailTheme === 'dark';
+          const heading = body.heading.replace(
+            /[&<>"']/g,
+            character =>
+              ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;',
+              })[character]!
+          );
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              success: true,
+              data: {
+                html: `<!doctype html><html><head><meta charset="utf-8"></head><body data-email-theme="${body.emailTheme}" style="background:${dark ? '#161615' : '#f3f0ea'};color:${dark ? '#f3f0ea' : '#0a0a0b'}"><h1>${heading}</h1></body></html>`,
+                text: body.heading,
+              },
+            }),
+          });
+          return;
+        }
         if (method === 'PUT' && path === '/email/settings') {
           const body = JSON.parse(route.request().postData() || '{}') as Record<
             string,
@@ -3276,6 +3401,10 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
           }
           if (typeof body.appUrl === 'string')
             emailSettings.appUrl = body.appUrl;
+          if (body.emailTheme === 'light' || body.emailTheme === 'dark') {
+            emailSettings.emailTheme = body.emailTheme;
+            emailSettings.sources.emailTheme = 'stored';
+          }
           if (typeof body.security === 'string') {
             emailSettings.security =
               body.security as MockEmailSettings['security'];

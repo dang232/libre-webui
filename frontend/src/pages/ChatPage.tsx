@@ -650,27 +650,49 @@ export const ChatPage: React.FC = () => {
     };
     sessionStorage.setItem('pendingMessage', JSON.stringify(pendingMessage));
 
-    // Clear local state
+    // Keep what was typed until the session exists, so a failed create does
+    // not throw the draft away.
+    const draft = {
+      message: welcomeMessage,
+      images: welcomeImages,
+      webSearch: welcomeWebSearch,
+      tools: welcomeTools,
+    };
     setWelcomeMessage('');
     setWelcomeImages([]);
     setWelcomeWebSearch(false);
     setWelcomeTools(DEFAULT_COMPOSER_TOOLS);
 
     // Create a new session and navigate to it
-    const newSession = await createSession(
-      selectedModel,
-      undefined,
-      selectedModel.startsWith('persona:')
-        ? selectedModel.slice('persona:'.length)
-        : undefined,
-      selectedProviderType,
-      selectedProviderId
-    );
-    if (newSession) {
-      // Carry the settings chosen before the session existed onto it.
-      await applyDraftSessionSettings(newSession);
-      navigate(`/c/${newSession.id}`, { replace: true });
+    let newSession: ChatSession | undefined;
+    try {
+      newSession = await createSession(
+        selectedModel,
+        undefined,
+        selectedModel.startsWith('persona:')
+          ? selectedModel.slice('persona:'.length)
+          : undefined,
+        selectedProviderType,
+        selectedProviderId
+      );
+    } catch {
+      newSession = undefined;
     }
+    if (!newSession) {
+      sessionStorage.removeItem('pendingMessage');
+      setWelcomeMessage(draft.message);
+      setWelcomeImages(draft.images);
+      setWelcomeWebSearch(draft.webSearch);
+      setWelcomeTools(draft.tools);
+      // The store reports thrown errors itself; a bare failure is silent.
+      if (!useChatStore.getState().error) {
+        toast.error(t('chat.toasts.createFailed'));
+      }
+      return;
+    }
+    // Carry the settings chosen before the session existed onto it.
+    await applyDraftSessionSettings(newSession);
+    navigate(`/c/${newSession.id}`, { replace: true });
   };
 
   /**
@@ -825,10 +847,12 @@ export const ChatPage: React.FC = () => {
           <button
             onClick={() => setControlsOpen(open => !open)}
             className={cn(
-              'absolute end-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-black/[0.07] bg-surface/65 text-gray-500 backdrop-blur-md transition-colors duration-150 hover:bg-surface-raised hover:text-gray-950 dark:border-white/[0.08] dark:bg-dark-200/65 dark:text-dark-600 dark:hover:bg-dark-200 dark:hover:text-dark-950 sm:end-6 sm:top-6',
+              'absolute inset-e-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-black/[0.07] bg-surface/65 text-gray-500 backdrop-blur-md transition-colors duration-150 hover:bg-surface-raised hover:text-gray-950 dark:border-white/8 dark:bg-dark-200/65 dark:text-dark-600 dark:hover:bg-dark-200 dark:hover:text-dark-950 sm:inset-e-6 sm:top-6',
               controlsOpen && 'text-primary-600 dark:text-primary-400'
             )}
+            type='button'
             title={t('chat.controls.title')}
+            aria-label={t('chat.controls.title')}
             aria-expanded={controlsOpen}
           >
             <SlidersHorizontal className='h-4 w-4' />
@@ -841,14 +865,14 @@ export const ChatPage: React.FC = () => {
               (!selectedModel && models.length === 0) ||
               (Boolean(selectedModel) && !selectedModelAvailable)
             }
-            className='absolute end-[3.75rem] top-4 z-10 flex items-center gap-2 rounded-full border border-black/[0.07] bg-surface/65 px-3 py-2 text-xs font-medium text-gray-500 backdrop-blur-md transition-colors duration-150 hover:bg-surface-raised hover:text-gray-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/[0.08] dark:bg-dark-200/65 dark:text-dark-600 dark:hover:bg-dark-200 dark:hover:text-dark-950 sm:end-[4.25rem] sm:top-6'
+            className='absolute inset-e-15 top-4 z-10 flex items-center gap-2 rounded-full border border-black/[0.07] bg-surface/65 px-3 py-2 text-xs font-medium text-gray-500 backdrop-blur-md transition-colors duration-150 hover:bg-surface-raised hover:text-gray-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/8 dark:bg-dark-200/65 dark:text-dark-600 dark:hover:bg-dark-200 dark:hover:text-dark-950 sm:inset-e-17 sm:top-6'
             title={t('chat.session.privateTooltip')}
           >
             <Ghost className='h-3.5 w-3.5' />
             <span>{t('chat.session.incognito', 'Incognito Chat')}</span>
           </button>
 
-          <div className='relative z-[1] mx-auto flex min-h-full w-full max-w-3xl flex-col items-center justify-center'>
+          <div className='relative z-1 mx-auto flex min-h-full w-full max-w-3xl flex-col items-center justify-center'>
             <div
               key={welcomePrompt.id}
               className='mb-8 flex flex-col items-center text-center animate-fade-in sm:mb-10'
@@ -873,14 +897,14 @@ export const ChatPage: React.FC = () => {
               <div className='w-full'>
                 {/* Advanced Features Panel */}
                 {showWelcomeAdvanced && (
-                  <div className='mb-3 animate-slide-up rounded-2xl border border-black/[0.07] bg-surface/80 p-4 shadow-sm backdrop-blur-xl dark:border-white/[0.08] dark:bg-dark-200/80'>
+                  <div className='mb-3 animate-slide-up rounded-2xl border border-black/[0.07] bg-surface/80 p-4 shadow-xs backdrop-blur-xl dark:border-white/8 dark:bg-dark-200/80'>
                     <ImageUpload
                       images={welcomeImages}
                       onImagesChange={setWelcomeImages}
                       maxImages={5}
                     />
-                    <div className='mt-3 flex items-center justify-between gap-3 border-t border-black/[0.06] pt-3 dark:border-white/[0.07]'>
-                      <span className='text-xs text-gray-500 dark:text-dark-500'>
+                    <div className='mt-3 flex items-center justify-between gap-3 border-t border-black/6 pt-3 dark:border-white/[0.07]'>
+                      <span className='text-xs text-ink-muted'>
                         {t('chat.input.menu.attachDocument')}
                       </span>
                       <Button
@@ -931,7 +955,8 @@ export const ChatPage: React.FC = () => {
                       }
                       onKeyDown={handleWelcomeKeyDown}
                       placeholder={t('chat.input.messagePlaceholder')}
-                      className='!m-0 block w-full min-h-9 max-h-[160px] resize-none !rounded-none !border-0 !bg-transparent !px-2 !pt-1.5 !pb-2 !shadow-none scrollbar-thin scrollbar-thumb-gray-300 placeholder:text-ink-subtle focus:!border-0 focus:!bg-transparent focus:!shadow-none focus:!ring-0 dark:scrollbar-thumb-dark-400 text-[0.9375rem] leading-relaxed touch-manipulation'
+                      aria-label={t('chat.input.messagePlaceholder')}
+                      className='m-0! block w-full min-h-9 max-h-[160px] resize-none rounded-none! border-0! bg-transparent! px-2! pt-1.5! pb-2! shadow-none! scrollbar-thin scrollbar-thumb-gray-300 placeholder:text-ink-subtle focus:border-0! focus:bg-transparent! focus:shadow-none! focus:ring-0! dark:scrollbar-thumb-dark-400 text-[0.9375rem] leading-relaxed touch-manipulation'
                       rows={1}
                     />
 
@@ -945,18 +970,20 @@ export const ChatPage: React.FC = () => {
                           setShowWelcomeAdvanced(!showWelcomeAdvanced)
                         }
                         className={cn(
-                          'h-9 w-9 !p-0 rounded-full flex-shrink-0',
+                          'h-9 w-9 p-0! rounded-full shrink-0',
                           'bg-surface-subtle text-ink-muted hover:bg-hover-solid hover:text-ink dark:bg-surface-raised dark:hover:bg-surface-overlay transition-colors touch-manipulation',
                           hasAdvancedFeatures &&
                             'text-primary-600 dark:text-primary-400',
                           showWelcomeAdvanced && 'bg-hover-solid text-ink'
                         )}
                         title={t('chat.input.attachImages')}
+                        aria-label={t('chat.input.attachImages')}
+                        aria-expanded={showWelcomeAdvanced}
                       >
                         {hasAdvancedFeatures ? (
                           <div className='relative flex items-center justify-center'>
                             <Paperclip className='h-4 w-4' />
-                            <div className='absolute -top-0.5 -end-0.5 h-1.5 w-1.5 bg-primary-500 rounded-full' />
+                            <div className='absolute -top-0.5 -inset-e-0.5 h-1.5 w-1.5 bg-primary-500 rounded-full' />
                           </div>
                         ) : showWelcomeAdvanced ? (
                           <Minus className='h-4 w-4' />
@@ -980,13 +1007,18 @@ export const ChatPage: React.FC = () => {
                           size='sm'
                           onClick={() => setWelcomeWebSearch(active => !active)}
                           className={cn(
-                            'h-9 w-9 p-0 rounded-full flex-shrink-0 flex items-center justify-center',
+                            'h-9 w-9 p-0 rounded-full shrink-0 flex items-center justify-center',
                             'text-ink-muted hover:bg-interactive-hover hover:text-ink',
                             'transition-colors duration-150 touch-manipulation',
                             welcomeWebSearch &&
                               'bg-primary-50 text-primary-600 dark:bg-primary-900/25 dark:text-primary-400'
                           )}
                           title={
+                            welcomeWebSearch
+                              ? t('chat.input.webSearchOn')
+                              : t('chat.input.webSearchOff')
+                          }
+                          aria-label={
                             welcomeWebSearch
                               ? t('chat.input.webSearchOn')
                               : t('chat.input.webSearchOff')
@@ -1030,6 +1062,7 @@ export const ChatPage: React.FC = () => {
                         }
                         className={composerSendButtonClass}
                         title={t('chat.input.sendMessage')}
+                        aria-label={t('chat.input.sendMessage')}
                       >
                         <ArrowUp className='h-4 w-4' />
                       </Button>
@@ -1090,13 +1123,13 @@ export const ChatPage: React.FC = () => {
     >
       {/* Background overlay for better readability when persona background is active */}
       {currentPersona?.background && (
-        <div className='absolute inset-0 bg-gray-50/[0.88] backdrop-blur-sm dark:bg-dark-100/[0.88]' />
+        <div className='absolute inset-0 bg-gray-50/88 backdrop-blur-sm dark:bg-dark-100/88' />
       )}
 
       <div className='relative z-10 flex h-full flex-col'>
         {/* Private mode indicator */}
         {currentSession?.isPrivate && (
-          <div className='flex-shrink-0 border-b border-black/[0.05] bg-surface/55 px-4 py-2 backdrop-blur-xl dark:border-white/[0.06] dark:bg-dark-100/55'>
+          <div className='shrink-0 border-b border-black/5 bg-surface/55 px-4 py-2 backdrop-blur-xl dark:border-white/6 dark:bg-dark-100/55'>
             <div className='flex items-center justify-center gap-2 text-gray-500 dark:text-dark-600'>
               <Ghost className='h-3.5 w-3.5' />
               <span className='text-xs font-medium'>
@@ -1110,7 +1143,7 @@ export const ChatPage: React.FC = () => {
         )}
         {/* Persona indicator header */}
         {currentPersona && !currentSession?.isPrivate && (
-          <div className='flex-shrink-0 border-b border-black/[0.05] bg-surface/55 px-4 py-2 backdrop-blur-xl dark:border-white/[0.06] dark:bg-dark-100/55'>
+          <div className='shrink-0 border-b border-black/5 bg-surface/55 px-4 py-2 backdrop-blur-xl dark:border-white/6 dark:bg-dark-100/55'>
             <PersonaIndicator
               persona={currentPersona}
               onClear={() => {
@@ -1162,10 +1195,12 @@ export const ChatPage: React.FC = () => {
             <button
               onClick={() => setControlsOpen(open => !open)}
               className={cn(
-                'absolute end-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-black/[0.07] bg-surface/65 text-gray-500 backdrop-blur-md transition-colors duration-150 hover:bg-surface-raised hover:text-gray-950 dark:border-white/[0.08] dark:bg-dark-200/65 dark:text-dark-600 dark:hover:bg-dark-200 dark:hover:text-dark-950',
+                'absolute inset-e-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-black/[0.07] bg-surface/65 text-gray-500 backdrop-blur-md transition-colors duration-150 hover:bg-surface-raised hover:text-gray-950 dark:border-white/8 dark:bg-dark-200/65 dark:text-dark-600 dark:hover:bg-dark-200 dark:hover:text-dark-950',
                 controlsOpen && 'text-primary-600 dark:text-primary-400'
               )}
+              type='button'
               title={t('chat.controls.title')}
+              aria-label={t('chat.controls.title')}
               aria-expanded={controlsOpen}
             >
               <SlidersHorizontal className='h-3.5 w-3.5' />
@@ -1178,7 +1213,7 @@ export const ChatPage: React.FC = () => {
                     `/c/${currentSession.settings!.forkedFrom!.sessionId}`
                   )
                 }
-                className='mx-auto mt-2 flex items-center gap-1.5 rounded-full border border-black/[0.07] bg-surface/70 px-3 py-1 text-[11px] text-gray-500 transition-colors hover:text-gray-800 dark:border-white/[0.08] dark:bg-dark-200/70 dark:text-dark-600 dark:hover:text-dark-900'
+                className='mx-auto mt-2 flex items-center gap-1.5 rounded-full border border-black/[0.07] bg-surface/70 px-3 py-1 text-[11px] text-gray-500 transition-colors hover:text-gray-800 dark:border-white/8 dark:bg-dark-200/70 dark:text-dark-600 dark:hover:text-dark-900'
                 data-testid='forked-from-banner'
               >
                 <GitFork className='h-3 w-3' />
@@ -1210,7 +1245,7 @@ export const ChatPage: React.FC = () => {
             />
             {currentSession?.shared ? (
               <div
-                className='mx-auto mb-4 w-full max-w-3xl rounded-xl border border-black/[0.06] bg-black/[0.02] px-4 py-3 text-center text-[13px] text-gray-500 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-dark-600'
+                className='mx-auto mb-4 w-full max-w-3xl rounded-xl border border-black/6 bg-black/2 px-4 py-3 text-center text-[13px] text-gray-500 dark:border-white/8 dark:bg-white/3 dark:text-dark-600'
                 data-testid='chat-shared-readonly'
               >
                 {t('chat.sharedReadOnly', {

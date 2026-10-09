@@ -36,6 +36,7 @@ import { cn } from '@/utils';
 import { UsageChart, type ChartMetric } from '@/components/usage/UsageChart';
 import {
   getUsageChartSeries,
+  getUsageAgentSummaries,
   getUsageModelColors,
   getProviderModelSegments,
   matchesUsageSnapshot,
@@ -72,7 +73,7 @@ const CELL_PITCH = CELL + CELL_GAP;
 const HEATMAP_LEFT_PAD = 30;
 const HEATMAP_TOP_PAD = 16;
 
-const EMPTY_FILL = 'fill-gray-950/[0.06] dark:fill-white/[0.07]';
+const EMPTY_FILL = 'fill-gray-950/6 dark:fill-white/[0.07]';
 const INTENSITY_OPACITY = [0, 0.35, 0.55, 0.75, 1];
 
 interface HeatmapTooltip {
@@ -187,7 +188,7 @@ const UsageHeatmap: React.FC<{
   return (
     <section
       data-testid='usage-heatmap'
-      className='min-w-0 overflow-hidden rounded-2xl border border-gray-200/80 bg-white/80 shadow-subtle backdrop-blur-md dark:border-white/[0.08] dark:bg-dark-100/75'
+      className='min-w-0 overflow-hidden rounded-2xl border border-gray-200/80 bg-white/80 shadow-subtle backdrop-blur-md dark:border-white/8 dark:bg-dark-100/75'
     >
       <div className='flex flex-col gap-1 border-b border-gray-200/70 px-4 py-3 dark:border-white/[0.07] sm:flex-row sm:items-center sm:justify-between sm:px-5'>
         <div>
@@ -282,7 +283,7 @@ const UsageHeatmap: React.FC<{
         </div>
         {tooltip && (
           <div
-            className='pointer-events-none absolute z-10 min-w-[10rem] -translate-x-1/2 -translate-y-full rounded-lg border border-gray-200/80 bg-white/95 px-3 py-2 shadow-card backdrop-blur-md dark:border-white/[0.1] dark:bg-dark-100/95'
+            className='pointer-events-none absolute z-10 min-w-40 -translate-x-1/2 -translate-y-full rounded-lg border border-gray-200/80 bg-white/95 px-3 py-2 shadow-card backdrop-blur-md dark:border-white/10 dark:bg-dark-100/95'
             style={{ left: tooltip.x, top: tooltip.y - 6 }}
           >
             <div className='text-[11px] font-medium text-gray-900 dark:text-dark-900'>
@@ -348,7 +349,7 @@ const UsageHeatmap: React.FC<{
           </div>
           <div className='flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-dark-500'>
             {t('usageAnalytics.heatmap.less')}
-            <span className='h-2.5 w-2.5 rounded-[3px] bg-gray-950/[0.06] dark:bg-white/[0.07]' />
+            <span className='h-2.5 w-2.5 rounded-[3px] bg-gray-950/6 dark:bg-white/[0.07]' />
             {INTENSITY_OPACITY.slice(1).map(opacity => (
               <span
                 key={opacity}
@@ -359,6 +360,155 @@ const UsageHeatmap: React.FC<{
             {t('usageAnalytics.heatmap.more')}
           </div>
         </div>
+      </div>
+    </section>
+  );
+};
+
+const AgentUsageSection: React.FC<{ analytics: PluginUsageAnalytics }> = ({
+  analytics,
+}) => {
+  const { t } = useTranslation();
+  const agents = getUsageAgentSummaries(analytics);
+  const reportedTokens = (entry: { tokens: number; meteredCalls?: number }) =>
+    (entry.meteredCalls ?? 0) > 0 || entry.tokens > 0;
+
+  return (
+    <section
+      data-testid='usage-agent-breakdown'
+      aria-labelledby='usage-agent-heading'
+      className='rounded-2xl border border-gray-200/80 bg-white/80 p-4 shadow-subtle dark:border-white/8 dark:bg-dark-100/75 sm:p-5'
+    >
+      <h2
+        id='usage-agent-heading'
+        className='flex items-center gap-2 text-sm font-medium text-gray-950 dark:text-dark-950'
+      >
+        <Bot className='h-4 w-4' aria-hidden='true' />
+        {t('usageAnalytics.agents.title')}
+      </h2>
+      <p className='mt-1 text-xs leading-5 text-gray-500 dark:text-dark-500'>
+        {t('usageAnalytics.agents.description')}
+      </p>
+      {analytics.agents === undefined && (
+        <p className='mt-2 text-xs text-gray-500 dark:text-dark-500'>
+          {t('usageAnalytics.agents.legacy')}
+        </p>
+      )}
+      <div className='mt-4 grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3'>
+        {agents.map(agent => (
+          <article
+            key={agent.agentId}
+            data-agent={agent.agentId}
+            className='min-w-0 rounded-xl border border-gray-200/70 p-3 dark:border-white/[0.07]'
+          >
+            <h3 className='text-sm font-medium text-gray-950 dark:text-dark-950'>
+              {agent.agentName}
+            </h3>
+            <dl className='mt-3 grid grid-cols-2 gap-3'>
+              <div>
+                <dt className='text-[11px] text-gray-500 dark:text-dark-500'>
+                  {t('usageAnalytics.metrics.calls')}
+                </dt>
+                <dd
+                  data-agent-metric='calls'
+                  className='mt-1 text-lg tabular-nums text-gray-950 dark:text-dark-950'
+                >
+                  {formatCount(agent.calls)}
+                </dd>
+              </div>
+              <div>
+                <dt className='text-[11px] text-gray-500 dark:text-dark-500'>
+                  {t('usageAnalytics.cards.tokens')}
+                </dt>
+                <dd
+                  data-agent-metric='tokens'
+                  className='mt-1 text-sm tabular-nums text-gray-950 dark:text-dark-950'
+                >
+                  {reportedTokens(agent)
+                    ? formatCount(agent.tokens)
+                    : agent.calls === 0
+                      ? '—'
+                      : agent.meteredCalls === 0
+                        ? t('usageAnalytics.agents.unreported')
+                        : '—'}
+                </dd>
+              </div>
+            </dl>
+            {agent.calls === 0 ? (
+              <p className='mt-2 text-xs text-gray-500 dark:text-dark-500'>
+                {t('usageAnalytics.agents.noCalls')}
+              </p>
+            ) : (
+              <>
+                <p className='mt-2 text-xs text-gray-500 dark:text-dark-500'>
+                  {t('usageAnalytics.cards.latency')}:{' '}
+                  <span className='tabular-nums' dir='ltr'>
+                    {formatLatency(agent.averageLatencyMs)}
+                  </span>
+                </p>
+                {agent.meteredCalls !== undefined && agent.meteredCalls > 0 && (
+                  <p className='mt-2 text-xs text-gray-500 dark:text-dark-500'>
+                    {t('usageAnalytics.cards.tokensDetail', {
+                      count: agent.meteredCalls,
+                    })}
+                  </p>
+                )}
+                {agent.errors > 0 && (
+                  <p className='mt-2 flex items-center gap-1 text-xs text-gray-600 dark:text-dark-600'>
+                    <TriangleAlert className='h-3.5 w-3.5' aria-hidden='true' />
+                    {t('usageAnalytics.providers.failures', {
+                      count: agent.errors,
+                    })}
+                  </p>
+                )}
+                {agent.models.length > 0 && (
+                  <div className='mt-3'>
+                    <h4 className='text-xs font-medium text-gray-700 dark:text-dark-700'>
+                      {t('usageAnalytics.agents.topModels')}
+                    </h4>
+                    <div className='mt-1 max-h-48 overflow-y-auto'>
+                      <table className='w-full table-fixed text-start text-xs'>
+                        <thead className='text-gray-500 dark:text-dark-500'>
+                          <tr>
+                            <th className='w-1/2 py-1 text-start font-normal'>
+                              {t('usageAnalytics.models.model')}
+                            </th>
+                            <th className='px-1 py-1 text-end font-normal'>
+                              {t('usageAnalytics.metrics.calls')}
+                            </th>
+                            <th className='py-1 text-end font-normal'>
+                              {t('usageAnalytics.metrics.tokens')}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className='divide-y divide-gray-100 dark:divide-white/6'>
+                          {agent.models.map(model => (
+                            <tr
+                              key={model.model}
+                              data-agent-model={model.model}
+                            >
+                              <td className='wrap-break-word py-1.5 pe-2 text-gray-700 dark:text-dark-700'>
+                                <span dir='auto'>{model.model}</span>
+                              </td>
+                              <td className='px-1 py-1.5 text-end tabular-nums'>
+                                {formatCount(model.calls)}
+                              </td>
+                              <td className='py-1.5 text-end tabular-nums'>
+                                {reportedTokens(model)
+                                  ? formatCount(model.tokens)
+                                  : '—'}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </article>
+        ))}
       </div>
     </section>
   );
@@ -378,6 +528,8 @@ const PluginUsagePage: React.FC = () => {
     refetch,
   } = useQuery({
     queryKey: ['plugin-usage', days],
+    refetchInterval: 20_000,
+    refetchIntervalInBackground: false,
     queryFn: async () => {
       const response = await pluginApi.getUsage(days);
       if (!response.success || !response.data) {
@@ -551,8 +703,12 @@ const PluginUsagePage: React.FC = () => {
   if (isLoading && !analytics) {
     return (
       <PageShell width='wide'>
-        <div className='flex min-h-[50vh] items-center justify-center'>
+        <div
+          role='status'
+          className='flex min-h-[50vh] items-center justify-center'
+        >
           <Loader2 className='h-7 w-7 motion-safe:animate-spin text-primary-500' />
+          <span className='sr-only'>{t('common.loading')}</span>
         </div>
       </PageShell>
     );
@@ -565,14 +721,14 @@ const PluginUsagePage: React.FC = () => {
         title={t('usageAnalytics.title')}
         description={t('usageAnalytics.description')}
         actions={
-          <div className='flex items-center gap-2'>
-            <div className='inline-flex rounded-xl border border-gray-200 bg-white/70 p-1 dark:border-white/[0.08] dark:bg-dark-100/70'>
+          <div className='flex flex-wrap items-center gap-2'>
+            <div className='inline-flex rounded-xl border border-gray-200 bg-white/70 p-1 dark:border-white/8 dark:bg-dark-100/70'>
               {[7, 30, 90].map(option => (
                 <button
                   key={option}
                   type='button'
                   className={cn(
-                    'min-h-9 rounded-lg px-3 py-1.5 text-xs font-medium motion-safe:transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-500',
+                    'min-h-9 rounded-lg px-3 py-1.5 text-xs font-medium motion-safe:transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-primary-500',
                     days === option
                       ? 'bg-gray-950 text-white dark:bg-white dark:text-gray-950'
                       : 'text-gray-500 hover:text-gray-900 dark:text-dark-500 dark:hover:text-dark-900'
@@ -605,22 +761,23 @@ const PluginUsagePage: React.FC = () => {
                   isFetching && 'motion-safe:animate-spin'
                 )}
               />
-              <span className='sr-only'>{t('usageAnalytics.refresh')}</span>
+              <span>{t('usageAnalytics.refresh')}</span>
             </Button>
           </div>
         }
       />
 
       {errorMessage && (
-        <div className='mb-6 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300'>
+        <div
+          role='alert'
+          className='mb-6 flex items-center gap-3 rounded-2xl border border-error-200 bg-error-50 px-4 py-3 text-sm text-error-700 dark:border-error-900/40 dark:bg-error-900/30 dark:text-error-300'
+        >
           <TriangleAlert className='h-4 w-4 shrink-0' />
           <span>{errorMessage}</span>
         </div>
       )}
 
-      <div className='mb-6'>
-        <CostGovernancePanel days={days} />
-      </div>
+      {!analytics && <CostGovernancePanel days={days} />}
 
       {analytics && (
         <div className='min-w-0 space-y-4'>
@@ -630,7 +787,7 @@ const PluginUsagePage: React.FC = () => {
               return (
                 <section
                   key={card.label}
-                  className='rounded-2xl border border-gray-200/80 bg-white/75 p-4 shadow-subtle backdrop-blur-md dark:border-white/[0.08] dark:bg-dark-100/70'
+                  className='rounded-2xl border border-gray-200/80 bg-white/75 p-4 shadow-subtle backdrop-blur-md dark:border-white/8 dark:bg-dark-100/70'
                 >
                   <div className='flex items-center justify-between gap-3'>
                     <span className='text-xs font-medium uppercase tracking-[0.12em] text-gray-500 dark:text-dark-500'>
@@ -648,6 +805,9 @@ const PluginUsagePage: React.FC = () => {
               );
             })}
           </div>
+
+          <AgentUsageSection analytics={analytics} />
+          <CostGovernancePanel days={days} />
 
           {analytics.heatmap && analytics.heatmap.cells.length > 0 && (
             <UsageHeatmap
@@ -678,7 +838,7 @@ const PluginUsagePage: React.FC = () => {
           />
 
           {analytics.totals.calls === 0 ? (
-            <div className='rounded-2xl border border-dashed border-gray-300 px-6 py-10 text-center dark:border-white/[0.12]'>
+            <div className='rounded-2xl border border-dashed border-gray-300 px-6 py-10 text-center dark:border-white/12'>
               <Bot className='mx-auto h-8 w-8 text-gray-400 dark:text-dark-500' />
               <h2 className='mt-4 text-base font-medium text-gray-900 dark:text-dark-900'>
                 {t('usageAnalytics.empty.title')}
@@ -689,7 +849,7 @@ const PluginUsagePage: React.FC = () => {
             </div>
           ) : (
             <div className='grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]'>
-              <section className='min-w-0 overflow-hidden rounded-2xl border border-gray-200/80 bg-white/80 shadow-subtle backdrop-blur-md dark:border-white/[0.08] dark:bg-dark-100/75'>
+              <section className='min-w-0 overflow-hidden rounded-2xl border border-gray-200/80 bg-white/80 shadow-subtle backdrop-blur-md dark:border-white/8 dark:bg-dark-100/75'>
                 <div className='border-b border-gray-200/70 px-4 py-3 dark:border-white/[0.07] sm:px-5'>
                   <h2 className='text-sm font-medium text-gray-950 dark:text-dark-950'>
                     {t('usageAnalytics.models.title')}
@@ -703,7 +863,7 @@ const PluginUsagePage: React.FC = () => {
                     data-testid='usage-model-table'
                     className='w-full min-w-[620px] text-start text-sm'
                   >
-                    <thead className='text-[11px] uppercase tracking-[0.1em] text-gray-400 dark:text-dark-500'>
+                    <thead className='text-[11px] uppercase tracking-widest text-gray-400 dark:text-dark-500'>
                       <tr>
                         <th className='px-5 py-2 text-start font-medium'>
                           {t('usageAnalytics.models.model')}
@@ -722,7 +882,7 @@ const PluginUsagePage: React.FC = () => {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className='divide-y divide-gray-100 dark:divide-white/[0.06]'>
+                    <tbody className='divide-y divide-gray-100 dark:divide-white/6'>
                       {analytics.models.map(model => (
                         <tr
                           key={JSON.stringify([
@@ -757,7 +917,7 @@ const PluginUsagePage: React.FC = () => {
                                 !!selected &&
                                 selected === chartKeyFor(model.model)
                               }
-                              className='flex min-h-9 max-w-[260px] items-center gap-2 rounded-md text-start font-medium text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 dark:text-dark-900'
+                              className='flex min-h-9 max-w-[260px] items-center gap-2 rounded-md text-start font-medium text-gray-900 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 dark:text-dark-900'
                               title={
                                 chartKeys.has(usageModelKey(model.model))
                                   ? model.model
@@ -824,7 +984,7 @@ const PluginUsagePage: React.FC = () => {
               <div className='min-w-0 space-y-4'>
                 <section
                   data-testid='usage-provider-breakdown'
-                  className='min-w-0 rounded-2xl border border-gray-200/80 bg-white/80 p-4 shadow-subtle dark:border-white/[0.08] dark:bg-dark-100/75 sm:p-5'
+                  className='min-w-0 rounded-2xl border border-gray-200/80 bg-white/80 p-4 shadow-subtle dark:border-white/8 dark:bg-dark-100/75 sm:p-5'
                 >
                   <h2 className='text-sm font-medium text-gray-950 dark:text-dark-950'>
                     {t('usageAnalytics.providers.title')}
@@ -974,7 +1134,7 @@ const PluginUsagePage: React.FC = () => {
                                     )
                                   }
                                   className={cn(
-                                    'flex min-h-8 min-w-0 max-w-full items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] text-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-500 dark:text-dark-700',
+                                    'flex min-h-8 min-w-0 max-w-full items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] text-gray-600 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-primary-500 dark:text-dark-700',
                                     highlighted && highlighted === key
                                       ? 'border-gray-400 bg-gray-50 dark:border-dark-500 dark:bg-dark-200'
                                       : 'border-gray-200/70 dark:border-white/[0.07]'
@@ -1003,7 +1163,7 @@ const PluginUsagePage: React.FC = () => {
                   </div>
                 </section>
 
-                <section className='rounded-2xl border border-gray-200/80 bg-white/80 p-4 shadow-subtle backdrop-blur-md dark:border-white/[0.08] dark:bg-dark-100/75 sm:p-5'>
+                <section className='rounded-2xl border border-gray-200/80 bg-white/80 p-4 shadow-subtle backdrop-blur-md dark:border-white/8 dark:bg-dark-100/75 sm:p-5'>
                   <div className='flex items-center gap-2'>
                     <Users className='h-4 w-4 text-primary-500 dark:text-primary-400' />
                     <h2 className='text-sm font-medium text-gray-950 dark:text-dark-950'>

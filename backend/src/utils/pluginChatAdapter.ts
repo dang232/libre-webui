@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 
+import {
+  bedrockAnthropicModelName,
+  pluginChatProtocol,
+} from './bedrockMantle.js';
 import type {
   ChatMessage,
   GenerationOptions,
@@ -27,7 +31,12 @@ import {
   buildOpenAIResponsesPayload,
   normalizeOpenAIResponsesResponse,
 } from './openAIResponsesAdapter.js';
-import { thinkingEffort } from './thinkingOptions.js';
+import {
+  fitThinkingBudget,
+  normalizeThinkingPreference,
+  thinkingBudgetTokens,
+  thinkingEffort,
+} from './thinkingOptions.js';
 
 export type PluginVariables = Record<string, string | number | boolean>;
 
@@ -51,6 +60,90 @@ type OpenAICompatibleSamplingParameters = Partial<{
   frequency_penalty: number;
   presence_penalty: number;
 }>;
+
+const KIMI_CODE_FIXED_SAMPLING_VARIABLES = new Set([
+  'temperature',
+  'top_p',
+  'frequency_penalty',
+  'presence_penalty',
+]);
+
+const ANTHROPIC_LEGACY_SAMPLING_MODELS = new Set([
+  'claude-haiku-4-5',
+  'claude-haiku-4-5-20251001',
+  'claude-opus-4-1',
+  'claude-opus-4-1-20250805',
+  'claude-opus-4-5',
+  'claude-opus-4-5-20251101',
+  'claude-opus-4-6',
+  'claude-sonnet-4-5',
+  'claude-sonnet-4-5-20250929',
+  'claude-sonnet-4-6',
+]);
+
+/**
+ * Documented max_tokens ceilings by model family, longest prefix first. A
+ * thinking budget raised max_tokens past what the model accepts — 17,408 on
+ * a model that stops at 8,192 is a 400 the user could not predict — so the
+ * request is clamped to the ceiling and the budget shrinks with it. Unknown
+ * families are not clamped: a wrong ceiling would truncate real replies.
+ */
+const ANTHROPIC_MAX_OUTPUT_TOKENS: ReadonlyArray<[string, number]> = [
+  ['claude-3-7-sonnet', 64000],
+  ['claude-3-5-sonnet', 8192],
+  ['claude-3-5-haiku', 8192],
+  ['claude-3-haiku', 4096],
+  ['claude-3-opus', 4096],
+  ['claude-3-sonnet', 4096],
+  ['claude-sonnet-4', 64000],
+  ['claude-haiku-4', 64000],
+  ['claude-opus-4', 32000],
+  ['claude-opus-5-5', 128000],
+  ['claude-sonnet-5-5', 128000],
+];
+
+/**
+ * Claude models that reject manual thinking budgets and `type: 'disabled'`.
+ * They think adaptively by default; depth is set with `output_config.effort`.
+ */
+const ANTHROPIC_ADAPTIVE_THINKING_MODELS = new Set([
+  'claude-opus-5-5',
+  'claude-sonnet-5-5',
+]);
+
+/**
+ * Adaptive models whose lowest setting is `between_tools`, which keeps
+ * up-front thinking off. The others have no way to switch thinking off.
+ */
+const ANTHROPIC_BETWEEN_TOOLS_MODELS = new Set(['claude-sonnet-5-5']);
+
+/** Room for adaptive thinking plus the answer when no ceiling was set. */
+const ANTHROPIC_ADAPTIVE_DEFAULT_MAX_TOKENS = 16384;
+
+function anthropicAdaptiveThinking(
+  model: string,
+  think: GenerationOptions['think']
+): Record<string, unknown> {
+  const preference = normalizeThinkingPreference(think);
+  if (preference === undefined) return {};
+  if (preference === false) {
+    return ANTHROPIC_BETWEEN_TOOLS_MODELS.has(model)
+      ? { thinking: { type: 'between_tools' } }
+      : {};
+  }
+  return {
+    thinking: { type: 'adaptive' },
+    ...(preference === true ? {} : { output_config: { effort: preference } }),
+  };
+}
+
+export function anthropicMaxOutputTokens(model: string): number | undefined {
+  const name = bedrockAnthropicModelName(model).toLowerCase();
+  for (const [prefix, ceiling] of ANTHROPIC_MAX_OUTPUT_TOKENS) {
+    if (name.startsWith(prefix)) return ceiling;
+  }
+  return undefined;
+}
 
 export function resolvePluginChatParameters(
   options: GenerationOptions = {},
@@ -78,13 +171,29 @@ export function resolvePluginChatParameters(
 }
 
 export function applyPluginDefinitionPolicy(plugin: Plugin): Plugin {
-  return plugin;
+  if (plugin.id !== 'kimi-code' || !plugin.variables) {
+    return plugin;
+  }
+
+  const variables = plugin.variables.filter(
+    variable => !KIMI_CODE_FIXED_SAMPLING_VARIABLES.has(variable.name)
+  );
+  return variables.length === plugin.variables.length
+    ? plugin
+    : { ...plugin, variables };
 }
 
 export function getOpenAICompatibleSamplingParameters(
-  _plugin: Pick<Plugin, 'id'>,
+  plugin: Pick<Plugin, 'id'>,
   params: PluginChatParameters
 ): OpenAICompatibleSamplingParameters {
+  // Kimi Code models choose fixed sampling values for their active mode and
+  // reject generic application preferences. Moonshot recommends omitting
+  // these fields instead of sending explicit fixed values.
+  if (plugin.id === 'kimi-code') {
+    return {};
+  }
+
   return {
     temperature: params.temperature,
     top_p: params.topP,
@@ -94,13 +203,22 @@ export function getOpenAICompatibleSamplingParameters(
 }
 
 /**
- * Generic thinking toggle passthrough for OpenAI-compatible endpoints.
+ * DeepSeek toggles reasoning with a `thinking` object on its OpenAI-compatible
+ * Chat Completions endpoint instead of relying on `reasoning_effort` alone.
+ * Reasoning is on by default there, so the toggle is sent only when the user
+ * actually chose a thinking preference; an unset preference keeps the
+ * provider's own default.
  */
 export function getOpenAICompatibleThinkingParameters(
-  _plugin: Pick<Plugin, 'id'>,
-  _think: unknown
+  plugin: Pick<Plugin, 'id'>,
+  think: unknown
 ): Record<string, unknown> {
-  return {};
+  if (plugin.id !== 'deepseek') return {};
+  const preference = normalizeThinkingPreference(think);
+  if (preference === undefined) return {};
+  return {
+    thinking: { type: preference === false ? 'disabled' : 'enabled' },
+  };
 }
 
 /** OpenAI Chat Completions-style tool definitions from provider-neutral specs. */
@@ -118,12 +236,52 @@ export function toOpenAICompatibleTools(
   }));
 }
 
+function toAnthropicTools(
+  tools: readonly ProviderToolSpec[] | undefined
+): Array<Record<string, unknown>> | undefined {
+  if (!tools || tools.length === 0) return undefined;
+  return tools.map(tool => ({
+    name: tool.name,
+    ...(tool.description ? { description: tool.description } : {}),
+    input_schema: tool.parameters ?? { type: 'object', properties: {} },
+  }));
+}
+
+const parseToolArguments = (value: string): Record<string, unknown> => {
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : {};
+  } catch {
+    return {};
+  }
+};
+
+function splitDataUrlImage(image: string): {
+  mediaType: string;
+  base64Data: string;
+} {
+  if (!image.startsWith('data:')) {
+    return {
+      mediaType: 'image/jpeg',
+      base64Data: image,
+    };
+  }
+
+  const match = image.match(/^data:([^;]+);base64,(.+)$/);
+  return {
+    mediaType: match?.[1] || 'image/jpeg',
+    base64Data: match?.[2] || image,
+  };
+}
+
 export function toOpenAICompatibleMessages(
   messages: ChatMessage[],
   options: {
     preserveProviderMetadata?: boolean;
     includeReasoning?: boolean;
-    /** Wire field for replayed reasoning. */
+    /** Wire field for replayed reasoning; DeepSeek names it reasoning_content. */
     reasoningField?: 'reasoning' | 'reasoning_content';
   } = {}
 ): Array<{
@@ -188,6 +346,317 @@ export function toOpenAICompatibleMessages(
   });
 }
 
+type AnthropicContentBlock =
+  | { type: 'text'; text: string }
+  | {
+      type: 'image';
+      source: { type: 'base64'; media_type: string; data: string };
+    }
+  | Record<string, unknown>;
+
+function toAnthropicMessages(messages: ChatMessage[]): Array<{
+  role: string;
+  content: string | AnthropicContentBlock[];
+}> {
+  return messages.map(message => {
+    // In-turn tool results travel back as user tool_result blocks.
+    if (message.role === 'tool') {
+      return {
+        role: 'user',
+        content: [
+          {
+            type: 'tool_result',
+            tool_use_id: message.tool_call_id ?? '',
+            content: message.content,
+          },
+        ],
+      };
+    }
+
+    // An in-turn assistant round that requested tools replays its thinking
+    // blocks verbatim (Anthropic requires them ahead of tool results), then
+    // its text, then the tool_use blocks.
+    if (message.role === 'assistant' && message.tool_calls?.length) {
+      const thinkingBlocks = Array.isArray(
+        message.providerMetadata?.anthropicThinkingBlocks
+      )
+        ? (message.providerMetadata
+            .anthropicThinkingBlocks as AnthropicContentBlock[])
+        : [];
+      return {
+        role: 'assistant',
+        content: [
+          ...thinkingBlocks,
+          ...(message.content
+            ? [{ type: 'text', text: message.content } as const]
+            : []),
+          ...message.tool_calls.map(call => ({
+            type: 'tool_use',
+            id: call.id,
+            name: call.function.name,
+            input: parseToolArguments(call.function.arguments),
+          })),
+        ],
+      };
+    }
+
+    if (message.images && message.images.length > 0) {
+      const content: Array<
+        | { type: 'text'; text: string }
+        | {
+            type: 'image';
+            source: { type: 'base64'; media_type: string; data: string };
+          }
+      > = [];
+
+      for (const image of message.images) {
+        const { mediaType, base64Data } = splitDataUrlImage(image);
+        content.push({
+          type: 'image',
+          source: {
+            type: 'base64',
+            media_type: mediaType,
+            data: base64Data,
+          },
+        });
+      }
+
+      if (message.content) {
+        content.push({
+          type: 'text',
+          text: message.content,
+        });
+      }
+
+      return {
+        role: message.role,
+        content,
+      };
+    }
+
+    return {
+      role: message.role,
+      content: message.content,
+    };
+  });
+}
+
+/**
+ * Anthropic prices thinking in tokens and takes it as its own block. The
+ * budget has to fit inside max_tokens with room left for the answer; an
+ * explicit user ceiling shrinks the budget rather than being raised, and the
+ * model's own documented ceiling bounds them both. Adaptive models take no
+ * budget, so max_tokens is left to the user or a roomy default. Chat and Work
+ * both build Anthropic requests from this, so the two cannot drift.
+ */
+export function resolveAnthropicThinking(
+  model: string,
+  think: unknown,
+  requestedMaxTokens: number | undefined,
+  /** Ceiling for a non-adaptive request that asked for no budget. */
+  defaultMaxTokens = 1024
+): {
+  maxTokens: number;
+  /** Set when a manual budget went out; sampling parameters must then stay off. */
+  budgetTokens?: number;
+  fields: Record<string, unknown>;
+} {
+  const anthropicModel = bedrockAnthropicModelName(model);
+  const adaptive = ANTHROPIC_ADAPTIVE_THINKING_MODELS.has(anthropicModel);
+  const levelBudget = adaptive ? undefined : thinkingBudgetTokens(think);
+  const fitted =
+    levelBudget === undefined
+      ? undefined
+      : fitThinkingBudget(requestedMaxTokens, levelBudget);
+  const modelCeiling = anthropicMaxOutputTokens(model);
+  let budgetTokens = fitted?.budgetTokens;
+  let maxTokens =
+    fitted?.maxTokens ??
+    requestedMaxTokens ??
+    (adaptive ? ANTHROPIC_ADAPTIVE_DEFAULT_MAX_TOKENS : defaultMaxTokens);
+  if (modelCeiling !== undefined && maxTokens > modelCeiling) {
+    maxTokens = modelCeiling;
+    if (budgetTokens !== undefined) {
+      budgetTokens = Math.max(
+        1024,
+        Math.min(budgetTokens, modelCeiling - 1024)
+      );
+    }
+  }
+  return {
+    maxTokens,
+    budgetTokens,
+    fields: {
+      ...(budgetTokens !== undefined
+        ? { thinking: { type: 'enabled', budget_tokens: budgetTokens } }
+        : {}),
+      ...(adaptive
+        ? anthropicAdaptiveThinking(
+            anthropicModel,
+            think as GenerationOptions['think']
+          )
+        : {}),
+    },
+  };
+}
+
+/**
+ * Gemini takes a thinking budget inside the generation config. Only an
+ * enabled setting is sent: a zero budget is rejected by the models that
+ * always reason, so switching thinking off is left to the model. Thinking
+ * tokens count against maxOutputTokens, so the ceiling has to hold the budget
+ * plus the answer or the reply arrives empty at MAX_TOKENS.
+ */
+export function resolveGeminiThinking(
+  think: unknown,
+  requestedMaxTokens: number | undefined
+): { maxOutputTokens: number; thinkingConfig?: Record<string, unknown> } {
+  const levelBudget = thinkingBudgetTokens(think);
+  const fitted =
+    levelBudget === undefined
+      ? undefined
+      : fitThinkingBudget(requestedMaxTokens, levelBudget);
+  return {
+    maxOutputTokens: fitted?.maxTokens ?? requestedMaxTokens ?? 1024,
+    ...(fitted !== undefined
+      ? {
+          thinkingConfig: {
+            thinkingBudget: fitted.budgetTokens,
+            // Without this the user pays for thinking and sees none.
+            includeThoughts: true,
+          },
+        }
+      : {}),
+  };
+}
+
+/**
+ * Reasoning fields for OpenAI-compatible Chat Completions. OpenAI and the
+ * providers that copy its shape name the levels instead of budgeting tokens.
+ * Nothing is sent unless thinking was asked for: the field is unknown to
+ * models that do not reason. DeepSeek documents low, high and max only; its
+ * middle is the provider default, so a plain "thinking on" preference sends
+ * no effort at all, and it toggles thinking with its own object.
+ */
+export function openAICompatibleReasoningFields(
+  plugin: Pick<Plugin, 'id'>,
+  think: unknown
+): Record<string, unknown> {
+  const thinkingLevel = thinkingEffort(think);
+  const effort =
+    plugin.id === 'deepseek' && thinkingLevel === 'medium'
+      ? undefined
+      : thinkingLevel;
+  return {
+    ...(effort ? { reasoning_effort: effort } : {}),
+    ...getOpenAICompatibleThinkingParameters(plugin, think),
+  };
+}
+
+function buildAnthropicChatPayload(
+  model: string,
+  messages: ChatMessage[],
+  options: GenerationOptions,
+  params: PluginChatParameters
+): PluginChatPayloadResult {
+  const systemMessages = messages.filter(message => message.role === 'system');
+  const nonSystemMessages = messages.filter(
+    message => message.role !== 'system'
+  );
+
+  const thinking = resolveAnthropicThinking(
+    model,
+    options.think,
+    params.maxTokens
+  );
+  const budgetTokens = thinking.budgetTokens;
+
+  const anthropicTools = toAnthropicTools(options.tools);
+  const payload: Record<string, unknown> = {
+    model,
+    messages: toAnthropicMessages(nonSystemMessages),
+    max_tokens: thinking.maxTokens,
+    stop_sequences: options.stop,
+    stream: params.shouldStream,
+    ...(anthropicTools ? { tools: anthropicTools } : {}),
+    ...thinking.fields,
+  };
+
+  // Anthropic rejects non-default sampling parameters on Claude Opus 4.7 and
+  // newer model families. Unknown model IDs are treated as current so models
+  // found through discovery remain safe as Anthropic expands the catalog.
+  // Extended thinking rejects them on every model, so a request that reasons
+  // sends none. Turning thinking off is left to the model's own default: the
+  // parameter itself is unknown to the models that never reasoned.
+  if (
+    budgetTokens === undefined &&
+    ANTHROPIC_LEGACY_SAMPLING_MODELS.has(bedrockAnthropicModelName(model))
+  ) {
+    if (params.topP !== undefined && params.topP < 1) {
+      payload.top_p = params.topP;
+    } else {
+      payload.temperature = params.temperature;
+    }
+  }
+
+  if (systemMessages.length > 0) {
+    payload.system = systemMessages.map(message => message.content).join('\n');
+  }
+
+  return {
+    payload,
+    headers: {
+      'anthropic-version': '2023-06-01',
+    },
+  };
+}
+
+function buildGeminiChatPayload(
+  model: string,
+  messages: ChatMessage[],
+  options: GenerationOptions,
+  params: PluginChatParameters
+): PluginChatPayloadResult {
+  const lastMessage = messages[messages.length - 1];
+  const parts: Array<{
+    text?: string;
+    inline_data?: { mime_type: string; data: string };
+  }> = [];
+
+  if (lastMessage?.images && lastMessage.images.length > 0) {
+    for (const image of lastMessage.images) {
+      const { mediaType, base64Data } = splitDataUrlImage(image);
+      parts.push({
+        inline_data: {
+          mime_type: mediaType,
+          data: base64Data,
+        },
+      });
+    }
+  }
+
+  if (lastMessage?.content) {
+    parts.push({ text: lastMessage.content });
+  }
+
+  const thinking = resolveGeminiThinking(options.think, params.maxTokens);
+
+  return {
+    payload: {
+      contents: [{ parts }],
+      generationConfig: {
+        temperature: params.temperature,
+        maxOutputTokens: thinking.maxOutputTokens,
+        topP: params.topP,
+        stopSequences: options.stop,
+        ...(thinking.thinkingConfig
+          ? { thinkingConfig: thinking.thinkingConfig }
+          : {}),
+      },
+    },
+  };
+}
+
 function buildOpenAICompatibleChatPayload(
   plugin: Pick<Plugin, 'id'>,
   model: string,
@@ -195,23 +664,27 @@ function buildOpenAICompatibleChatPayload(
   options: GenerationOptions,
   params: PluginChatParameters
 ): PluginChatPayloadResult {
-  // OpenAI and the providers that copy its shape name the levels instead of
-  // budgeting tokens. Nothing is sent unless thinking was asked for: the field
-  // is unknown to models that do not reason.
-  const thinkingLevel = thinkingEffort(options.think);
-  const effort = thinkingLevel;
   const tools = toOpenAICompatibleTools(options.tools);
+  // Replayed reasoning has no single wire name: OpenRouter reads `reasoning`,
+  // while DeepSeek requires `reasoning_content` beside its tool calls. Both
+  // deliberately replay whatever thinking the session stored, even turns an
+  // earlier provider produced: the provider treats it as context.
+  const reasoningField: 'reasoning' | 'reasoning_content' =
+    plugin.id === 'deepseek' ? 'reasoning_content' : 'reasoning';
 
   return {
     payload: {
       model,
-      messages: toOpenAICompatibleMessages(messages),
+      messages: toOpenAICompatibleMessages(messages, {
+        includeReasoning:
+          plugin.id === 'openrouter' || plugin.id === 'deepseek',
+        reasoningField,
+      }),
       ...getOpenAICompatibleSamplingParameters(plugin, params),
       max_tokens: params.maxTokens,
       stop: options.stop,
       stream: params.shouldStream,
-      ...(effort ? { reasoning_effort: effort } : {}),
-      ...getOpenAICompatibleThinkingParameters(plugin, options.think),
+      ...openAICompatibleReasoningFields(plugin, options.think),
       ...(tools ? { tools } : {}),
     },
   };
@@ -232,7 +705,17 @@ export function buildPluginChatPayload(
     params.shouldStream = streamOverride;
   }
 
+  if (pluginChatProtocol(plugin, model) === 'anthropic') {
+    return buildAnthropicChatPayload(model, messages, options, params);
+  }
+
+  if (plugin.id === 'gemini') {
+    return buildGeminiChatPayload(model, messages, options, params);
+  }
+
   if (apiMode === 'responses') {
+    // The ChatGPT-backed codex endpoint rejects sampling parameters outright.
+    const supportsSampling = plugin.id !== 'codex-oauth';
     return {
       payload: buildOpenAIResponsesPayload(
         model,
@@ -240,10 +723,15 @@ export function buildPluginChatPayload(
           preserveProviderMetadata: true,
         }),
         {
-          max_tokens: params.maxTokens,
-          temperature: params.temperature,
-          top_p: params.topP,
-          stream: params.shouldStream,
+          ...(supportsSampling
+            ? {
+                max_tokens: params.maxTokens,
+                temperature: params.temperature,
+                top_p: params.topP,
+              }
+            : {}),
+          // The codex endpoint rejects non-streaming requests outright.
+          stream: supportsSampling ? params.shouldStream : true,
           stateScope: providerStateScope,
           reasoningEffort: thinkingEffort(options.think),
           ...(options.tools?.length
@@ -263,13 +751,188 @@ export function buildPluginChatPayload(
   );
 }
 
+export function convertAnthropicResponse(
+  anthropicResponse: Record<string, unknown>,
+  model: string
+): PluginResponse {
+  const id =
+    typeof anthropicResponse.id === 'string'
+      ? anthropicResponse.id
+      : `chatcmpl-${Date.now()}`;
+
+  const stopReasonMap: Record<string, string> = {
+    end_turn: 'stop',
+    max_tokens: 'length',
+    stop_sequence: 'stop',
+    tool_use: 'tool_calls',
+  };
+
+  const stopReason =
+    typeof anthropicResponse.stop_reason === 'string'
+      ? stopReasonMap[anthropicResponse.stop_reason] || 'stop'
+      : 'stop';
+
+  let content = '';
+  let reasoning = '';
+  if (Array.isArray(anthropicResponse.content)) {
+    for (const block of anthropicResponse.content) {
+      if (!block || typeof block !== 'object' || !('type' in block)) continue;
+      if (block.type === 'text' && 'text' in block) {
+        if (typeof block.text === 'string') content += block.text;
+      } else if (block.type === 'thinking' && 'thinking' in block) {
+        // The streaming path renders these; a non-streaming reply must not
+        // silently drop the reasoning the user paid for.
+        if (typeof block.thinking === 'string') reasoning += block.thinking;
+      }
+    }
+  }
+
+  let usage;
+  if (
+    anthropicResponse.usage &&
+    typeof anthropicResponse.usage === 'object' &&
+    anthropicResponse.usage !== null
+  ) {
+    const usageObj = anthropicResponse.usage as Record<string, unknown>;
+    const inputTokens =
+      typeof usageObj.input_tokens === 'number' ? usageObj.input_tokens : 0;
+    const outputTokens =
+      typeof usageObj.output_tokens === 'number' ? usageObj.output_tokens : 0;
+
+    usage = {
+      prompt_tokens: inputTokens,
+      completion_tokens: outputTokens,
+      total_tokens: inputTokens + outputTokens,
+    };
+  }
+
+  return {
+    id,
+    object: 'chat.completion',
+    created: Math.floor(Date.now() / 1000),
+    model,
+    choices: [
+      {
+        index: 0,
+        message: {
+          role: 'assistant',
+          content,
+          ...(reasoning ? { reasoning_content: reasoning } : {}),
+        },
+        finish_reason: stopReason,
+      },
+    ],
+    usage,
+  };
+}
+
+export function convertGeminiResponse(
+  geminiResponse: Record<string, unknown>,
+  model: string
+): PluginResponse {
+  const id = `chatcmpl-${Date.now()}`;
+
+  let content = '';
+  let reasoning = '';
+  let finishReason = 'stop';
+
+  if (Array.isArray(geminiResponse.candidates)) {
+    const candidate = geminiResponse.candidates[0];
+    if (candidate && typeof candidate === 'object') {
+      const candidateObj = candidate as Record<string, unknown>;
+
+      if (candidateObj.content && typeof candidateObj.content === 'object') {
+        const contentObj = candidateObj.content as Record<string, unknown>;
+        if (Array.isArray(contentObj.parts)) {
+          for (const part of contentObj.parts) {
+            if (
+              part &&
+              typeof part === 'object' &&
+              'text' in part &&
+              typeof part.text === 'string'
+            ) {
+              // Thought summaries arrive as parts flagged `thought`; they are
+              // reasoning, not answer text.
+              if ('thought' in part && part.thought === true) {
+                reasoning += part.text;
+              } else {
+                content += part.text;
+              }
+            }
+          }
+        }
+      }
+
+      if (typeof candidateObj.finishReason === 'string') {
+        const finishReasonMap: Record<string, string> = {
+          STOP: 'stop',
+          MAX_TOKENS: 'length',
+          SAFETY: 'content_filter',
+          RECITATION: 'content_filter',
+          OTHER: 'stop',
+        };
+        finishReason = finishReasonMap[candidateObj.finishReason] || 'stop';
+      }
+    }
+  }
+
+  let usage;
+  if (
+    geminiResponse.usageMetadata &&
+    typeof geminiResponse.usageMetadata === 'object'
+  ) {
+    const usageObj = geminiResponse.usageMetadata as Record<string, unknown>;
+    const promptTokens =
+      typeof usageObj.promptTokenCount === 'number'
+        ? usageObj.promptTokenCount
+        : 0;
+    const completionTokens =
+      typeof usageObj.candidatesTokenCount === 'number'
+        ? usageObj.candidatesTokenCount
+        : 0;
+
+    usage = {
+      prompt_tokens: promptTokens,
+      completion_tokens: completionTokens,
+      total_tokens: promptTokens + completionTokens,
+    };
+  }
+
+  return {
+    id,
+    object: 'chat.completion',
+    created: Math.floor(Date.now() / 1000),
+    model,
+    choices: [
+      {
+        index: 0,
+        message: {
+          role: 'assistant',
+          content,
+          ...(reasoning ? { reasoning_content: reasoning } : {}),
+        },
+        finish_reason: finishReason,
+      },
+    ],
+    usage,
+  };
+}
+
 export function convertProviderResponse(
-  _plugin: Plugin,
+  plugin: Plugin,
   response: Record<string, unknown>,
   model: string,
   apiMode: PluginApiMode = 'chat_completions',
   providerStateScope?: string
 ): PluginResponse {
+  if (pluginChatProtocol(plugin, model) === 'anthropic') {
+    return convertAnthropicResponse(response, model);
+  }
+
+  if (plugin.id === 'gemini') {
+    return convertGeminiResponse(response, model);
+  }
+
   if (apiMode === 'responses') {
     return normalizeOpenAIResponsesResponse(
       response,

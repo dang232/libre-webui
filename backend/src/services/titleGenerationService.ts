@@ -24,11 +24,29 @@ import type {
   PluginResponse,
 } from '../types/index.js';
 import {
+  ChatProviderSelectionError,
   normalizeChatProviderSelection,
   type QualifiedChatProviderSelection,
 } from '../utils/chatProviderSelection.js';
 
 export const AUTO_TITLE_CURRENT_MODEL = '__current_running_model__';
+
+export type StrandsAuxiliaryTargetResolver = (
+  model: string,
+  userId: string
+) => Promise<{
+  model: string;
+  providerType: 'ollama' | 'plugin';
+  providerId: string | null;
+}>;
+
+/** Resolve text calls without creating an agent session or invoking tools. */
+export const resolveStrandsAuxiliaryTarget: StrandsAuxiliaryTargetResolver =
+  async (model, userId) => {
+    const { resolveStrandsProviderTarget } =
+      await import('../strands/catalog.js');
+    return resolveStrandsProviderTarget(model, userId);
+  };
 
 const TITLE_GENERATION_OPTIONS: GenerationOptions = {
   temperature: 0.3,
@@ -114,6 +132,7 @@ export interface TitleGenerationServiceDependencies {
   pluginService: PluginServiceDependency;
   now?: () => number;
   logger?: Pick<Console, 'error'>;
+  resolveStrandsProviderTarget?: StrandsAuxiliaryTargetResolver;
 }
 
 export function buildTitlePrompt(message: string): string {
@@ -197,6 +216,7 @@ export class TitleGenerationService {
   private pluginService: PluginServiceDependency;
   private now: () => number;
   private logger: Pick<Console, 'error'>;
+  private resolveStrandsProviderTarget: StrandsAuxiliaryTargetResolver;
 
   constructor({
     chatService,
@@ -204,12 +224,14 @@ export class TitleGenerationService {
     pluginService,
     now = Date.now,
     logger = console,
+    resolveStrandsProviderTarget = resolveStrandsAuxiliaryTarget,
   }: TitleGenerationServiceDependencies) {
     this.chatService = chatService;
     this.chatGenerationService = chatGenerationService;
     this.pluginService = pluginService;
     this.now = now;
     this.logger = logger;
+    this.resolveStrandsProviderTarget = resolveStrandsProviderTarget;
   }
 
   async resolveTitleGenerationModel(
@@ -218,6 +240,7 @@ export class TitleGenerationService {
     userId: string
   ): Promise<string> {
     if (requestedModel === AUTO_TITLE_CURRENT_MODEL) {
+      if (session.providerType === 'agent') return session.model;
       return this.chatGenerationService.resolveActualModelName(
         session.model,
         userId
@@ -240,24 +263,48 @@ export class TitleGenerationService {
       return null;
     }
 
-    const model = await this.resolveTitleGenerationModel(
+    let providerSelection =
+      requestedModel === AUTO_TITLE_CURRENT_MODEL
+        ? // A persona session's binding points at the pseudo-model; the
+          // resolved backing model finds its own provider by name.
+          session.model.startsWith('persona:') &&
+          session.providerType !== 'agent'
+          ? undefined
+          : normalizeChatProviderSelection(session)
+        : normalizeChatProviderSelection({ providerType, providerId });
+    if (
+      requestedModel.startsWith('persona:') &&
+      providerSelection?.providerType !== 'agent'
+    ) {
+      // Task personas carry the same synthetic binding as Chat personas.
+      // Their backing model owns provider resolution, including plugin routes.
+      providerSelection = undefined;
+    }
+    const usesStrands =
+      providerSelection?.providerType === 'agent' &&
+      providerSelection.providerId === 'strands';
+    if (providerSelection?.providerType === 'agent' && !usesStrands) {
+      throw new ChatProviderSelectionError(
+        'Title generation requires an Ollama, plugin, or Strands model.'
+      );
+    }
+    let model = await this.resolveTitleGenerationModel(
       requestedModel,
       session,
       userId
     );
-    const providerSelection =
-      requestedModel === AUTO_TITLE_CURRENT_MODEL
-        ? // A persona session's binding points at the pseudo-model; the
-          // resolved backing model finds its own provider by name.
-          session.model.startsWith('persona:')
-          ? undefined
-          : normalizeChatProviderSelection(session)
-        : normalizeChatProviderSelection({ providerType, providerId });
 
     let title = buildFallbackTitle(message);
     let source: GenerateTitleForSessionResult['source'] = 'fallback';
 
     try {
+      if (usesStrands) {
+        // Titles are a plain text call on the engine's underlying model. No
+        // agent session or tool loop is created for them.
+        const resolved = await this.resolveStrandsProviderTarget(model, userId);
+        model = resolved.model;
+        providerSelection = normalizeChatProviderSelection(resolved);
+      }
       const generation = await this.generateTitleWithModel(
         sessionId,
         model,
@@ -306,6 +353,15 @@ export class TitleGenerationService {
       TITLE_GENERATION_OPTIONS,
       providerSelection
     );
+    if (
+      target.providerType === 'agent' ||
+      (providerSelection?.providerType === 'plugin' &&
+        target.activePlugin?.id !== providerSelection.providerId) ||
+      (providerSelection?.providerType === 'ollama' && target.activePlugin)
+    ) {
+      throw new Error('The selected title provider is unavailable.');
+    }
+    const { tools: _tools, ...textOptions } = target.mergedOptions;
     const prompt = buildTitlePrompt(message);
 
     if (target.activePlugin) {
@@ -319,7 +375,7 @@ export class TitleGenerationService {
             timestamp: this.now(),
           },
         ],
-        { ...target.mergedOptions, ...PLUGIN_TITLE_GENERATION_OPTIONS },
+        { ...textOptions, ...PLUGIN_TITLE_GENERATION_OPTIONS },
         userId,
         target.activePlugin.id
       );

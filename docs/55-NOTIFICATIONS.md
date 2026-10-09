@@ -12,6 +12,14 @@ Alcore keeps a durable, per-user notification inbox so team activity
 — mentions, direct messages, shares, automation failures, and calendar
 reminders — reaches people even when the relevant page is closed.
 
+## Status popups
+
+Short status messages, such as a saved change or a completed Git operation,
+appear near the top of the page. Use the **Close** button to clear a popup
+with a pointer or keyboard. Hovering keeps the message visible so you can read
+it; closing it dismisses the message while the underlying operation keeps its
+current state.
+
 ## The inbox
 
 Notifications are database rows first: encrypted title and body at rest,
@@ -113,6 +121,16 @@ for container deployments; a value saved in the UI takes precedence. The
 password is stored encrypted and never returned to the browser. **Send
 test** delivers a message to the administrator's own address (or any address
 typed in) so the round trip is proven before users rely on it.
+
+Administrators also choose a **Light** or **Dark** email template and preview
+it before saving. Light is the default. The saved preset applies to every
+notification and test email on this instance, including Markdown results;
+it is independent of each user's interface theme. The preview renders draft
+sample content without contacting SMTP, sending mail, or queuing a job.
+Only administrators can read or change the preset or request a preview.
+The built-in presets keep text, links, code blocks, and buttons readable;
+custom HTML templates are not accepted. Email clients may still adjust colors
+according to their own display settings.
 
 Once the switch is on, each user chooses what reaches their inbox under
 **Settings → Notifications → Email notifications**:

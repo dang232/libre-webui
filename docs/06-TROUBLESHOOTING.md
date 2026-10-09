@@ -327,8 +327,9 @@ The following security and ownership rules also apply:
   directly quarantines it again; use the administrator install or update flow
   so its source path and definition hash are recorded.
 - Saved credentials are bound to the route, authentication contract,
-  definition, and source in effect when they were entered. After changing an
-  endpoint or definition, save that account's credential again. An old unbound
+  definition, and source in effect when they were entered. Adding or removing
+  models keeps them. After changing an endpoint or any other part of the
+  definition, save that account's credential again. An old unbound
   credential migrates automatically only on an exact anchored bundled route.
 - Imported plugins may use `api_url` as a legacy full-operation URL alias.
   `endpoint` wins when both fields are set. If model discovery lives elsewhere,
@@ -574,6 +575,41 @@ rm -rf backend/data
 ```
 
 Restart the backend and create a fresh account.
+
+## Strands Engine Problems
+
+The embedded [Strands engine](./STRANDS_ENGINE) reports its state to any
+account that may use it:
+
+```bash
+curl -H "Authorization: Bearer $LIBRE_ADMIN_TOKEN" \
+  http://localhost:3001/api/strands/health
+```
+
+A `403` response means the engine is not enabled for that account.
+
+### The Strands page is missing
+
+The sidebar hides **Strands** when the account has no access. Check **Settings
+→ User Management → Access & policies → Strands engine**. **Off** blocks
+everyone, administrators included, and **Administrators** hides it from regular
+users. If the control is locked, `LIBRE_STRANDS_ACCESS` pins the mode: set it to
+`admins` or `all-users`, or unset it to manage the mode in the interface. Any
+value other than `disabled`, `admins`, or `all-users` locks the engine off.
+
+### No models are listed
+
+Strands only drives models Libre WebUI already serves. Enable Ollama and pull a
+chat model, or activate a chat provider plugin under **Settings → Plugins**. The
+Strands model list then includes those models.
+
+### A Work step on Strands fails because tools are unsupported
+
+With **Engine: Strands**, the Strands agent plans each step through tool calls,
+so the provider model must support tool calling. When it does not, Work reports
+that the model does not advertise tool support
+(`WORK_MODEL_TOOLS_UNSUPPORTED`). Pick a tool-capable model in the Work
+**Model** control and run the task again.
 
 ## Still Stuck
 

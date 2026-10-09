@@ -25,6 +25,8 @@ export interface PluginCredentialRepository {
     userId: string
   ): Promise<StoredPluginCredential | null>;
   bindLegacy(id: string, fingerprint: string): Promise<boolean>;
+  /** Replace one binding with another; false when it already changed. */
+  rebind(id: string, from: string, to: string): Promise<boolean>;
   listByUser(userId: string): Promise<StoredPluginCredential[]>;
   upsert(record: StoredPluginCredential): Promise<void>;
   delete(pluginId: string, userId: string): Promise<boolean>;
@@ -191,6 +193,12 @@ export interface PluginUsageRepository {
   ): Promise<Array<Record<string, unknown>>>;
   plugins(from: number, to: number): Promise<Array<Record<string, unknown>>>;
   models(from: number, to: number): Promise<Array<Record<string, unknown>>>;
+  /** All reserved agent totals (model=null) plus their top 20 models each. */
+  agentUsage(
+    from: number,
+    to: number,
+    agentIds: readonly string[]
+  ): Promise<Array<Record<string, unknown>>>;
   heatmap(
     from: number,
     to: number,

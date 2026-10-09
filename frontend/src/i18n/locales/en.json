@@ -38,14 +38,22 @@
     "custom": "Custom",
     "remove": "Remove",
     "home": "Home",
-    "more": "More"
+    "more": "More",
+    "provider": "Provider",
+    "agent": "Agent",
+    "reasoning": "Reasoning",
+    "skipToContent": "Skip to content"
   },
   "brand": {
     "name": "Alcore",
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "backendConnectionFailed": "Failed to connect to the backend service"
+    "backendConnectionFailed": "Failed to connect to the backend service",
+    "ollamaUnavailable": "Ollama service is not available. Plugin models may still be used.",
+    "connecting": "Connecting to the backend… ({{attempt}}/{{total}})",
+    "startingUp": "Starting up…",
+    "backendUnreachableHint": "Make sure the backend is running, then try again."
   },
   "auth": {
     "login": {
@@ -206,7 +214,9 @@
       "removed": "Passkey removed.",
       "removeFailed": "The passkey could not be removed.",
       "signInButton": "Sign in with a passkey",
-      "signInFailed": "Passkey sign-in failed."
+      "signInFailed": "Passkey sign-in failed.",
+      "removeConfirmTitle": "Remove this passkey?",
+      "removeConfirmDescription": "“{{name}}” will no longer work for signing in. You can register it again later."
     },
     "alcore": {
       "title": "This server uses Alcore Auth for sign-in.",
@@ -272,6 +282,12 @@
       "tryAgain": "Try again",
       "restart": "Restart sign-in",
       "support": "Need help? Contact your server admin or see"
+    },
+    "password": {
+      "show": "Reveal characters",
+      "hide": "Hide characters",
+      "showConfirmation": "Reveal confirmation",
+      "hideConfirmation": "Hide confirmation"
     }
   },
   "setup": {
@@ -324,7 +340,8 @@
       "envNote": "This key is also saved in your backend/.env file as ENCRYPTION_KEY",
       "acknowledgment": "I have saved my encryption key in a secure location and understand that losing it may result in data loss.",
       "confirmRequired": "Please confirm that you have saved the encryption key",
-      "continue": "Continue to Alcore"
+      "continue": "Continue to Alcore",
+      "loadFailed": "Could not load the encryption key. Retry to continue."
     },
     "connectModels": {
       "title": "Connect your models",
@@ -418,7 +435,8 @@
       "toolsOn": "Tools on — the model can call approved tools",
       "toolsOff": "Let the model call tools for this message",
       "thinkingOn": "Thinking on ({{level}})",
-      "thinkingOff": "Think before answering"
+      "thinkingOff": "Think before answering",
+      "thinkingUpdateFailed": "Could not update the thinking setting"
     },
     "session": {
       "new": "New Chat",
@@ -454,7 +472,8 @@
         "move": "Move to folder",
         "remove": "Remove from folder",
         "delete": "Delete folder",
-        "deleteConfirm": "Delete this folder? Chats inside are kept."
+        "deleteConfirm": "Delete this folder? Chats inside are kept.",
+        "rename": "Rename folder"
       },
       "shareChat": "Share chat…"
     },
@@ -472,7 +491,8 @@
       "selectBeforePrivateChat": "Select an available model before starting private chat",
       "selectBeforeSending": "Select an available model before sending",
       "selectBeforeRegenerating": "Select an available model before regenerating",
-      "connectDescription": "No models are connected yet. Pick a source below — a local runtime, your own server, or a cloud API — and you'll be chatting in under a minute."
+      "connectDescription": "No models are connected yet. Pick a source below — a local runtime, your own server, or a cloud API — and you'll be chatting in under a minute.",
+      "pullCommand": "ollama pull llama3.2:3b"
     },
     "footer": {
       "disclaimer": "LLM can make mistakes - verify important information",
@@ -486,7 +506,13 @@
       "browse": "browse",
       "unsupportedFileType": "File type not supported: {{name}}",
       "maxImagesAllowed": "Maximum {{count}} images allowed",
-      "imageTooLarge": "Image {{name}} is too large (max 10MB)"
+      "imageTooLarge": "Image {{name}} is too large (max 10MB)",
+      "readFailed": "Could not read {{name}}",
+      "uploadAlt": "Upload {{number}}",
+      "removeImage": "Remove image {{number}}",
+      "addMore": "Add more images ({{count}}/{{max}})",
+      "uploading": "Uploading",
+      "removeDocument": "Remove {{name}}"
     },
     "structuredOutput": {
       "title": "Response Format",
@@ -537,7 +563,8 @@
       "compactionOff": "Off for this chat"
     },
     "message": {
-      "sources": "Sources"
+      "sources": "Sources",
+      "copyFailed": "Could not copy to the clipboard"
     },
     "toasts": {
       "chatCreated": "New chat created",
@@ -581,7 +608,8 @@
       "generationRateLimitedWeekly": "Weekly budget spent — new chats pause until Monday 00:00 UTC. Try again later or upgrade your plan.",
       "generationRateLimitedMonthly": "Monthly budget spent — new chats pause until the 1st of next month (UTC). Try again later or upgrade your plan.",
       "generationFailedSupport": "The reply couldn't be finished — retry, and if it keeps happening report it from Settings > About > GitHub issues.",
-      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access."
+      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access.",
+      "archiveFailed": "Could not archive this chat"
     },
     "documents": {
       "title": "Documents in context"
@@ -614,7 +642,25 @@
     "delegate": {
       "action": "Run as Work task"
     },
-    "sharedReadOnly": "Shared by {{owner}} — view only"
+    "sharedReadOnly": "Shared by {{owner}} — view only",
+    "branch": {
+      "variants": "{{count}} variant",
+      "variants_plural": "{{count}} variants",
+      "selectVariant": "Select variant {{number}}",
+      "generating": "generating...",
+      "select": "select"
+    },
+    "sources": {
+      "fullContextFailed": "Could not update the full-document setting",
+      "usedByRetrieval": "Used in replies",
+      "triggerLabel": "Sources ({{count}})"
+    },
+    "announce": {
+      "replyFinished": "{{name}} replied: {{text}}",
+      "replyFinishedNoText": "{{name}} finished replying.",
+      "codeBlock": "code block",
+      "generationStopped": "Generation stopped"
+    }
   },
   "sidebar": {
     "navigation": {
@@ -636,10 +682,12 @@
       "prompts": "Prompts",
       "skills": "Skills",
       "tools": "Tools",
-      "channels": "Channels"
+      "channels": "Channels",
+      "strands": "Strands"
     },
     "toggleSize": "Toggle sidebar size",
-    "expandSidebar": "Expand sidebar"
+    "expandSidebar": "Expand sidebar",
+    "ariaLabel": "Sidebar"
   },
   "user": {
     "menu": {
@@ -696,7 +744,8 @@
       "sessions": "Sessions",
       "apiKeys": "API keys",
       "apiPlatform": "API Platform",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "ollamaDisabled": "Ollama is disabled by an administrator"
     },
     "apiPlatform": {
       "title": "API Platform",
@@ -1062,7 +1111,8 @@
       "modelPrice": "Price / 1M",
       "modelStatus": "Status",
       "modelFree": "Free",
-      "modelDeprecated": "Deprecated"
+      "modelDeprecated": "Deprecated",
+      "dismissError": "Dismiss error"
     },
     "generation": {
       "title": "Generation Options",
@@ -1165,7 +1215,8 @@
         "deleteFailed": "Failed to delete the collection",
         "assignFailed": "Failed to move the document",
         "share": "Share collection",
-        "shared": "shared"
+        "shared": "shared",
+        "assignTo": "Collection for {{name}}"
       },
       "library": {
         "title": "Uploaded documents",
@@ -1307,7 +1358,8 @@
         "title": "Archived chats",
         "empty": "No archived chats",
         "unarchive": "Unarchive"
-      }
+      },
+      "clearAllConfirm": "Are you sure you want to delete all chat history? This action cannot be undone."
     },
     "about": {
       "title": "About",
@@ -1319,43 +1371,36 @@
       "features": {
         "privacy": {
           "title": "Privacy First",
-          "description": "Your data stays on your device"
+          "description": "Self-hosted workspace — your data stays under your control"
         },
         "openSource": {
           "title": "Open Source",
-          "description": "Free and open source software"
+          "description": "Open-source software maintained by the Alcore team"
         },
         "localInference": {
           "title": "Local Inference",
-          "description": "Run AI models locally with Ollama"
+          "description": "Use local Ollama models or connect to your Alcore provider"
         }
       },
-      "openSourceBy": "Open source by {{company}}",
+      "openSourceBy": "Built by {{company}}",
       "links": {
         "title": "Links",
-        "github": "GitHub",
-        "githubDescription": "View source code and contribute",
         "website": "Website",
-        "websiteDescription": "Visit our website",
+        "websiteDescription": "Visit the Alcore website",
         "documentation": "Documentation",
         "reportIssue": "Report Issues",
         "reportIssueDescription": "Bug reports & feature requests",
-        "documentationDescription": "Guides, tutorials and API reference",
-        "forgejo": "Forgejo Mirror",
-        "forgejoDescription": "Self-hosted Forgejo repository",
-        "sponsor": "Sponsor",
-        "sponsorDescription": "Help fund the project",
-        "star": "Star on GitHub",
-        "starDescription": "A star helps others discover the project"
+        "documentationDescription": "Guides and documentation for Alcore"
       },
       "version": "Version {{version}}",
       "updates": {
-        "checking": "Checking for updates…",
-        "upToDate": "You're on the latest version",
-        "updateAvailable": "Version {{version}} is available",
-        "ahead": "Running ahead of the latest release ({{version}})",
-        "checkFailed": "Couldn't check for updates",
         "viewChangelog": "View changelog"
+      },
+      "ollama": {
+        "title": "Ollama Status",
+        "version": "Version",
+        "healthy": "Healthy",
+        "unhealthy": "Unhealthy"
       }
     },
     "groups": {
@@ -1421,7 +1466,11 @@
       "unknownDevice": "Unknown device",
       "createdAt": "Signed in",
       "lastSeenAt": "Last active",
-      "expiresAt": "Expires"
+      "expiresAt": "Expires",
+      "signOutConfirmTitle": "Sign out this session?",
+      "signOutConfirmDescription": "{{device}} will be signed out immediately and must sign in again.",
+      "signOutOthersConfirmTitle": "Sign out other sessions?",
+      "signOutOthersConfirmDescription": "{{count}} other sessions will be signed out immediately. This session stays signed in."
     },
     "apiKeys": {
       "title": "API keys",
@@ -1455,7 +1504,9 @@
       "createdAt": "Created",
       "lastUsedAt": "Last used",
       "expiresAt": "Expires",
-      "neverExpires": "Never"
+      "neverExpires": "Never",
+      "revokeConfirmTitle": "Revoke “{{name}}”?",
+      "revokeConfirmDescription": "Anything using this API key stops working immediately. This cannot be undone."
     },
     "notifications": {
       "title": "Notifications",
@@ -1484,7 +1535,20 @@
   "models": {
     "title": "Models",
     "noModels": "No models installed",
-    "noModelsFound": "No models found"
+    "noModelsFound": "No models found",
+    "subtitle": "Pull, manage, and monitor your Ollama models",
+    "installed": "Installed Models",
+    "available": "Available Models",
+    "pull": "Pull Model",
+    "pulling": "Pulling...",
+    "delete": "Delete Model",
+    "deleting": "Deleting...",
+    "size": "Size",
+    "modified": "Modified",
+    "family": "Family",
+    "parameters": "Parameters",
+    "quantization": "Quantization",
+    "pullFirst": "Pull a model to get started"
   },
   "personas": {
     "title": "Personas",
@@ -1516,7 +1580,8 @@
     "model": "Model",
     "size": "Size",
     "quality": "Quality",
-    "created": "Created"
+    "created": "Created",
+    "lightboxLabel": "Image preview"
   },
   "errors": {
     "generic": "An error occurred",
@@ -1565,7 +1630,13 @@
   },
   "modelManager": {
     "sections": {
-      "catalog": "Model Catalog"
+      "catalog": "Model Catalog",
+      "pull": "Pull New Model",
+      "library": "Browse Library",
+      "huggingface": "HuggingFace Hub",
+      "running": "Running Models",
+      "local": "Local Models",
+      "advanced": "Advanced Actions"
     },
     "catalog": {
       "searchPlaceholder": "Search models by name or provider...",
@@ -1588,12 +1659,159 @@
       "hide": "Hide from users",
       "show": "Show to users",
       "star": "Star {{name}}",
-      "unstar": "Remove star from {{name}}"
+      "unstar": "Remove star from {{name}}",
+      "providerOllama": "Ollama",
+      "filterLabel": "Filter models",
+      "displayName": "Display name for {{name}}"
     },
     "huggingface": {
       "checkingGguf": "Checking for GGUF files...",
       "noGgufAvailable": "No GGUF files available for direct Ollama pull",
-      "ggufFilesCount": "GGUF Files ({{count}}) - Pull directly to Ollama"
+      "ggufFilesCount": "GGUF Files ({{count}}) - Pull directly to Ollama",
+      "browseAll": "Browse all on HuggingFace",
+      "noModelsFound": "No models found",
+      "noResults": "No models found. Try adjusting your search or filters.",
+      "browseAllLink": "Browse all",
+      "search": "Search HuggingFace models...",
+      "by": "by",
+      "gated": "Gated",
+      "viewOnHF": "View on HuggingFace",
+      "sortDownloads": "Downloads",
+      "sortLikes": "Likes",
+      "sortRecent": "Recent",
+      "taskTextGeneration": "Text Generation",
+      "taskTextToSpeech": "Text to Speech",
+      "taskTextToImage": "Text to Image",
+      "taskSpeechRecognition": "Speech Recognition",
+      "tasks": {
+        "textGen": "Text Generation",
+        "tts": "Text to Speech",
+        "image": "Text to Image",
+        "stt": "Speech Recognition"
+      },
+      "sort": {
+        "downloads": "Most Downloads",
+        "likes": "Most Liked",
+        "recent": "Recently Updated"
+      }
+    },
+    "title": "Models",
+    "loading": "Loading models...",
+    "systemStatus": {
+      "online": "Ollama Online",
+      "offline": "Ollama Offline",
+      "models": "model",
+      "models_plural": "models",
+      "running": "running",
+      "vram": "VRAM"
+    },
+    "pull": {
+      "placeholder": "Enter model name (e.g., llama3.2:3b, deepseek-r1:14b)",
+      "button": "Pull",
+      "cancel": "Cancel",
+      "popular": "Popular models:",
+      "browseAll": "Browse all models on ollama.com",
+      "success": "Model {{name}} pulled successfully",
+      "cancelled": "Model pull cancelled",
+      "failed": "Failed to pull model",
+      "enterName": "Please enter a model name",
+      "restricted": "Model installation is restricted to administrators on this instance."
+    },
+    "progress": {
+      "starting": "Initializing...",
+      "pulling": "Downloading model...",
+      "pullingLayer": "pulling",
+      "verifying": "Verifying integrity...",
+      "verifyingDigest": "verifying sha256 digest",
+      "writing": "Writing manifest...",
+      "cleaning": "Cleaning up..."
+    },
+    "library": {
+      "available": "available",
+      "search": "Search models...",
+      "noResults": "No models found matching your criteria",
+      "installed": "Installed",
+      "more": "+{{count}} more",
+      "refresh": "Refresh Library"
+    },
+    "local": {
+      "noModels": "No models installed yet",
+      "pullToStart": "Pull a model above to get started",
+      "installed": "installed",
+      "running": "Running",
+      "info": "Info",
+      "copy": "Copy",
+      "delete": "Delete",
+      "deleteConfirm": "Are you sure you want to delete model \"{{name}}\"?",
+      "deleteSuccess": "Model {{name}} deleted successfully",
+      "deleteFailed": "Failed to delete model"
+    },
+    "advanced": {
+      "createModel": "Create Model",
+      "fromModelfile": "From Modelfile",
+      "copyModel": "Copy Model",
+      "duplicateExisting": "Duplicate existing",
+      "testEmbeddings": "Test Embeddings",
+      "generateVectors": "Generate vectors",
+      "healthCheck": "Health Check",
+      "testConnection": "Test connection",
+      "healthy": "Ollama is healthy!"
+    },
+    "modals": {
+      "details": {
+        "title": "Model Details",
+        "info": "Model Information",
+        "family": "Family",
+        "parameters": "Parameters",
+        "quantization": "Quantization",
+        "format": "Format",
+        "systemPrompt": "System Prompt",
+        "template": "Template",
+        "license": "License",
+        "modelfile": "Modelfile",
+        "noDetails": "No details available"
+      },
+      "copy": {
+        "title": "Copy Model",
+        "source": "Source Model",
+        "selectModel": "Select a model...",
+        "newName": "New Model Name",
+        "placeholder": "e.g., my-custom-model",
+        "copying": "Copying...",
+        "button": "Copy Model",
+        "success": "Model copied to {{name}}",
+        "failed": "Failed to copy model",
+        "enterBoth": "Please enter both source and destination names"
+      },
+      "create": {
+        "title": "Create Custom Model",
+        "name": "Model Name",
+        "namePlaceholder": "e.g., my-assistant",
+        "modelfile": "Modelfile",
+        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
+        "see": "See",
+        "docs": "Modelfile docs",
+        "docsLink": "for syntax reference",
+        "creating": "Creating...",
+        "button": "Create Model",
+        "success": "Model {{name}} created successfully",
+        "failed": "Failed to create model",
+        "enterBoth": "Please enter model name and Modelfile content"
+      },
+      "embeddings": {
+        "title": "Test Embeddings",
+        "model": "Embedding Model",
+        "selectModel": "Select a model...",
+        "recommended": "Recommended: nomic-embed-text, mxbai-embed-large",
+        "input": "Input Text",
+        "placeholder": "Enter text to generate embeddings for...",
+        "generating": "Generating...",
+        "button": "Generate Embeddings",
+        "result": "Result ({{count}} dimensions)",
+        "success": "Generated {{count}}-dimensional embedding vector",
+        "failed": "Failed to generate embeddings",
+        "enterBoth": "Please select a model and enter text"
+      }
     }
   },
   "personaManager": {
@@ -1615,7 +1833,10 @@
     "deleteConfirm": "Are you sure you want to delete \"{{name}}\"?",
     "deleteSuccess": "Persona \"{{name}}\" deleted successfully",
     "downloadSuccess": "Persona \"{{name}}\" downloaded successfully",
-    "failed": "Failed to {{action}} persona"
+    "failed": "Failed to {{action}} persona",
+    "loadFailed": "Your personas could not be loaded.",
+    "deleteFailed": "Failed to delete persona",
+    "downloadFailed": "Failed to download persona"
   },
   "personaForm": {
     "title": {
@@ -1747,7 +1968,8 @@
       "promptHint": "A prompt to seed every new chat with this persona.",
       "noPrompt": "No prompt",
       "version": "Bindings revision {{version}}"
-    }
+    },
+    "sections": "Persona sections"
   },
   "personaCard": {
     "enhanced": "Enhanced",
@@ -1764,7 +1986,16 @@
     "backupSuccess": "Persona backup downloaded successfully",
     "dnaSuccess": "Persona DNA exported successfully",
     "failed": "Failed to {{action}}",
-    "shareTooltip": "Share this persona"
+    "shareTooltip": "Share this persona",
+    "wipeFailed": "Failed to wipe memories",
+    "backupFailed": "Failed to back up persona",
+    "exportDnaFailed": "Failed to export persona DNA",
+    "favorite": "Favorite",
+    "memoryStatus": {
+      "active": "Active",
+      "wiped": "Wiped",
+      "backed_up": "Backed up"
+    }
   },
   "userManager": {
     "title": "User Management",
@@ -1793,7 +2024,10 @@
     "noUsersMatching": "No users matching your search",
     "columns": {
       "role": "Role",
-      "created": "Created"
+      "created": "Created",
+      "user": "User",
+      "email": "Email",
+      "actions": "Actions"
     },
     "roles": {
       "admin": "Admin",
@@ -1832,7 +2066,10 @@
       "createSuccess": "User created successfully",
       "updateSuccess": "User updated successfully",
       "createFailed": "Failed to create user",
-      "updateFailed": "Failed to update user"
+      "updateFailed": "Failed to update user",
+      "usernamePlaceholder": "Enter username",
+      "emailPlaceholder": "Enter email (optional)",
+      "passwordPlaceholder": "Enter password"
     },
     "workAccess": {
       "title": "Work access",
@@ -1925,7 +2162,28 @@
       "memberOf": "Groups",
       "featuresLabel": "Feature access",
       "grantsLabel": "Grants",
-      "grantVia": "via"
+      "grantVia": "via",
+      "deleteConfirmTitle": "Delete group “{{name}}”?",
+      "deleteConfirmDescription": "Members lose any access they only had through this group. The accounts themselves are not deleted.",
+      "statuses": {
+        "active": "Active",
+        "pending": "Pending approval"
+      },
+      "features": {
+        "work": "Work",
+        "model-download": "Model download",
+        "web-search": "Web search",
+        "strands": "Strands engine",
+        "tools": "Tools",
+        "stt": "Speech to text",
+        "tts": "Text to speech",
+        "voice-mode": "Voice mode",
+        "voice-cloning": "Voice cloning"
+      },
+      "grantViaKinds": {
+        "user": "direct grant",
+        "group": "group"
+      }
     },
     "audit": {
       "title": "Security audit log",
@@ -2012,13 +2270,60 @@
       "save": "Save",
       "saving": "Saving…",
       "saved": "Email settings saved.",
-      "saveFailed": "The email settings could not be saved."
+      "saveFailed": "The email settings could not be saved.",
+      "security": {
+        "starttls": "STARTTLS (port 587)",
+        "tls": "TLS (port 465)",
+        "none": "None (trusted network only)"
+      },
+      "templateTitle": "Email appearance",
+      "templateHint": "Choose a light or dark template for news digests and notification emails.",
+      "themeLabel": "Email template",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "previewTitle": "Template preview",
+      "previewLoading": "Loading preview…",
+      "previewFailed": "Could not load the email preview.",
+      "previewHeading": "Your news digest",
+      "previewIntro": "A preview of your daily news email.",
+      "previewMarkdown": "## Today’s highlights\n\n- Technology and research updates\n- News from your selected sources\n\n**Summary:** Your daily news, ready to read.",
+      "previewLinkLabel": "Open the result"
+    },
+    "modelAccess": {
+      "title": "Model downloads",
+      "description": "Allow all active users to pull models from Ollama and the Hugging Face browser. Administrators can always download models.",
+      "saved": "Model download access updated",
+      "saveFailed": "Could not update model download access"
+    },
+    "ollamaProvider": {
+      "title": "Ollama provider",
+      "description": "When off, the app stops checking for Ollama entirely — no health probes, no warnings. The endpoint can point at any Ollama-compatible gateway.",
+      "saved": "Ollama provider settings saved",
+      "saveFailed": "Could not save the Ollama provider settings",
+      "baseUrlLabel": "Ollama endpoint URL"
+    },
+    "strandsAccess": {
+      "title": "Strands engine",
+      "description": "Choose who can use the embedded Strands agent. It can read and edit files in each session's private workspace, but it cannot run shell commands.",
+      "saved": "Strands access updated",
+      "saveFailed": "Could not update Strands access",
+      "lockedByEnv": "Pinned by the LIBRE_STRANDS_ACCESS environment variable.",
+      "modes": {
+        "disabled": "Off",
+        "admins": "Administrators",
+        "all-users": "All users"
+      }
+    },
+    "agentCliAccess": {
+      "title": "Agent CLI models",
+      "description": "Administrators can use installed Pi, OpenCode, Codex, and Claude Code as chat models. They run on the host, outside Work sandboxes.",
+      "lockedByEnv": "Pinned by the AGENT_CLI_MODELS_ENABLED environment variable."
     }
   },
   "usageAnalytics": {
     "eyebrow": "Administration",
     "title": "Provider Usage",
-    "description": "Follow outbound API calls and model consumption across the enabled plugins on this instance.",
+    "description": "Track model requests and usage across this instance's providers and agents.",
     "days": "{{count}} days",
     "refresh": "Refresh usage",
     "loadFailed": "Provider usage could not be loaded.",
@@ -2065,7 +2370,7 @@
       "notCharted": "Select to load this model in the chart"
     },
     "providers": {
-      "title": "Enabled plugin traffic",
+      "title": "Provider and agent traffic",
       "description": "Request volume, reliability, and response time by provider.",
       "share": "{{percent}}% of calls",
       "failures": "{{count}} failed or cancelled",
@@ -2083,7 +2388,7 @@
     },
     "empty": {
       "title": "No provider calls yet",
-      "description": "Calls will appear here after an enabled plugin handles chat, Work, embedding, image, speech, sound, or video requests."
+      "description": "Requests appear here after a provider or agent handles chat, Work, embedding, image, speech, sound, or video requests."
     },
     "privacyNote": "Usage is metered on the server at the outbound plugin boundary. Alcore stores provider, model, timing, status, and reported counters—never prompts, responses, endpoints, credentials, or provider error bodies. Token totals include only calls where the provider returned usage metadata.",
     "heatmap": {
@@ -2095,6 +2400,14 @@
       "less": "Less",
       "more": "More",
       "yearTotal": "{{formatted}} calls in the last year"
+    },
+    "agents": {
+      "title": "Agents",
+      "description": "Calls to CLI agents and the Strands engine.",
+      "noCalls": "No recorded calls in this period",
+      "unreported": "Tokens not reported",
+      "topModels": "Top models",
+      "legacy": "This server does not provide a complete agent breakdown. Available agent records are shown below."
     }
   },
   "systemPage": {
@@ -2309,7 +2622,11 @@
       "harmful": "Harmful",
       "formatting": "Formatting"
     },
-    "feedbackComment": "Add a comment…"
+    "feedbackComment": "Add a comment…",
+    "user": "User",
+    "feedbackFailed": "Could not save your feedback",
+    "openImage": "Open image {{number}}",
+    "uploadedImageAlt": "Uploaded image {{number}}"
   },
   "imageGallery": {
     "title": "Image Gallery",
@@ -2321,7 +2638,8 @@
     "deleteSuccess": "Image deleted",
     "deleteFailed": "Failed to delete image",
     "loadMore": "Load More ({{current}} of {{total}})",
-    "loadFailed": "Failed to load gallery"
+    "loadFailed": "Failed to load gallery",
+    "downloadFailed": "Failed to download image"
   },
   "imageGeneration": {
     "title": "Generate Image",
@@ -2397,7 +2715,10 @@
       "image": "Images",
       "video": "Videos",
       "audio": "Audio"
-    }
+    },
+    "deleteConfirmTitle": "Delete this item?",
+    "deleteConfirmDescription": "The generated media will be permanently deleted.",
+    "previewFailed": "Preview unavailable"
   },
   "errorBoundary": {
     "title": "Something went wrong",
@@ -2475,7 +2796,8 @@
     "previousVersion": "Previous version",
     "nextVersion": "Next version",
     "print": "Print",
-    "exportCsv": "Export CSV"
+    "exportCsv": "Export CSV",
+    "resizePanel": "Resize panel"
   },
   "personaImportExport": {
     "title": "Import & Export Personas",
@@ -2513,7 +2835,10 @@
     "generation": "Generation:",
     "modelLoad": "Model load:",
     "totalTime": "Total time:",
-    "generatedAt": "Generated at:"
+    "generatedAt": "Generated at:",
+    "notAvailable": "N/A",
+    "tokenCount": "{{tokens}} tokens",
+    "tokensPerSecond": "{{value}} t/s"
   },
   "userMenu": {
     "loggedOut": "Logged out successfully",
@@ -2572,7 +2897,9 @@
       "httpWarning": "HTTP does not encrypt credentials or traffic. Use it only on a trusted network.",
       "invalidBaseUrl": "Base URLs cannot contain a query string or fragment.",
       "invalidApiPath": "Must start with / and contain no URL, query, fragment, or .. segment",
-      "tooLong": "Value is too long"
+      "tooLong": "Value is too long",
+      "resetConfirmTitle": "Reset to defaults?",
+      "resetConfirmDescription": "This clears every stored value for {{name}}, including API keys and other credentials. This cannot be undone."
     }
   },
   "huggingface": {
@@ -2592,7 +2919,10 @@
   },
   "demoMode": {
     "title": "Demo Mode",
-    "github": "GitHub"
+    "github": "GitHub",
+    "defaultMessage": "This is a demo version for presentation purposes only. The Ollama backend is not connected.",
+    "viewOnGithub": "View on GitHub",
+    "dismiss": "Dismiss"
   },
   "libreClaw": {
     "title": "Agents",
@@ -2755,8 +3085,8 @@
       "status": "Status: {{status}}"
     },
     "landing": {
-      "title": "Start a new Work task",
-      "description": "Give a local or configured provider model a durable, isolated workspace. It can inspect files, run tools, and continue where it left off when you return.",
+      "title": "What would you like to work on?",
+      "description": "Describe a task. Your model gets its own workspace.",
       "isolated": "Isolated",
       "isolatedBody": "Every task gets its own container and files.",
       "durable": "Durable",
@@ -2785,7 +3115,11 @@
         "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
         "attachTooMany": "Only {{max}} files can be attached at once.",
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
-      }
+      },
+      "engine": "Engine",
+      "libreModels": "Libre WebUI models",
+      "strandsDisabled": "The Strands engine is not available for your account.",
+      "modelLabel": "Model"
     },
     "conversation": {
       "ready": "Workspace ready",
@@ -2825,8 +3159,18 @@
         "checksPending": "Checks pending",
         "stallNudges": "Stall nudges",
         "ambiguityNudges": "Re-grounding nudges",
-        "stoppedBy": "Stopped by"
-      }
+        "stoppedBy": "Stopped by",
+        "reasons": {
+          "round": "round limit",
+          "toolCall": "tool-call limit",
+          "approvalTimeout": "approval timeout",
+          "computerStall": "computer stalled"
+        }
+      },
+      "skillTraceSavedWorked": "Noted: worked",
+      "skillTraceSavedFailed": "Noted: failed",
+      "connectionClosed": "The live Work connection closed.",
+      "reconnectingBackground": "Live updates are reconnecting in the background."
     },
     "runtime": {
       "unavailable": "Runtime unavailable",
@@ -2834,7 +3178,7 @@
       "readyOllama": "Docker ready",
       "readyPlugin": "Docker + plugin ready",
       "readyHybrid": "Docker + models ready",
-      "reason": "Docker and an available Ollama or plugin model provider are required."
+      "reason": "A Work runtime and an available model provider are required."
     },
     "workspace": {
       "label": "Workspace views",
@@ -2869,7 +3213,11 @@
       "changes": "Changes",
       "changesSince": "What changed since the last turn",
       "diffLabel": "Changes since the last turn: {{path}}",
-      "diffFolded": "{{count}} unchanged lines"
+      "diffFolded": "{{count}} unchanged lines",
+      "diffAdded": "Added",
+      "diffRemoved": "Removed",
+      "unsavedChanges": "unsaved changes",
+      "editingLocked": "Editing unlocks when the turn finishes."
     },
     "activity": {
       "empty": "Commands, file operations, and tool results will appear here.",
@@ -2880,7 +3228,9 @@
         "toolCall": "Tool call",
         "toolResult": "Tool result",
         "error": "Error"
-      }
+      },
+      "arguments": "Tool arguments",
+      "output": "Tool output"
     },
     "preview": {
       "command": "Optional start command",
@@ -2909,7 +3259,8 @@
       "saveFailed": "Could not save this file.",
       "saved": "File saved.",
       "previewFailed": "Could not start the preview.",
-      "previewStopFailed": "Could not stop the preview."
+      "previewStopFailed": "Could not stop the preview.",
+      "sendFailed": "The message could not be sent."
     },
     "terminal": {
       "connecting": "Opening a shell in the sandbox…",
@@ -2961,7 +3312,18 @@
       "noFilterMatches": "No changed files match this filter.",
       "allChanges": "All changes",
       "diffTruncated": "This diff is truncated.",
-      "binaryFile": "Binary file, no text diff."
+      "binaryFile": "Binary file, no text diff.",
+      "statusLabels": {
+        "modified": "Modified",
+        "added": "Added",
+        "deleted": "Deleted",
+        "renamed": "Renamed",
+        "copied": "Copied",
+        "typeChanged": "Type changed",
+        "untracked": "Untracked"
+      },
+      "stagedState": "staged",
+      "aheadBehind": "{{ahead}} ahead, {{behind}} behind"
     },
     "hostWorkspace": {
       "hint": "Leave blank for an isolated workspace, or point the task at a folder on this machine.",
@@ -2988,7 +3350,8 @@
       "unmute": "Unmute",
       "mute": "Mute",
       "finished": "This task is finished. Reopen it to bring its screen back.",
-      "reopenOpen": "Reopen task and open the screen"
+      "reopenOpen": "Reopen task and open the screen",
+      "teachSaveFailed": "Could not save this demonstration."
     },
     "computerSetup": {
       "title": "Work Computer",
@@ -3004,7 +3367,7 @@
       "label": "Hire as an agent (optional)",
       "none": "No persona (one-off task)",
       "hint": "This task becomes a named agent: it keeps the persona, stays pinned in the sidebar, and reports a one-line status after each run.",
-      "description": "Pick a persona to turn this task into a persistent agent with its own identity."
+      "description": "Choose a persona to keep this task as a named agent."
     },
     "agent": {
       "openScreen": "Open the full screen view",
@@ -3025,7 +3388,11 @@
       "approvalsToggleFailed": "Could not update approvals.",
       "approvalRuleLine": "Always allowed",
       "approvalRuleDelete": "Remove rule",
-      "approvalRuleDeleteFailed": "Could not remove the rule."
+      "approvalRuleDeleteFailed": "Could not remove the rule.",
+      "routinesLoadFailed": "Could not load routines.",
+      "skillsLoadFailed": "Could not load taught skills.",
+      "approvalsLoadFailed": "Could not load approval settings.",
+      "routinePaused": "Paused"
     },
     "runs": {
       "title": "Runs",
@@ -3036,7 +3403,8 @@
         "needsInput": "Needs input",
         "failed": "Failed",
         "cancelled": "Cancelled"
-      }
+      },
+      "loadFailed": "Could not load run history."
     },
     "approval": {
       "title": "Approval needed",
@@ -3044,7 +3412,16 @@
       "allowOnce": "Allow once",
       "allowAlways": "Always allow",
       "deny": "Deny",
-      "failed": "Could not send the decision."
+      "failed": "Could not send the decision.",
+      "details": "Action details",
+      "fields": {
+        "command": "Command",
+        "path": "Path",
+        "from": "From",
+        "to": "To",
+        "actions": "Actions",
+        "recursive": "Recursive"
+      }
     },
     "idleStopHint": "Stops after {{minutes}} minutes without activity.",
     "recovery": {
@@ -3057,6 +3434,17 @@
       "retrySucceeded": "Cleared {{cleared}} of {{attempted}} pending cleanups.",
       "retryPending": "Still retrying {{attempted}} pending cleanups.",
       "retryFailed": "Could not retry the pending cleanups."
+    },
+    "computer": {
+      "setupFailed": "The Work Computer could not be set up."
+    },
+    "announce": {
+      "completed": "{{title}} finished.",
+      "needsInput": "{{title}} needs your input or approval.",
+      "failed": "{{title}} failed.",
+      "cancelled": "{{title}} was stopped.",
+      "approvalNeeded": "{{title}} needs your approval to run {{tool}}.",
+      "untitledTask": "This task"
     }
   },
   "personaBackground": {
@@ -3088,7 +3476,21 @@
     "reselectProvider": "reselect a provider to pin this model",
     "unavailable": "unavailable",
     "unavailableSelections": "Unavailable selections",
-    "agentModels": "Agents"
+    "agentModels": "Agents",
+    "searchOllama": "Search Ollama library...",
+    "searchHuggingFace": "Search HuggingFace...",
+    "searchModels": "Search models...",
+    "ollamaModels": "Ollama Models",
+    "installed": "Installed",
+    "use": "Use",
+    "pull": "Pull",
+    "pullRestricted": "Model installation is restricted to administrators on this instance.",
+    "adminOnlyPull": "Admins only",
+    "showAll": "Show all ({{total}})",
+    "sources": "Model sources",
+    "defaultModel": "Default model",
+    "contextSize": "{{size}} context",
+    "via": "via {{provider}}"
   },
   "whatsNew": {
     "title": "What's new",
@@ -3145,7 +3547,16 @@
     "unpin": "Unpin note",
     "pinned": "Pinned",
     "export": "Download as Markdown",
-    "sharedWithYou": "Shared with you"
+    "sharedWithYou": "Shared with you",
+    "titleLabel": "Note title",
+    "loadFailed": "Could not load this. Try again.",
+    "restoreConfirmTitle": "Restore this version?",
+    "restoreConfirmDescription": "The note's text will be replaced with this earlier version.",
+    "deleteAttachmentConfirmTitle": "Delete {{name}}?",
+    "deleteAttachmentConfirmDescription": "The attachment will be permanently deleted from this note.",
+    "attachmentDeleteFailed": "Could not delete the attachment",
+    "revokeFailed": "Could not revoke access",
+    "sharePermissionLabel": "Permission"
   },
   "calendar": {
     "title": "Calendar",
@@ -3190,7 +3601,22 @@
     "importFailed": "The file could not be imported",
     "importResult": "Imported {{total}} events",
     "importIcs": "Import",
-    "exportIcs": "Export"
+    "exportIcs": "Export",
+    "chipStatus": {
+      "automation": "Scheduled automation",
+      "runSucceeded": "Automation run succeeded",
+      "runFailed": "Automation run failed"
+    },
+    "newEventOn": "New event on {{date}}",
+    "showDay": "Show all events on {{date}}",
+    "deleteEventConfirmTitle": "Delete \"{{title}}\"?",
+    "deleteEventConfirmDescription": "This event will be permanently deleted.",
+    "deleteRecurringEventConfirmDescription": "This repeating event and all of its occurrences will be permanently deleted.",
+    "shareCalendarNamed": "Share calendar {{name}}",
+    "deleteCalendarNamed": "Delete calendar {{name}}",
+    "deleteCalendarConfirmTitle": "Delete calendar \"{{name}}\"?",
+    "deleteCalendarConfirmDescription": "The calendar and the events in it will be permanently deleted.",
+    "calendarDeleteFailed": "The calendar could not be deleted"
   },
   "automations": {
     "title": "Automations",
@@ -3317,13 +3743,17 @@
         "work-approval": "an agent is waiting for your approval",
         "system": "a system notice arrives"
       }
-    }
+    },
+    "deleteConfirmTitle": "Delete \"{{name}}\"?",
+    "deleteConfirmDescription": "The automation and its schedule will be permanently deleted. Past runs stay in the run history."
   },
   "home": {
     "active": "active",
     "continue": "Continue",
     "start": "Start",
-    "explore": "Explore"
+    "explore": "Explore",
+    "greeting": "{{greeting}}.",
+    "greetingWithName": "{{greeting}}, {{name}}."
   },
   "palette": {
     "empty": "No matches.",
@@ -3336,7 +3766,14 @@
     "work": "Work",
     "messages": "Messages",
     "notes": "Notes",
-    "documents": "Documents"
+    "documents": "Documents",
+    "searching": "Searching…",
+    "searchFailed": "Workspace search failed. Showing matching chats and actions only.",
+    "results": "Results",
+    "escKey": "esc",
+    "hintNavigate": "Navigate",
+    "hintOpen": "Open",
+    "hintClose": "Close"
   },
   "tabs": {
     "actions": "Tab actions",
@@ -3540,7 +3977,8 @@
       "button": "From folder",
       "missingSkillMd": "The folder needs a SKILL.md file",
       "done": "Skill imported with {{count}} bundled files"
-    }
+    },
+    "toggleLabel": "Enable skill {{name}}"
   },
   "toolsPage": {
     "title": "Tools",
@@ -3701,7 +4139,14 @@
     "added": "Shared with {{name}}",
     "failed": "Sharing failed",
     "userNotFound": "No user with that name",
-    "groupNotFound": "No group with that name"
+    "groupNotFound": "No group with that name",
+    "principalKind": "Share with a user or group",
+    "principalName": "Username or group name",
+    "permission": "Permission",
+    "sharing": "Sharing",
+    "loading": "Loading shares",
+    "loadFailed": "Could not load shares",
+    "revokeFailed": "Could not revoke access"
   },
   "channels": {
     "title": "Channels",
@@ -3760,13 +4205,44 @@
     "toolCalls": {
       "summary": "Tools used ({{total}})",
       "deniedHint": "Tools that change things are declined in channels. Run them from a chat."
-    }
+    },
+    "confirmEdit": "Save edit",
+    "cancelEdit": "Cancel edit",
+    "reactWith": "React with {{emoji}}",
+    "deleteMessageConfirmTitle": "Delete this message?",
+    "deleteMessageConfirmDescription": "The message will be removed for everyone in this channel.",
+    "unreadCount": "{{total}} unread",
+    "send": "Send message",
+    "invite": "Invite member",
+    "closeThread": "Close thread",
+    "removeAttachment": "Remove attachment",
+    "loadFailed": "Could not load this. Try again.",
+    "editFailed": "The message could not be edited",
+    "deleteMessageFailed": "The message could not be deleted",
+    "pinFailed": "The pin could not be changed",
+    "reactFailed": "The reaction could not be saved",
+    "downloadFailed": "The file could not be downloaded",
+    "removeMemberConfirm": "Remove {{name}} from this channel?",
+    "removeMemberConfirmDescription": "They will lose access to the channel and its messages.",
+    "removeMemberNamed": "Remove {{name}} from channel",
+    "removeMemberFailed": "The member could not be removed",
+    "leaveConfirm": "Leave {{name}}?",
+    "leaveConfirmDescription": "You will need to be invited again to rejoin a private channel.",
+    "leaveFailed": "You could not leave the channel",
+    "joinFailed": "The channel could not be joined",
+    "deleteConfirm": "Delete {{name}}?",
+    "deleteConfirmDescription": "The channel and all of its messages will be permanently deleted for every member.",
+    "deleteFailed": "The channel could not be deleted",
+    "saveFailed": "The channel could not be saved"
   },
   "notifications": {
     "title": "Notifications",
     "empty": "You are all caught up.",
     "markAllRead": "Mark all as read",
-    "markRead": "Mark as read"
+    "markRead": "Mark as read",
+    "titleWithUnread": "Notifications ({{unread}} unread)",
+    "unread": "Unread",
+    "loadFailed": "Could not load notifications."
   },
   "voiceMode": {
     "title": "Voice mode",
@@ -3901,7 +4377,12 @@
       "failed": "Failed",
       "cancelled": "Cancelled"
     },
-    "noFeedback": "No feedback yet — rate assistant replies to build your dataset."
+    "noFeedback": "No feedback yet — rate assistant replies to build your dataset.",
+    "deleteSetConfirmTitle": "Delete \"{{name}}\"?",
+    "deleteSetConfirmDescription": "The evaluation set and its prompts will be permanently deleted.",
+    "deleteSetFailed": "The evaluation set could not be deleted",
+    "runError": "Error: {{detail}}",
+    "cancelFailed": "The run could not be cancelled"
   },
   "passwordStrength": {
     "levels": {
@@ -3915,6 +4396,14 @@
       "hasCase": "Uppercase and lowercase letters",
       "hasNumber": "At least one number",
       "tooLong": "No more than 72 bytes"
+    },
+    "requirements": "Use at least 12 characters, no more than 72 UTF-8 bytes, with uppercase, lowercase, and a number.",
+    "errors": {
+      "minLength": "Password must be at least 12 characters.",
+      "tooLong": "Password must be no more than 72 UTF-8 bytes.",
+      "uppercase": "Password must contain an uppercase letter.",
+      "lowercase": "Password must contain a lowercase letter.",
+      "number": "Password must contain a number."
     }
   },
   "connectModels": {
@@ -3933,7 +4422,8 @@
       "enable": "Enable provider",
       "enabling": "Enabling…",
       "enabled": "{{name}} connected — its models are now available",
-      "enableFailed": "Could not enable the provider"
+      "enableFailed": "Could not enable the provider",
+      "urlLabel": "Server URL"
     },
     "cloud": {
       "title": "Cloud API",
@@ -3942,7 +4432,70 @@
       "connect": "Connect",
       "connecting": "Connecting…",
       "connected": "{{name}} connected — its models are now available",
-      "saveFailed": "Could not save the API key"
+      "saveFailed": "Could not save the API key",
+      "keyLabel": "{{name}} API key"
+    },
+    "ollama": {
+      "status": {
+        "checking": "Checking availability…",
+        "healthy": "Running and ready for local models",
+        "offline": "Not detected on this machine",
+        "disabled": "Disabled — no checks will run"
+      },
+      "recheck": "Check again",
+      "enable": "Enable",
+      "disable": "Stop checking for Ollama",
+      "enabledToast": "Ollama provider enabled",
+      "disabledToast": "Ollama checks disabled — you can re-enable them in Settings",
+      "settingsFailed": "Could not update the Ollama settings",
+      "offlineHint": "Install Ollama from ollama.com and it will be detected automatically — or use one of the options below instead. If you don't plan to use Ollama, you can turn its checks off.",
+      "healthyHint": "Ollama is connected. Pull a model from the Model Manager and you're ready to chat."
     }
+  },
+  "modelDownload": {
+    "success": "Downloaded {{name}}",
+    "failed": "Failed to download: {{error}}",
+    "startFailed": "Failed to start download",
+    "cancelled": "Download cancelled"
+  },
+  "strands": {
+    "title": "Strands",
+    "subtitle": "Embedded agent engine on your Libre WebUI models.",
+    "subtitleVersion": "Embedded agent engine, harness {{version}}.",
+    "newSession": "New session",
+    "sessions": "Sessions",
+    "noSessions": "No sessions yet. Create one to start.",
+    "empty": "Ask the agent to read or edit files in its workspace.",
+    "placeholder": "Ask the engine to do something…",
+    "model": "Model",
+    "defaultModel": "Default model",
+    "send": "Send",
+    "stop": "Stop",
+    "reasoning": "Reasoning",
+    "tool": {
+      "running": "Running",
+      "done": "Done",
+      "failed": "Failed"
+    },
+    "cancelled": "Cancelled",
+    "turnLimit": "Stopped at the turn limit.",
+    "messageCount": "Messages: {{count}}",
+    "deleteSession": "Delete session",
+    "deleteConfirm": "Delete \"{{title}}\" and its history?",
+    "loadFailed": "Could not load Strands.",
+    "createFailed": "Could not create a session.",
+    "deleteFailed": "Could not delete the session.",
+    "saveFailed": "Could not save the session.",
+    "turnFailed": "The engine could not complete the turn"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "This page doesn't exist or may have moved."
+  },
+  "themeToggle": {
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode",
+    "switchToAmoled": "Switch to pure black mode",
+    "switchToCelestial": "Switch to celestial mode"
   }
 }

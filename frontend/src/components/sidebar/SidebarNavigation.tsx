@@ -32,7 +32,8 @@ import { compactSidebarButtonClass } from './compactSidebarStyles';
 interface SidebarNavigationProps {
   sidebarCompact: boolean;
   activePath: string;
-  showAgents: boolean;
+  /** Whether this account may use the embedded Strands engine. */
+  showStrands: boolean;
   /** Finished automation runs not yet acknowledged; badges the Zap icon. */
   unseenRunCount?: number;
   onMobileNavigate: () => void;
@@ -61,7 +62,7 @@ const DESTINATIONS = [
     labelKey: 'sidebar.navigation.personas',
   },
   { path: '/gallery', icon: Sparkles, labelKey: 'sidebar.navigation.imagine' },
-  { path: '/agents', icon: Bot, labelKey: 'sidebar.navigation.agents' },
+  { path: '/strands', icon: Bot, labelKey: 'sidebar.navigation.strands' },
 ] as const;
 
 /**
@@ -72,7 +73,7 @@ const DESTINATIONS = [
 export function SidebarNavigation({
   sidebarCompact,
   activePath,
-  showAgents,
+  showStrands,
   unseenRunCount = 0,
   onMobileNavigate,
 }: SidebarNavigationProps) {
@@ -90,9 +91,12 @@ export function SidebarNavigation({
             : 'items-center gap-1'
         )}
       >
-        {DESTINATIONS.filter(
-          destination => destination.path !== '/agents' || showAgents
-        ).map(({ path, icon: Icon, labelKey }) => {
+        {DESTINATIONS.filter(destination => {
+          // The engine ships disabled, so its destination must not advertise a
+          // page the deployment has not opted into.
+          if (destination.path === '/strands') return showStrands;
+          return true;
+        }).map(({ path, icon: Icon, labelKey }) => {
           const active =
             activePath === path || activePath.startsWith(`${path}/`);
           const label = t(labelKey);
@@ -107,7 +111,7 @@ export function SidebarNavigation({
               className={cn(
                 sidebarCompact
                   ? compactSidebarButtonClass
-                  : 'relative flex h-9 flex-1 items-center justify-center rounded-xl transition-colors duration-150 touch-manipulation outline-none focus-visible:ring-2 focus-visible:ring-primary-500/30',
+                  : 'relative flex h-9 flex-1 items-center justify-center rounded-xl transition-colors duration-150 touch-manipulation outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500/30',
                 active
                   ? 'bg-nav-active text-ink'
                   : !sidebarCompact &&
@@ -118,7 +122,7 @@ export function SidebarNavigation({
               {path === '/automations' && unseenRunCount > 0 && (
                 <span
                   data-testid='automations-unseen-badge'
-                  className='absolute -end-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-primary-500 px-0.5 text-[9px] font-semibold leading-none text-white'
+                  className='absolute -inset-e-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-primary-600 px-0.5 text-[9px] font-semibold leading-none text-white'
                 >
                   {unseenRunCount > 9 ? '9+' : unseenRunCount}
                 </span>

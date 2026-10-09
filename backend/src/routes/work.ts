@@ -16,6 +16,7 @@
  */
 
 import express, { NextFunction, Response } from 'express';
+import { userHasStrandsAccess } from '../services/strandsAccessService.js';
 import {
   authenticate,
   requireAdmin,
@@ -76,6 +77,10 @@ import {
   WorkTaskSummary,
 } from '../types/work.js';
 import { ApiResponse } from '../types/index.js';
+import {
+  normalizeThinkingPreference,
+  type ThinkingPreference,
+} from '../utils/thinkingOptions.js';
 
 const router = express.Router();
 const WORK_SSE_MAX_PENDING_BYTES = 1_000_000;
@@ -180,9 +185,10 @@ router.get(
     res: Response<ApiResponse<WorkCapabilities>>
   ): Promise<void> => {
     const userId = requireUserId(req);
-    const [runtimeAvailable, providers] = await Promise.all([
+    const [runtimeAvailable, providers, strandsEnabled] = await Promise.all([
       workRuntimeService.isRuntimeAvailable(),
       workModelProviderService.availability(userId),
+      userHasStrandsAccess({ id: userId, role: req.user?.role }),
     ]);
     const providerAvailable =
       providers.ollamaAvailable || providers.pluginAvailable;
@@ -195,7 +201,7 @@ router.get(
         ? workRuntimeService.runtimeUnavailableReason ||
           `The ${workRuntimeService.runtimeKind} runtime is not available to the Alcore backend.`
         : !providerAvailable
-          ? 'No Ollama or configured plugin model provider is available.'
+          ? 'No configured Work model provider is available.'
           : undefined;
     sendSuccess(res, {
       available,
@@ -204,6 +210,7 @@ router.get(
       runtimeAvailable,
       ollamaAvailable: providers.ollamaAvailable,
       pluginAvailable: providers.pluginAvailable,
+      strands: { enabled: strandsEnabled },
       runtimeImage: workRuntimeService.image,
       reason,
       // Structured alongside `reason` so the interface can say how many
@@ -491,7 +498,8 @@ router.post(
         {
           personaId: requestedPersonaId || undefined,
           isAgent,
-        }
+        },
+        readThinkSelection(req.body)
       );
       const runId = detail.activeRun?.id;
       if (!runId) {
@@ -1162,7 +1170,9 @@ router.post(
         userId,
         message,
         model,
-        provider
+        provider,
+        undefined,
+        readThinkSelection(req.body)
       );
       const runId = detail.activeRun?.id;
       if (!runId) throw new Error('Work run was not created.');
@@ -1821,6 +1831,25 @@ async function requireIdleGitTask(
   return task;
 }
 
+/**
+ * The run's reasoning level. Absent or null leaves the model on its default;
+ * anything else must be a boolean or a named level.
+ */
+const readThinkSelection = (
+  body: Record<string, unknown> | undefined
+): ThinkingPreference | undefined => {
+  const raw = body?.think;
+  if (raw === undefined || raw === null) return undefined;
+  const think = normalizeThinkingPreference(raw);
+  if (think === undefined) {
+    throw new WorkRouteError(
+      'Field "think" must be true, false, "low", "medium" or "high".',
+      400
+    );
+  }
+  return think;
+};
+
 function readProviderSelection(
   body: unknown,
   fallback?: Pick<WorkTaskRecord, 'providerType' | 'providerId'>
@@ -1861,7 +1890,7 @@ function readProviderSelection(
       413
     );
   }
-  return { providerType: 'plugin', providerId: rawProviderId.trim() };
+  return { providerType: rawType, providerId: rawProviderId.trim() };
 }
 
 function requireBodyString(

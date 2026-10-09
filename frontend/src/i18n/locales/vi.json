@@ -38,14 +38,22 @@
     "custom": "Tùy chỉnh",
     "remove": "Xóa",
     "home": "Trang chủ",
-    "more": "Nhiều"
+    "more": "Nhiều",
+    "provider": "Nhà cung cấp",
+    "agent": "Tác nhân",
+    "reasoning": "Lý luận",
+    "skipToContent": "Chuyển đến nội dung"
   },
   "brand": {
     "name": "Alcore",
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "backendConnectionFailed": "Không thể kết nối với dịch vụ backend"
+    "backendConnectionFailed": "Không thể kết nối với dịch vụ backend",
+    "ollamaUnavailable": "Dịch vụ Ollama không khả dụng. Vẫn có thể sử dụng các mô hình plugin.",
+    "connecting": "Đang kết nối tới backend… ({{attempt}}/{{total}})",
+    "startingUp": "Đang khởi động…",
+    "backendUnreachableHint": "Hãy đảm bảo backend đang chạy, rồi thử lại."
   },
   "auth": {
     "login": {
@@ -206,7 +214,9 @@
       "removed": "Đã xóa khóa truy cập.",
       "removeFailed": "Không thể xóa khóa truy cập.",
       "signInButton": "Đăng nhập bằng khóa truy cập",
-      "signInFailed": "Đăng nhập bằng khóa truy cập thất bại."
+      "signInFailed": "Đăng nhập bằng khóa truy cập thất bại.",
+      "removeConfirmTitle": "Xóa khóa truy cập này?",
+      "removeConfirmDescription": "\"{{name}}\" sẽ không dùng để đăng nhập được nữa. Bạn có thể đăng ký lại sau."
     },
     "alcore": {
       "title": "This server uses Alcore Auth for sign-in.",
@@ -272,6 +282,12 @@
       "tryAgain": "Thử lại",
       "restart": "Bắt đầu lại đăng nhập",
       "support": "Cần trợ giúp? Liên hệ quản trị viên máy chủ của bạn hoặc xem"
+    },
+    "password": {
+      "show": "Hiện mật khẩu",
+      "hide": "Ẩn mật khẩu",
+      "showConfirmation": "Hiện mật khẩu xác nhận",
+      "hideConfirmation": "Ẩn mật khẩu xác nhận"
     }
   },
   "setup": {
@@ -324,7 +340,8 @@
       "envNote": "Khóa này cũng được lưu trong tệp backend/.env của bạn dưới dạng ENCRYPTION_KEY",
       "acknowledgment": "Tôi đã lưu khóa mã hóa của tôi ở nơi an toàn và hiểu rằng việc mất nó có thể dẫn đến mất dữ liệu.",
       "confirmRequired": "Vui lòng xác nhận rằng bạn đã lưu khóa mã hóa",
-      "continue": "Tiếp tục đến Alcore"
+      "continue": "Tiếp tục đến Alcore",
+      "loadFailed": "Không thể tải khóa mã hóa. Hãy thử lại để tiếp tục."
     },
     "connectModels": {
       "title": "Kết nối mô hình của bạn",
@@ -418,7 +435,8 @@
       "toolsOn": "Công cụ đang bật — mô hình có thể gọi các công cụ đã được phê duyệt",
       "toolsOff": "Cho phép mô hình gọi công cụ trong tin nhắn này",
       "thinkingOn": "Suy luận đang bật ({{level}})",
-      "thinkingOff": "Suy luận trước khi trả lời"
+      "thinkingOff": "Suy luận trước khi trả lời",
+      "thinkingUpdateFailed": "Không thể cập nhật cài đặt suy luận"
     },
     "session": {
       "new": "Cuộc trò chuyện mới",
@@ -454,7 +472,8 @@
         "move": "Chuyển vào thư mục",
         "remove": "Gỡ khỏi thư mục",
         "delete": "Xóa thư mục",
-        "deleteConfirm": "Xóa thư mục này? Các cuộc trò chuyện bên trong vẫn giữ nguyên."
+        "deleteConfirm": "Xóa thư mục này? Các cuộc trò chuyện bên trong vẫn giữ nguyên.",
+        "rename": "Đổi tên thư mục"
       },
       "shareChat": "Chia sẻ cuộc trò chuyện…"
     },
@@ -472,7 +491,8 @@
       "selectBeforePrivateChat": "Chọn một mô hình khả dụng trước khi bắt đầu trò chuyện riêng tư",
       "selectBeforeSending": "Chọn một mô hình khả dụng trước khi gửi",
       "selectBeforeRegenerating": "Chọn một mô hình khả dụng trước khi tạo lại",
-      "connectDescription": "Chưa có mô hình nào được kết nối. Hãy chọn một nguồn bên dưới — một môi trường chạy cục bộ, máy chủ riêng của bạn, hoặc một API đám mây — và bạn sẽ trò chuyện được trong chưa đầy một phút."
+      "connectDescription": "Chưa có mô hình nào được kết nối. Hãy chọn một nguồn bên dưới — một môi trường chạy cục bộ, máy chủ riêng của bạn, hoặc một API đám mây — và bạn sẽ trò chuyện được trong chưa đầy một phút.",
+      "pullCommand": "ollama pull llama3.2:3b"
     },
     "footer": {
       "disclaimer": "LLM có thể mắc lỗi - hãy xác minh thông tin quan trọng",
@@ -486,7 +506,13 @@
       "browse": "duyệt",
       "unsupportedFileType": "Loại tệp không được hỗ trợ: {{name}}",
       "maxImagesAllowed": "Cho phép tối đa {{count}} hình ảnh",
-      "imageTooLarge": "Hình ảnh {{name}} quá lớn (tối đa 10MB)"
+      "imageTooLarge": "Hình ảnh {{name}} quá lớn (tối đa 10MB)",
+      "readFailed": "Không thể đọc {{name}}",
+      "uploadAlt": "Tải lên {{number}}",
+      "removeImage": "Xóa hình ảnh {{number}}",
+      "addMore": "Thêm hình ảnh ({{count}}/{{max}})",
+      "uploading": "Đang tải lên",
+      "removeDocument": "Xóa {{name}}"
     },
     "structuredOutput": {
       "title": "Định dạng phản hồi",
@@ -537,7 +563,8 @@
       "compactionOff": "Tắt cho cuộc trò chuyện này"
     },
     "message": {
-      "sources": "Nguồn"
+      "sources": "Nguồn",
+      "copyFailed": "Không thể sao chép vào bộ nhớ tạm"
     },
     "toasts": {
       "chatCreated": "Đã tạo cuộc trò chuyện mới",
@@ -581,7 +608,8 @@
       "generationRateLimitedWeekly": "Đã hết hạn mức tuần — cuộc trò chuyện mới tạm dừng đến 0 giờ UTC thứ Hai. Hãy thử lại sau hoặc nâng cấp gói.",
       "generationRateLimitedMonthly": "Đã hết hạn mức tháng — cuộc trò chuyện mới tạm dừng đến ngày 1 tháng sau (UTC). Hãy thử lại sau hoặc nâng cấp gói.",
       "generationFailedSupport": "Không thể hoàn thành câu trả lời — hãy thử lại, và nếu vẫn lỗi, báo cáo từ Cài đặt > Giới thiệu > GitHub issues.",
-      "generationAccountPending": "Tài khoản của bạn đang chờ quản trị viên phê duyệt — hãy liên hệ quản trị viên để được cấp quyền."
+      "generationAccountPending": "Tài khoản của bạn đang chờ quản trị viên phê duyệt — hãy liên hệ quản trị viên để được cấp quyền.",
+      "archiveFailed": "Không thể lưu trữ cuộc trò chuyện này"
     },
     "documents": {
       "title": "Tài liệu trong ngữ cảnh"
@@ -614,7 +642,25 @@
     "delegate": {
       "action": "Chạy dưới dạng tác vụ Work"
     },
-    "sharedReadOnly": "Được {{owner}} chia sẻ — chỉ xem"
+    "sharedReadOnly": "Được {{owner}} chia sẻ — chỉ xem",
+    "branch": {
+      "variants": "{{count}} biến thể",
+      "variants_plural": "{{count}} biến thể",
+      "selectVariant": "Chọn biến thể {{number}}",
+      "generating": "đang tạo...",
+      "select": "chọn"
+    },
+    "sources": {
+      "fullContextFailed": "Không thể cập nhật cài đặt tài liệu đầy đủ",
+      "usedByRetrieval": "Được dùng trong câu trả lời",
+      "triggerLabel": "Nguồn ({{count}})"
+    },
+    "announce": {
+      "replyFinished": "{{name}} đã trả lời: {{text}}",
+      "replyFinishedNoText": "{{name}} đã trả lời xong.",
+      "codeBlock": "khối mã",
+      "generationStopped": "Đã dừng tạo"
+    }
   },
   "sidebar": {
     "navigation": {
@@ -636,10 +682,12 @@
       "prompts": "Prompt",
       "skills": "Kỹ năng",
       "tools": "Công cụ",
-      "channels": "Kênh"
+      "channels": "Kênh",
+      "strands": "Strands"
     },
     "toggleSize": "Chuyển đổi kích thước thanh bên",
-    "expandSidebar": "Mở rộng thanh bên"
+    "expandSidebar": "Mở rộng thanh bên",
+    "ariaLabel": "Thanh bên"
   },
   "user": {
     "menu": {
@@ -696,7 +744,8 @@
       "sessions": "Phiên đăng nhập",
       "apiKeys": "Khóa API",
       "notifications": "Thông báo",
-      "apiPlatform": "API Platform"
+      "apiPlatform": "API Platform",
+      "ollamaDisabled": "Ollama đã bị quản trị viên vô hiệu hóa"
     },
     "appearance": {
       "title": "Giao diện",
@@ -921,7 +970,8 @@
       "modelPrice": "Giá / 1M",
       "modelStatus": "Trạng thái",
       "modelFree": "Miễn phí",
-      "modelDeprecated": "Ngừng hỗ trợ"
+      "modelDeprecated": "Ngừng hỗ trợ",
+      "dismissError": "Đóng lỗi"
     },
     "generation": {
       "title": "Tùy chọn tạo nội dung",
@@ -1024,7 +1074,8 @@
         "deleteFailed": "Không thể xóa bộ sưu tập",
         "assignFailed": "Không thể di chuyển tài liệu",
         "share": "Chia sẻ bộ sưu tập",
-        "shared": "đã chia sẻ"
+        "shared": "đã chia sẻ",
+        "assignTo": "Bộ sưu tập cho {{name}}"
       },
       "library": {
         "title": "Tài liệu đã tải lên",
@@ -1166,7 +1217,8 @@
         "title": "Cuộc trò chuyện đã lưu trữ",
         "empty": "Không có cuộc trò chuyện nào được lưu trữ",
         "unarchive": "Bỏ lưu trữ"
-      }
+      },
+      "clearAllConfirm": "Bạn có chắc muốn xóa toàn bộ lịch sử trò chuyện? Không thể hoàn tác."
     },
     "about": {
       "title": "Giới thiệu",
@@ -1178,43 +1230,36 @@
       "features": {
         "privacy": {
           "title": "Ưu tiên quyền riêng tư",
-          "description": "Dữ liệu của bạn được lưu trên thiết bị của bạn"
+          "description": "Không gian làm việc tự lưu trữ — dữ liệu của bạn thuộc quyền kiểm soát của bạn"
         },
         "openSource": {
           "title": "Mã nguồn mở",
-          "description": "Phần mềm miễn phí và mã nguồn mở"
+          "description": "Phần mềm mã nguồn mở do đội ngũ Alcore duy trì"
         },
         "localInference": {
           "title": "Suy luận cục bộ",
-          "description": "Chạy mô hình AI cục bộ với Ollama"
+          "description": "Dùng mô hình Ollama cục bộ hoặc kết nối tới nhà cung cấp Alcore của bạn"
         }
       },
-      "openSourceBy": "Mã nguồn mở bởi {{company}}",
+      "openSourceBy": "Được xây dựng bởi {{company}}",
       "links": {
         "title": "Liên kết",
-        "github": "GitHub",
-        "githubDescription": "Xem mã nguồn và đóng góp",
         "website": "Website",
-        "websiteDescription": "Truy cập website của chúng tôi",
+        "websiteDescription": "Truy cập website Alcore",
         "documentation": "Tài liệu",
         "reportIssue": "Báo cáo vấn đề",
         "reportIssueDescription": "Báo lỗi & yêu cầu tính năng",
-        "documentationDescription": "Hướng dẫn, bài học và tham khảo API",
-        "forgejo": "Bản sao Forgejo",
-        "forgejoDescription": "Kho Forgejo tự lưu trữ",
-        "sponsor": "Tài trợ",
-        "sponsorDescription": "Giúp tài trợ cho dự án",
-        "star": "Gắn sao trên GitHub",
-        "starDescription": "Một ngôi sao giúp người khác khám phá dự án"
+        "documentationDescription": "Hướng dẫn và tài liệu sử dụng Alcore"
       },
       "version": "Phiên bản {{version}}",
       "updates": {
-        "checking": "Đang kiểm tra bản cập nhật…",
-        "upToDate": "Bạn đang dùng phiên bản mới nhất",
-        "updateAvailable": "Đã có phiên bản {{version}}",
-        "ahead": "Đang chạy trước bản phát hành mới nhất ({{version}})",
-        "checkFailed": "Không thể kiểm tra bản cập nhật",
         "viewChangelog": "Xem nhật ký thay đổi"
+      },
+      "ollama": {
+        "title": "Trạng thái Ollama",
+        "version": "Phiên bản",
+        "healthy": "Khỏe mạnh",
+        "unhealthy": "Không khỏe mạnh"
       }
     },
     "groups": {
@@ -1280,7 +1325,11 @@
       "unknownDevice": "Thiết bị không xác định",
       "createdAt": "Đăng nhập lúc",
       "lastSeenAt": "Hoạt động gần nhất",
-      "expiresAt": "Hết hạn"
+      "expiresAt": "Hết hạn",
+      "signOutConfirmTitle": "Đăng xuất phiên này?",
+      "signOutConfirmDescription": "{{device}} sẽ bị đăng xuất ngay và phải đăng nhập lại.",
+      "signOutOthersConfirmTitle": "Đăng xuất các phiên khác?",
+      "signOutOthersConfirmDescription": "{{count}} phiên khác sẽ bị đăng xuất ngay. Phiên này vẫn đăng nhập."
     },
     "apiKeys": {
       "title": "Khóa API",
@@ -1314,7 +1363,9 @@
       "createdAt": "Đã tạo",
       "lastUsedAt": "Dùng lần cuối",
       "expiresAt": "Hết hạn",
-      "neverExpires": "Không bao giờ"
+      "neverExpires": "Không bao giờ",
+      "revokeConfirmTitle": "Thu hồi \"{{name}}\"?",
+      "revokeConfirmDescription": "Mọi thứ dùng khóa API này sẽ ngừng hoạt động ngay lập tức. Không thể hoàn tác."
     },
     "notifications": {
       "title": "Thông báo",
@@ -1484,7 +1535,20 @@
   "models": {
     "title": "Mô hình",
     "noModels": "Chưa có mô hình nào được cài đặt",
-    "noModelsFound": "Không tìm thấy mô hình"
+    "noModelsFound": "Không tìm thấy mô hình",
+    "subtitle": "Tải, quản lý và giám sát mô hình Ollama của bạn",
+    "installed": "Mô hình đã cài đặt",
+    "available": "Mô hình khả dụng",
+    "pull": "Tải mô hình",
+    "pulling": "Đang tải...",
+    "delete": "Xóa mô hình",
+    "deleting": "Đang xóa...",
+    "size": "Kích thước",
+    "modified": "Đã sửa đổi",
+    "family": "Họ",
+    "parameters": "Tham số",
+    "quantization": "Lượng tử hóa",
+    "pullFirst": "Tải mô hình để bắt đầu"
   },
   "personas": {
     "title": "Personas",
@@ -1516,7 +1580,8 @@
     "model": "Mô hình",
     "size": "Kích thước",
     "quality": "Chất lượng",
-    "created": "Đã tạo"
+    "created": "Đã tạo",
+    "lightboxLabel": "Xem trước hình ảnh"
   },
   "errors": {
     "generic": "Đã xảy ra lỗi",
@@ -1565,7 +1630,13 @@
   },
   "modelManager": {
     "sections": {
-      "catalog": "Danh mục mô hình"
+      "catalog": "Danh mục mô hình",
+      "pull": "Tải mô hình mới",
+      "library": "Duyệt thư viện",
+      "huggingface": "HuggingFace Hub",
+      "running": "Mô hình đang chạy",
+      "local": "Mô hình cục bộ",
+      "advanced": "Hành động nâng cao"
     },
     "catalog": {
       "searchPlaceholder": "Tìm mô hình theo tên hoặc nhà cung cấp...",
@@ -1588,12 +1659,159 @@
       "hide": "Ẩn với người dùng",
       "show": "Hiện với người dùng",
       "star": "Gắn sao cho {{name}}",
-      "unstar": "Bỏ sao khỏi {{name}}"
+      "unstar": "Bỏ sao khỏi {{name}}",
+      "providerOllama": "Ollama",
+      "filterLabel": "Lọc mô hình",
+      "displayName": "Tên hiển thị cho {{name}}"
     },
     "huggingface": {
       "checkingGguf": "Đang tìm tệp GGUF...",
       "noGgufAvailable": "Không có tệp GGUF để tải trực tiếp vào Ollama",
-      "ggufFilesCount": "Tệp GGUF ({{count}}) - Tải trực tiếp vào Ollama"
+      "ggufFilesCount": "Tệp GGUF ({{count}}) - Tải trực tiếp vào Ollama",
+      "browseAll": "Xem tất cả trên HuggingFace",
+      "noModelsFound": "Không tìm thấy mô hình",
+      "noResults": "Không tìm thấy mô hình. Thử điều chỉnh tìm kiếm hoặc bộ lọc.",
+      "browseAllLink": "Xem tất cả",
+      "search": "Tìm kiếm mô hình HuggingFace...",
+      "by": "bởi",
+      "gated": "Truy cập hạn chế",
+      "viewOnHF": "Xem trên HuggingFace",
+      "sortDownloads": "Lượt tải",
+      "sortLikes": "Lượt thích",
+      "sortRecent": "Gần đây",
+      "taskTextGeneration": "Tạo văn bản",
+      "taskTextToSpeech": "Văn bản thành giọng nói",
+      "taskTextToImage": "Văn bản thành hình ảnh",
+      "taskSpeechRecognition": "Nhận dạng giọng nói",
+      "tasks": {
+        "textGen": "Tạo văn bản",
+        "tts": "Văn bản thành giọng nói",
+        "image": "Văn bản thành hình ảnh",
+        "stt": "Nhận dạng giọng nói"
+      },
+      "sort": {
+        "downloads": "Tải nhiều nhất",
+        "likes": "Được thích nhiều nhất",
+        "recent": "Cập nhật gần đây"
+      }
+    },
+    "title": "Mô hình",
+    "loading": "Đang tải mô hình...",
+    "systemStatus": {
+      "online": "Ollama trực tuyến",
+      "offline": "Ollama ngoại tuyến",
+      "models": "mô hình",
+      "models_plural": "mô hình",
+      "running": "đang chạy",
+      "vram": "VRAM"
+    },
+    "pull": {
+      "placeholder": "Nhập tên mô hình (vd: llama3.2:3b, deepseek-r1:14b)",
+      "button": "Tải",
+      "cancel": "Hủy",
+      "popular": "Mô hình phổ biến:",
+      "browseAll": "Duyệt tất cả mô hình trên ollama.com",
+      "success": "Đã tải mô hình {{name}} thành công",
+      "cancelled": "Đã hủy tải mô hình",
+      "failed": "Không thể tải mô hình",
+      "enterName": "Vui lòng nhập tên mô hình",
+      "restricted": "Việc cài đặt mô hình trên phiên bản này chỉ dành cho quản trị viên."
+    },
+    "progress": {
+      "starting": "Đang khởi tạo...",
+      "pulling": "Đang tải mô hình...",
+      "pullingLayer": "đang tải",
+      "verifying": "Đang xác minh tính toàn vẹn...",
+      "verifyingDigest": "đang xác minh digest sha256",
+      "writing": "Đang ghi manifest...",
+      "cleaning": "Đang dọn dẹp..."
+    },
+    "library": {
+      "available": "khả dụng",
+      "search": "Tìm kiếm mô hình...",
+      "noResults": "Không tìm thấy mô hình nào phù hợp với tiêu chí của bạn",
+      "installed": "Đã cài đặt",
+      "more": "+{{count}} thêm",
+      "refresh": "Làm mới thư viện"
+    },
+    "local": {
+      "noModels": "Chưa có mô hình nào được cài đặt",
+      "pullToStart": "Tải mô hình ở trên để bắt đầu",
+      "installed": "đã cài đặt",
+      "running": "Đang chạy",
+      "info": "Thông tin",
+      "copy": "Sao chép",
+      "delete": "Xóa",
+      "deleteConfirm": "Bạn có chắc chắn muốn xóa mô hình \"{{name}}\"?",
+      "deleteSuccess": "Đã xóa mô hình {{name}} thành công",
+      "deleteFailed": "Không thể xóa mô hình"
+    },
+    "advanced": {
+      "createModel": "Tạo mô hình",
+      "fromModelfile": "Từ Modelfile",
+      "copyModel": "Sao chép mô hình",
+      "duplicateExisting": "Nhân đôi hiện có",
+      "testEmbeddings": "Kiểm tra nhúng",
+      "generateVectors": "Tạo vector",
+      "healthCheck": "Kiểm tra sức khỏe",
+      "testConnection": "Kiểm tra kết nối",
+      "healthy": "Ollama đang hoạt động tốt!"
+    },
+    "modals": {
+      "details": {
+        "title": "Chi tiết mô hình",
+        "info": "Thông tin mô hình",
+        "family": "Họ",
+        "parameters": "Tham số",
+        "quantization": "Lượng tử hóa",
+        "format": "Định dạng",
+        "systemPrompt": "Prompt hệ thống",
+        "template": "Mẫu",
+        "license": "Giấy phép",
+        "modelfile": "Modelfile",
+        "noDetails": "Không có chi tiết"
+      },
+      "copy": {
+        "title": "Sao chép mô hình",
+        "source": "Mô hình nguồn",
+        "selectModel": "Chọn mô hình...",
+        "newName": "Tên mô hình mới",
+        "placeholder": "vd: my-custom-model",
+        "copying": "Đang sao chép...",
+        "button": "Sao chép mô hình",
+        "success": "Đã sao chép mô hình sang {{name}}",
+        "failed": "Không thể sao chép mô hình",
+        "enterBoth": "Vui lòng nhập cả tên nguồn và tên đích"
+      },
+      "create": {
+        "title": "Tạo mô hình tùy chỉnh",
+        "name": "Tên mô hình",
+        "namePlaceholder": "vd: my-assistant",
+        "modelfile": "Modelfile",
+        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
+        "see": "Xem",
+        "docs": "Tài liệu Modelfile",
+        "docsLink": "để tham khảo cú pháp",
+        "creating": "Đang tạo...",
+        "button": "Tạo mô hình",
+        "success": "Đã tạo mô hình {{name}} thành công",
+        "failed": "Không thể tạo mô hình",
+        "enterBoth": "Vui lòng nhập tên mô hình và nội dung Modelfile"
+      },
+      "embeddings": {
+        "title": "Kiểm tra nhúng",
+        "model": "Mô hình nhúng",
+        "selectModel": "Chọn mô hình...",
+        "recommended": "Khuyến nghị: nomic-embed-text, mxbai-embed-large",
+        "input": "Văn bản đầu vào",
+        "placeholder": "Nhập văn bản để tạo nhúng cho...",
+        "generating": "Đang tạo...",
+        "button": "Tạo nhúng",
+        "result": "Kết quả ({{count}} chiều)",
+        "success": "Đã tạo vector nhúng {{count}} chiều",
+        "failed": "Không thể tạo nhúng",
+        "enterBoth": "Vui lòng chọn mô hình và nhập văn bản"
+      }
     }
   },
   "personaManager": {
@@ -1615,7 +1833,10 @@
     "deleteConfirm": "Bạn có chắc chắn muốn xóa \"{{name}}\"?",
     "deleteSuccess": "Đã xóa persona \"{{name}}\" thành công",
     "downloadSuccess": "Đã tải xuống persona \"{{name}}\" thành công",
-    "failed": "Không thể {{action}} persona"
+    "failed": "Không thể {{action}} persona",
+    "loadFailed": "Không thể tải các persona của bạn.",
+    "deleteFailed": "Xóa persona thất bại",
+    "downloadFailed": "Tải persona xuống thất bại"
   },
   "personaForm": {
     "title": {
@@ -1747,7 +1968,8 @@
       "promptHint": "Một prompt để mở đầu mọi cuộc trò chuyện mới với persona này.",
       "noPrompt": "Không có prompt",
       "version": "Bản sửa đổi ràng buộc {{version}}"
-    }
+    },
+    "sections": "Các phần của persona"
   },
   "personaCard": {
     "enhanced": "Nâng cao",
@@ -1764,7 +1986,16 @@
     "backupSuccess": "Đã tải xuống bản sao lưu persona thành công",
     "dnaSuccess": "Đã xuất DNA persona thành công",
     "failed": "Không thể {{action}}",
-    "shareTooltip": "Chia sẻ persona này"
+    "shareTooltip": "Chia sẻ persona này",
+    "wipeFailed": "Xóa ký ức thất bại",
+    "backupFailed": "Sao lưu persona thất bại",
+    "exportDnaFailed": "Xuất DNA persona thất bại",
+    "favorite": "Yêu thích",
+    "memoryStatus": {
+      "active": "Đang hoạt động",
+      "wiped": "Đã xóa",
+      "backed_up": "Đã sao lưu"
+    }
   },
   "userManager": {
     "title": "Quản lý người dùng",
@@ -1793,7 +2024,10 @@
     "noUsersMatching": "Không có người dùng nào khớp với tìm kiếm của bạn",
     "columns": {
       "role": "Vai trò",
-      "created": "Đã tạo"
+      "created": "Đã tạo",
+      "user": "Người dùng",
+      "email": "Email",
+      "actions": "Hành động"
     },
     "roles": {
       "admin": "Quản trị viên",
@@ -1832,7 +2066,10 @@
       "createSuccess": "Đã tạo người dùng thành công",
       "updateSuccess": "Đã cập nhật người dùng thành công",
       "createFailed": "Không thể tạo người dùng",
-      "updateFailed": "Không thể cập nhật người dùng"
+      "updateFailed": "Không thể cập nhật người dùng",
+      "usernamePlaceholder": "Nhập tên người dùng",
+      "emailPlaceholder": "Nhập email (tùy chọn)",
+      "passwordPlaceholder": "Nhập mật khẩu"
     },
     "workAccess": {
       "title": "Quyền truy cập Work",
@@ -1925,7 +2162,28 @@
       "memberOf": "Nhóm",
       "featuresLabel": "Quyền truy cập tính năng",
       "grantsLabel": "Quyền được cấp",
-      "grantVia": "qua"
+      "grantVia": "qua",
+      "deleteConfirmTitle": "Xóa nhóm \"{{name}}\"?",
+      "deleteConfirmDescription": "Thành viên sẽ mất quyền truy cập mà họ chỉ có qua nhóm này. Bản thân tài khoản không bị xóa.",
+      "statuses": {
+        "active": "Đang hoạt động",
+        "pending": "Chờ phê duyệt"
+      },
+      "features": {
+        "work": "Công việc",
+        "model-download": "Tải mô hình",
+        "web-search": "Tìm kiếm web",
+        "strands": "Công cụ Strands",
+        "tools": "Công cụ",
+        "stt": "Chuyển giọng nói thành văn bản",
+        "tts": "Chuyển văn bản thành giọng nói",
+        "voice-mode": "Chế độ giọng nói",
+        "voice-cloning": "Nhân bản giọng nói"
+      },
+      "grantViaKinds": {
+        "user": "cấp trực tiếp",
+        "group": "nhóm"
+      }
     },
     "audit": {
       "title": "Nhật ký kiểm tra bảo mật",
@@ -2012,13 +2270,60 @@
       "save": "Lưu",
       "saving": "Đang lưu…",
       "saved": "Đã lưu cài đặt email.",
-      "saveFailed": "Không thể lưu cài đặt email."
+      "saveFailed": "Không thể lưu cài đặt email.",
+      "security": {
+        "starttls": "STARTTLS (cổng 587)",
+        "tls": "TLS (cổng 465)",
+        "none": "Không (chỉ mạng đáng tin cậy)"
+      },
+      "templateTitle": "Giao diện email",
+      "templateHint": "Chọn mẫu sáng hoặc tối cho bản tin tổng hợp và email thông báo.",
+      "themeLabel": "Mẫu email",
+      "themeLight": "Sáng",
+      "themeDark": "Tối",
+      "previewTitle": "Xem trước mẫu",
+      "previewLoading": "Đang tải bản xem trước…",
+      "previewFailed": "Không thể tải bản xem trước email.",
+      "previewHeading": "Bản tin của bạn",
+      "previewIntro": "Bản xem trước email tin tức hằng ngày của bạn.",
+      "previewMarkdown": "## Tin nổi bật hôm nay\n\n- Cập nhật về công nghệ và nghiên cứu\n- Tin tức từ các nguồn bạn đã chọn\n\n**Tóm tắt:** Tin tức hằng ngày của bạn đã sẵn sàng để đọc.",
+      "previewLinkLabel": "Mở kết quả"
+    },
+    "modelAccess": {
+      "title": "Tải mô hình",
+      "description": "Cho phép tất cả người dùng đang hoạt động tải mô hình từ Ollama và trình duyệt Hugging Face. Quản trị viên luôn có thể tải mô hình.",
+      "saved": "Đã cập nhật quyền tải mô hình",
+      "saveFailed": "Không thể cập nhật quyền tải mô hình"
+    },
+    "ollamaProvider": {
+      "title": "Nhà cung cấp Ollama",
+      "description": "Khi tắt, ứng dụng sẽ ngừng hoàn toàn việc kiểm tra Ollama — không dò trạng thái, không cảnh báo. Điểm cuối có thể trỏ đến bất kỳ cổng nào tương thích với Ollama.",
+      "saved": "Đã lưu cài đặt nhà cung cấp Ollama",
+      "saveFailed": "Không thể lưu cài đặt nhà cung cấp Ollama",
+      "baseUrlLabel": "URL điểm cuối Ollama"
+    },
+    "strandsAccess": {
+      "title": "Công cụ Strands",
+      "description": "Chọn ai có thể dùng tác tử Strands tích hợp. Tác tử có thể đọc và chỉnh sửa tệp trong không gian làm việc riêng của mỗi phiên, nhưng không thể chạy lệnh shell.",
+      "saved": "Đã cập nhật quyền truy cập Strands",
+      "saveFailed": "Không thể cập nhật quyền truy cập Strands",
+      "lockedByEnv": "Được cố định bởi biến môi trường LIBRE_STRANDS_ACCESS.",
+      "modes": {
+        "disabled": "Tắt",
+        "admins": "Quản trị viên",
+        "all-users": "Tất cả người dùng"
+      }
+    },
+    "agentCliAccess": {
+      "title": "Mô hình tác tử CLI",
+      "description": "Quản trị viên có thể dùng Pi, OpenCode, Codex và Claude Code đã cài đặt làm mô hình trò chuyện. Chúng chạy trên máy chủ, bên ngoài môi trường cách ly Work.",
+      "lockedByEnv": "Bị khóa bởi biến môi trường AGENT_CLI_MODELS_ENABLED."
     }
   },
   "usageAnalytics": {
     "eyebrow": "Quản trị",
     "title": "Mức sử dụng nhà cung cấp",
-    "description": "Theo dõi các cuộc gọi API gửi đi và mức tiêu thụ mô hình trên các plugin đã bật trong phiên bản này.",
+    "description": "Theo dõi yêu cầu mô hình và mức sử dụng của các nhà cung cấp và tác nhân trên phiên bản này.",
     "days": "{{count}} ngày",
     "refresh": "Làm mới mức sử dụng",
     "loadFailed": "Không thể tải mức sử dụng của nhà cung cấp.",
@@ -2065,7 +2370,7 @@
       "notCharted": "Chọn để tải mô hình này vào biểu đồ"
     },
     "providers": {
-      "title": "Lưu lượng plugin đã bật",
+      "title": "Lưu lượng nhà cung cấp và tác nhân",
       "description": "Số lượng yêu cầu, độ tin cậy và thời gian phản hồi theo nhà cung cấp.",
       "share": "{{percent}}% số lệnh gọi",
       "failures": "{{count}} thất bại hoặc bị hủy",
@@ -2083,7 +2388,7 @@
     },
     "empty": {
       "title": "Chưa có lệnh gọi nhà cung cấp",
-      "description": "Các lệnh gọi sẽ hiển thị tại đây sau khi một plugin đã bật xử lý yêu cầu trò chuyện, Work, nhúng, hình ảnh, giọng nói, âm thanh hoặc video."
+      "description": "Yêu cầu xuất hiện ở đây sau khi nhà cung cấp hoặc tác nhân xử lý trò chuyện, Work, embedding, hình ảnh, giọng nói, âm thanh hoặc video."
     },
     "privacyNote": "Mức sử dụng được đo trên máy chủ tại ranh giới plugin gửi đi. Alcore lưu trữ nhà cung cấp, mô hình, thời gian, trạng thái và bộ đếm đã báo cáo—không bao gồm lời nhắc, phản hồi, điểm cuối, thông tin xác thực hoặc nội dung lỗi của nhà cung cấp. Tổng token chỉ bao gồm các lệnh gọi mà nhà cung cấp trả về siêu dữ liệu sử dụng.",
     "heatmap": {
@@ -2095,6 +2400,14 @@
       "less": "Ít",
       "more": "Nhiều",
       "yearTotal": "{{formatted}} lượt gọi trong năm qua"
+    },
+    "agents": {
+      "title": "Tác nhân",
+      "description": "Lệnh gọi đến tác tử CLI và công cụ Strands.",
+      "noCalls": "Không có lượt gọi được ghi nhận trong khoảng thời gian này",
+      "unreported": "Token chưa được báo cáo",
+      "topModels": "Mô hình được dùng nhiều nhất",
+      "legacy": "Máy chủ này không cung cấp thống kê tác nhân đầy đủ. Các bản ghi tác nhân hiện có được hiển thị bên dưới."
     }
   },
   "systemPage": {
@@ -2309,7 +2622,11 @@
       "harmful": "Có hại",
       "formatting": "Định dạng"
     },
-    "feedbackComment": "Thêm bình luận…"
+    "feedbackComment": "Thêm bình luận…",
+    "user": "Người dùng",
+    "feedbackFailed": "Không thể lưu phản hồi của bạn",
+    "openImage": "Mở hình ảnh {{number}}",
+    "uploadedImageAlt": "Hình ảnh đã tải lên {{number}}"
   },
   "imageGallery": {
     "title": "Thư viện hình ảnh",
@@ -2321,7 +2638,8 @@
     "deleteSuccess": "Đã xóa hình ảnh",
     "deleteFailed": "Không thể xóa hình ảnh",
     "loadMore": "Tải thêm ({{current}} trong số {{total}})",
-    "loadFailed": "Không thể tải thư viện"
+    "loadFailed": "Không thể tải thư viện",
+    "downloadFailed": "Không thể tải xuống hình ảnh"
   },
   "imageGeneration": {
     "title": "Tạo hình ảnh",
@@ -2397,7 +2715,10 @@
       "image": "Hình ảnh",
       "video": "Video",
       "audio": "Âm thanh"
-    }
+    },
+    "deleteConfirmTitle": "Xóa mục này?",
+    "deleteConfirmDescription": "Phương tiện đã tạo sẽ bị xóa vĩnh viễn.",
+    "previewFailed": "Không có bản xem trước"
   },
   "errorBoundary": {
     "title": "Đã xảy ra lỗi",
@@ -2475,7 +2796,8 @@
     "previousVersion": "Phiên bản trước",
     "nextVersion": "Phiên bản sau",
     "print": "In",
-    "exportCsv": "Xuất CSV"
+    "exportCsv": "Xuất CSV",
+    "resizePanel": "Đổi kích thước bảng"
   },
   "personaImportExport": {
     "title": "Nhập & Xuất Personas",
@@ -2513,7 +2835,10 @@
     "generation": "Tạo:",
     "modelLoad": "Tải mô hình:",
     "totalTime": "Tổng thời gian:",
-    "generatedAt": "Tạo lúc:"
+    "generatedAt": "Tạo lúc:",
+    "notAvailable": "Không có",
+    "tokenCount": "{{tokens}} token",
+    "tokensPerSecond": "{{value}} t/s"
   },
   "userMenu": {
     "loggedOut": "Đăng xuất thành công",
@@ -2572,7 +2897,9 @@
       "httpWarning": "HTTP không mã hóa thông tin xác thực hoặc lưu lượng truy cập. Chỉ sử dụng trên mạng đáng tin cậy.",
       "invalidBaseUrl": "URL cơ sở không được chứa chuỗi truy vấn hoặc phân đoạn.",
       "invalidApiPath": "Phải bắt đầu bằng / và không chứa URL, truy vấn, phân đoạn hoặc phân đoạn ..",
-      "tooLong": "Giá trị quá dài"
+      "tooLong": "Giá trị quá dài",
+      "resetConfirmTitle": "Đặt lại về mặc định?",
+      "resetConfirmDescription": "Thao tác này xóa mọi giá trị đã lưu của {{name}}, gồm khóa API và thông tin xác thực khác. Không thể hoàn tác."
     }
   },
   "huggingface": {
@@ -2592,7 +2919,10 @@
   },
   "demoMode": {
     "title": "Chế độ demo",
-    "github": "GitHub"
+    "github": "GitHub",
+    "defaultMessage": "Đây là bản demo chỉ dùng để trình bày. Backend Ollama chưa được kết nối.",
+    "viewOnGithub": "Xem trên GitHub",
+    "dismiss": "Đóng"
   },
   "libreClaw": {
     "title": "Tác nhân",
@@ -2755,8 +3085,8 @@
       "status": "Trạng thái: {{status}}"
     },
     "landing": {
-      "title": "Bắt đầu tác vụ công việc mới",
-      "description": "Cung cấp cho mô hình cục bộ hoặc mô hình của nhà cung cấp đã cấu hình một không gian làm việc lâu dài và biệt lập. Mô hình có thể kiểm tra tệp, chạy công cụ và tiếp tục từ vị trí cũ khi bạn quay lại.",
+      "title": "Bạn muốn làm việc gì?",
+      "description": "Mô tả một tác vụ. Mô hình của bạn sẽ có không gian làm việc riêng.",
       "isolated": "Biệt lập",
       "isolatedBody": "Mỗi tác vụ có vùng chứa và tệp riêng.",
       "durable": "Lâu dài",
@@ -2785,7 +3115,11 @@
         "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
         "attachTooMany": "Only {{max}} files can be attached at once.",
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
-      }
+      },
+      "engine": "Bộ máy",
+      "libreModels": "Mô hình Libre WebUI",
+      "strandsDisabled": "Công cụ Strands không khả dụng cho tài khoản của bạn.",
+      "modelLabel": "Mô hình"
     },
     "conversation": {
       "ready": "Không gian làm việc đã sẵn sàng",
@@ -2825,8 +3159,18 @@
         "checksPending": "Kiểm tra đang chờ",
         "stallNudges": "Nhắc kẹt tiến độ",
         "ambiguityNudges": "Nhắc định hướng lại",
-        "stoppedBy": "Dừng bởi"
-      }
+        "stoppedBy": "Dừng bởi",
+        "reasons": {
+          "round": "giới hạn số vòng",
+          "toolCall": "giới hạn lệnh gọi công cụ",
+          "approvalTimeout": "hết thời gian phê duyệt",
+          "computerStall": "máy tính bị treo"
+        }
+      },
+      "skillTraceSavedWorked": "Đã ghi chú: hiệu quả",
+      "skillTraceSavedFailed": "Đã ghi chú: thất bại",
+      "connectionClosed": "Kết nối trực tiếp của Công việc đã đóng.",
+      "reconnectingBackground": "Cập nhật trực tiếp đang kết nối lại ở nền."
     },
     "runtime": {
       "unavailable": "Môi trường chạy không khả dụng",
@@ -2834,7 +3178,7 @@
       "readyOllama": "Docker đã sẵn sàng",
       "readyPlugin": "Docker + plugin đã sẵn sàng",
       "readyHybrid": "Docker + mô hình đã sẵn sàng",
-      "reason": "Cần có Docker và nhà cung cấp mô hình Ollama hoặc plugin khả dụng."
+      "reason": "Cần có môi trường thực thi Work và nhà cung cấp mô hình khả dụng."
     },
     "workspace": {
       "label": "Chế độ xem không gian làm việc",
@@ -2869,7 +3213,11 @@
       "changes": "Thay đổi",
       "changesSince": "Những gì đã thay đổi kể từ lượt trước",
       "diffLabel": "Thay đổi kể từ lượt trước: {{path}}",
-      "diffFolded": "{{count}} dòng không thay đổi"
+      "diffFolded": "{{count}} dòng không thay đổi",
+      "diffAdded": "Đã thêm",
+      "diffRemoved": "Đã xóa",
+      "unsavedChanges": "thay đổi chưa lưu",
+      "editingLocked": "Chỉnh sửa sẽ mở khóa khi lượt này kết thúc."
     },
     "activity": {
       "empty": "Lệnh, thao tác tệp và kết quả công cụ sẽ xuất hiện ở đây.",
@@ -2880,7 +3228,9 @@
         "toolCall": "Lệnh gọi công cụ",
         "toolResult": "Kết quả công cụ",
         "error": "Lỗi"
-      }
+      },
+      "arguments": "Tham số công cụ",
+      "output": "Kết quả công cụ"
     },
     "preview": {
       "command": "Lệnh khởi động không bắt buộc",
@@ -2909,7 +3259,8 @@
       "saveFailed": "Không thể lưu tệp này.",
       "saved": "Đã lưu tệp.",
       "previewFailed": "Không thể bắt đầu bản xem trước.",
-      "previewStopFailed": "Không thể dừng bản xem trước."
+      "previewStopFailed": "Không thể dừng bản xem trước.",
+      "sendFailed": "Không thể gửi tin nhắn."
     },
     "terminal": {
       "connecting": "Đang mở shell trong hộp cát…",
@@ -2961,7 +3312,18 @@
       "noFilterMatches": "Không có tệp thay đổi nào khớp với bộ lọc này.",
       "allChanges": "Tất cả thay đổi",
       "diffTruncated": "Diff này đã bị cắt bớt.",
-      "binaryFile": "Tệp nhị phân, không có diff văn bản."
+      "binaryFile": "Tệp nhị phân, không có diff văn bản.",
+      "statusLabels": {
+        "modified": "Đã sửa đổi",
+        "added": "Đã thêm",
+        "deleted": "Đã xóa",
+        "renamed": "Đã đổi tên",
+        "copied": "Đã sao chép",
+        "typeChanged": "Đã đổi kiểu",
+        "untracked": "Chưa theo dõi"
+      },
+      "stagedState": "đã stage",
+      "aheadBehind": "Trước {{ahead}}, sau {{behind}}"
     },
     "hostWorkspace": {
       "hint": "Để trống cho không gian làm việc cô lập, hoặc trỏ tác vụ tới một thư mục trên máy này.",
@@ -2988,7 +3350,8 @@
       "unmute": "Bật tiếng",
       "mute": "Tắt tiếng",
       "finished": "Tác vụ này đã kết thúc. Mở lại để lấy lại màn hình của nó.",
-      "reopenOpen": "Mở lại tác vụ và mở màn hình"
+      "reopenOpen": "Mở lại tác vụ và mở màn hình",
+      "teachSaveFailed": "Không thể lưu bản trình diễn này."
     },
     "computerSetup": {
       "title": "Work Computer",
@@ -3004,7 +3367,7 @@
       "label": "Thuê làm tác nhân (không bắt buộc)",
       "none": "Không có persona (tác vụ một lần)",
       "hint": "Tác vụ này trở thành một tác nhân có tên: giữ persona, được ghim trong thanh bên và báo cáo một dòng trạng thái sau mỗi lần chạy.",
-      "description": "Chọn một persona để biến tác vụ này thành tác nhân lâu dài với danh tính riêng."
+      "description": "Chọn một persona để giữ tác vụ này dưới dạng tác nhân có tên."
     },
     "agent": {
       "openScreen": "Mở chế độ xem toàn màn hình",
@@ -3025,7 +3388,11 @@
       "approvalsToggleFailed": "Không thể cập nhật phê duyệt.",
       "approvalRuleLine": "Luôn được phép",
       "approvalRuleDelete": "Xóa quy tắc",
-      "approvalRuleDeleteFailed": "Không thể xóa quy tắc."
+      "approvalRuleDeleteFailed": "Không thể xóa quy tắc.",
+      "routinesLoadFailed": "Không thể tải các thói quen.",
+      "skillsLoadFailed": "Không thể tải các kỹ năng đã dạy.",
+      "approvalsLoadFailed": "Không thể tải cài đặt phê duyệt.",
+      "routinePaused": "Đã tạm dừng"
     },
     "approval": {
       "title": "Cần phê duyệt",
@@ -3033,7 +3400,16 @@
       "allowOnce": "Cho phép một lần",
       "allowAlways": "Luôn cho phép",
       "deny": "Từ chối",
-      "failed": "Không thể gửi quyết định."
+      "failed": "Không thể gửi quyết định.",
+      "details": "Chi tiết hành động",
+      "fields": {
+        "command": "Lệnh",
+        "path": "Đường dẫn",
+        "from": "Từ",
+        "to": "Đến",
+        "actions": "Hành động",
+        "recursive": "Đệ quy"
+      }
     },
     "idleStopHint": "Dừng sau {{minutes}} phút không hoạt động.",
     "runs": {
@@ -3045,7 +3421,8 @@
         "needsInput": "Cần nhập liệu",
         "failed": "Thất bại",
         "cancelled": "Đã hủy"
-      }
+      },
+      "loadFailed": "Không thể tải lịch sử chạy."
     },
     "recovery": {
       "pending": "Work đang xác nhận {{pending}} lượt dọn dẹp sandbox trước khi chấp nhận thao tác mới.",
@@ -3057,6 +3434,17 @@
       "retrySucceeded": "Đã dọn {{cleared}} trong số {{attempted}} mục đang chờ.",
       "retryPending": "Vẫn đang thử lại {{attempted}} mục dọn dẹp đang chờ.",
       "retryFailed": "Không thể thử lại các mục dọn dẹp đang chờ."
+    },
+    "computer": {
+      "setupFailed": "Không thể thiết lập Máy tính Công việc."
+    },
+    "announce": {
+      "completed": "{{title}} đã hoàn tất.",
+      "needsInput": "{{title}} cần nhập liệu hoặc phê duyệt của bạn.",
+      "failed": "{{title}} đã thất bại.",
+      "cancelled": "{{title}} đã bị dừng.",
+      "approvalNeeded": "{{title}} cần bạn phê duyệt để chạy {{tool}}.",
+      "untitledTask": "Tác vụ này"
     }
   },
   "personaBackground": {
@@ -3088,7 +3476,21 @@
     "reselectProvider": "chọn lại nhà cung cấp để ghim mô hình này",
     "unavailable": "không khả dụng",
     "unavailableSelections": "Lựa chọn không khả dụng",
-    "agentModels": "Tác nhân"
+    "agentModels": "Tác nhân",
+    "searchOllama": "Tìm trong thư viện Ollama...",
+    "searchHuggingFace": "Tìm trên HuggingFace...",
+    "searchModels": "Tìm kiếm mô hình...",
+    "ollamaModels": "Mô hình Ollama",
+    "installed": "Đã cài",
+    "use": "Dùng",
+    "pull": "Tải",
+    "pullRestricted": "Việc cài đặt mô hình trên phiên bản này chỉ dành cho quản trị viên.",
+    "adminOnlyPull": "Chỉ quản trị viên",
+    "showAll": "Hiện tất cả ({{total}})",
+    "sources": "Nguồn mô hình",
+    "defaultModel": "Mô hình mặc định",
+    "contextSize": "ngữ cảnh {{size}}",
+    "via": "qua {{provider}}"
   },
   "whatsNew": {
     "title": "Có gì mới",
@@ -3145,7 +3547,16 @@
     "unpin": "Bỏ ghim ghi chú",
     "pinned": "Đã ghim",
     "export": "Tải xuống dạng Markdown",
-    "sharedWithYou": "Được chia sẻ với bạn"
+    "sharedWithYou": "Được chia sẻ với bạn",
+    "titleLabel": "Tiêu đề ghi chú",
+    "loadFailed": "Không thể tải. Hãy thử lại.",
+    "restoreConfirmTitle": "Khôi phục phiên bản này?",
+    "restoreConfirmDescription": "Nội dung ghi chú sẽ được thay bằng phiên bản cũ hơn này.",
+    "deleteAttachmentConfirmTitle": "Xóa {{name}}?",
+    "deleteAttachmentConfirmDescription": "Tệp đính kèm sẽ bị xóa vĩnh viễn khỏi ghi chú này.",
+    "attachmentDeleteFailed": "Không thể xóa tệp đính kèm",
+    "revokeFailed": "Không thể thu hồi quyền truy cập",
+    "sharePermissionLabel": "Quyền"
   },
   "calendar": {
     "title": "Lịch",
@@ -3190,7 +3601,22 @@
     "importFailed": "Không thể nhập tệp",
     "importResult": "Đã nhập {{total}} sự kiện",
     "importIcs": "Nhập",
-    "exportIcs": "Xuất"
+    "exportIcs": "Xuất",
+    "chipStatus": {
+      "automation": "Tự động hóa theo lịch",
+      "runSucceeded": "Lần chạy tự động hóa thành công",
+      "runFailed": "Lần chạy tự động hóa thất bại"
+    },
+    "newEventOn": "Sự kiện mới vào {{date}}",
+    "showDay": "Hiện tất cả sự kiện vào {{date}}",
+    "deleteEventConfirmTitle": "Xóa \"{{title}}\"?",
+    "deleteEventConfirmDescription": "Sự kiện này sẽ bị xóa vĩnh viễn.",
+    "deleteRecurringEventConfirmDescription": "Sự kiện lặp lại này và tất cả lần lặp sẽ bị xóa vĩnh viễn.",
+    "shareCalendarNamed": "Chia sẻ lịch {{name}}",
+    "deleteCalendarNamed": "Xóa lịch {{name}}",
+    "deleteCalendarConfirmTitle": "Xóa lịch \"{{name}}\"?",
+    "deleteCalendarConfirmDescription": "Lịch và các sự kiện trong lịch sẽ bị xóa vĩnh viễn.",
+    "calendarDeleteFailed": "Không thể xóa lịch"
   },
   "automations": {
     "title": "Tự động hóa",
@@ -3317,13 +3743,17 @@
         "work-approval": "một tác nhân đang chờ bạn phê duyệt",
         "system": "có thông báo hệ thống"
       }
-    }
+    },
+    "deleteConfirmTitle": "Xóa \"{{name}}\"?",
+    "deleteConfirmDescription": "Tự động hóa và lịch chạy của nó sẽ bị xóa vĩnh viễn. Các lần chạy trước vẫn còn trong lịch sử chạy."
   },
   "home": {
     "active": "đang hoạt động",
     "continue": "Tiếp tục",
     "start": "Bắt đầu",
-    "explore": "Khám phá"
+    "explore": "Khám phá",
+    "greeting": "{{greeting}}.",
+    "greetingWithName": "{{greeting}}, {{name}}."
   },
   "palette": {
     "empty": "Không có kết quả.",
@@ -3336,7 +3766,14 @@
     "work": "Công việc",
     "messages": "Tin nhắn",
     "notes": "Ghi chú",
-    "documents": "Tài liệu"
+    "documents": "Tài liệu",
+    "searching": "Đang tìm kiếm…",
+    "searchFailed": "Tìm kiếm không gian làm việc thất bại. Chỉ hiện các cuộc trò chuyện và hành động khớp.",
+    "results": "Kết quả",
+    "escKey": "esc",
+    "hintNavigate": "Di chuyển",
+    "hintOpen": "Mở",
+    "hintClose": "Đóng"
   },
   "tabs": {
     "actions": "Hành động thẻ",
@@ -3540,7 +3977,8 @@
       "button": "Từ thư mục",
       "missingSkillMd": "Thư mục cần có tệp SKILL.md",
       "done": "Đã nhập kỹ năng với {{count}} tệp đi kèm"
-    }
+    },
+    "toggleLabel": "Bật kỹ năng {{name}}"
   },
   "toolsPage": {
     "title": "Công cụ",
@@ -3701,7 +4139,14 @@
     "added": "Đã chia sẻ với {{name}}",
     "failed": "Chia sẻ thất bại",
     "userNotFound": "Không có người dùng nào với tên đó",
-    "groupNotFound": "Không có nhóm nào với tên đó"
+    "groupNotFound": "Không có nhóm nào với tên đó",
+    "principalKind": "Chia sẻ với người dùng hoặc nhóm",
+    "principalName": "Tên người dùng hoặc tên nhóm",
+    "permission": "Quyền",
+    "sharing": "Chia sẻ",
+    "loading": "Đang tải danh sách chia sẻ",
+    "loadFailed": "Không thể tải danh sách chia sẻ",
+    "revokeFailed": "Không thể thu hồi quyền truy cập"
   },
   "channels": {
     "title": "Kênh",
@@ -3760,13 +4205,44 @@
     "toolCalls": {
       "summary": "Công cụ đã dùng ({{total}})",
       "deniedHint": "Các công cụ làm thay đổi dữ liệu bị từ chối trong kênh. Hãy chạy chúng từ một cuộc trò chuyện."
-    }
+    },
+    "confirmEdit": "Lưu chỉnh sửa",
+    "cancelEdit": "Hủy chỉnh sửa",
+    "reactWith": "Thả cảm xúc {{emoji}}",
+    "deleteMessageConfirmTitle": "Xóa tin nhắn này?",
+    "deleteMessageConfirmDescription": "Tin nhắn sẽ bị xóa với mọi người trong kênh này.",
+    "unreadCount": "{{total}} chưa đọc",
+    "send": "Gửi tin nhắn",
+    "invite": "Mời thành viên",
+    "closeThread": "Đóng chuỗi",
+    "removeAttachment": "Xóa tệp đính kèm",
+    "loadFailed": "Không thể tải. Hãy thử lại.",
+    "editFailed": "Không thể chỉnh sửa tin nhắn",
+    "deleteMessageFailed": "Không thể xóa tin nhắn",
+    "pinFailed": "Không thể thay đổi ghim",
+    "reactFailed": "Không thể lưu cảm xúc",
+    "downloadFailed": "Không thể tải tệp xuống",
+    "removeMemberConfirm": "Xóa {{name}} khỏi kênh này?",
+    "removeMemberConfirmDescription": "Họ sẽ mất quyền truy cập vào kênh và các tin nhắn trong kênh.",
+    "removeMemberNamed": "Xóa {{name}} khỏi kênh",
+    "removeMemberFailed": "Không thể xóa thành viên",
+    "leaveConfirm": "Rời khỏi {{name}}?",
+    "leaveConfirmDescription": "Bạn sẽ cần được mời lại để tham gia lại kênh riêng tư.",
+    "leaveFailed": "Không thể rời khỏi kênh",
+    "joinFailed": "Không thể tham gia kênh",
+    "deleteConfirm": "Xóa {{name}}?",
+    "deleteConfirmDescription": "Kênh và toàn bộ tin nhắn trong kênh sẽ bị xóa vĩnh viễn với mọi thành viên.",
+    "deleteFailed": "Không thể xóa kênh",
+    "saveFailed": "Không thể lưu kênh"
   },
   "notifications": {
     "title": "Thông báo",
     "empty": "Bạn đã xem hết.",
     "markAllRead": "Đánh dấu tất cả đã đọc",
-    "markRead": "Đánh dấu đã đọc"
+    "markRead": "Đánh dấu đã đọc",
+    "titleWithUnread": "Thông báo ({{unread}} chưa đọc)",
+    "unread": "Chưa đọc",
+    "loadFailed": "Không thể tải thông báo."
   },
   "voiceMode": {
     "title": "Chế độ giọng nói",
@@ -3901,7 +4377,12 @@
       "failed": "Thất bại",
       "cancelled": "Đã hủy"
     },
-    "noFeedback": "Chưa có phản hồi — hãy đánh giá các câu trả lời để xây dựng tập dữ liệu."
+    "noFeedback": "Chưa có phản hồi — hãy đánh giá các câu trả lời để xây dựng tập dữ liệu.",
+    "deleteSetConfirmTitle": "Xóa \"{{name}}\"?",
+    "deleteSetConfirmDescription": "Bộ đánh giá và các prompt trong bộ sẽ bị xóa vĩnh viễn.",
+    "deleteSetFailed": "Không thể xóa bộ đánh giá",
+    "runError": "Lỗi: {{detail}}",
+    "cancelFailed": "Không thể hủy lần chạy"
   },
   "passwordStrength": {
     "levels": {
@@ -3915,6 +4396,14 @@
       "hasCase": "Chữ hoa và chữ thường",
       "hasNumber": "Ít nhất một chữ số",
       "tooLong": "Tối đa 72 byte"
+    },
+    "requirements": "Dùng ít nhất 12 ký tự, tối đa 72 byte UTF-8, gồm chữ hoa, chữ thường và một chữ số.",
+    "errors": {
+      "minLength": "Mật khẩu phải có ít nhất 12 ký tự.",
+      "tooLong": "Mật khẩu không được quá 72 byte UTF-8.",
+      "uppercase": "Mật khẩu phải có một chữ hoa.",
+      "lowercase": "Mật khẩu phải có một chữ thường.",
+      "number": "Mật khẩu phải có một chữ số."
     }
   },
   "connectModels": {
@@ -3933,7 +4422,8 @@
       "enable": "Bật nhà cung cấp",
       "enabling": "Đang bật…",
       "enabled": "{{name}} đã kết nối — các mô hình của nó hiện đã khả dụng",
-      "enableFailed": "Không thể bật nhà cung cấp"
+      "enableFailed": "Không thể bật nhà cung cấp",
+      "urlLabel": "URL máy chủ"
     },
     "cloud": {
       "title": "API đám mây",
@@ -3942,7 +4432,70 @@
       "connect": "Kết nối",
       "connecting": "Đang kết nối…",
       "connected": "{{name}} đã kết nối — các mô hình của nó hiện đã khả dụng",
-      "saveFailed": "Không thể lưu khóa API"
+      "saveFailed": "Không thể lưu khóa API",
+      "keyLabel": "Khóa API {{name}}"
+    },
+    "ollama": {
+      "status": {
+        "checking": "Đang kiểm tra khả dụng…",
+        "healthy": "Đang chạy và sẵn sàng cho các mô hình cục bộ",
+        "offline": "Không phát hiện trên máy này",
+        "disabled": "Đã tắt — sẽ không có kiểm tra nào chạy"
+      },
+      "recheck": "Kiểm tra lại",
+      "enable": "Bật",
+      "disable": "Ngừng kiểm tra Ollama",
+      "enabledToast": "Đã bật nhà cung cấp Ollama",
+      "disabledToast": "Đã tắt kiểm tra Ollama — bạn có thể bật lại trong Cài đặt",
+      "settingsFailed": "Không thể cập nhật cài đặt Ollama",
+      "offlineHint": "Cài đặt Ollama từ ollama.com và nó sẽ được tự động phát hiện — hoặc dùng một trong các tùy chọn bên dưới. Nếu bạn không định dùng Ollama, bạn có thể tắt các kiểm tra của nó.",
+      "healthyHint": "Ollama đã kết nối. Hãy tải một mô hình từ trang Mô hình và bạn đã sẵn sàng trò chuyện."
     }
+  },
+  "modelDownload": {
+    "success": "Đã tải xuống {{name}}",
+    "failed": "Không thể tải xuống: {{error}}",
+    "startFailed": "Không thể bắt đầu tải xuống",
+    "cancelled": "Đã hủy tải xuống"
+  },
+  "strands": {
+    "title": "Strands",
+    "subtitle": "Công cụ tác tử tích hợp chạy trên các mô hình Libre WebUI của bạn.",
+    "subtitleVersion": "Công cụ tác tử tích hợp, harness {{version}}.",
+    "newSession": "Phiên mới",
+    "sessions": "Phiên",
+    "noSessions": "Chưa có phiên nào. Hãy tạo một phiên để bắt đầu.",
+    "empty": "Yêu cầu tác tử đọc hoặc chỉnh sửa tệp trong không gian làm việc của nó.",
+    "placeholder": "Yêu cầu công cụ làm điều gì đó…",
+    "model": "Mô hình",
+    "defaultModel": "Mô hình mặc định",
+    "send": "Gửi",
+    "stop": "Dừng",
+    "reasoning": "Lý luận",
+    "tool": {
+      "running": "Đang chạy",
+      "done": "Xong",
+      "failed": "thất bại"
+    },
+    "cancelled": "Đã hủy",
+    "turnLimit": "Đã dừng khi đạt giới hạn lượt.",
+    "messageCount": "Tin nhắn: {{count}}",
+    "deleteSession": "Xóa phiên",
+    "deleteConfirm": "Xóa \"{{title}}\" và lịch sử của nó?",
+    "loadFailed": "Không thể tải Strands.",
+    "createFailed": "Không thể tạo phiên.",
+    "deleteFailed": "Không thể xóa phiên.",
+    "saveFailed": "Không thể lưu phiên.",
+    "turnFailed": "Công cụ không thể hoàn tất lượt"
+  },
+  "notFound": {
+    "title": "Không tìm thấy trang",
+    "description": "Trang này không tồn tại hoặc có thể đã được di chuyển."
+  },
+  "themeToggle": {
+    "switchToLight": "Chuyển sang chế độ sáng",
+    "switchToDark": "Chuyển sang chế độ tối",
+    "switchToAmoled": "Chuyển sang chế độ đen thuần",
+    "switchToCelestial": "Chuyển sang chế độ thiên thể"
   }
 }

@@ -38,14 +38,22 @@
     "custom": "مخصص",
     "remove": "إزالة",
     "home": "الرئيسية",
-    "more": "أكثر"
+    "more": "أكثر",
+    "provider": "المزود",
+    "agent": "الوكيل",
+    "reasoning": "المنطق",
+    "skipToContent": "انتقل إلى المحتوى"
   },
   "brand": {
     "name": "Alcore",
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "backendConnectionFailed": "تعذّر الاتصال بخدمة الواجهة الخلفية"
+    "backendConnectionFailed": "تعذّر الاتصال بخدمة الواجهة الخلفية",
+    "ollamaUnavailable": "خدمة Ollama غير متاحة. لا يزال من الممكن استخدام نماذج الإضافات.",
+    "connecting": "جارٍ الاتصال بالخادم الخلفي… ({{attempt}}/{{total}})",
+    "startingUp": "جارٍ التشغيل…",
+    "backendUnreachableHint": "تأكد من أن الخادم الخلفي يعمل ثم حاول مرة أخرى."
   },
   "auth": {
     "login": {
@@ -206,7 +214,9 @@
       "removed": "تمت إزالة مفتاح المرور.",
       "removeFailed": "تعذّرت إزالة مفتاح المرور.",
       "signInButton": "تسجيل الدخول بمفتاح مرور",
-      "signInFailed": "فشل تسجيل الدخول بمفتاح المرور."
+      "signInFailed": "فشل تسجيل الدخول بمفتاح المرور.",
+      "removeConfirmTitle": "إزالة مفتاح المرور هذا؟",
+      "removeConfirmDescription": "لن يعمل «{{name}}» لتسجيل الدخول بعد الآن. يمكنك تسجيله مرة أخرى لاحقًا."
     },
     "alcore": {
       "title": "This server uses Alcore Auth for sign-in.",
@@ -272,6 +282,12 @@
       "tryAgain": "Try again",
       "restart": "Restart sign-in",
       "support": "Need help? Contact your server admin or see"
+    },
+    "password": {
+      "show": "إظهار كلمة المرور",
+      "hide": "إخفاء كلمة المرور",
+      "showConfirmation": "إظهار تأكيد كلمة المرور",
+      "hideConfirmation": "إخفاء تأكيد كلمة المرور"
     }
   },
   "setup": {
@@ -324,7 +340,8 @@
       "envNote": "هذا المفتاح محفوظ أيضاً في ملف backend/.env كـ ENCRYPTION_KEY",
       "acknowledgment": "لقد حفظت مفتاح التشفير في مكان آمن وأفهم أن فقدانه قد يؤدي إلى فقدان البيانات.",
       "confirmRequired": "يرجى التأكيد على أنك حفظت مفتاح التشفير",
-      "continue": "المتابعة إلى Alcore"
+      "continue": "المتابعة إلى Alcore",
+      "loadFailed": "تعذّر تحميل مفتاح التشفير. أعد المحاولة للمتابعة."
     },
     "connectModels": {
       "title": "قم بتوصيل نماذجك",
@@ -418,7 +435,8 @@
       "toolsOn": "الأدوات مفعّلة — يمكن للنموذج استدعاء الأدوات المعتمدة",
       "toolsOff": "اسمح للنموذج باستدعاء الأدوات في هذه الرسالة",
       "thinkingOn": "التفكير مفعّل ({{level}})",
-      "thinkingOff": "فكّر قبل الإجابة"
+      "thinkingOff": "فكّر قبل الإجابة",
+      "thinkingUpdateFailed": "تعذّر تحديث إعداد التفكير"
     },
     "session": {
       "new": "محادثة جديدة",
@@ -454,7 +472,8 @@
         "move": "نقل إلى مجلد",
         "remove": "إزالة من المجلد",
         "delete": "حذف المجلد",
-        "deleteConfirm": "حذف هذا المجلد؟ ستبقى المحادثات بداخله."
+        "deleteConfirm": "حذف هذا المجلد؟ ستبقى المحادثات بداخله.",
+        "rename": "إعادة تسمية المجلد"
       },
       "shareChat": "مشاركة المحادثة…"
     },
@@ -472,7 +491,8 @@
       "selectBeforePrivateChat": "اختر نموذجاً متاحاً قبل بدء محادثة خاصة",
       "selectBeforeSending": "اختر نموذجاً متاحاً قبل الإرسال",
       "selectBeforeRegenerating": "اختر نموذجاً متاحاً قبل إعادة التوليد",
-      "connectDescription": "لا توجد نماذج متصلة بعد. اختر مصدرًا أدناه — بيئة تشغيل محلية، أو خادمك الخاص، أو واجهة API سحابية — وستكون جاهزًا للدردشة في أقل من دقيقة."
+      "connectDescription": "لا توجد نماذج متصلة بعد. اختر مصدرًا أدناه — بيئة تشغيل محلية، أو خادمك الخاص، أو واجهة API سحابية — وستكون جاهزًا للدردشة في أقل من دقيقة.",
+      "pullCommand": "ollama pull llama3.2:3b"
     },
     "footer": {
       "disclaimer": "قد يرتكب الذكاء الاصطناعي أخطاء - تحقق من المعلومات المهمة",
@@ -486,7 +506,13 @@
       "browse": "تصفح",
       "unsupportedFileType": "نوع الملف غير مدعوم: {{name}}",
       "maxImagesAllowed": "الحد الأقصى المسموح به هو {{count}} صور",
-      "imageTooLarge": "الصورة {{name}} كبيرة جداً (الحد الأقصى 10 ميغابايت)"
+      "imageTooLarge": "الصورة {{name}} كبيرة جداً (الحد الأقصى 10 ميغابايت)",
+      "readFailed": "تعذّرت قراءة {{name}}",
+      "uploadAlt": "الرفع {{number}}",
+      "removeImage": "إزالة الصورة {{number}}",
+      "addMore": "إضافة المزيد من الصور ({{count}}/{{max}})",
+      "uploading": "جارٍ الرفع",
+      "removeDocument": "إزالة {{name}}"
     },
     "structuredOutput": {
       "title": "تنسيق الاستجابة",
@@ -537,7 +563,8 @@
       "compactionOff": "معطّل لهذه المحادثة"
     },
     "message": {
-      "sources": "المصادر"
+      "sources": "المصادر",
+      "copyFailed": "تعذّر النسخ إلى الحافظة"
     },
     "toasts": {
       "chatCreated": "تم إنشاء محادثة جديدة",
@@ -581,7 +608,8 @@
       "generationRateLimitedWeekly": "Weekly budget spent — new chats pause until Monday 00:00 UTC. Try again later or upgrade your plan.",
       "generationRateLimitedMonthly": "Monthly budget spent — new chats pause until the 1st of next month (UTC). Try again later or upgrade your plan.",
       "generationFailedSupport": "The reply couldn't be finished — retry, and if it keeps happening report it from Settings > About > GitHub issues.",
-      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access."
+      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access.",
+      "archiveFailed": "تعذّرت أرشفة هذه المحادثة"
     },
     "documents": {
       "title": "مستندات في السياق"
@@ -614,7 +642,25 @@
     "delegate": {
       "action": "Run as Work task"
     },
-    "sharedReadOnly": "مشاركة من {{owner}} — عرض فقط"
+    "sharedReadOnly": "مشاركة من {{owner}} — عرض فقط",
+    "branch": {
+      "variants": "{{count}} نسخة",
+      "variants_plural": "{{count}} نسخ",
+      "selectVariant": "اختيار النسخة {{number}}",
+      "generating": "جارٍ الإنشاء...",
+      "select": "اختيار"
+    },
+    "sources": {
+      "fullContextFailed": "تعذّر تحديث إعداد المستند الكامل",
+      "usedByRetrieval": "مستخدم في الردود",
+      "triggerLabel": "المصادر ({{count}})"
+    },
+    "announce": {
+      "replyFinished": "{{name}} ردّ: {{text}}",
+      "replyFinishedNoText": "أنهى {{name}} الرد.",
+      "codeBlock": "كتلة شيفرة",
+      "generationStopped": "تم إيقاف التوليد"
+    }
   },
   "sidebar": {
     "navigation": {
@@ -636,10 +682,12 @@
       "prompts": "الموجهات",
       "skills": "المهارات",
       "tools": "الأدوات",
-      "channels": "القنوات"
+      "channels": "القنوات",
+      "strands": "Strands"
     },
     "toggleSize": "تبديل حجم الشريط الجانبي",
-    "expandSidebar": "توسيع الشريط الجانبي"
+    "expandSidebar": "توسيع الشريط الجانبي",
+    "ariaLabel": "الشريط الجانبي"
   },
   "user": {
     "menu": {
@@ -696,7 +744,8 @@
       "sessions": "الجلسات",
       "apiKeys": "مفاتيح API",
       "notifications": "الإشعارات",
-      "apiPlatform": "API Platform"
+      "apiPlatform": "API Platform",
+      "ollamaDisabled": "تم تعطيل Ollama من قبل مسؤول"
     },
     "appearance": {
       "title": "المظهر",
@@ -921,7 +970,8 @@
       "modelPrice": "Price / 1M",
       "modelStatus": "Status",
       "modelFree": "Free",
-      "modelDeprecated": "Deprecated"
+      "modelDeprecated": "Deprecated",
+      "dismissError": "تجاهل الخطأ"
     },
     "generation": {
       "title": "خيارات التوليد",
@@ -1024,7 +1074,8 @@
         "deleteFailed": "فشل حذف المجموعة",
         "assignFailed": "فشل نقل المستند",
         "share": "مشاركة المجموعة",
-        "shared": "مشتركة"
+        "shared": "مشتركة",
+        "assignTo": "المجموعة الخاصة بـ {{name}}"
       },
       "library": {
         "title": "المستندات المرفوعة",
@@ -1166,7 +1217,8 @@
         "title": "المحادثات المؤرشفة",
         "empty": "لا توجد محادثات مؤرشفة",
         "unarchive": "إلغاء الأرشفة"
-      }
+      },
+      "clearAllConfirm": "هل تريد حذف سجل المحادثات بالكامل؟ لا يمكن التراجع عن هذا الإجراء."
     },
     "about": {
       "title": "حول",
@@ -1178,43 +1230,36 @@
       "features": {
         "privacy": {
           "title": "الخصوصية أولاً",
-          "description": "بياناتك تبقى على جهازك"
+          "description": "Self-hosted workspace — your data stays under your control"
         },
         "openSource": {
           "title": "مفتوح المصدر",
-          "description": "برنامج مجاني ومفتوح المصدر"
+          "description": "Open-source software maintained by the Alcore team"
         },
         "localInference": {
           "title": "استدلال محلي",
-          "description": "تشغيل نماذج الذكاء الاصطناعي محلياً مع Ollama"
+          "description": "Use local Ollama models or connect to your Alcore provider"
         }
       },
-      "openSourceBy": "مفتوح المصدر بواسطة {{company}}",
+      "openSourceBy": "Built by {{company}}",
       "links": {
         "title": "الروابط",
-        "github": "GitHub",
-        "githubDescription": "عرض الكود المصدري والمساهمة",
         "website": "الموقع",
-        "websiteDescription": "زيارة موقعنا",
+        "websiteDescription": "Visit the Alcore website",
         "documentation": "التوثيق",
         "reportIssue": "الإبلاغ عن المشاكل",
         "reportIssueDescription": "تقارير الأخطاء وطلبات الميزات",
-        "documentationDescription": "أدلة ودروس ومرجع API",
-        "forgejo": "مرآة Forgejo",
-        "forgejoDescription": "مستودع Forgejo مستضاف ذاتياً",
-        "sponsor": "ادعم المشروع",
-        "sponsorDescription": "ساهم في تمويل المشروع",
-        "star": "نجمة على GitHub",
-        "starDescription": "النجمة تساعد الآخرين على اكتشاف المشروع"
+        "documentationDescription": "Guides and documentation for Alcore"
       },
       "version": "الإصدار {{version}}",
       "updates": {
-        "checking": "جارٍ البحث عن تحديثات…",
-        "upToDate": "أنت على أحدث إصدار",
-        "updateAvailable": "الإصدار {{version}} متاح",
-        "ahead": "أنت متقدم على أحدث إصدار ({{version}})",
-        "checkFailed": "تعذّر التحقق من التحديثات",
         "viewChangelog": "عرض سجل التغييرات"
+      },
+      "ollama": {
+        "title": "حالة Ollama",
+        "version": "الإصدار",
+        "healthy": "سليم",
+        "unhealthy": "غير سليم"
       }
     },
     "groups": {
@@ -1280,7 +1325,11 @@
       "unknownDevice": "جهاز غير معروف",
       "createdAt": "تاريخ تسجيل الدخول",
       "lastSeenAt": "آخر نشاط",
-      "expiresAt": "تنتهي في"
+      "expiresAt": "تنتهي في",
+      "signOutConfirmTitle": "تسجيل الخروج من هذه الجلسة؟",
+      "signOutConfirmDescription": "سيتم تسجيل خروج {{device}} فورًا وسيحتاج إلى تسجيل الدخول مرة أخرى.",
+      "signOutOthersConfirmTitle": "تسجيل الخروج من الجلسات الأخرى؟",
+      "signOutOthersConfirmDescription": "سيتم تسجيل الخروج من {{count}} جلسات أخرى فورًا. ستبقى هذه الجلسة مسجّلة."
     },
     "apiKeys": {
       "title": "مفاتيح API",
@@ -1314,7 +1363,9 @@
       "createdAt": "تاريخ الإنشاء",
       "lastUsedAt": "آخر استخدام",
       "expiresAt": "تنتهي في",
-      "neverExpires": "أبدًا"
+      "neverExpires": "أبدًا",
+      "revokeConfirmTitle": "إلغاء «{{name}}»؟",
+      "revokeConfirmDescription": "سيتوقف فورًا كل ما يستخدم مفتاح API هذا. لا يمكن التراجع عن ذلك."
     },
     "notifications": {
       "title": "الإشعارات",
@@ -1484,7 +1535,20 @@
   "models": {
     "title": "النماذج",
     "noModels": "لا توجد نماذج مثبتة",
-    "noModelsFound": "لم يتم العثور على نماذج"
+    "noModelsFound": "لم يتم العثور على نماذج",
+    "subtitle": "سحب وإدارة ومراقبة نماذج Ollama",
+    "installed": "النماذج المثبتة",
+    "available": "النماذج المتاحة",
+    "pull": "سحب النموذج",
+    "pulling": "جاري السحب...",
+    "delete": "حذف النموذج",
+    "deleting": "جاري الحذف...",
+    "size": "الحجم",
+    "modified": "تم التعديل",
+    "family": "العائلة",
+    "parameters": "المعلمات",
+    "quantization": "التكميم",
+    "pullFirst": "اسحب نموذجاً للبدء"
   },
   "personas": {
     "title": "الشخصيات",
@@ -1516,7 +1580,8 @@
     "model": "النموذج",
     "size": "الحجم",
     "quality": "الجودة",
-    "created": "تم الإنشاء"
+    "created": "تم الإنشاء",
+    "lightboxLabel": "معاينة الصورة"
   },
   "errors": {
     "generic": "حدث خطأ",
@@ -1565,7 +1630,13 @@
   },
   "modelManager": {
     "sections": {
-      "catalog": "دليل النماذج"
+      "catalog": "دليل النماذج",
+      "pull": "سحب نموذج جديد",
+      "library": "تصفح المكتبة",
+      "huggingface": "HuggingFace Hub",
+      "running": "النماذج قيد التشغيل",
+      "local": "النماذج المحلية",
+      "advanced": "إجراءات متقدمة"
     },
     "catalog": {
       "searchPlaceholder": "ابحث عن النماذج بالاسم أو المزوّد...",
@@ -1588,12 +1659,159 @@
       "hide": "إخفاؤه عن المستخدمين",
       "show": "إظهاره للمستخدمين",
       "star": "تمييز {{name}} بنجمة",
-      "unstar": "إزالة النجمة من {{name}}"
+      "unstar": "إزالة النجمة من {{name}}",
+      "providerOllama": "Ollama",
+      "filterLabel": "تصفية النماذج",
+      "displayName": "الاسم المعروض لـ {{name}}"
     },
     "huggingface": {
       "checkingGguf": "البحث عن ملفات GGUF...",
       "noGgufAvailable": "لا توجد ملفات GGUF متاحة للسحب المباشر من Ollama",
-      "ggufFilesCount": "ملفات GGUF ({{count}}) - سحب مباشر إلى Ollama"
+      "ggufFilesCount": "ملفات GGUF ({{count}}) - سحب مباشر إلى Ollama",
+      "browseAll": "تصفح الكل على HuggingFace",
+      "noModelsFound": "لم يتم العثور على نماذج",
+      "noResults": "لم يتم العثور على نماذج. حاول تعديل البحث أو المرشحات.",
+      "browseAllLink": "تصفح الكل",
+      "search": "البحث في نماذج HuggingFace...",
+      "by": "بواسطة",
+      "gated": "وصول مقيد",
+      "viewOnHF": "عرض على HuggingFace",
+      "sortDownloads": "التنزيلات",
+      "sortLikes": "الإعجابات",
+      "sortRecent": "الأحدث",
+      "taskTextGeneration": "توليد النص",
+      "taskTextToSpeech": "تحويل النص إلى كلام",
+      "taskTextToImage": "تحويل النص إلى صورة",
+      "taskSpeechRecognition": "التعرف على الكلام",
+      "tasks": {
+        "textGen": "توليد النص",
+        "tts": "تحويل النص إلى كلام",
+        "image": "تحويل النص إلى صورة",
+        "stt": "التعرف على الكلام"
+      },
+      "sort": {
+        "downloads": "الأكثر تنزيلاً",
+        "likes": "الأكثر إعجاباً",
+        "recent": "المحدثة مؤخراً"
+      }
+    },
+    "title": "النماذج",
+    "loading": "جاري تحميل النماذج...",
+    "systemStatus": {
+      "online": "Ollama متصل",
+      "offline": "Ollama غير متصل",
+      "models": "نموذج",
+      "models_plural": "نماذج",
+      "running": "قيد التشغيل",
+      "vram": "VRAM"
+    },
+    "pull": {
+      "placeholder": "أدخل اسم النموذج (مثل llama3.2:3b، deepseek-r1:14b)",
+      "button": "سحب",
+      "cancel": "إلغاء",
+      "popular": "النماذج الشائعة:",
+      "browseAll": "تصفح جميع النماذج على ollama.com",
+      "success": "تم سحب النموذج {{name}} بنجاح",
+      "cancelled": "تم إلغاء سحب النموذج",
+      "failed": "فشل سحب النموذج",
+      "enterName": "يرجى إدخال اسم النموذج",
+      "restricted": "تثبيت النماذج مقصور على المسؤولين في هذا المثيل."
+    },
+    "progress": {
+      "starting": "جاري التهيئة...",
+      "pulling": "جاري تحميل النموذج...",
+      "pullingLayer": "تحميل",
+      "verifying": "جاري التحقق من السلامة...",
+      "verifyingDigest": "التحقق من تجزئة sha256",
+      "writing": "جاري كتابة البيان...",
+      "cleaning": "جاري التنظيف..."
+    },
+    "library": {
+      "available": "متاح",
+      "search": "البحث عن نماذج...",
+      "noResults": "لم يتم العثور على نماذج تطابق معاييرك",
+      "installed": "مثبت",
+      "more": "+{{count}} المزيد",
+      "refresh": "تحديث المكتبة"
+    },
+    "local": {
+      "noModels": "لم يتم تثبيت نماذج بعد",
+      "pullToStart": "اسحب نموذجاً أعلاه للبدء",
+      "installed": "مثبت",
+      "running": "قيد التشغيل",
+      "info": "معلومات",
+      "copy": "نسخ",
+      "delete": "حذف",
+      "deleteConfirm": "هل أنت متأكد من حذف النموذج \"{{name}}\"؟",
+      "deleteSuccess": "تم حذف النموذج {{name}} بنجاح",
+      "deleteFailed": "فشل حذف النموذج"
+    },
+    "advanced": {
+      "createModel": "إنشاء نموذج",
+      "fromModelfile": "من Modelfile",
+      "copyModel": "نسخ نموذج",
+      "duplicateExisting": "تكرار موجود",
+      "testEmbeddings": "اختبار التضمينات",
+      "generateVectors": "توليد المتجهات",
+      "healthCheck": "فحص الصحة",
+      "testConnection": "اختبار الاتصال",
+      "healthy": "Ollama سليم!"
+    },
+    "modals": {
+      "details": {
+        "title": "تفاصيل النموذج",
+        "info": "معلومات النموذج",
+        "family": "العائلة",
+        "parameters": "المعلمات",
+        "quantization": "التكميم",
+        "format": "التنسيق",
+        "systemPrompt": "موجه النظام",
+        "template": "القالب",
+        "license": "الترخيص",
+        "modelfile": "Modelfile",
+        "noDetails": "لا تتوفر تفاصيل"
+      },
+      "copy": {
+        "title": "نسخ النموذج",
+        "source": "النموذج المصدر",
+        "selectModel": "اختر نموذجاً...",
+        "newName": "اسم النموذج الجديد",
+        "placeholder": "مثل my-custom-model",
+        "copying": "جاري النسخ...",
+        "button": "نسخ النموذج",
+        "success": "تم نسخ النموذج إلى {{name}}",
+        "failed": "فشل نسخ النموذج",
+        "enterBoth": "يرجى إدخال أسماء المصدر والوجهة"
+      },
+      "create": {
+        "title": "إنشاء نموذج مخصص",
+        "name": "اسم النموذج",
+        "namePlaceholder": "مثل my-assistant",
+        "modelfile": "Modelfile",
+        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
+        "see": "راجع",
+        "docs": "توثيق Modelfile",
+        "docsLink": "لمرجع الصيغة",
+        "creating": "جاري الإنشاء...",
+        "button": "إنشاء النموذج",
+        "success": "تم إنشاء النموذج {{name}} بنجاح",
+        "failed": "فشل إنشاء النموذج",
+        "enterBoth": "يرجى إدخال اسم النموذج ومحتوى Modelfile"
+      },
+      "embeddings": {
+        "title": "اختبار التضمينات",
+        "model": "نموذج التضمين",
+        "selectModel": "اختر نموذجاً...",
+        "recommended": "موصى به: nomic-embed-text، mxbai-embed-large",
+        "input": "نص الإدخال",
+        "placeholder": "أدخل النص لتوليد التضمينات...",
+        "generating": "جاري التوليد...",
+        "button": "توليد التضمينات",
+        "result": "النتيجة ({{count}} بُعد)",
+        "success": "تم توليد متجه تضمين من {{count}} بُعد",
+        "failed": "فشل توليد التضمينات",
+        "enterBoth": "يرجى اختيار نموذج وإدخال نص"
+      }
     }
   },
   "personaManager": {
@@ -1615,7 +1833,10 @@
     "deleteConfirm": "هل أنت متأكد من حذف \"{{name}}\"؟",
     "deleteSuccess": "تم حذف الشخصية \"{{name}}\" بنجاح",
     "downloadSuccess": "تم تحميل الشخصية \"{{name}}\" بنجاح",
-    "failed": "فشل {{action}} الشخصية"
+    "failed": "فشل {{action}} الشخصية",
+    "loadFailed": "تعذّر تحميل شخصياتك.",
+    "deleteFailed": "تعذّر حذف الشخصية",
+    "downloadFailed": "تعذّر تنزيل الشخصية"
   },
   "personaForm": {
     "title": {
@@ -1747,7 +1968,8 @@
       "promptHint": "موجه يبدأ به كل محادثة جديدة مع هذه الشخصية.",
       "noPrompt": "بلا موجه",
       "version": "مراجعة الارتباطات {{version}}"
-    }
+    },
+    "sections": "أقسام الشخصية"
   },
   "personaCard": {
     "enhanced": "محسّن",
@@ -1764,7 +1986,16 @@
     "backupSuccess": "تم تحميل نسخة الشخصية الاحتياطية بنجاح",
     "dnaSuccess": "تم تصدير DNA الشخصية بنجاح",
     "failed": "فشل {{action}}",
-    "shareTooltip": "مشاركة هذه الشخصية"
+    "shareTooltip": "مشاركة هذه الشخصية",
+    "wipeFailed": "تعذّر مسح الذكريات",
+    "backupFailed": "تعذّر نسخ الشخصية احتياطيًا",
+    "exportDnaFailed": "تعذّر تصدير الحمض النووي للشخصية",
+    "favorite": "مفضلة",
+    "memoryStatus": {
+      "active": "نشطة",
+      "wiped": "ممسوحة",
+      "backed_up": "لها نسخة احتياطية"
+    }
   },
   "userManager": {
     "title": "إدارة المستخدمين",
@@ -1793,7 +2024,10 @@
     "noUsersMatching": "لا يوجد مستخدمون يطابقون بحثك",
     "columns": {
       "role": "الدور",
-      "created": "تم الإنشاء"
+      "created": "تم الإنشاء",
+      "user": "المستخدم",
+      "email": "البريد الإلكتروني",
+      "actions": "الإجراءات"
     },
     "roles": {
       "admin": "مسؤول",
@@ -1832,7 +2066,10 @@
       "createSuccess": "تم إنشاء المستخدم بنجاح",
       "updateSuccess": "تم تحديث المستخدم بنجاح",
       "createFailed": "فشل إنشاء المستخدم",
-      "updateFailed": "فشل تحديث المستخدم"
+      "updateFailed": "فشل تحديث المستخدم",
+      "usernamePlaceholder": "أدخل اسم المستخدم",
+      "emailPlaceholder": "أدخل البريد الإلكتروني (اختياري)",
+      "passwordPlaceholder": "أدخل كلمة المرور"
     },
     "workAccess": {
       "title": "الوصول إلى Work",
@@ -1925,7 +2162,28 @@
       "memberOf": "المجموعات",
       "featuresLabel": "الوصول إلى الميزات",
       "grantsLabel": "الصلاحيات الممنوحة",
-      "grantVia": "عبر"
+      "grantVia": "عبر",
+      "deleteConfirmTitle": "حذف المجموعة «{{name}}»؟",
+      "deleteConfirmDescription": "يفقد الأعضاء أي وصول كان عبر هذه المجموعة فقط. لا يتم حذف الحسابات نفسها.",
+      "statuses": {
+        "active": "نشطة",
+        "pending": "بانتظار الموافقة"
+      },
+      "features": {
+        "work": "العمل",
+        "model-download": "تنزيل النماذج",
+        "web-search": "البحث في الويب",
+        "strands": "محرك Strands",
+        "tools": "الأدوات",
+        "stt": "تحويل الكلام إلى نص",
+        "tts": "تحويل النص إلى كلام",
+        "voice-mode": "الوضع الصوتي",
+        "voice-cloning": "استنساخ الصوت"
+      },
+      "grantViaKinds": {
+        "user": "منح مباشر",
+        "group": "مجموعة"
+      }
     },
     "audit": {
       "title": "سجل التدقيق الأمني",
@@ -2012,13 +2270,60 @@
       "save": "حفظ",
       "saving": "جاري الحفظ...",
       "saved": "تم حفظ إعدادات البريد الإلكتروني.",
-      "saveFailed": "تعذّر حفظ إعدادات البريد الإلكتروني."
+      "saveFailed": "تعذّر حفظ إعدادات البريد الإلكتروني.",
+      "security": {
+        "starttls": "STARTTLS (المنفذ 587)",
+        "tls": "TLS (المنفذ 465)",
+        "none": "بلا (شبكة موثوقة فقط)"
+      },
+      "templateTitle": "مظهر البريد الإلكتروني",
+      "templateHint": "اختر قالبًا فاتحًا أو داكنًا لملخصات الأخبار ورسائل الإشعارات.",
+      "themeLabel": "قالب البريد الإلكتروني",
+      "themeLight": "فاتح",
+      "themeDark": "داكن",
+      "previewTitle": "معاينة القالب",
+      "previewLoading": "جارٍ تحميل المعاينة…",
+      "previewFailed": "تعذّر تحميل معاينة البريد الإلكتروني.",
+      "previewHeading": "ملخص أخبارك",
+      "previewIntro": "معاينة لبريدك الإخباري اليومي.",
+      "previewMarkdown": "## أبرز أخبار اليوم\n\n- تحديثات التكنولوجيا والأبحاث\n- أخبار من مصادرك المختارة\n\n**الملخص:** أخبارك اليومية جاهزة للقراءة.",
+      "previewLinkLabel": "افتح النتيجة"
+    },
+    "modelAccess": {
+      "title": "تنزيل النماذج",
+      "description": "السماح لجميع المستخدمين النشطين بسحب النماذج من Ollama ومتصفح Hugging Face. يمكن للمسؤولين دائمًا تنزيل النماذج.",
+      "saved": "تم تحديث صلاحية تنزيل النماذج",
+      "saveFailed": "تعذر تحديث صلاحية تنزيل النماذج"
+    },
+    "ollamaProvider": {
+      "title": "مزود Ollama",
+      "description": "عند الإيقاف، يتوقف التطبيق عن البحث عن Ollama تمامًا — بلا فحوصات صحة ولا تحذيرات. يمكن أن تشير نقطة النهاية إلى أي بوابة متوافقة مع Ollama.",
+      "saved": "تم حفظ إعدادات مزود Ollama",
+      "saveFailed": "تعذّر حفظ إعدادات مزود Ollama",
+      "baseUrlLabel": "عنوان URL لنقطة نهاية Ollama"
+    },
+    "strandsAccess": {
+      "title": "محرك Strands",
+      "description": "اختر من يمكنه استخدام وكيل Strands المدمج. يمكنه قراءة الملفات وتعديلها في مساحة العمل الخاصة بكل جلسة، لكنه لا يستطيع تشغيل أوامر الطرفية.",
+      "saved": "تم تحديث الوصول إلى Strands",
+      "saveFailed": "تعذر تحديث الوصول إلى Strands",
+      "lockedByEnv": "مثبّت بواسطة متغير البيئة LIBRE_STRANDS_ACCESS.",
+      "modes": {
+        "disabled": "إيقاف",
+        "admins": "المسؤولون",
+        "all-users": "جميع المستخدمين"
+      }
+    },
+    "agentCliAccess": {
+      "title": "نماذج وكلاء CLI",
+      "description": "يمكن للمسؤولين استخدام Pi وOpenCode وCodex وClaude Code المثبتة كنماذج دردشة. تعمل على المضيف خارج بيئات Work المعزولة.",
+      "lockedByEnv": "مثبَّت بواسطة متغير البيئة AGENT_CLI_MODELS_ENABLED."
     }
   },
   "usageAnalytics": {
     "eyebrow": "الإدارة",
     "title": "استخدام المزود",
-    "description": "تابع مكالمات API الصادرة واستهلاك النماذج عبر الإضافات الممكّنة في هذا المثيل.",
+    "description": "تتبّع طلبات النماذج واستخدامها عبر المزوّدين والوكلاء في هذا الخادم.",
     "days": "{{count}} أيام",
     "refresh": "تحديث الاستخدام",
     "loadFailed": "تعذر تحميل استخدام المزود.",
@@ -2065,7 +2370,7 @@
       "notCharted": "حدّد لتحميل هذا النموذج في الرسم البياني"
     },
     "providers": {
-      "title": "حركة مرور الإضافات الممكّنة",
+      "title": "حركة المزوّدين والوكلاء",
       "description": "حجم الطلبات والموثوقية ووقت الاستجابة حسب المزوّد.",
       "share": "{{percent}}% من الاستدعاءات",
       "failures": "{{count}} فاشلة أو ملغاة",
@@ -2083,7 +2388,7 @@
     },
     "empty": {
       "title": "لا توجد مكالمات مزود بعد",
-      "description": "ستظهر المكالمات هنا بعد أن تعالج إضافة ممكّنة طلبات الدردشة، أو العمل، أو التضمين، أو الصورة، أو الكلام، أو الصوت، أو الفيديو."
+      "description": "تظهر الطلبات هنا بعد أن يعالج مزوّد أو وكيل طلبات الدردشة أو العمل أو التضمين أو الصور أو الكلام أو الصوت أو الفيديو."
     },
     "privacyNote": "يتم قياس الاستخدام على الخادم عند حدود الإضافة الصادرة. يخزن Alcore المزود، والنموذج، والتوقيت، والحالة، والعدادات المُبلغ عنها — وليس المطالبات، أو الاستجابات، أو نقاط النهاية، أو بيانات الاعتماد، أو هيئات أخطاء المزود. تشمل إجماليات الرموز فقط المكالمات التي أعاد فيها المزود بيانات الاستخدام الوصفية.",
     "heatmap": {
@@ -2095,6 +2400,14 @@
       "less": "أقل",
       "more": "أكثر",
       "yearTotal": "{{formatted}} استدعاءً خلال العام الماضي"
+    },
+    "agents": {
+      "title": "الوكلاء",
+      "description": "استدعاءات وكلاء CLI ومحرك Strands.",
+      "noCalls": "لا توجد استدعاءات مسجّلة في هذه الفترة",
+      "unreported": "لم يُبلَّغ عن الرموز",
+      "topModels": "النماذج الأكثر استخدامًا",
+      "legacy": "لا يوفّر هذا الخادم تفصيلًا كاملًا للوكلاء. تظهر سجلات الوكلاء المتاحة أدناه."
     }
   },
   "systemPage": {
@@ -2309,7 +2622,11 @@
       "harmful": "ضار",
       "formatting": "التنسيق"
     },
-    "feedbackComment": "أضف تعليقًا…"
+    "feedbackComment": "أضف تعليقًا…",
+    "user": "المستخدم",
+    "feedbackFailed": "تعذّر حفظ ملاحظاتك",
+    "openImage": "فتح الصورة {{number}}",
+    "uploadedImageAlt": "الصورة المرفوعة {{number}}"
   },
   "imageGallery": {
     "title": "معرض الصور",
@@ -2321,7 +2638,8 @@
     "deleteSuccess": "تم حذف الصورة",
     "deleteFailed": "فشل حذف الصورة",
     "loadMore": "تحميل المزيد ({{current}} من {{total}})",
-    "loadFailed": "فشل تحميل المعرض"
+    "loadFailed": "فشل تحميل المعرض",
+    "downloadFailed": "فشل تحميل الصورة"
   },
   "imageGeneration": {
     "title": "توليد صورة",
@@ -2397,7 +2715,10 @@
       "image": "الصور",
       "video": "مقاطع الفيديو",
       "audio": "الصوت"
-    }
+    },
+    "deleteConfirmTitle": "حذف هذا العنصر؟",
+    "deleteConfirmDescription": "سيتم حذف الوسائط المُنشأة نهائيًا.",
+    "previewFailed": "المعاينة غير متاحة"
   },
   "errorBoundary": {
     "title": "حدث خطأ ما",
@@ -2475,7 +2796,8 @@
     "previousVersion": "الإصدار السابق",
     "nextVersion": "الإصدار التالي",
     "print": "Print",
-    "exportCsv": "Export CSV"
+    "exportCsv": "Export CSV",
+    "resizePanel": "تغيير حجم اللوحة"
   },
   "personaImportExport": {
     "title": "استيراد وتصدير الشخصيات",
@@ -2513,7 +2835,10 @@
     "generation": "التوليد:",
     "modelLoad": "تحميل النموذج:",
     "totalTime": "الوقت الإجمالي:",
-    "generatedAt": "تم التوليد في:"
+    "generatedAt": "تم التوليد في:",
+    "notAvailable": "غير متاح",
+    "tokenCount": "{{tokens}} رمز",
+    "tokensPerSecond": "{{value}} رمز/ث"
   },
   "userMenu": {
     "loggedOut": "تم تسجيل الخروج بنجاح",
@@ -2572,7 +2897,9 @@
       "httpWarning": "لا يقوم HTTP بتشفير بيانات الاعتماد أو حركة المرور. استخدمه فقط على شبكة موثوقة.",
       "invalidBaseUrl": "لا يمكن أن تحتوي عناوين URL الأساسية على سلسلة استعلام أو جزء.",
       "invalidApiPath": "يجب أن يبدأ بـ / وألا يحتوي على URL أو استعلام أو جزء أو مقطع ..",
-      "tooLong": "القيمة طويلة جدًا"
+      "tooLong": "القيمة طويلة جدًا",
+      "resetConfirmTitle": "إعادة التعيين إلى الإعدادات الافتراضية؟",
+      "resetConfirmDescription": "سيؤدي هذا إلى مسح كل القيم المخزّنة لـ {{name}}، بما في ذلك مفاتيح API وبيانات الاعتماد الأخرى. لا يمكن التراجع عن ذلك."
     }
   },
   "huggingface": {
@@ -2592,7 +2919,10 @@
   },
   "demoMode": {
     "title": "وضع تجريبي",
-    "github": "GitHub"
+    "github": "GitHub",
+    "defaultMessage": "هذه نسخة تجريبية لأغراض العرض فقط. خادم Ollama الخلفي غير متصل.",
+    "viewOnGithub": "عرض على GitHub",
+    "dismiss": "تجاهل"
   },
   "libreClaw": {
     "title": "الوكلاء",
@@ -2755,8 +3085,8 @@
       "status": "الحالة: {{status}}"
     },
     "landing": {
-      "title": "بدء مهمة عمل جديدة",
-      "description": "امنح نموذجًا محليًا أو تابعًا لمزوّد مُعدّ مساحة عمل دائمة ومعزولة. يمكنه فحص الملفات وتشغيل الأدوات والمتابعة من حيث توقف عند عودتك.",
+      "title": "ما الذي تود العمل عليه؟",
+      "description": "صِف مهمة. يحصل نموذجك على مساحة عمل خاصة به.",
       "isolated": "معزولة",
       "isolatedBody": "لكل مهمة حاويتها وملفاتها الخاصة.",
       "durable": "دائمة",
@@ -2785,7 +3115,11 @@
         "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
         "attachTooMany": "Only {{max}} files can be attached at once.",
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
-      }
+      },
+      "engine": "المحرك",
+      "libreModels": "نماذج Libre WebUI",
+      "strandsDisabled": "محرك Strands غير متاح لحسابك.",
+      "modelLabel": "النموذج"
     },
     "conversation": {
       "ready": "مساحة العمل جاهزة",
@@ -2825,8 +3159,18 @@
         "checksPending": "فحوصات معلقة",
         "stallNudges": "تنبيهات التوقف",
         "ambiguityNudges": "تنبيهات إعادة التثبيت",
-        "stoppedBy": "توقف بسبب"
-      }
+        "stoppedBy": "توقف بسبب",
+        "reasons": {
+          "round": "حد الجولات",
+          "toolCall": "حد استدعاءات الأدوات",
+          "approvalTimeout": "انتهت مهلة الموافقة",
+          "computerStall": "توقف الكمبيوتر عن الاستجابة"
+        }
+      },
+      "skillTraceSavedWorked": "تم التدوين: نجحت",
+      "skillTraceSavedFailed": "تم التدوين: فشلت",
+      "connectionClosed": "أُغلق اتصال العمل المباشر.",
+      "reconnectingBackground": "تتم إعادة الاتصال بالتحديثات المباشرة في الخلفية."
     },
     "runtime": {
       "unavailable": "بيئة التشغيل غير متاحة",
@@ -2834,7 +3178,7 @@
       "readyOllama": "Docker جاهز",
       "readyPlugin": "Docker والمكوّن الإضافي جاهزان",
       "readyHybrid": "Docker والنماذج جاهزة",
-      "reason": "يلزم توفر Docker ومزوّد نماذج متاح عبر Ollama أو مكوّن إضافي."
+      "reason": "يلزم وجود بيئة تشغيل Work ومزود نماذج متاح."
     },
     "workspace": {
       "label": "طرق عرض مساحة العمل",
@@ -2869,7 +3213,11 @@
       "changes": "التغييرات",
       "changesSince": "ما تغيّر منذ الدور الأخير",
       "diffLabel": "التغييرات منذ الدور الأخير: {{path}}",
-      "diffFolded": "{{count}} سطرًا دون تغيير"
+      "diffFolded": "{{count}} سطرًا دون تغيير",
+      "diffAdded": "مضاف",
+      "diffRemoved": "محذوف",
+      "unsavedChanges": "تغييرات غير محفوظة",
+      "editingLocked": "يُتاح التعديل عند انتهاء الدور."
     },
     "activity": {
       "empty": "ستظهر الأوامر وعمليات الملفات ونتائج الأدوات هنا.",
@@ -2880,7 +3228,9 @@
         "toolCall": "استدعاء أداة",
         "toolResult": "نتيجة أداة",
         "error": "خطأ"
-      }
+      },
+      "arguments": "وسائط الأداة",
+      "output": "مخرجات الأداة"
     },
     "preview": {
       "command": "أمر تشغيل اختياري",
@@ -2909,7 +3259,8 @@
       "saveFailed": "تعذّر حفظ هذا الملف.",
       "saved": "تم حفظ الملف.",
       "previewFailed": "تعذّر بدء المعاينة.",
-      "previewStopFailed": "تعذّر إيقاف المعاينة."
+      "previewStopFailed": "تعذّر إيقاف المعاينة.",
+      "sendFailed": "تعذّر إرسال الرسالة."
     },
     "terminal": {
       "connecting": "جارٍ فتح صدفة داخل بيئة العزل…",
@@ -2961,7 +3312,18 @@
       "noFilterMatches": "لا توجد ملفات متغيّرة تطابق هذا الفلتر.",
       "allChanges": "كل التغييرات",
       "diffTruncated": "هذا الفرق مقتطع.",
-      "binaryFile": "ملف ثنائي، لا يوجد فرق نصي."
+      "binaryFile": "ملف ثنائي، لا يوجد فرق نصي.",
+      "statusLabels": {
+        "modified": "تم التعديل",
+        "added": "تمت الإضافة",
+        "deleted": "تم الحذف",
+        "renamed": "تمت إعادة التسمية",
+        "copied": "تم النسخ",
+        "typeChanged": "تغيّر النوع",
+        "untracked": "غير متتبَّع"
+      },
+      "stagedState": "مُجهَّز",
+      "aheadBehind": "{{ahead}} متقدم، {{behind}} متأخر"
     },
     "hostWorkspace": {
       "hint": "اتركه فارغًا لمساحة عمل معزولة، أو وجّه المهمة إلى مجلد على هذا الجهاز.",
@@ -2988,7 +3350,8 @@
       "unmute": "تشغيل الصوت",
       "mute": "كتم الصوت",
       "finished": "انتهت هذه المهمة. أعد فتحها لإرجاع شاشتها.",
-      "reopenOpen": "إعادة فتح المهمة وفتح الشاشة"
+      "reopenOpen": "إعادة فتح المهمة وفتح الشاشة",
+      "teachSaveFailed": "تعذّر حفظ هذا الشرح العملي."
     },
     "computerSetup": {
       "title": "Work Computer",
@@ -3004,7 +3367,7 @@
       "label": "توظيف كوكيل (اختياري)",
       "none": "بدون شخصية (مهمة لمرة واحدة)",
       "hint": "تصبح هذه المهمة وكيلاً مسمى: تحتفظ بالشخصية، وتبقى مثبتة في الشريط الجانبي، وتعرض سطر حالة واحدًا بعد كل تشغيل.",
-      "description": "اختر شخصية لتحويل هذه المهمة إلى وكيل دائم بهوية خاصة به."
+      "description": "اختر شخصية للاحتفاظ بهذه المهمة كوكيل ذي اسم."
     },
     "agent": {
       "openScreen": "فتح عرض الشاشة الكاملة",
@@ -3025,7 +3388,11 @@
       "approvalsToggleFailed": "تعذّر تحديث إعدادات الموافقة.",
       "approvalRuleLine": "مسموح دائمًا",
       "approvalRuleDelete": "إزالة القاعدة",
-      "approvalRuleDeleteFailed": "تعذّرت إزالة القاعدة."
+      "approvalRuleDeleteFailed": "تعذّرت إزالة القاعدة.",
+      "routinesLoadFailed": "تعذّر تحميل الروتينات.",
+      "skillsLoadFailed": "تعذّر تحميل المهارات المعلَّمة.",
+      "approvalsLoadFailed": "تعذّر تحميل إعدادات الموافقة.",
+      "routinePaused": "متوقف مؤقتًا"
     },
     "runs": {
       "title": "عمليات التشغيل",
@@ -3036,7 +3403,8 @@
         "needsInput": "بحاجة إلى إدخال",
         "failed": "فشل",
         "cancelled": "أُلغي"
-      }
+      },
+      "loadFailed": "تعذّر تحميل سجل التشغيل."
     },
     "approval": {
       "title": "الموافقة مطلوبة",
@@ -3044,7 +3412,16 @@
       "allowOnce": "السماح مرة واحدة",
       "allowAlways": "السماح دائمًا",
       "deny": "رفض",
-      "failed": "تعذّر إرسال القرار."
+      "failed": "تعذّر إرسال القرار.",
+      "details": "تفاصيل الإجراء",
+      "fields": {
+        "command": "الأمر",
+        "path": "المسار",
+        "from": "من",
+        "to": "إلى",
+        "actions": "الإجراءات",
+        "recursive": "تكراري"
+      }
     },
     "idleStopHint": "يتوقف بعد {{minutes}} دقيقة من دون نشاط.",
     "recovery": {
@@ -3057,6 +3434,17 @@
       "retrySucceeded": "تم مسح {{cleared}} من أصل {{attempted}} من عمليات التنظيف المعلقة.",
       "retryPending": "ما زالت إعادة المحاولة جارية لـ {{attempted}} من عمليات التنظيف المعلقة.",
       "retryFailed": "تعذّرت إعادة محاولة عمليات التنظيف المعلقة."
+    },
+    "computer": {
+      "setupFailed": "تعذّر إعداد Work Computer."
+    },
+    "announce": {
+      "completed": "انتهت المهمة {{title}}.",
+      "needsInput": "{{title}} تحتاج إلى إدخالك أو موافقتك.",
+      "failed": "فشلت المهمة {{title}}.",
+      "cancelled": "تم إيقاف {{title}}.",
+      "approvalNeeded": "{{title}} تحتاج إلى موافقتك لتشغيل {{tool}}.",
+      "untitledTask": "هذه المهمة"
     }
   },
   "personaBackground": {
@@ -3088,7 +3476,21 @@
     "reselectProvider": "أعد اختيار مزود لتثبيت هذا النموذج",
     "unavailable": "غير متاح",
     "unavailableSelections": "اختيارات غير متاحة",
-    "agentModels": "الوكلاء"
+    "agentModels": "الوكلاء",
+    "searchOllama": "البحث في مكتبة Ollama...",
+    "searchHuggingFace": "البحث في HuggingFace...",
+    "searchModels": "ابحث في النماذج...",
+    "ollamaModels": "نماذج Ollama",
+    "installed": "مثبت",
+    "use": "استخدام",
+    "pull": "تنزيل",
+    "pullRestricted": "تثبيت النماذج مقصور على المسؤولين في هذا المثيل.",
+    "adminOnlyPull": "للمسؤولين فقط",
+    "showAll": "عرض الكل ({{total}})",
+    "sources": "مصادر النماذج",
+    "defaultModel": "النموذج الافتراضي",
+    "contextSize": "سياق {{size}}",
+    "via": "عبر {{provider}}"
   },
   "whatsNew": {
     "title": "ما الجديد",
@@ -3145,7 +3547,16 @@
     "unpin": "إلغاء تثبيت الملاحظة",
     "pinned": "مثبّتة",
     "export": "تنزيل كـ Markdown",
-    "sharedWithYou": "مشتركة معك"
+    "sharedWithYou": "مشتركة معك",
+    "titleLabel": "عنوان الملاحظة",
+    "loadFailed": "تعذّر التحميل. حاول مرة أخرى.",
+    "restoreConfirmTitle": "استعادة هذه النسخة؟",
+    "restoreConfirmDescription": "سيُستبدل نص الملاحظة بهذه النسخة الأقدم.",
+    "deleteAttachmentConfirmTitle": "حذف {{name}}؟",
+    "deleteAttachmentConfirmDescription": "سيتم حذف المرفق نهائيًا من هذه الملاحظة.",
+    "attachmentDeleteFailed": "تعذّر حذف المرفق",
+    "revokeFailed": "تعذّر إلغاء الوصول",
+    "sharePermissionLabel": "الإذن"
   },
   "calendar": {
     "title": "التقويم",
@@ -3190,7 +3601,22 @@
     "importFailed": "تعذر استيراد الملف",
     "importResult": "تم استيراد {{total}} أحداث",
     "importIcs": "استيراد",
-    "exportIcs": "تصدير"
+    "exportIcs": "تصدير",
+    "chipStatus": {
+      "automation": "أتمتة مجدولة",
+      "runSucceeded": "نجح تشغيل الأتمتة",
+      "runFailed": "فشل تشغيل الأتمتة"
+    },
+    "newEventOn": "حدث جديد في {{date}}",
+    "showDay": "عرض كل الأحداث في {{date}}",
+    "deleteEventConfirmTitle": "حذف «{{title}}»؟",
+    "deleteEventConfirmDescription": "سيتم حذف هذا الحدث نهائيًا.",
+    "deleteRecurringEventConfirmDescription": "سيتم حذف هذا الحدث المتكرر وجميع تكراراته نهائيًا.",
+    "shareCalendarNamed": "مشاركة التقويم {{name}}",
+    "deleteCalendarNamed": "حذف التقويم {{name}}",
+    "deleteCalendarConfirmTitle": "حذف التقويم «{{name}}»؟",
+    "deleteCalendarConfirmDescription": "سيتم حذف التقويم والأحداث التي فيه نهائيًا.",
+    "calendarDeleteFailed": "تعذّر حذف التقويم"
   },
   "automations": {
     "title": "الأتمتة",
@@ -3317,13 +3743,17 @@
         "work-approval": "ينتظر وكيل موافقتك",
         "system": "يصل إشعار نظام"
       }
-    }
+    },
+    "deleteConfirmTitle": "حذف «{{name}}»؟",
+    "deleteConfirmDescription": "ستُحذف الأتمتة وجدولها نهائيًا. تبقى عمليات التشغيل السابقة في سجل التشغيل."
   },
   "home": {
     "active": "نشط",
     "continue": "متابعة",
     "start": "ابدأ",
-    "explore": "استكشاف"
+    "explore": "استكشاف",
+    "greeting": "{{greeting}}.",
+    "greetingWithName": "{{greeting}}، {{name}}."
   },
   "palette": {
     "empty": "لا توجد نتائج.",
@@ -3336,7 +3766,14 @@
     "work": "العمل",
     "messages": "الرسائل",
     "notes": "الملاحظات",
-    "documents": "المستندات"
+    "documents": "المستندات",
+    "searching": "جارٍ البحث…",
+    "searchFailed": "فشل البحث في مساحة العمل. يتم عرض المحادثات والإجراءات المطابقة فقط.",
+    "results": "النتائج",
+    "escKey": "Esc",
+    "hintNavigate": "تنقّل",
+    "hintOpen": "فتح",
+    "hintClose": "إغلاق"
   },
   "tabs": {
     "actions": "إجراءات التبويب",
@@ -3540,7 +3977,8 @@
       "button": "من مجلد",
       "missingSkillMd": "يجب أن يحتوي المجلد على ملف SKILL.md",
       "done": "تم استيراد المهارة مع {{count}} من الملفات المرفقة"
-    }
+    },
+    "toggleLabel": "تفعيل المهارة {{name}}"
   },
   "toolsPage": {
     "title": "الأدوات",
@@ -3701,7 +4139,14 @@
     "added": "تمت المشاركة مع {{name}}",
     "failed": "فشلت المشاركة",
     "userNotFound": "لا يوجد مستخدم بهذا الاسم",
-    "groupNotFound": "لا توجد مجموعة بهذا الاسم"
+    "groupNotFound": "لا توجد مجموعة بهذا الاسم",
+    "principalKind": "مشاركة مع مستخدم أو مجموعة",
+    "principalName": "اسم المستخدم أو اسم المجموعة",
+    "permission": "الإذن",
+    "sharing": "المشاركة",
+    "loading": "جارٍ تحميل المشاركات",
+    "loadFailed": "تعذّر تحميل المشاركات",
+    "revokeFailed": "تعذّر إلغاء الوصول"
   },
   "channels": {
     "title": "القنوات",
@@ -3760,13 +4205,44 @@
     "toolCalls": {
       "summary": "الأدوات المستخدمة ({{total}})",
       "deniedHint": "تُرفض الأدوات التي تغيّر البيانات في القنوات. شغّلها من محادثة."
-    }
+    },
+    "confirmEdit": "حفظ التعديل",
+    "cancelEdit": "إلغاء التعديل",
+    "reactWith": "التفاعل بـ {{emoji}}",
+    "deleteMessageConfirmTitle": "حذف هذه الرسالة؟",
+    "deleteMessageConfirmDescription": "ستتم إزالة الرسالة للجميع في هذه القناة.",
+    "unreadCount": "{{total}} غير مقروءة",
+    "send": "إرسال الرسالة",
+    "invite": "دعوة عضو",
+    "closeThread": "إغلاق السلسلة",
+    "removeAttachment": "إزالة المرفق",
+    "loadFailed": "تعذّر التحميل. حاول مرة أخرى.",
+    "editFailed": "تعذّر تعديل الرسالة",
+    "deleteMessageFailed": "تعذّر حذف الرسالة",
+    "pinFailed": "تعذّر تغيير التثبيت",
+    "reactFailed": "تعذّر حفظ التفاعل",
+    "downloadFailed": "تعذّر تنزيل الملف",
+    "removeMemberConfirm": "إزالة {{name}} من هذه القناة؟",
+    "removeMemberConfirmDescription": "سيفقد وصوله إلى القناة ورسائلها.",
+    "removeMemberNamed": "إزالة {{name}} من القناة",
+    "removeMemberFailed": "تعذّرت إزالة العضو",
+    "leaveConfirm": "مغادرة {{name}}؟",
+    "leaveConfirmDescription": "ستحتاج إلى دعوة جديدة للانضمام إلى قناة خاصة مرة أخرى.",
+    "leaveFailed": "تعذّرت مغادرة القناة",
+    "joinFailed": "تعذّر الانضمام إلى القناة",
+    "deleteConfirm": "حذف {{name}}؟",
+    "deleteConfirmDescription": "سيتم حذف القناة وجميع رسائلها نهائيًا لدى كل الأعضاء.",
+    "deleteFailed": "تعذّر حذف القناة",
+    "saveFailed": "تعذّر حفظ القناة"
   },
   "notifications": {
     "title": "الإشعارات",
     "empty": "لا إشعارات جديدة.",
     "markAllRead": "تحديد الكل كمقروء",
-    "markRead": "تحديد كمقروء"
+    "markRead": "تحديد كمقروء",
+    "titleWithUnread": "الإشعارات ({{unread}} غير مقروءة)",
+    "unread": "غير مقروءة",
+    "loadFailed": "تعذّر تحميل الإشعارات."
   },
   "voiceMode": {
     "title": "الوضع الصوتي",
@@ -3901,7 +4377,12 @@
       "failed": "فشل",
       "cancelled": "أُلغي"
     },
-    "noFeedback": "لا توجد ملاحظات بعد — قيّم الردود لبناء مجموعة بياناتك."
+    "noFeedback": "لا توجد ملاحظات بعد — قيّم الردود لبناء مجموعة بياناتك.",
+    "deleteSetConfirmTitle": "حذف «{{name}}»؟",
+    "deleteSetConfirmDescription": "ستُحذف مجموعة التقييم ومطالباتها نهائيًا.",
+    "deleteSetFailed": "تعذّر حذف مجموعة التقييم",
+    "runError": "خطأ: {{detail}}",
+    "cancelFailed": "تعذّر إلغاء التشغيل"
   },
   "passwordStrength": {
     "levels": {
@@ -3915,6 +4396,14 @@
       "hasCase": "أحرف كبيرة وصغيرة",
       "hasNumber": "رقم واحد على الأقل",
       "tooLong": "لا تتجاوز 72 بايت"
+    },
+    "requirements": "استخدم 12 حرفًا على الأقل وبحد أقصى 72 بايت UTF-8، مع أحرف كبيرة وصغيرة ورقم.",
+    "errors": {
+      "minLength": "يجب أن تتكون كلمة المرور من 12 حرفًا على الأقل.",
+      "tooLong": "يجب ألا تتجاوز كلمة المرور 72 بايت UTF-8.",
+      "uppercase": "يجب أن تحتوي كلمة المرور على حرف كبير.",
+      "lowercase": "يجب أن تحتوي كلمة المرور على حرف صغير.",
+      "number": "يجب أن تحتوي كلمة المرور على رقم."
     }
   },
   "connectModels": {
@@ -3933,7 +4422,8 @@
       "enable": "تفعيل المزود",
       "enabling": "جارٍ التفعيل…",
       "enabled": "تم توصيل {{name}} — نماذجه متاحة الآن",
-      "enableFailed": "تعذّر تفعيل المزود"
+      "enableFailed": "تعذّر تفعيل المزود",
+      "urlLabel": "عنوان URL للخادم"
     },
     "cloud": {
       "title": "API سحابي",
@@ -3942,7 +4432,70 @@
       "connect": "اتصال",
       "connecting": "جارٍ الاتصال…",
       "connected": "تم توصيل {{name}} — نماذجه متاحة الآن",
-      "saveFailed": "تعذّر حفظ مفتاح API"
+      "saveFailed": "تعذّر حفظ مفتاح API",
+      "keyLabel": "مفتاح API لـ {{name}}"
+    },
+    "ollama": {
+      "status": {
+        "checking": "جارٍ التحقق من التوفر…",
+        "healthy": "قيد التشغيل وجاهز للنماذج المحلية",
+        "offline": "غير مكتشَف على هذا الجهاز",
+        "disabled": "معطّل — لن تُجرى أي فحوصات"
+      },
+      "recheck": "تحقق مرة أخرى",
+      "enable": "تفعيل",
+      "disable": "إيقاف البحث عن Ollama",
+      "enabledToast": "تم تفعيل مزود Ollama",
+      "disabledToast": "تم تعطيل فحوصات Ollama — يمكنك إعادة تفعيلها من الإعدادات",
+      "settingsFailed": "تعذّر تحديث إعدادات Ollama",
+      "offlineHint": "ثبّت Ollama من ollama.com وسيتم اكتشافه تلقائيًا — أو استخدم أحد الخيارات أدناه بدلاً من ذلك. إذا كنت لا تخطط لاستخدام Ollama، يمكنك إيقاف فحوصاته.",
+      "healthyHint": "تم توصيل Ollama. اسحب نموذجًا من صفحة النماذج وستكون جاهزًا للدردشة."
     }
+  },
+  "modelDownload": {
+    "success": "تم تنزيل {{name}}",
+    "failed": "تعذّر التنزيل: {{error}}",
+    "startFailed": "تعذّر بدء التنزيل",
+    "cancelled": "تم إلغاء التنزيل"
+  },
+  "strands": {
+    "title": "Strands",
+    "subtitle": "محرك وكلاء مدمج يعمل على نماذج Libre WebUI.",
+    "subtitleVersion": "محرك وكلاء مدمج، الإصدار {{version}}.",
+    "newSession": "جلسة جديدة",
+    "sessions": "الجلسات",
+    "noSessions": "لا توجد جلسات بعد. أنشئ واحدة للبدء.",
+    "empty": "اطلب من الوكيل قراءة الملفات أو تعديلها في مساحة عمله.",
+    "placeholder": "اطلب من المحرك القيام بشيء…",
+    "model": "النموذج",
+    "defaultModel": "النموذج الافتراضي",
+    "send": "إرسال",
+    "stop": "إيقاف",
+    "reasoning": "المنطق",
+    "tool": {
+      "running": "قيد التشغيل",
+      "done": "تم",
+      "failed": "فشل"
+    },
+    "cancelled": "تم الإلغاء",
+    "turnLimit": "توقف عند حد الأدوار.",
+    "messageCount": "الرسائل: {{count}}",
+    "deleteSession": "حذف الجلسة",
+    "deleteConfirm": "حذف \"{{title}}\" وسجله؟",
+    "loadFailed": "تعذر تحميل Strands.",
+    "createFailed": "تعذّر إنشاء الجلسة.",
+    "deleteFailed": "تعذّر حذف الجلسة.",
+    "saveFailed": "تعذر حفظ الجلسة.",
+    "turnFailed": "لم يتمكن المحرك من إكمال الدور"
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "هذه الصفحة غير موجودة أو ربما نُقلت."
+  },
+  "themeToggle": {
+    "switchToLight": "التبديل إلى الوضع الفاتح",
+    "switchToDark": "التبديل إلى الوضع الداكن",
+    "switchToAmoled": "التبديل إلى وضع الأسود الحالك",
+    "switchToCelestial": "التبديل إلى الوضع السماوي"
   }
 }

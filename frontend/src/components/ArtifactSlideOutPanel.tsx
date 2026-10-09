@@ -18,6 +18,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
+import toast from 'react-hot-toast';
 import {
   Code,
   FileText,
@@ -267,6 +268,21 @@ export const ArtifactSlideOutPanel: React.FC = () => {
     [panelWidth, setIsResizing]
   );
 
+  // Keyboard equivalent of dragging. The panel hugs the inline-end edge, so
+  // the arrow pointing away from that edge widens it in either direction.
+  const handleResizeKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    const widen = rtl ? e.key === 'ArrowRight' : e.key === 'ArrowLeft';
+    const step = e.shiftKey ? 96 : 24;
+    setPanelWidth(
+      Math.min(
+        getMaxPanelWidth(),
+        Math.max(MIN_PANEL_WIDTH, panelWidth + (widen ? step : -step))
+      )
+    );
+  };
+
   const handleResizeMove = useCallback(
     (e: PointerEvent) => {
       if (!isResizing) return;
@@ -390,6 +406,7 @@ export const ArtifactSlideOutPanel: React.FC = () => {
       setTimeout(() => setCopied(false), 2000);
     } catch (_err) {
       logger.error('Failed to copy:', _err);
+      toast.error(t('chat.message.copyFailed'));
     }
   };
 
@@ -568,7 +585,7 @@ export const ArtifactSlideOutPanel: React.FC = () => {
         <OptimizedSyntaxHighlighter
           language={getLanguage()}
           isDark={theme.mode !== 'light'}
-          className='!m-0 !rounded-lg !h-full'
+          className='m-0! rounded-lg! h-full!'
           codeTheme='night'
           showLineNumbers
           backgroundColor={
@@ -591,7 +608,7 @@ export const ArtifactSlideOutPanel: React.FC = () => {
           <OptimizedSyntaxHighlighter
             language='json'
             isDark={theme.mode !== 'light'}
-            className='!m-0 !rounded-lg !h-full'
+            className='m-0! rounded-lg! h-full!'
             codeTheme='night'
             showLineNumbers
             backgroundColor={
@@ -668,7 +685,7 @@ export const ArtifactSlideOutPanel: React.FC = () => {
         <div
           className={cn(
             'fixed inset-0 cursor-col-resize select-none',
-            isDesktop ? 'z-40' : 'z-[55]'
+            isDesktop ? 'z-40' : 'z-55'
           )}
           aria-hidden='true'
         />
@@ -681,7 +698,7 @@ export const ArtifactSlideOutPanel: React.FC = () => {
         data-testid='artifact-slide-out-panel'
         style={{ width: effectiveWidth }}
         className={cn(
-          'fixed top-0 end-0 h-full',
+          'fixed top-0 inset-e-0 h-full',
           isDesktop ? 'z-30' : 'z-50',
           'bg-white dark:bg-dark-25',
           'shadow-2xl border-s border-gray-200 dark:border-dark-200',
@@ -696,10 +713,19 @@ export const ArtifactSlideOutPanel: React.FC = () => {
         {!isMobile && (
           <div
             onPointerDown={handleResizeStart}
+            onKeyDown={handleResizeKeyDown}
+            role='separator'
+            aria-orientation='vertical'
+            tabIndex={0}
+            aria-label={t('artifacts.resizePanel')}
+            aria-valuenow={Math.round(panelWidth)}
+            aria-valuemin={MIN_PANEL_WIDTH}
+            aria-valuemax={Math.round(getMaxPanelWidth())}
             data-testid='artifact-resize-handle'
             title={t('artifacts.dragEdgeToResize')}
             className={cn(
-              'absolute start-0 top-0 bottom-0 w-4 -ms-2 cursor-col-resize z-[56]',
+              'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500',
+              'absolute inset-s-0 top-0 bottom-0 w-4 -ms-2 cursor-col-resize z-56',
               'flex items-center justify-center',
               'touch-none select-none group'
             )}
@@ -709,7 +735,7 @@ export const ArtifactSlideOutPanel: React.FC = () => {
               className={cn(
                 'w-1 h-16 rounded-full transition-all duration-200',
                 'bg-gray-300 dark:bg-dark-300',
-                'group-hover:bg-primary-500 group-hover:h-24',
+                'group-hover:bg-primary-500 group-hover:h-24 group-focus-visible:bg-primary-500',
                 isResizing && 'bg-primary-500 h-24'
               )}
             />
@@ -730,25 +756,25 @@ export const ArtifactSlideOutPanel: React.FC = () => {
             Created date and description live in tooltips instead of bands. */}
         <div className='flex items-center gap-1.5 border-b border-gray-200 dark:border-dark-200 ps-3 pe-2 py-1.5'>
           <div className='flex items-center gap-2 min-w-0 flex-1'>
-            <div className='text-gray-600 dark:text-gray-400 flex-shrink-0'>
+            <div className='text-gray-600 dark:text-gray-400 shrink-0'>
               {getIcon()}
             </div>
             <h2
               className='text-sm font-semibold text-gray-900 dark:text-gray-100 truncate'
               title={
                 artifact.description ||
-                `${t('artifacts.created')}: ${new Date(artifact.createdAt).toLocaleString()}`
+                `${t('artifacts.created')}: ${new Date(artifact.createdAt).toLocaleString(i18n.language)}`
               }
             >
               {artifact.title}
             </h2>
-            <span className='hidden sm:inline text-[10px] bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 px-1.5 py-0.5 rounded-full font-medium flex-shrink-0'>
+            <span className='hidden sm:inline text-[10px] bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 px-1.5 py-0.5 rounded-full font-medium shrink-0'>
               {artifact.type.toUpperCase()}
             </span>
           </div>
 
           {versions.length > 1 && versionIndex !== -1 && (
-            <div className='flex items-center gap-0.5 flex-shrink-0'>
+            <div className='flex items-center gap-0.5 shrink-0'>
               <Button
                 variant='ghost'
                 size='sm'
@@ -756,6 +782,7 @@ export const ArtifactSlideOutPanel: React.FC = () => {
                 onClick={() => openArtifactPanel(versions[versionIndex - 1])}
                 className='h-7 w-7 p-0'
                 title={t('artifacts.previousVersion')}
+                aria-label={t('artifacts.previousVersion')}
               >
                 <ChevronLeft className='h-3.5 w-3.5 rtl:rotate-180' />
               </Button>
@@ -772,6 +799,7 @@ export const ArtifactSlideOutPanel: React.FC = () => {
                 onClick={() => openArtifactPanel(versions[versionIndex + 1])}
                 className='h-7 w-7 p-0'
                 title={t('artifacts.nextVersion')}
+                aria-label={t('artifacts.nextVersion')}
               >
                 <ChevronRight className='h-3.5 w-3.5 rtl:rotate-180' />
               </Button>
@@ -779,13 +807,14 @@ export const ArtifactSlideOutPanel: React.FC = () => {
           )}
 
           {shouldShowViewToggle() && (
-            <div className='flex items-center gap-0.5 flex-shrink-0'>
+            <div className='flex items-center gap-0.5 shrink-0'>
               <Button
                 variant={viewMode === 'preview' ? 'primary' : 'ghost'}
                 size='sm'
                 onClick={() => setViewMode('preview')}
                 className='h-7 px-2 text-xs'
                 title={t('artifacts.previewMode')}
+                aria-pressed={viewMode === 'preview'}
               >
                 <Eye className='h-3.5 w-3.5 me-1' />
                 {t('artifacts.preview')}
@@ -796,6 +825,7 @@ export const ArtifactSlideOutPanel: React.FC = () => {
                 onClick={() => setViewMode('code')}
                 className='h-7 px-2 text-xs'
                 title={t('artifacts.codeMode')}
+                aria-pressed={viewMode === 'code'}
               >
                 <Code2 className='h-3.5 w-3.5 me-1' />
                 {t('artifacts.code')}
@@ -803,13 +833,14 @@ export const ArtifactSlideOutPanel: React.FC = () => {
             </div>
           )}
 
-          <div className='flex items-center gap-0.5 flex-shrink-0'>
+          <div className='flex items-center gap-0.5 shrink-0'>
             <Button
               variant='ghost'
               size='sm'
               onClick={() => copyToClipboard(artifact.content)}
               className='h-7 w-7 p-0 hover:bg-gray-100 dark:hover:bg-dark-200'
               title={t('artifacts.copyContent')}
+              aria-label={t('artifacts.copyContent')}
             >
               {copied ? (
                 <Check className='h-3.5 w-3.5 text-green-500' />
@@ -824,6 +855,7 @@ export const ArtifactSlideOutPanel: React.FC = () => {
               onClick={downloadArtifact}
               className='h-7 w-7 p-0 hover:bg-gray-100 dark:hover:bg-dark-200'
               title={t('artifacts.download')}
+              aria-label={t('artifacts.download')}
             >
               <Download className='h-3.5 w-3.5' />
             </Button>
@@ -862,6 +894,9 @@ export const ArtifactSlideOutPanel: React.FC = () => {
               onClick={closeArtifactPanel}
               className='h-7 w-7 p-0 hover:bg-gray-100 dark:hover:bg-dark-200'
               title={
+                isDesktop ? t('common.close') : t('artifacts.closePanelEsc')
+              }
+              aria-label={
                 isDesktop ? t('common.close') : t('artifacts.closePanelEsc')
               }
             >

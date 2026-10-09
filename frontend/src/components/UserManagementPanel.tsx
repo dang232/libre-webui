@@ -19,6 +19,7 @@ import React, { useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserManager } from '@/components/UserManager';
 import { AgentAccessSettings } from '@/components/AgentAccessSettings';
+import { StrandsAccessSettings } from '@/components/StrandsAccessSettings';
 import { DefaultThemeSettings } from '@/components/DefaultThemeSettings';
 import { ToolAccessSettings } from '@/components/ToolAccessSettings';
 import { VoiceAccessSettings } from '@/components/VoiceAccessSettings';
@@ -54,6 +55,7 @@ const renderSection = (section: SectionId) => {
           <WorkPoliciesSettings />
           <WebSearchAccessSettings />
           <AgentAccessSettings />
+          <StrandsAccessSettings />
           <ToolAccessSettings />
           <VoiceAccessSettings />
           <EmailNotificationSettings />
@@ -148,7 +150,7 @@ export const UserManagementPanel: React.FC = () => {
             onClick={() => selectSection(section.id)}
             onKeyDown={event => handleTabKeyDown(event, section.id)}
             className={cn(
-              'min-h-11 shrink-0 rounded-xl border px-3 py-2 text-sm font-medium outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-surface motion-reduce:transition-none',
+              'min-h-11 shrink-0 rounded-xl border px-3 py-2 text-sm font-medium outline-hidden transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-surface motion-reduce:transition-none',
               activeSection === section.id
                 ? 'border-line bg-nav-active text-ink'
                 : 'border-transparent text-ink-muted hover:bg-hover-solid hover:text-ink'

@@ -169,6 +169,7 @@ test('readiness fails closed while a valid older schema awaits migration', async
     DROP TABLE platform_resource_deletion_tombstones;
     ALTER TABLE skills DROP COLUMN approval_tools;
     ALTER TABLE skills DROP COLUMN approval_policy;
+    ALTER TABLE work_runs DROP COLUMN think;
     ALTER TABLE work_runs DROP COLUMN exit_state;
     ALTER TABLE work_runs DROP COLUMN changed_files;
     ALTER TABLE work_runs DROP COLUMN summary;

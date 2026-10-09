@@ -38,14 +38,22 @@
     "custom": "Personnalisé",
     "remove": "Supprimer",
     "home": "Accueil",
-    "more": "Plus"
+    "more": "Plus",
+    "provider": "Fournisseur",
+    "agent": "Agent",
+    "reasoning": "Raisonnement",
+    "skipToContent": "Aller au contenu"
   },
   "brand": {
     "name": "Alcore",
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "backendConnectionFailed": "Échec de la connexion au service backend"
+    "backendConnectionFailed": "Échec de la connexion au service backend",
+    "ollamaUnavailable": "Le service Ollama n’est pas disponible. Les modèles de plugins peuvent toujours être utilisés.",
+    "connecting": "Connexion au backend… ({{attempt}}/{{total}})",
+    "startingUp": "Démarrage…",
+    "backendUnreachableHint": "Vérifiez que le backend est en cours d'exécution, puis réessayez."
   },
   "auth": {
     "login": {
@@ -206,7 +214,9 @@
       "removed": "Clé d'accès supprimée.",
       "removeFailed": "La clé d'accès n'a pas pu être supprimée.",
       "signInButton": "Se connecter avec une clé d'accès",
-      "signInFailed": "Échec de la connexion par clé d'accès."
+      "signInFailed": "Échec de la connexion par clé d'accès.",
+      "removeConfirmTitle": "Supprimer cette clé d'accès ?",
+      "removeConfirmDescription": "« {{name}} » ne pourra plus servir à se connecter. Vous pourrez la réenregistrer plus tard."
     },
     "alcore": {
       "title": "This server uses Alcore Auth for sign-in.",
@@ -272,6 +282,12 @@
       "tryAgain": "Réessayer",
       "restart": "Recommencer la connexion",
       "support": "Besoin d’aide ? Contactez votre administrateur serveur ou consultez"
+    },
+    "password": {
+      "show": "Afficher le mot de passe",
+      "hide": "Masquer le mot de passe",
+      "showConfirmation": "Afficher la confirmation du mot de passe",
+      "hideConfirmation": "Masquer la confirmation du mot de passe"
     }
   },
   "setup": {
@@ -324,7 +340,8 @@
       "envNote": "Cette clé est également sauvegardée dans votre fichier backend/.env sous ENCRYPTION_KEY",
       "acknowledgment": "J'ai sauvegardé ma clé de chiffrement dans un endroit sécurisé et je comprends que la perdre peut entraîner une perte de données.",
       "confirmRequired": "Veuillez confirmer que vous avez sauvegardé la clé de chiffrement",
-      "continue": "Continuer vers Alcore"
+      "continue": "Continuer vers Alcore",
+      "loadFailed": "Impossible de charger la clé de chiffrement. Réessayez pour continuer."
     },
     "connectModels": {
       "title": "Connectez vos modèles",
@@ -418,7 +435,8 @@
       "toolsOn": "Outils activés — le modèle peut appeler les outils approuvés",
       "toolsOff": "Laisser le modèle appeler des outils pour ce message",
       "thinkingOn": "Réflexion activée ({{level}})",
-      "thinkingOff": "Réfléchir avant de répondre"
+      "thinkingOff": "Réfléchir avant de répondre",
+      "thinkingUpdateFailed": "Impossible de mettre à jour le réglage de réflexion"
     },
     "session": {
       "new": "Nouvelle conversation",
@@ -454,7 +472,8 @@
         "move": "Déplacer vers un dossier",
         "remove": "Retirer du dossier",
         "delete": "Supprimer le dossier",
-        "deleteConfirm": "Supprimer ce dossier ? Les discussions sont conservées."
+        "deleteConfirm": "Supprimer ce dossier ? Les discussions sont conservées.",
+        "rename": "Renommer le dossier"
       },
       "shareChat": "Partager la discussion…"
     },
@@ -472,7 +491,8 @@
       "selectBeforePrivateChat": "Sélectionnez un modèle disponible avant de démarrer une discussion privée",
       "selectBeforeSending": "Sélectionnez un modèle disponible avant d'envoyer",
       "selectBeforeRegenerating": "Sélectionnez un modèle disponible avant de régénérer",
-      "connectDescription": "Aucun modèle n'est encore connecté. Choisissez une source ci-dessous — un environnement d'exécution local, votre propre serveur ou une API cloud — et vous discuterez en moins d'une minute."
+      "connectDescription": "Aucun modèle n'est encore connecté. Choisissez une source ci-dessous — un environnement d'exécution local, votre propre serveur ou une API cloud — et vous discuterez en moins d'une minute.",
+      "pullCommand": "ollama pull llama3.2:3b"
     },
     "footer": {
       "disclaimer": "Les LLM peuvent faire des erreurs - vérifiez les informations importantes",
@@ -486,7 +506,13 @@
       "browse": "parcourir",
       "unsupportedFileType": "Type de fichier non pris en charge : {{name}}",
       "maxImagesAllowed": "Maximum de {{count}} images autorisé",
-      "imageTooLarge": "L’image {{name}} est trop volumineuse (10 Mo max.)"
+      "imageTooLarge": "L’image {{name}} est trop volumineuse (10 Mo max.)",
+      "readFailed": "Impossible de lire {{name}}",
+      "uploadAlt": "Import {{number}}",
+      "removeImage": "Retirer l'image {{number}}",
+      "addMore": "Ajouter d'autres images ({{count}}/{{max}})",
+      "uploading": "Import en cours",
+      "removeDocument": "Retirer {{name}}"
     },
     "structuredOutput": {
       "title": "Format de réponse",
@@ -537,7 +563,8 @@
       "compactionOff": "Désactivé pour cette discussion"
     },
     "message": {
-      "sources": "Sources"
+      "sources": "Sources",
+      "copyFailed": "Impossible de copier dans le presse-papiers"
     },
     "toasts": {
       "chatCreated": "Nouveau chat créé",
@@ -581,7 +608,8 @@
       "generationRateLimitedWeekly": "Weekly budget spent — new chats pause until Monday 00:00 UTC. Try again later or upgrade your plan.",
       "generationRateLimitedMonthly": "Monthly budget spent — new chats pause until the 1st of next month (UTC). Try again later or upgrade your plan.",
       "generationFailedSupport": "The reply couldn't be finished — retry, and if it keeps happening report it from Settings > About > GitHub issues.",
-      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access."
+      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access.",
+      "archiveFailed": "Impossible d'archiver cette discussion"
     },
     "documents": {
       "title": "Documents dans le contexte"
@@ -614,7 +642,25 @@
     "delegate": {
       "action": "Run as Work task"
     },
-    "sharedReadOnly": "Partagé par {{owner}} — lecture seule"
+    "sharedReadOnly": "Partagé par {{owner}} — lecture seule",
+    "branch": {
+      "variants": "{{count}} variante",
+      "variants_plural": "{{count}} variantes",
+      "selectVariant": "Sélectionner la variante {{number}}",
+      "generating": "génération en cours...",
+      "select": "sélectionner"
+    },
+    "sources": {
+      "fullContextFailed": "Impossible de mettre à jour le réglage du document complet",
+      "usedByRetrieval": "Utilisée dans les réponses",
+      "triggerLabel": "Sources ({{count}})"
+    },
+    "announce": {
+      "replyFinished": "{{name}} a répondu : {{text}}",
+      "replyFinishedNoText": "{{name}} a terminé de répondre.",
+      "codeBlock": "bloc de code",
+      "generationStopped": "Génération arrêtée"
+    }
   },
   "sidebar": {
     "navigation": {
@@ -636,10 +682,12 @@
       "prompts": "Prompts",
       "skills": "Compétences",
       "tools": "Outils",
-      "channels": "Canaux"
+      "channels": "Canaux",
+      "strands": "Strands"
     },
     "toggleSize": "Basculer la taille de la barre latérale",
-    "expandSidebar": "Agrandir la barre latérale"
+    "expandSidebar": "Agrandir la barre latérale",
+    "ariaLabel": "Barre latérale"
   },
   "user": {
     "menu": {
@@ -696,7 +744,8 @@
       "sessions": "Sessions",
       "apiKeys": "Clés API",
       "notifications": "Notifications",
-      "apiPlatform": "API Platform"
+      "apiPlatform": "API Platform",
+      "ollamaDisabled": "Ollama est désactivé par un administrateur"
     },
     "appearance": {
       "title": "Apparence",
@@ -921,7 +970,8 @@
       "modelPrice": "Price / 1M",
       "modelStatus": "Status",
       "modelFree": "Free",
-      "modelDeprecated": "Deprecated"
+      "modelDeprecated": "Deprecated",
+      "dismissError": "Ignorer l'erreur"
     },
     "generation": {
       "title": "Options de génération",
@@ -1024,7 +1074,8 @@
         "deleteFailed": "Impossible de supprimer la collection",
         "assignFailed": "Impossible de déplacer le document",
         "share": "Partager la collection",
-        "shared": "partagée"
+        "shared": "partagée",
+        "assignTo": "Collection pour {{name}}"
       },
       "library": {
         "title": "Documents importés",
@@ -1166,7 +1217,8 @@
         "title": "Discussions archivées",
         "empty": "Aucune discussion archivée",
         "unarchive": "Désarchiver"
-      }
+      },
+      "clearAllConfirm": "Voulez-vous vraiment supprimer tout l'historique des discussions ? Cette action est irréversible."
     },
     "about": {
       "title": "À propos",
@@ -1178,43 +1230,36 @@
       "features": {
         "privacy": {
           "title": "Vie privée d'abord",
-          "description": "Vos données restent sur votre appareil"
+          "description": "Self-hosted workspace — your data stays under your control"
         },
         "openSource": {
           "title": "Open Source",
-          "description": "Logiciel libre et open source"
+          "description": "Open-source software maintained by the Alcore team"
         },
         "localInference": {
           "title": "Inférence locale",
-          "description": "Exécutez des modèles IA localement avec Ollama"
+          "description": "Use local Ollama models or connect to your Alcore provider"
         }
       },
-      "openSourceBy": "Open source par {{company}}",
+      "openSourceBy": "Built by {{company}}",
       "links": {
         "title": "Liens",
-        "github": "GitHub",
-        "githubDescription": "Voir le code source et contribuer",
         "website": "Site web",
-        "websiteDescription": "Visitez notre site web",
+        "websiteDescription": "Visit the Alcore website",
         "documentation": "Documentation",
         "reportIssue": "Signaler des problèmes",
         "reportIssueDescription": "Rapports de bugs et demandes de fonctionnalités",
-        "documentationDescription": "Guides, tutoriels et référence API",
-        "forgejo": "Miroir Forgejo",
-        "forgejoDescription": "Dépôt Forgejo auto-hébergé",
-        "sponsor": "Sponsor",
-        "sponsorDescription": "Aider à financer le projet",
-        "star": "Étoile sur GitHub",
-        "starDescription": "Une étoile aide les autres à découvrir le projet"
+        "documentationDescription": "Guides and documentation for Alcore"
       },
       "version": "Version {{version}}",
       "updates": {
-        "checking": "Recherche de mises à jour…",
-        "upToDate": "Vous utilisez la dernière version",
-        "updateAvailable": "La version {{version}} est disponible",
-        "ahead": "En avance sur la dernière version publiée ({{version}})",
-        "checkFailed": "Impossible de vérifier les mises à jour",
         "viewChangelog": "Voir le journal des modifications"
+      },
+      "ollama": {
+        "title": "Statut Ollama",
+        "version": "Version",
+        "healthy": "Opérationnel",
+        "unhealthy": "Non opérationnel"
       }
     },
     "groups": {
@@ -1280,7 +1325,11 @@
       "unknownDevice": "Appareil inconnu",
       "createdAt": "Connexion",
       "lastSeenAt": "Dernière activité",
-      "expiresAt": "Expire"
+      "expiresAt": "Expire",
+      "signOutConfirmTitle": "Déconnecter cette session ?",
+      "signOutConfirmDescription": "{{device}} sera déconnecté immédiatement et devra se reconnecter.",
+      "signOutOthersConfirmTitle": "Déconnecter les autres sessions ?",
+      "signOutOthersConfirmDescription": "{{count}} autres sessions seront déconnectées immédiatement. Cette session reste connectée."
     },
     "apiKeys": {
       "title": "Clés API",
@@ -1314,7 +1363,9 @@
       "createdAt": "Créée",
       "lastUsedAt": "Dernière utilisation",
       "expiresAt": "Expire",
-      "neverExpires": "Jamais"
+      "neverExpires": "Jamais",
+      "revokeConfirmTitle": "Révoquer « {{name}} » ?",
+      "revokeConfirmDescription": "Tout ce qui utilise cette clé API cessera de fonctionner immédiatement. Cette action est irréversible."
     },
     "notifications": {
       "title": "Notifications",
@@ -1484,7 +1535,20 @@
   "models": {
     "title": "Modèles",
     "noModels": "Aucun modèle installé",
-    "noModelsFound": "Aucun modèle trouvé"
+    "noModelsFound": "Aucun modèle trouvé",
+    "subtitle": "Téléchargez, gérez et surveillez vos modèles Ollama",
+    "installed": "Modèles installés",
+    "available": "Modèles disponibles",
+    "pull": "Télécharger le modèle",
+    "pulling": "Téléchargement...",
+    "delete": "Supprimer le modèle",
+    "deleting": "Suppression...",
+    "size": "Taille",
+    "modified": "Modifié",
+    "family": "Famille",
+    "parameters": "Paramètres",
+    "quantization": "Quantification",
+    "pullFirst": "Téléchargez un modèle pour commencer"
   },
   "personas": {
     "title": "Personas",
@@ -1516,7 +1580,8 @@
     "model": "Modèle",
     "size": "Taille",
     "quality": "Qualité",
-    "created": "Créé"
+    "created": "Créé",
+    "lightboxLabel": "Aperçu de l'image"
   },
   "errors": {
     "generic": "Une erreur s'est produite",
@@ -1565,7 +1630,13 @@
   },
   "modelManager": {
     "sections": {
-      "catalog": "Catalogue de modèles"
+      "catalog": "Catalogue de modèles",
+      "pull": "Télécharger un nouveau modèle",
+      "library": "Parcourir la bibliothèque",
+      "huggingface": "HuggingFace Hub",
+      "running": "Modèles en cours d'exécution",
+      "local": "Modèles locaux",
+      "advanced": "Actions avancées"
     },
     "catalog": {
       "searchPlaceholder": "Rechercher des modèles par nom ou fournisseur...",
@@ -1588,12 +1659,159 @@
       "hide": "Masquer aux utilisateurs",
       "show": "Afficher aux utilisateurs",
       "star": "Marquer {{name}} d’une étoile",
-      "unstar": "Retirer l’étoile de {{name}}"
+      "unstar": "Retirer l’étoile de {{name}}",
+      "providerOllama": "Ollama",
+      "filterLabel": "Filtrer les modèles",
+      "displayName": "Nom d'affichage pour {{name}}"
     },
     "huggingface": {
       "checkingGguf": "Recherche des fichiers GGUF...",
       "noGgufAvailable": "Aucun fichier GGUF disponible pour Ollama",
-      "ggufFilesCount": "Fichiers GGUF ({{count}}) - Télécharger vers Ollama"
+      "ggufFilesCount": "Fichiers GGUF ({{count}}) - Télécharger vers Ollama",
+      "browseAll": "Parcourir tout sur HuggingFace",
+      "noModelsFound": "Aucun modèle trouvé",
+      "noResults": "Aucun modèle trouvé. Essayez d'ajuster votre recherche.",
+      "browseAllLink": "Voir tout",
+      "search": "Rechercher des modèles HuggingFace...",
+      "by": "par",
+      "gated": "Accès restreint",
+      "viewOnHF": "Voir sur HuggingFace",
+      "sortDownloads": "Téléchargements",
+      "sortLikes": "Likes",
+      "sortRecent": "Récent",
+      "taskTextGeneration": "Génération de texte",
+      "taskTextToSpeech": "Synthèse vocale",
+      "taskTextToImage": "Texte vers image",
+      "taskSpeechRecognition": "Reconnaissance vocale",
+      "tasks": {
+        "textGen": "Génération de texte",
+        "tts": "Synthèse vocale",
+        "image": "Texte vers image",
+        "stt": "Reconnaissance vocale"
+      },
+      "sort": {
+        "downloads": "Plus téléchargés",
+        "likes": "Plus aimés",
+        "recent": "Récemment mis à jour"
+      }
+    },
+    "title": "Modèles",
+    "loading": "Chargement des modèles...",
+    "systemStatus": {
+      "online": "Ollama en ligne",
+      "offline": "Ollama hors ligne",
+      "models": "modèle",
+      "models_plural": "modèles",
+      "running": "en cours",
+      "vram": "VRAM"
+    },
+    "pull": {
+      "placeholder": "Entrez le nom du modèle (ex: llama3.2:3b, deepseek-r1:14b)",
+      "button": "Télécharger",
+      "cancel": "Annuler",
+      "popular": "Modèles populaires :",
+      "browseAll": "Parcourir tous les modèles sur ollama.com",
+      "success": "Modèle {{name}} téléchargé avec succès",
+      "cancelled": "Téléchargement du modèle annulé",
+      "failed": "Échec du téléchargement du modèle",
+      "enterName": "Veuillez entrer un nom de modèle",
+      "restricted": "L'installation des modèles est réservée aux administrateurs sur cette instance."
+    },
+    "progress": {
+      "starting": "Initialisation...",
+      "pulling": "Téléchargement du modèle...",
+      "pullingLayer": "téléchargement",
+      "verifying": "Vérification de l'intégrité...",
+      "verifyingDigest": "vérification du digest sha256",
+      "writing": "Écriture du manifeste...",
+      "cleaning": "Nettoyage..."
+    },
+    "library": {
+      "available": "disponibles",
+      "search": "Rechercher des modèles...",
+      "noResults": "Aucun modèle correspondant à vos critères",
+      "installed": "Installé",
+      "more": "+{{count}} de plus",
+      "refresh": "Actualiser la bibliothèque"
+    },
+    "local": {
+      "noModels": "Aucun modèle installé",
+      "pullToStart": "Téléchargez un modèle ci-dessus pour commencer",
+      "installed": "installés",
+      "running": "En cours",
+      "info": "Info",
+      "copy": "Copier",
+      "delete": "Supprimer",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer le modèle \"{{name}}\" ?",
+      "deleteSuccess": "Modèle {{name}} supprimé avec succès",
+      "deleteFailed": "Échec de la suppression du modèle"
+    },
+    "advanced": {
+      "createModel": "Créer un modèle",
+      "fromModelfile": "À partir d'un Modelfile",
+      "copyModel": "Copier un modèle",
+      "duplicateExisting": "Dupliquer un existant",
+      "testEmbeddings": "Tester les embeddings",
+      "generateVectors": "Générer des vecteurs",
+      "healthCheck": "Vérification de santé",
+      "testConnection": "Tester la connexion",
+      "healthy": "Ollama est opérationnel !"
+    },
+    "modals": {
+      "details": {
+        "title": "Détails du modèle",
+        "info": "Informations sur le modèle",
+        "family": "Famille",
+        "parameters": "Paramètres",
+        "quantization": "Quantification",
+        "format": "Format",
+        "systemPrompt": "Message système",
+        "template": "Modèle",
+        "license": "Licence",
+        "modelfile": "Modelfile",
+        "noDetails": "Aucun détail disponible"
+      },
+      "copy": {
+        "title": "Copier le modèle",
+        "source": "Modèle source",
+        "selectModel": "Sélectionnez un modèle...",
+        "newName": "Nouveau nom du modèle",
+        "placeholder": "ex: mon-modèle-personnalisé",
+        "copying": "Copie en cours...",
+        "button": "Copier le modèle",
+        "success": "Modèle copié vers {{name}}",
+        "failed": "Échec de la copie du modèle",
+        "enterBoth": "Veuillez entrer les noms source et destination"
+      },
+      "create": {
+        "title": "Créer un modèle personnalisé",
+        "name": "Nom du modèle",
+        "namePlaceholder": "ex: mon-assistant",
+        "modelfile": "Modelfile",
+        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM Vous êtes un assistant utile.",
+        "see": "Voir",
+        "docs": "la documentation Modelfile",
+        "docsLink": "pour la référence syntaxique",
+        "creating": "Création...",
+        "button": "Créer le modèle",
+        "success": "Modèle {{name}} créé avec succès",
+        "failed": "Échec de la création du modèle",
+        "enterBoth": "Veuillez entrer le nom du modèle et le contenu du Modelfile"
+      },
+      "embeddings": {
+        "title": "Tester les embeddings",
+        "model": "Modèle d'embedding",
+        "selectModel": "Sélectionnez un modèle...",
+        "recommended": "Recommandés : nomic-embed-text, mxbai-embed-large",
+        "input": "Texte d'entrée",
+        "placeholder": "Entrez le texte pour générer les embeddings...",
+        "generating": "Génération...",
+        "button": "Générer les embeddings",
+        "result": "Résultat ({{count}} dimensions)",
+        "success": "Vecteur d'embedding de {{count}} dimensions généré",
+        "failed": "Échec de la génération des embeddings",
+        "enterBoth": "Veuillez sélectionner un modèle et entrer du texte"
+      }
     }
   },
   "personaManager": {
@@ -1615,7 +1833,10 @@
     "deleteConfirm": "Êtes-vous sûr de vouloir supprimer \"{{name}}\" ?",
     "deleteSuccess": "Persona \"{{name}}\" supprimé avec succès",
     "downloadSuccess": "Persona \"{{name}}\" téléchargé avec succès",
-    "failed": "Échec de {{action}} le persona"
+    "failed": "Échec de {{action}} le persona",
+    "loadFailed": "Vos personas n'ont pas pu être chargées.",
+    "deleteFailed": "Échec de la suppression de la persona",
+    "downloadFailed": "Échec du téléchargement de la persona"
   },
   "personaForm": {
     "title": {
@@ -1747,7 +1968,8 @@
       "promptHint": "Un prompt pour amorcer chaque nouvelle conversation avec cette persona.",
       "noPrompt": "Aucun prompt",
       "version": "Révision des liaisons {{version}}"
-    }
+    },
+    "sections": "Sections de la persona"
   },
   "personaCard": {
     "enhanced": "Amélioré",
@@ -1764,7 +1986,16 @@
     "backupSuccess": "Sauvegarde du persona téléchargée avec succès",
     "dnaSuccess": "ADN du persona exporté avec succès",
     "failed": "Échec de {{action}}",
-    "shareTooltip": "Partager cette persona"
+    "shareTooltip": "Partager cette persona",
+    "wipeFailed": "Échec de l'effacement des souvenirs",
+    "backupFailed": "Échec de la sauvegarde de la persona",
+    "exportDnaFailed": "Échec de l'exportation de l'ADN de la persona",
+    "favorite": "Favori",
+    "memoryStatus": {
+      "active": "Actifs",
+      "wiped": "Effacés",
+      "backed_up": "Sauvegardés"
+    }
   },
   "userManager": {
     "title": "Gestion des utilisateurs",
@@ -1793,7 +2024,10 @@
     "noUsersMatching": "Aucun utilisateur correspondant à votre recherche",
     "columns": {
       "role": "Rôle",
-      "created": "Créé le"
+      "created": "Créé le",
+      "user": "Utilisateur",
+      "email": "Email",
+      "actions": "Actions"
     },
     "roles": {
       "admin": "Admin",
@@ -1832,7 +2066,10 @@
       "createSuccess": "Utilisateur créé avec succès",
       "updateSuccess": "Utilisateur mis à jour avec succès",
       "createFailed": "Échec de la création de l'utilisateur",
-      "updateFailed": "Échec de la mise à jour de l'utilisateur"
+      "updateFailed": "Échec de la mise à jour de l'utilisateur",
+      "usernamePlaceholder": "Entrez le nom d'utilisateur",
+      "emailPlaceholder": "Entrez l'email (optionnel)",
+      "passwordPlaceholder": "Entrez le mot de passe"
     },
     "workAccess": {
       "title": "Accès à Work",
@@ -1925,7 +2162,28 @@
       "memberOf": "Groupes",
       "featuresLabel": "Accès aux fonctionnalités",
       "grantsLabel": "Autorisations",
-      "grantVia": "via"
+      "grantVia": "via",
+      "deleteConfirmTitle": "Supprimer le groupe « {{name}} » ?",
+      "deleteConfirmDescription": "Les membres perdent les accès qu'ils n'avaient que via ce groupe. Les comptes eux-mêmes ne sont pas supprimés.",
+      "statuses": {
+        "active": "Actif",
+        "pending": "En attente d'approbation"
+      },
+      "features": {
+        "work": "Travail",
+        "model-download": "Téléchargement de modèles",
+        "web-search": "Recherche web",
+        "strands": "Moteur Strands",
+        "tools": "Outils",
+        "stt": "Reconnaissance vocale",
+        "tts": "Synthèse vocale",
+        "voice-mode": "Mode vocal",
+        "voice-cloning": "Clonage vocal"
+      },
+      "grantViaKinds": {
+        "user": "accès direct",
+        "group": "groupe"
+      }
     },
     "audit": {
       "title": "Journal d'audit de sécurité",
@@ -2012,13 +2270,60 @@
       "save": "Enregistrer",
       "saving": "Enregistrement…",
       "saved": "Paramètres de messagerie enregistrés.",
-      "saveFailed": "Les paramètres de messagerie n'ont pas pu être enregistrés."
+      "saveFailed": "Les paramètres de messagerie n'ont pas pu être enregistrés.",
+      "security": {
+        "starttls": "STARTTLS (port 587)",
+        "tls": "TLS (port 465)",
+        "none": "Aucune (réseau de confiance uniquement)"
+      },
+      "templateTitle": "Apparence des e-mails",
+      "templateHint": "Choisissez un modèle clair ou sombre pour les résumés d’actualités et les e-mails de notification.",
+      "themeLabel": "Modèle d’e-mail",
+      "themeLight": "Clair",
+      "themeDark": "Sombre",
+      "previewTitle": "Aperçu du modèle",
+      "previewLoading": "Chargement de l’aperçu…",
+      "previewFailed": "Impossible de charger l’aperçu de l’e-mail.",
+      "previewHeading": "Votre résumé d’actualités",
+      "previewIntro": "Aperçu de votre e-mail d’actualités quotidien.",
+      "previewMarkdown": "## À la une aujourd’hui\n\n- Actualités sur la technologie et la recherche\n- Nouvelles de vos sources sélectionnées\n\n**En résumé :** vos actualités quotidiennes sont prêtes à être lues.",
+      "previewLinkLabel": "Ouvrir le résultat"
+    },
+    "modelAccess": {
+      "title": "Téléchargement de modèles",
+      "description": "Autoriser tous les utilisateurs actifs à télécharger des modèles depuis Ollama et le navigateur Hugging Face. Les administrateurs peuvent toujours télécharger des modèles.",
+      "saved": "Accès au téléchargement de modèles mis à jour",
+      "saveFailed": "Impossible de mettre à jour l'accès au téléchargement de modèles"
+    },
+    "ollamaProvider": {
+      "title": "Fournisseur Ollama",
+      "description": "Lorsqu'il est désactivé, l'application arrête complètement de rechercher Ollama — aucune vérification de santé, aucun avertissement. L'endpoint peut pointer vers n'importe quelle passerelle compatible Ollama.",
+      "saved": "Paramètres du fournisseur Ollama enregistrés",
+      "saveFailed": "Impossible d'enregistrer les paramètres du fournisseur Ollama",
+      "baseUrlLabel": "URL de l'endpoint Ollama"
+    },
+    "strandsAccess": {
+      "title": "Moteur Strands",
+      "description": "Choisissez qui peut utiliser l'agent Strands intégré. Il peut lire et modifier des fichiers dans l'espace de travail privé de chaque session, mais ne peut pas exécuter de commandes shell.",
+      "saved": "Accès à Strands mis à jour",
+      "saveFailed": "Impossible de mettre à jour l'accès à Strands",
+      "lockedByEnv": "Fixé par la variable d'environnement LIBRE_STRANDS_ACCESS.",
+      "modes": {
+        "disabled": "Désactivé",
+        "admins": "Administrateurs",
+        "all-users": "Tous les utilisateurs"
+      }
+    },
+    "agentCliAccess": {
+      "title": "Modèles d’agents CLI",
+      "description": "Les administrateurs peuvent utiliser Pi, OpenCode, Codex et Claude Code installés comme modèles de chat. Ils s’exécutent sur l’hôte, hors des environnements isolés de Work.",
+      "lockedByEnv": "Fixé par la variable d'environnement AGENT_CLI_MODELS_ENABLED."
     }
   },
   "usageAnalytics": {
     "eyebrow": "Administration",
     "title": "Utilisation des fournisseurs",
-    "description": "Suivez les appels API sortants et la consommation des modèles sur les plugins activés de cette instance.",
+    "description": "Suivez les requêtes aux modèles et leur utilisation chez les fournisseurs et agents de cette instance.",
     "days": "{{count}} jours",
     "refresh": "Actualiser l'utilisation",
     "loadFailed": "L'utilisation des fournisseurs n'a pas pu être chargée.",
@@ -2065,7 +2370,7 @@
       "notCharted": "Sélectionnez ce modèle pour le charger dans le graphique"
     },
     "providers": {
-      "title": "Trafic des plugins activés",
+      "title": "Trafic des fournisseurs et agents",
       "description": "Volume de requêtes, fiabilité et temps de réponse par fournisseur.",
       "share": "{{percent}} % des appels",
       "failures": "{{count}} en échec ou annulés",
@@ -2083,7 +2388,7 @@
     },
     "empty": {
       "title": "Aucun appel fournisseur pour le moment",
-      "description": "Les appels apparaîtront ici une fois qu'un plugin activé aura traité des requêtes de chat, Work, d'embedding, d'image, de parole, de son ou de vidéo."
+      "description": "Les requêtes apparaissent ici après le traitement des discussions, tâches Work, embeddings, images, paroles, sons ou vidéos par un fournisseur ou un agent."
     },
     "privacyNote": "L'utilisation est mesurée sur le serveur à la limite du plugin sortant. Alcore stocke le fournisseur, le modèle, le minutage, le statut et les compteurs signalés — jamais les prompts, les réponses, les points de terminaison, les identifiants ou les corps d'erreur du fournisseur. Les totaux de jetons incluent uniquement les appels où le fournisseur a renvoyé des métadonnées d'utilisation.",
     "heatmap": {
@@ -2095,6 +2400,14 @@
       "less": "Moins",
       "more": "Plus",
       "yearTotal": "{{formatted}} appels sur la dernière année"
+    },
+    "agents": {
+      "title": "Agents",
+      "description": "Appels aux agents CLI et au moteur Strands.",
+      "noCalls": "Aucun appel enregistré sur cette période",
+      "unreported": "Jetons non signalés",
+      "topModels": "Modèles les plus utilisés",
+      "legacy": "Ce serveur ne fournit pas de répartition complète des agents. Les enregistrements disponibles sont affichés ci-dessous."
     }
   },
   "systemPage": {
@@ -2309,7 +2622,11 @@
       "harmful": "Nuisible",
       "formatting": "Mise en forme"
     },
-    "feedbackComment": "Ajouter un commentaire…"
+    "feedbackComment": "Ajouter un commentaire…",
+    "user": "Utilisateur",
+    "feedbackFailed": "Impossible d'enregistrer votre avis",
+    "openImage": "Ouvrir l'image {{number}}",
+    "uploadedImageAlt": "Image importée {{number}}"
   },
   "imageGallery": {
     "title": "Galerie d'images",
@@ -2321,7 +2638,8 @@
     "deleteSuccess": "Image supprimée",
     "deleteFailed": "Échec de la suppression de l'image",
     "loadMore": "Charger plus ({{current}} sur {{total}})",
-    "loadFailed": "Échec du chargement de la galerie"
+    "loadFailed": "Échec du chargement de la galerie",
+    "downloadFailed": "Échec du téléchargement de l'image"
   },
   "imageGeneration": {
     "title": "Générer une image",
@@ -2397,7 +2715,10 @@
       "image": "Images",
       "video": "Vidéos",
       "audio": "Audio"
-    }
+    },
+    "deleteConfirmTitle": "Supprimer cet élément ?",
+    "deleteConfirmDescription": "Le média généré sera définitivement supprimé.",
+    "previewFailed": "Aperçu indisponible"
   },
   "errorBoundary": {
     "title": "Une erreur s'est produite",
@@ -2475,7 +2796,8 @@
     "previousVersion": "Version précédente",
     "nextVersion": "Version suivante",
     "print": "Print",
-    "exportCsv": "Export CSV"
+    "exportCsv": "Export CSV",
+    "resizePanel": "Redimensionner le panneau"
   },
   "personaImportExport": {
     "title": "Importer et exporter des personas",
@@ -2513,7 +2835,10 @@
     "generation": "Génération :",
     "modelLoad": "Chargement du modèle :",
     "totalTime": "Temps total :",
-    "generatedAt": "Généré à :"
+    "generatedAt": "Généré à :",
+    "notAvailable": "N/D",
+    "tokenCount": "{{tokens}} jetons",
+    "tokensPerSecond": "{{value}} jetons/s"
   },
   "userMenu": {
     "loggedOut": "Déconnexion réussie",
@@ -2572,7 +2897,9 @@
       "httpWarning": "HTTP ne chiffre pas les identifiants ni le trafic. Ne l'utilisez que sur un réseau de confiance.",
       "invalidBaseUrl": "Les URL de base ne peuvent pas contenir de chaîne de requête ni de fragment.",
       "invalidApiPath": "Doit commencer par / et ne contenir ni URL, ni requête, ni fragment, ni segment ..",
-      "tooLong": "La valeur est trop longue"
+      "tooLong": "La valeur est trop longue",
+      "resetConfirmTitle": "Rétablir les valeurs par défaut ?",
+      "resetConfirmDescription": "Cela efface toutes les valeurs enregistrées pour {{name}}, y compris les clés API et autres identifiants. Cette action est irréversible."
     }
   },
   "huggingface": {
@@ -2592,7 +2919,10 @@
   },
   "demoMode": {
     "title": "Mode démo",
-    "github": "GitHub"
+    "github": "GitHub",
+    "defaultMessage": "Ceci est une version de démonstration à des fins de présentation uniquement. Le backend Ollama n'est pas connecté.",
+    "viewOnGithub": "Voir sur GitHub",
+    "dismiss": "Masquer"
   },
   "libreClaw": {
     "title": "Agents",
@@ -2755,8 +3085,8 @@
       "status": "État : {{status}}"
     },
     "landing": {
-      "title": "Démarrer une nouvelle tâche de travail",
-      "description": "Attribuez à un modèle local ou provenant d'un fournisseur configuré un espace de travail isolé et persistant. Il peut inspecter des fichiers, exécuter des outils et reprendre là où il s'était arrêté à votre retour.",
+      "title": "Sur quoi souhaitez-vous travailler ?",
+      "description": "Décrivez une tâche. Votre modèle dispose de son propre espace de travail.",
       "isolated": "Isolé",
       "isolatedBody": "Chaque tâche dispose de son propre conteneur et de ses fichiers.",
       "durable": "Persistant",
@@ -2785,7 +3115,11 @@
         "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
         "attachTooMany": "Only {{max}} files can be attached at once.",
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
-      }
+      },
+      "engine": "Moteur",
+      "libreModels": "Modèles Libre WebUI",
+      "strandsDisabled": "Le moteur Strands n'est pas disponible pour votre compte.",
+      "modelLabel": "Modèle"
     },
     "conversation": {
       "ready": "Espace de travail prêt",
@@ -2825,8 +3159,18 @@
         "checksPending": "Vérifications en attente",
         "stallNudges": "Rappels de blocage",
         "ambiguityNudges": "Rappels de réancrage",
-        "stoppedBy": "Arrêté par"
-      }
+        "stoppedBy": "Arrêté par",
+        "reasons": {
+          "round": "limite de tours",
+          "toolCall": "limite d'appels d'outils",
+          "approvalTimeout": "délai d'approbation dépassé",
+          "computerStall": "ordinateur bloqué"
+        }
+      },
+      "skillTraceSavedWorked": "Noté : a fonctionné",
+      "skillTraceSavedFailed": "Noté : a échoué",
+      "connectionClosed": "La connexion en direct à Work a été fermée.",
+      "reconnectingBackground": "Les mises à jour en direct se reconnectent en arrière-plan."
     },
     "runtime": {
       "unavailable": "Environnement d'exécution indisponible",
@@ -2834,7 +3178,7 @@
       "readyOllama": "Docker prêt",
       "readyPlugin": "Docker + plugin prêts",
       "readyHybrid": "Docker + modèles prêts",
-      "reason": "Docker et un fournisseur de modèles disponible via Ollama ou une extension sont requis."
+      "reason": "Un environnement Work et un fournisseur de modèles disponible sont nécessaires."
     },
     "workspace": {
       "label": "Vues de l'espace de travail",
@@ -2869,7 +3213,11 @@
       "changes": "Modifications",
       "changesSince": "Ce qui a changé depuis le dernier tour",
       "diffLabel": "Modifications depuis le dernier tour : {{path}}",
-      "diffFolded": "{{count}} lignes inchangées"
+      "diffFolded": "{{count}} lignes inchangées",
+      "diffAdded": "Ajouté",
+      "diffRemoved": "Supprimé",
+      "unsavedChanges": "modifications non enregistrées",
+      "editingLocked": "La modification sera disponible à la fin du tour."
     },
     "activity": {
       "empty": "Les commandes, les opérations sur les fichiers et les résultats des outils apparaîtront ici.",
@@ -2880,7 +3228,9 @@
         "toolCall": "Appel d'outil",
         "toolResult": "Résultat d'outil",
         "error": "Erreur"
-      }
+      },
+      "arguments": "Arguments de l'outil",
+      "output": "Sortie de l'outil"
     },
     "preview": {
       "command": "Commande de démarrage facultative",
@@ -2909,7 +3259,8 @@
       "saveFailed": "Impossible d'enregistrer ce fichier.",
       "saved": "Fichier enregistré.",
       "previewFailed": "Impossible de démarrer l'aperçu.",
-      "previewStopFailed": "Impossible d'arrêter l'aperçu."
+      "previewStopFailed": "Impossible d'arrêter l'aperçu.",
+      "sendFailed": "Le message n'a pas pu être envoyé."
     },
     "terminal": {
       "connecting": "Ouverture d’un shell dans le bac à sable…",
@@ -2961,7 +3312,18 @@
       "noFilterMatches": "Aucun fichier modifié ne correspond à ce filtre.",
       "allChanges": "Tous les changements",
       "diffTruncated": "Ce diff est tronqué.",
-      "binaryFile": "Fichier binaire, pas de diff texte."
+      "binaryFile": "Fichier binaire, pas de diff texte.",
+      "statusLabels": {
+        "modified": "Modifié",
+        "added": "Ajouté",
+        "deleted": "Supprimé",
+        "renamed": "Renommé",
+        "copied": "Copié",
+        "typeChanged": "Type modifié",
+        "untracked": "Non suivi"
+      },
+      "stagedState": "indexé",
+      "aheadBehind": "{{ahead}} en avance, {{behind}} en retard"
     },
     "hostWorkspace": {
       "hint": "Laissez vide pour un espace isolé, ou pointez la tâche vers un dossier de cette machine.",
@@ -2988,7 +3350,8 @@
       "unmute": "Activer le son",
       "mute": "Couper le son",
       "finished": "Cette tâche est terminée. Rouvrez-la pour retrouver son écran.",
-      "reopenOpen": "Rouvrir la tâche et ouvrir l'écran"
+      "reopenOpen": "Rouvrir la tâche et ouvrir l'écran",
+      "teachSaveFailed": "Impossible d'enregistrer cette démonstration."
     },
     "computerSetup": {
       "title": "Work Computer",
@@ -3004,7 +3367,7 @@
       "label": "Recruter comme agent (facultatif)",
       "none": "Aucune persona (tâche ponctuelle)",
       "hint": "Cette tâche devient un agent nommé : elle conserve la persona, reste épinglée dans la barre latérale et affiche une ligne d'état après chaque exécution.",
-      "description": "Choisissez une persona pour transformer cette tâche en agent permanent avec sa propre identité."
+      "description": "Choisissez une persona pour conserver cette tâche comme agent nommé."
     },
     "agent": {
       "openScreen": "Ouvrir la vue plein écran",
@@ -3025,7 +3388,11 @@
       "approvalsToggleFailed": "Impossible de mettre à jour les approbations.",
       "approvalRuleLine": "Toujours autorisé",
       "approvalRuleDelete": "Supprimer la règle",
-      "approvalRuleDeleteFailed": "Impossible de supprimer la règle."
+      "approvalRuleDeleteFailed": "Impossible de supprimer la règle.",
+      "routinesLoadFailed": "Impossible de charger les routines.",
+      "skillsLoadFailed": "Impossible de charger les compétences apprises.",
+      "approvalsLoadFailed": "Impossible de charger les réglages d'approbation.",
+      "routinePaused": "En pause"
     },
     "approval": {
       "title": "Approbation requise",
@@ -3033,7 +3400,16 @@
       "allowOnce": "Autoriser une fois",
       "allowAlways": "Toujours autoriser",
       "deny": "Refuser",
-      "failed": "Impossible d'envoyer la décision."
+      "failed": "Impossible d'envoyer la décision.",
+      "details": "Détails de l'action",
+      "fields": {
+        "command": "Commande",
+        "path": "Chemin",
+        "from": "De",
+        "to": "Vers",
+        "actions": "Actions",
+        "recursive": "Récursif"
+      }
     },
     "idleStopHint": "S'arrête après {{minutes}} minutes d'inactivité.",
     "runs": {
@@ -3045,7 +3421,8 @@
         "needsInput": "Saisie requise",
         "failed": "Échoué",
         "cancelled": "Annulé"
-      }
+      },
+      "loadFailed": "Impossible de charger l'historique des exécutions."
     },
     "recovery": {
       "pending": "Work confirme {{pending}} nettoyage(s) de bac à sable avant d'accepter de nouvelles opérations.",
@@ -3057,6 +3434,17 @@
       "retrySucceeded": "{{cleared}} nettoyage(s) en attente résolu(s) sur {{attempted}}.",
       "retryPending": "Nouvelle tentative en cours pour {{attempted}} nettoyages en attente.",
       "retryFailed": "Impossible de relancer les nettoyages en attente."
+    },
+    "computer": {
+      "setupFailed": "Le Work Computer n'a pas pu être configuré."
+    },
+    "announce": {
+      "completed": "{{title}} : terminé.",
+      "needsInput": "{{title}} a besoin de votre saisie ou de votre approbation.",
+      "failed": "{{title}} : échec.",
+      "cancelled": "{{title}} : arrêté.",
+      "approvalNeeded": "{{title}} a besoin de votre approbation pour exécuter {{tool}}.",
+      "untitledTask": "Cette tâche"
     }
   },
   "personaBackground": {
@@ -3088,7 +3476,21 @@
     "reselectProvider": "resélectionnez un fournisseur pour épingler ce modèle",
     "unavailable": "indisponible",
     "unavailableSelections": "Sélections indisponibles",
-    "agentModels": "Agents"
+    "agentModels": "Agents",
+    "searchOllama": "Rechercher dans la bibliothèque Ollama...",
+    "searchHuggingFace": "Rechercher sur HuggingFace...",
+    "searchModels": "Rechercher des modèles...",
+    "ollamaModels": "Modèles Ollama",
+    "installed": "Installé",
+    "use": "Utiliser",
+    "pull": "Télécharger",
+    "pullRestricted": "L'installation des modèles est réservée aux administrateurs sur cette instance.",
+    "adminOnlyPull": "Admins uniquement",
+    "showAll": "Tout afficher ({{total}})",
+    "sources": "Sources de modèles",
+    "defaultModel": "Modèle par défaut",
+    "contextSize": "contexte de {{size}}",
+    "via": "via {{provider}}"
   },
   "whatsNew": {
     "title": "Nouveautés",
@@ -3145,7 +3547,16 @@
     "unpin": "Désépingler la note",
     "pinned": "Épinglée",
     "export": "Télécharger en Markdown",
-    "sharedWithYou": "Partagée avec vous"
+    "sharedWithYou": "Partagée avec vous",
+    "titleLabel": "Titre de la note",
+    "loadFailed": "Impossible de charger ce contenu. Réessayez.",
+    "restoreConfirmTitle": "Restaurer cette version ?",
+    "restoreConfirmDescription": "Le texte de la note sera remplacé par cette version antérieure.",
+    "deleteAttachmentConfirmTitle": "Supprimer {{name}} ?",
+    "deleteAttachmentConfirmDescription": "La pièce jointe sera définitivement supprimée de cette note.",
+    "attachmentDeleteFailed": "Impossible de supprimer la pièce jointe",
+    "revokeFailed": "Impossible de révoquer l'accès",
+    "sharePermissionLabel": "Autorisation"
   },
   "calendar": {
     "title": "Calendrier",
@@ -3190,7 +3601,22 @@
     "importFailed": "Le fichier n'a pas pu être importé",
     "importResult": "{{total}} événements importés",
     "importIcs": "Importer",
-    "exportIcs": "Exporter"
+    "exportIcs": "Exporter",
+    "chipStatus": {
+      "automation": "Automatisation planifiée",
+      "runSucceeded": "Exécution de l'automatisation réussie",
+      "runFailed": "Exécution de l'automatisation échouée"
+    },
+    "newEventOn": "Nouvel événement le {{date}}",
+    "showDay": "Afficher tous les événements du {{date}}",
+    "deleteEventConfirmTitle": "Supprimer « {{title}} » ?",
+    "deleteEventConfirmDescription": "Cet événement sera définitivement supprimé.",
+    "deleteRecurringEventConfirmDescription": "Cet événement récurrent et toutes ses occurrences seront définitivement supprimés.",
+    "shareCalendarNamed": "Partager le calendrier {{name}}",
+    "deleteCalendarNamed": "Supprimer le calendrier {{name}}",
+    "deleteCalendarConfirmTitle": "Supprimer le calendrier « {{name}} » ?",
+    "deleteCalendarConfirmDescription": "Le calendrier et ses événements seront définitivement supprimés.",
+    "calendarDeleteFailed": "Le calendrier n'a pas pu être supprimé"
   },
   "automations": {
     "title": "Automatisations",
@@ -3317,13 +3743,17 @@
         "work-approval": "un agent attend votre approbation",
         "system": "une notification système arrive"
       }
-    }
+    },
+    "deleteConfirmTitle": "Supprimer « {{name}} » ?",
+    "deleteConfirmDescription": "L'automatisation et sa planification seront définitivement supprimées. Les exécutions passées restent dans l'historique."
   },
   "home": {
     "active": "actif",
     "continue": "Continuer",
     "start": "Commencer",
-    "explore": "Explorer"
+    "explore": "Explorer",
+    "greeting": "{{greeting}}.",
+    "greetingWithName": "{{greeting}}, {{name}}."
   },
   "palette": {
     "empty": "Aucun résultat.",
@@ -3336,7 +3766,14 @@
     "work": "Travail",
     "messages": "Messages",
     "notes": "Notes",
-    "documents": "Documents"
+    "documents": "Documents",
+    "searching": "Recherche…",
+    "searchFailed": "La recherche dans l'espace de travail a échoué. Seuls les discussions et actions correspondantes sont affichées.",
+    "results": "Résultats",
+    "escKey": "échap",
+    "hintNavigate": "Naviguer",
+    "hintOpen": "Ouvrir",
+    "hintClose": "Fermer"
   },
   "tabs": {
     "actions": "Actions de l'onglet",
@@ -3540,7 +3977,8 @@
       "button": "Depuis un dossier",
       "missingSkillMd": "Le dossier doit contenir un fichier SKILL.md",
       "done": "Compétence importée avec {{count}} fichiers inclus"
-    }
+    },
+    "toggleLabel": "Activer la compétence {{name}}"
   },
   "toolsPage": {
     "title": "Outils",
@@ -3701,7 +4139,14 @@
     "added": "Partagé avec {{name}}",
     "failed": "Le partage a échoué",
     "userNotFound": "Aucun utilisateur avec ce nom",
-    "groupNotFound": "Aucun groupe avec ce nom"
+    "groupNotFound": "Aucun groupe avec ce nom",
+    "principalKind": "Partager avec un utilisateur ou un groupe",
+    "principalName": "Nom d'utilisateur ou de groupe",
+    "permission": "Autorisation",
+    "sharing": "Partage",
+    "loading": "Chargement des partages",
+    "loadFailed": "Impossible de charger les partages",
+    "revokeFailed": "Impossible de révoquer l'accès"
   },
   "channels": {
     "title": "Canaux",
@@ -3760,13 +4205,44 @@
     "toolCalls": {
       "summary": "Outils utilisés ({{total}})",
       "deniedHint": "Les outils qui modifient des données sont refusés dans les canaux. Exécutez-les depuis une conversation."
-    }
+    },
+    "confirmEdit": "Enregistrer la modification",
+    "cancelEdit": "Annuler la modification",
+    "reactWith": "Réagir avec {{emoji}}",
+    "deleteMessageConfirmTitle": "Supprimer ce message ?",
+    "deleteMessageConfirmDescription": "Le message sera supprimé pour tous les membres de ce canal.",
+    "unreadCount": "{{total}} non lus",
+    "send": "Envoyer le message",
+    "invite": "Inviter un membre",
+    "closeThread": "Fermer le fil",
+    "removeAttachment": "Retirer la pièce jointe",
+    "loadFailed": "Impossible de charger ce contenu. Réessayez.",
+    "editFailed": "Le message n'a pas pu être modifié",
+    "deleteMessageFailed": "Le message n'a pas pu être supprimé",
+    "pinFailed": "L'épingle n'a pas pu être modifiée",
+    "reactFailed": "La réaction n'a pas pu être enregistrée",
+    "downloadFailed": "Le fichier n'a pas pu être téléchargé",
+    "removeMemberConfirm": "Retirer {{name}} de ce canal ?",
+    "removeMemberConfirmDescription": "Cette personne perdra l'accès au canal et à ses messages.",
+    "removeMemberNamed": "Retirer {{name}} du canal",
+    "removeMemberFailed": "Le membre n'a pas pu être retiré",
+    "leaveConfirm": "Quitter {{name}} ?",
+    "leaveConfirmDescription": "Vous devrez être invité à nouveau pour rejoindre un canal privé.",
+    "leaveFailed": "Vous n'avez pas pu quitter le canal",
+    "joinFailed": "Le canal n'a pas pu être rejoint",
+    "deleteConfirm": "Supprimer {{name}} ?",
+    "deleteConfirmDescription": "Le canal et tous ses messages seront définitivement supprimés pour tous les membres.",
+    "deleteFailed": "Le canal n'a pas pu être supprimé",
+    "saveFailed": "Le canal n'a pas pu être enregistré"
   },
   "notifications": {
     "title": "Notifications",
     "empty": "Vous êtes à jour.",
     "markAllRead": "Tout marquer comme lu",
-    "markRead": "Marquer comme lu"
+    "markRead": "Marquer comme lu",
+    "titleWithUnread": "Notifications ({{unread}} non lues)",
+    "unread": "Non lues",
+    "loadFailed": "Impossible de charger les notifications."
   },
   "voiceMode": {
     "title": "Mode vocal",
@@ -3901,7 +4377,12 @@
       "failed": "Échouée",
       "cancelled": "Annulée"
     },
-    "noFeedback": "Aucun retour — évaluez des réponses pour constituer votre jeu de données."
+    "noFeedback": "Aucun retour — évaluez des réponses pour constituer votre jeu de données.",
+    "deleteSetConfirmTitle": "Supprimer « {{name}} » ?",
+    "deleteSetConfirmDescription": "Le jeu d'évaluation et ses prompts seront définitivement supprimés.",
+    "deleteSetFailed": "Le jeu d'évaluation n'a pas pu être supprimé",
+    "runError": "Erreur : {{detail}}",
+    "cancelFailed": "L'exécution n'a pas pu être annulée"
   },
   "passwordStrength": {
     "levels": {
@@ -3915,6 +4396,14 @@
       "hasCase": "Majuscules et minuscules",
       "hasNumber": "Au moins un chiffre",
       "tooLong": "Au plus 72 octets"
+    },
+    "requirements": "Utilisez au moins 12 caractères et au plus 72 octets UTF-8, avec une majuscule, une minuscule et un chiffre.",
+    "errors": {
+      "minLength": "Le mot de passe doit contenir au moins 12 caractères.",
+      "tooLong": "Le mot de passe ne doit pas dépasser 72 octets UTF-8.",
+      "uppercase": "Le mot de passe doit contenir une majuscule.",
+      "lowercase": "Le mot de passe doit contenir une minuscule.",
+      "number": "Le mot de passe doit contenir un chiffre."
     }
   },
   "connectModels": {
@@ -3933,7 +4422,8 @@
       "enable": "Activer le fournisseur",
       "enabling": "Activation…",
       "enabled": "{{name}} connecté — ses modèles sont désormais disponibles",
-      "enableFailed": "Impossible d'activer le fournisseur"
+      "enableFailed": "Impossible d'activer le fournisseur",
+      "urlLabel": "URL du serveur"
     },
     "cloud": {
       "title": "API cloud",
@@ -3942,7 +4432,70 @@
       "connect": "Connecter",
       "connecting": "Connexion…",
       "connected": "{{name}} connecté — ses modèles sont désormais disponibles",
-      "saveFailed": "Impossible d'enregistrer la clé API"
+      "saveFailed": "Impossible d'enregistrer la clé API",
+      "keyLabel": "Clé API {{name}}"
+    },
+    "ollama": {
+      "status": {
+        "checking": "Vérification de la disponibilité…",
+        "healthy": "En cours d'exécution et prêt pour les modèles locaux",
+        "offline": "Non détecté sur cette machine",
+        "disabled": "Désactivé — aucune vérification ne sera effectuée"
+      },
+      "recheck": "Vérifier à nouveau",
+      "enable": "Activer",
+      "disable": "Arrêter de rechercher Ollama",
+      "enabledToast": "Fournisseur Ollama activé",
+      "disabledToast": "Vérifications Ollama désactivées — vous pouvez les réactiver dans les Paramètres",
+      "settingsFailed": "Impossible de mettre à jour les paramètres Ollama",
+      "offlineHint": "Installez Ollama depuis ollama.com et il sera détecté automatiquement — ou utilisez plutôt l'une des options ci-dessous. Si vous ne prévoyez pas d'utiliser Ollama, vous pouvez désactiver ses vérifications.",
+      "healthyHint": "Ollama est connecté. Téléchargez un modèle depuis Modèles et vous serez prêt à discuter."
     }
+  },
+  "modelDownload": {
+    "success": "{{name}} téléchargé",
+    "failed": "Échec du téléchargement : {{error}}",
+    "startFailed": "Échec du démarrage du téléchargement",
+    "cancelled": "Téléchargement annulé"
+  },
+  "strands": {
+    "title": "Strands",
+    "subtitle": "Moteur d'agents intégré, sur vos modèles Libre WebUI.",
+    "subtitleVersion": "Moteur d'agents intégré, harness {{version}}.",
+    "newSession": "Nouvelle session",
+    "sessions": "Sessions",
+    "noSessions": "Aucune session. Créez-en une pour commencer.",
+    "empty": "Demandez à l'agent de lire ou de modifier des fichiers dans son espace de travail.",
+    "placeholder": "Demandez au moteur de faire quelque chose…",
+    "model": "Modèle",
+    "defaultModel": "Modèle par défaut",
+    "send": "Envoyer",
+    "stop": "Arrêter",
+    "reasoning": "Raisonnement",
+    "tool": {
+      "running": "En cours",
+      "done": "Terminé",
+      "failed": "Échec"
+    },
+    "cancelled": "Annulé",
+    "turnLimit": "Arrêté à la limite de tours.",
+    "messageCount": "Messages : {{count}}",
+    "deleteSession": "Supprimer la session",
+    "deleteConfirm": "Supprimer « {{title}} » et son historique ?",
+    "loadFailed": "Impossible de charger Strands.",
+    "createFailed": "Impossible de créer une session.",
+    "deleteFailed": "Impossible de supprimer la session.",
+    "saveFailed": "Impossible d'enregistrer la session.",
+    "turnFailed": "Le moteur n'a pas pu terminer le tour"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "Cette page n'existe pas ou a été déplacée."
+  },
+  "themeToggle": {
+    "switchToLight": "Passer en mode clair",
+    "switchToDark": "Passer en mode sombre",
+    "switchToAmoled": "Passer en mode noir pur",
+    "switchToCelestial": "Passer en mode céleste"
   }
 }

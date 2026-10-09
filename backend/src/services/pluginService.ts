@@ -15,6 +15,11 @@
  * limitations under the License.
  */
 
+import {
+  fetchPluginChat,
+  pluginChatProtocol,
+  requestPluginChat,
+} from '../utils/bedrockMantle.js';
 import fs from 'fs';
 import path from 'path';
 import { createHash } from 'crypto';
@@ -59,10 +64,6 @@ import {
   applyPluginDefinitionPolicy,
   buildPluginChatPayload,
   convertProviderResponse,
-  getOpenAICompatibleSamplingParameters,
-  resolvePluginChatParameters,
-  toOpenAICompatibleMessages,
-  toOpenAICompatibleTools,
 } from '../utils/pluginChatAdapter.js';
 import {
   inferReasoningFromModelId,
@@ -76,6 +77,7 @@ import {
   type PluginModelReasoningMap,
 } from '../utils/pluginModelCatalog.js';
 import {
+  streamAnthropicResponse,
   streamOpenAICompatibleResponse,
   streamOpenAIResponsesResponse,
   withMeasuredStreamTimings,
@@ -124,6 +126,7 @@ import pluginUsageService, {
   type ProviderTokenUsage,
 } from './pluginUsageService.js';
 import {
+  getCredentialBindingDefinitionFingerprint,
   getPluginDefinitionFingerprint,
   matchesBundledPluginTrustAnchor,
 } from '../utils/pluginDefinitionTrust.js';
@@ -1382,14 +1385,18 @@ export class PluginService {
     const usesTrustedBundledRouting = this.usesTrustedBundledRouting(plugin);
     const allowTrustedFallback =
       usesTrustedBundledRouting && !hasHonoredConnectionOverride;
+    const bindings = await this.getCredentialRoutingAuthFingerprints(
+      plugin,
+      userId
+    );
     return pluginCredentialsService.getApiKey(
       plugin.id,
       plugin.auth.key_env,
       userId,
       {
         allowEnvironmentFallback: allowTrustedFallback,
-        expectedRoutingAuthFingerprint:
-          await this.getCredentialRoutingAuthFingerprint(plugin, userId),
+        expectedRoutingAuthFingerprint: bindings.current,
+        previousRoutingAuthFingerprint: bindings.previous,
         allowLegacyUnboundCredential: allowTrustedFallback,
       }
     );
@@ -1403,6 +1410,19 @@ export class PluginService {
     plugin: Plugin,
     userId?: string
   ): Promise<string> {
+    return (await this.getCredentialRoutingAuthFingerprints(plugin, userId))
+      .current;
+  }
+
+  /**
+   * `current` leaves the model catalog out, so adding a model keeps saved
+   * keys. `previous` is the earlier binding that hashed the whole definition;
+   * credentials saved under it stay valid for the same route.
+   */
+  async getCredentialRoutingAuthFingerprints(
+    plugin: Plugin,
+    userId?: string
+  ): Promise<{ current: string; previous: string }> {
     const variables = await this.getPluginVariables(plugin, userId);
     const effectiveConnectionValues = Array.from(
       getPluginConnectionVariableNames(plugin),
@@ -1424,38 +1444,52 @@ export class PluginService {
     const effectivePath = sharedDefinition
       ? null
       : this.resolveEffectivePluginFilePath(plugin.id);
-    let effectiveDefinitionFingerprint = getPluginDefinitionFingerprint(plugin);
+    let effectiveDefinition = plugin;
     if (effectivePath) {
       try {
-        const effectiveDefinition = JSON.parse(
+        const sourceDefinition = JSON.parse(
           readRegularPluginDefinition(effectivePath)
         ) as Plugin;
         if (
-          this.validatePlugin(effectiveDefinition) &&
-          effectiveDefinition.id === plugin.id
+          this.validatePlugin(sourceDefinition) &&
+          sourceDefinition.id === plugin.id
         ) {
-          effectiveDefinitionFingerprint =
-            getPluginDefinitionFingerprint(effectiveDefinition);
+          effectiveDefinition = sourceDefinition;
         }
       } catch {
-        // Keep the in-memory fingerprint. A missing/invalid source is already
+        // Keep the in-memory definition. A missing/invalid source is already
         // excluded from normal plugin loading and cannot gain trust here.
       }
     }
-    const fingerprintInput = JSON.stringify({
-      plugin_id: plugin.id,
-      plugin_type: plugin.type,
-      trusted_bundled_source: this.usesTrustedBundledRouting(plugin),
-      effective_source_path: sharedDefinition
-        ? 'database:plugin_definitions'
-        : effectivePath
-          ? path.resolve(effectivePath)
-          : null,
-      effective_definition_fingerprint: effectiveDefinitionFingerprint,
-      routing_auth_projection: getPluginRoutingAuthProjection(plugin),
-      effective_connection_values: effectiveConnectionValues,
-    });
-    return createHash('sha256').update(fingerprintInput).digest('hex');
+    const trustedBundledSource = this.usesTrustedBundledRouting(plugin);
+    const routingAuthProjection = getPluginRoutingAuthProjection(plugin);
+    const binding = (effectiveDefinitionFingerprint: string) =>
+      createHash('sha256')
+        .update(
+          JSON.stringify({
+            plugin_id: plugin.id,
+            plugin_type: plugin.type,
+            trusted_bundled_source: trustedBundledSource,
+            effective_source_path: sharedDefinition
+              ? 'database:plugin_definitions'
+              : effectivePath
+                ? path.resolve(effectivePath)
+                : null,
+            effective_definition_fingerprint: effectiveDefinitionFingerprint,
+            routing_auth_projection: routingAuthProjection,
+            effective_connection_values: effectiveConnectionValues,
+          })
+        )
+        .digest('hex');
+    return {
+      current: binding(
+        getCredentialBindingDefinitionFingerprint(
+          effectiveDefinition,
+          effectiveConnectionValues
+        )
+      ),
+      previous: binding(getPluginDefinitionFingerprint(effectiveDefinition)),
+    };
   }
 
   /**
@@ -1899,6 +1933,8 @@ export class PluginService {
       const entries = response.data?.data;
       if (entries && Array.isArray(entries)) {
         const models = entries
+          // Bedrock lists models the account cannot call, marked unavailable.
+          .filter((m: { status?: unknown }) => m?.status !== 'unavailable')
           .map((m: { id?: string }) => m.id)
           .filter((id: unknown): id is string => typeof id === 'string');
         // Providers that publish a context window are worth remembering: it is
@@ -2541,14 +2577,20 @@ export class PluginService {
 
     const startedAt = Date.now();
     try {
-      const response = await providerRequest<Record<string, unknown>>({
-        url: processedEndpoint,
-        method: 'POST',
-        json: payload,
-        headers,
-        timeoutMs: 60000, // 60 second timeout
-        signal,
-      });
+      const response = await requestPluginChat(
+        activePlugin,
+        processedEndpoint,
+        model,
+        url =>
+          providerRequest<Record<string, unknown>>({
+            url,
+            method: 'POST',
+            json: payload,
+            headers,
+            timeoutMs: 60000, // 60 second timeout
+            signal,
+          })
+      );
 
       const normalized = convertProviderResponse(
         activePlugin,
@@ -2682,38 +2724,24 @@ export class PluginService {
       apiKey,
       processedEndpoint
     );
-    let payload: Record<string, unknown>;
-
-    if (apiMode === 'responses') {
-      const pluginRequest = buildPluginChatPayload(
-        activePlugin,
-        model,
-        messages,
-        options,
-        pluginVars,
-        true,
-        apiMode,
-        providerStateScope
-      );
-      payload = pluginRequest.payload;
-      Object.assign(headers, pluginRequest.headers);
-    } else {
-      const params = resolvePluginChatParameters(options, pluginVars);
-      payload = {
-        model,
-        messages: toOpenAICompatibleMessages(messages),
-        ...getOpenAICompatibleSamplingParameters(activePlugin, params),
-        max_tokens: params.maxTokens,
-        stop: options.stop,
-        stream: true,
-        // OpenAI-compatible servers omit token counts from a stream unless
-        // they are asked for, which is why provider-backed replies used to
-        // report zero tokens.
-        stream_options: { include_usage: true },
-        ...(options.tools?.length
-          ? { tools: toOpenAICompatibleTools(options.tools) }
-          : {}),
-      };
+    const pluginRequest = buildPluginChatPayload(
+      activePlugin,
+      model,
+      messages,
+      options,
+      pluginVars,
+      true,
+      apiMode,
+      providerStateScope
+    );
+    const payload = pluginRequest.payload;
+    Object.assign(headers, pluginRequest.headers);
+    if (
+      pluginChatProtocol(activePlugin, model) !== 'anthropic' &&
+      apiMode !== 'responses'
+    ) {
+      // Completion streams otherwise omit usage on OpenAI-compatible servers.
+      payload.stream_options = { include_usage: true };
     }
 
     const startedAt = Date.now();
@@ -2750,15 +2778,22 @@ export class PluginService {
     };
 
     try {
-      const response = await fetch(processedEndpoint, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(payload),
-        redirect: 'error',
-        signal,
-      });
+      const response = await fetchPluginChat(
+        activePlugin,
+        processedEndpoint,
+        model,
+        {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(payload),
+          redirect: 'error',
+          signal,
+        }
+      );
 
-      if (apiMode === 'responses') {
+      if (pluginChatProtocol(activePlugin, model) === 'anthropic') {
+        yield* forward(streamAnthropicResponse(response));
+      } else if (apiMode === 'responses') {
         const contentType = response.headers.get('content-type') || '';
         if (!contentType.includes('text/event-stream')) {
           if (!response.ok) {

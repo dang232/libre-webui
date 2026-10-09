@@ -23,6 +23,7 @@ import { usePluginStore } from '@/store/pluginStore';
 import { Plugin, PluginVariableDefinition } from '@/types';
 import { PluginVariableValue } from '@/utils/api';
 import { Button } from '@/components/ui/Button';
+import { confirmAction } from '@/components/ui/confirmStore';
 import {
   Settings,
   Upload,
@@ -310,6 +311,16 @@ export const PluginVariablesEditor: React.FC<{
   };
 
   const handleReset = async () => {
+    // Reset also drops stored secrets such as API keys, which cannot be undone.
+    const confirmed = await confirmAction({
+      title: t('pluginManager.variables.resetConfirmTitle'),
+      description: t('pluginManager.variables.resetConfirmDescription', {
+        name: plugin.name,
+      }),
+      confirmLabel: t('pluginManager.variables.resetDefaults'),
+      destructive: true,
+    });
+    if (!confirmed) return;
     setResetting(true);
     try {
       const success = await resetPluginVariables(plugin.id);
@@ -419,7 +430,7 @@ export const PluginVariablesEditor: React.FC<{
       'bg-white dark:bg-dark-100',
       'border-gray-300 dark:border-dark-300',
       'text-gray-900 dark:text-dark-700',
-      'focus:outline-none focus:ring-2 focus:ring-blue-500/20'
+      'focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/30'
     );
 
     switch (def.type) {
@@ -511,7 +522,7 @@ export const PluginVariablesEditor: React.FC<{
                   : inheritedLabel
               }
               onChange={event => updateLocalValue(def.name, event.target.value)}
-              className={cn(inputClasses, isSensitive && 'pr-10')}
+              className={cn(inputClasses, isSensitive && 'pe-10')}
               aria-invalid={hasError}
               aria-describedby={describedBy}
               disabled={saving || resetting}
@@ -533,7 +544,7 @@ export const PluginVariablesEditor: React.FC<{
                       })
                 }
                 disabled={saving || resetting}
-                className='absolute end-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:text-gray-300'
+                className='absolute inset-e-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:text-gray-300'
               >
                 {isRevealed ? (
                   <EyeOff className='w-4 h-4' />
@@ -565,7 +576,7 @@ export const PluginVariablesEditor: React.FC<{
               )
             : def.label}
           {def.required && (
-            <span aria-hidden='true' className='text-red-500 ml-1'>
+            <span aria-hidden='true' className='text-red-500 ms-1'>
               *
             </span>
           )}
@@ -635,7 +646,7 @@ export const PluginVariablesEditor: React.FC<{
             aria-expanded={advancedOpen}
             aria-controls={advancedPanelId}
             onClick={() => setAdvancedOpen(open => !open)}
-            className='flex w-full items-center justify-between rounded-md py-1 text-left text-sm font-medium text-gray-700 hover:text-gray-950 dark:text-gray-300 dark:hover:text-white'
+            className='flex w-full items-center justify-between rounded-md py-1 text-start text-sm font-medium text-gray-700 hover:text-gray-950 dark:text-gray-300 dark:hover:text-white'
           >
             <span>
               {t('pluginManager.variables.advanced', 'Advanced parameters')} (
@@ -794,7 +805,7 @@ export const PluginManager: React.FC<PluginManagerProps> = ({ onClose }) => {
   };
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-3 sm:p-6'>
+    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3 sm:p-6'>
       <div className='flex max-h-[calc(100dvh-1.5rem)] min-h-0 w-full max-w-4xl flex-col overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-800 sm:max-h-[90dvh]'>
         {/* Header */}
         <div className='flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700'>
@@ -975,7 +986,7 @@ export const PluginManager: React.FC<PluginManagerProps> = ({ onClose }) => {
                         {plugin.model_map.map(model => (
                           <span
                             key={model}
-                            className='inline-block px-2 py-1 text-xs rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                            className='inline-block px-2 py-1 text-xs rounded-sm bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
                           >
                             {model}
                           </span>

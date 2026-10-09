@@ -16,6 +16,7 @@
  */
 
 import {
+  Bot,
   Boxes,
   ChevronLeft,
   CircleAlert,
@@ -24,7 +25,9 @@ import {
   MessageSquare,
   Monitor,
   MoreHorizontal,
+  SlidersHorizontal,
   Trash2,
+  X,
 } from 'lucide-react';
 import {
   useCallback,
@@ -37,7 +40,6 @@ import {
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useBlocker, useLocation, useNavigate, useParams } from 'react-router';
-import { LogoMark } from '@/components/LogoMark';
 import { WorkComposer } from '@/components/work/WorkComposer';
 import { WorkConversation } from '@/components/work/WorkConversation';
 import { WorkSplitPane } from '@/components/work/WorkSplitPane';
@@ -55,11 +57,22 @@ import {
   type WorkRunEvent,
   type WorkTask,
 } from '@/types/work';
+import type { ThinkingPreference } from '@/types';
 import { cn, formatRelativeTime } from '@/utils';
 import { preferencesApi, workApi } from '@/utils/api';
 import { clearWorkDraft, clearWorkTaskDrafts } from '@/utils/workDrafts';
 import type { WorkAttachmentDraft } from '@/utils/workAttachments';
 import { workStatusPresentation } from '@/utils/workStatus';
+import { workStatusAnnouncement } from '@/utils/workAnnouncements';
+import { announce } from '@/components/ui/liveAnnouncerStore';
+import {
+  baseWorkModel,
+  selectWorkEngine,
+  workModelEngine,
+  workModelSupportsEngine,
+  workModelFromChatStrands,
+  type WorkEngine,
+} from '@/utils/workModels';
 
 type MobileSurface = 'conversation' | 'workspace';
 
@@ -92,16 +105,24 @@ const waitForReconnect = (
 
 export default function WorkPage() {
   const { t, i18n } = useTranslation();
+  // The live-run subscription must not restart when the language changes, so
+  // it reads the current translator through a ref.
+  const tRef = useRef(t);
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
   const location = useLocation();
   const navigate = useNavigate();
   const { taskId } = useParams<{ taskId: string }>();
   const preferences = useAppStore(state => state.preferences);
   const setPreferences = useAppStore(state => state.setPreferences);
   const authenticatedUser = useAuthStore(state => state.user);
+  const strandsEnabled = useAuthStore(state => state.canUseStrands());
   const authenticatedUserId = authenticatedUser?.id ?? null;
   const [remoteDisclosureSaving, setRemoteDisclosureSaving] = useState(false);
   const [retryingRecovery, setRetryingRecovery] = useState(false);
   const chatModels = useChatStore(state => state.models);
+  const loadingModels = useChatStore(state => state.loading);
   const chatSelectedModel = useChatStore(state => state.selectedModel);
   const chatSelectedProviderType = useChatStore(
     state => state.selectedProviderType
@@ -216,6 +237,23 @@ export default function WorkPage() {
     location.state,
     navigate,
   ]);
+  const allModelOptions = modelOptions;
+  const [draftModel, setDraftModel] = useState<WorkModelOption | null>(null);
+  const [engineChoice, setEngineChoice] = useState<{
+    owner: string;
+    engine: WorkEngine;
+  } | null>(null);
+  const engineChoiceRef = useRef<typeof engineChoice>(null);
+  // A reasoning level picked in this composer. It belongs to the task (or
+  // the new-task landing) it was picked on, and a new task takes it along.
+  const [thinkChoice, setThinkChoice] = useState<{
+    owner: string;
+    think: ThinkingPreference | null;
+  } | null>(null);
+  const pendingModelSelection = useRef<{
+    taskId: string;
+    option: WorkModelOption;
+  } | null>(null);
   const [mobileSurfaceState, setMobileSurfaceState] = useState<{
     locationKey: string;
     value: MobileSurface;
@@ -346,12 +384,12 @@ export default function WorkPage() {
       }
     } catch (setupError) {
       setComputerSetupError(
-        errorMessage(setupError, 'The Work Computer could not be set up.')
+        errorMessage(setupError, t('work.computer.setupFailed'))
       );
     } finally {
       setComputerSetupBusy(false);
     }
-  }, []);
+  }, [t]);
   // Idle-stop can end a preview server-side, and no live channel exists to
   // announce it (the SSE stream is run-scoped and idle-stop fires precisely
   // when nothing runs). Poll the open task while its preview is up so the
@@ -469,17 +507,70 @@ export default function WorkPage() {
     void loadFiles(taskId, '').catch(() => undefined);
   }, [taskId, loadFiles, loadTask, selectTask]);
 
+  const draftBaseModel =
+    draftModel &&
+    allModelOptions.find(
+      model => model.key === selectWorkEngine(draftModel, 'libre').key
+    );
+  const chatStrandsModel = workModelFromChatStrands(
+    {
+      model: chatSelectedModel,
+      providerType: chatSelectedProviderType,
+      providerId: chatSelectedProviderId,
+    },
+    allModelOptions
+  );
+  const chatStrandsSelected =
+    chatSelectedProviderType === 'agent' &&
+    chatSelectedProviderId === 'strands';
+  const chosenEngine =
+    engineChoice?.owner === (taskId ?? 'new') ? engineChoice.engine : undefined;
+  const inheritedModel = draftModel
+    ? (draftBaseModel ?? draftModel)
+    : chatStrandsSelected
+      ? chatStrandsModel?.option
+      : (modelOptions.find(
+          model =>
+            model.model === chatSelectedModel &&
+            (chatSelectedProviderType === 'plugin'
+              ? model.providerType === 'plugin' &&
+                model.providerId === chatSelectedProviderId
+              : model.providerType === 'ollama')
+        ) ?? modelOptions[0]);
+  const freshEngine =
+    chosenEngine ??
+    (draftModel
+      ? workModelEngine(draftModel.model, draftModel.providerType)
+      : inheritedModel
+        ? workModelEngine(inheritedModel.model, inheritedModel.providerType)
+        : chatStrandsSelected
+          ? 'strands'
+          : 'libre');
   const freshModel =
-    modelOptions.find(model => model.key === draftModelKey) ||
-    modelOptions.find(
-      model =>
-        model.model === chatSelectedModel &&
-        (chatSelectedProviderType === 'plugin'
-          ? model.providerType === 'plugin' &&
-            model.providerId === chatSelectedProviderId
-          : model.providerType === 'ollama')
-    ) ||
-    modelOptions[0];
+    inheritedModel && workModelSupportsEngine(inheritedModel, freshEngine)
+      ? selectWorkEngine(inheritedModel, freshEngine)
+      : undefined;
+  const freshModelUnavailable =
+    !!freshModel &&
+    !allModelOptions.some(
+      model => model.key === selectWorkEngine(freshModel, 'libre').key
+    );
+  const freshEngineUnavailable = freshEngine === 'strands' && !strandsEnabled;
+  const availableFreshModels = modelOptions;
+  const freshModelOptions =
+    freshModel && freshModelUnavailable
+      ? [selectWorkEngine(freshModel, 'libre'), ...availableFreshModels]
+      : availableFreshModels;
+  const freshModelUnavailableMessage =
+    freshModelUnavailable && freshModel
+      ? t('chat.toasts.modelUnavailable', {
+          model: baseWorkModel(freshModel.model, freshModel.providerType),
+          provider:
+            freshModel.providerType !== 'ollama'
+              ? freshModel.providerId
+              : 'Ollama',
+        })
+      : undefined;
 
   const selectedTaskSummary = taskId
     ? tasks.find(task => task.id === taskId)
@@ -503,6 +594,59 @@ export default function WorkPage() {
     taskId && liveRuns[taskId]?.runId === selectedRunId
       ? liveRuns[taskId]
       : undefined;
+  // A run blocked on a tool approval stays "running", so the status change
+  // above never fires for it. Announce each pending approval once, but treat
+  // whatever the first caught-up state of a run already holds (opening the
+  // task, replayed history) as seen: a page load stays silent.
+  const pendingApprovalId =
+    liveRun?.pendingApproval?.status === 'pending'
+      ? liveRun.pendingApproval.approvalId
+      : null;
+  const pendingApprovalTool = liveRun?.pendingApproval?.name;
+  const liveRunCaughtUp = (liveRun?.lastEventId ?? 0) > 0;
+  const approvalAnnounceRef = useRef<{
+    runKey: string;
+    primed: boolean;
+    seen: string | null;
+  } | null>(null);
+  useEffect(() => {
+    if (!taskId || !selectedRunId) {
+      approvalAnnounceRef.current = null;
+      return;
+    }
+    const runKey = `${taskId}:${selectedRunId}`;
+    if (approvalAnnounceRef.current?.runKey !== runKey) {
+      approvalAnnounceRef.current = { runKey, primed: false, seen: null };
+    }
+    const tracker = approvalAnnounceRef.current;
+    if (!tracker.primed) {
+      if (!liveRunCaughtUp) return;
+      tracker.primed = true;
+      tracker.seen = pendingApprovalId;
+      return;
+    }
+    if (!pendingApprovalId || pendingApprovalId === tracker.seen) return;
+    tracker.seen = pendingApprovalId;
+    const state = useWorkStore.getState();
+    const title =
+      state.tasks.find(task => task.id === taskId)?.title ??
+      (state.selectedTask?.id === taskId
+        ? state.selectedTask.title
+        : undefined);
+    announce(
+      tRef.current('work.announce.approvalNeeded', {
+        title: title || tRef.current('work.announce.untitledTask'),
+        tool: pendingApprovalTool ?? '',
+      }),
+      'assertive'
+    );
+  }, [
+    taskId,
+    selectedRunId,
+    liveRunCaughtUp,
+    pendingApprovalId,
+    pendingApprovalTool,
+  ]);
   const summaryPollingActive =
     selectedStatus === 'preparing' || selectedStatus === 'running';
   const summaryPollingDelay = summaryPollingActive ? 1000 : 4000;
@@ -523,6 +667,19 @@ export default function WorkPage() {
     };
   }, [loadTasks, summaryPollingDelay]);
 
+  // Most failures already raise an assertive error toast with the same text;
+  // the persistent banner speaks only for errors nothing else announced.
+  useEffect(() => {
+    if (!error) return undefined;
+    const timer = window.setTimeout(() => {
+      const alreadyAlerted = Array.from(
+        document.querySelectorAll('[role="alert"]')
+      ).some(element => element.textContent?.trim() === error.trim());
+      if (!alreadyAlerted) announce(error, 'assertive');
+    }, 150);
+    return () => window.clearTimeout(timer);
+  }, [error]);
+
   const previousStatusRef = useRef<{
     taskId: string;
     status: WorkTask['status'];
@@ -540,6 +697,26 @@ export default function WorkPage() {
       selectedStatus !== 'preparing' &&
       selectedStatus !== 'running'
     ) {
+      // The one place a run is seen leaving the working states for the open
+      // task, so each finish is announced once and a page load never is.
+      const announcement = workStatusAnnouncement(
+        previous.status,
+        selectedStatus
+      );
+      if (announcement) {
+        const state = useWorkStore.getState();
+        const title =
+          state.tasks.find(task => task.id === taskId)?.title ??
+          (state.selectedTask?.id === taskId
+            ? state.selectedTask.title
+            : undefined);
+        announce(
+          tRef.current(announcement.key, {
+            title: title || tRef.current('work.announce.untitledTask'),
+          }),
+          announcement.politeness
+        );
+      }
       void loadTask(taskId, true).catch(() => undefined);
       void loadFiles(taskId, '').catch(() => undefined);
     }
@@ -611,7 +788,7 @@ export default function WorkPage() {
           });
           flushEvents();
           if (terminal || stopped || controller.signal.aborted) break;
-          throw new Error('The live Work connection closed.');
+          throw new Error(tRef.current('work.live.connectionClosed'));
         } catch (streamError) {
           flushEvents();
           if (stopped || controller.signal.aborted) return;
@@ -626,7 +803,7 @@ export default function WorkPage() {
             reconnectAttempt >= 3
               ? errorMessage(
                   streamError,
-                  'Live updates are reconnecting in the background.'
+                  tRef.current('work.live.reconnectingBackground')
                 )
               : undefined
           );
@@ -743,6 +920,24 @@ export default function WorkPage() {
     navigate('/work');
   };
 
+  // Work reads the same reasoning default as Chat: the level pinned for the
+  // model, else the global one. A choice made here overrides it.
+  const inheritedThinkFor = (model?: string): ThinkingPreference | null =>
+    (model
+      ? preferences.modelGenerationOptions?.[baseWorkModel(model)]?.think
+      : undefined) ??
+    preferences.generationOptions?.think ??
+    null;
+  const freshThink = thinkChoice?.owner === 'new' ? thinkChoice.think : null;
+  const freshInheritedThink = inheritedThinkFor(freshModel?.model);
+  const freshThinkEffective = freshThink ?? freshInheritedThink;
+  const taskThink =
+    selectedTask && thinkChoice?.owner === selectedTask.id
+      ? thinkChoice.think
+      : (selectedTask?.activeRun?.think ?? null);
+  const taskInheritedThink = inheritedThinkFor(selectedTask?.model);
+  const taskThinkEffective = taskThink ?? taskInheritedThink;
+
   const submitMessage = async (
     message: string,
     files: WorkAttachmentDraft[] = []
@@ -787,7 +982,7 @@ export default function WorkPage() {
         await uploadComposerFiles(selectedTask.id);
         const sent = await workApi.sendRunMessage(selectedTask.id, message);
         if (!sent.success) {
-          throw new Error(sent.message || 'The message could not be sent.');
+          throw new Error(sent.message || t('work.toasts.sendFailed'));
         }
         await loadTask(selectedTask.id);
       } else if (selectedTask) {
@@ -797,6 +992,7 @@ export default function WorkPage() {
           model: selectedTask.model,
           providerType: selectedTask.providerType,
           providerId: selectedTask.providerId || undefined,
+          ...(taskThinkEffective !== null ? { think: taskThinkEffective } : {}),
         });
       } else {
         if (!freshModel) {
@@ -806,6 +1002,10 @@ export default function WorkPage() {
             })
           );
         }
+        if (freshModelUnavailableMessage)
+          throw new Error(freshModelUnavailableMessage);
+        if (freshEngineUnavailable)
+          throw new Error(t('work.composer.strandsDisabled'));
         const task = await createTask({
           message,
           model: freshModel.model,
@@ -817,8 +1017,14 @@ export default function WorkPage() {
             : {}),
           ...(policyId ? { policyId } : {}),
           ...(personaId ? { personaId, isAgent: true } : {}),
+          ...(freshThinkEffective !== null
+            ? { think: freshThinkEffective }
+            : {}),
         });
         await uploadComposerFiles(task.id);
+        if (thinkChoice?.owner === 'new') {
+          setThinkChoice({ owner: task.id, think: thinkChoice.think });
+        }
         navigate(`/work/${task.id}`);
       }
       return true;
@@ -835,18 +1041,52 @@ export default function WorkPage() {
     }
   };
 
-  const changeModel = async (modelKey: string) => {
-    const model = effectiveModelOptions.find(option => option.key === modelKey);
-    if (!model) return;
+  const changeModel = async (
+    model: WorkModelOption,
+    requestedEngine?: WorkEngine
+  ) => {
     if (!selectedTask) {
-      setDraftModelKey(modelKey);
+      // ModelSelector can finish its unload request after a newer engine
+      // choice. Merge with current state instead of its captured render.
+      setDraftModel(current => {
+        const choice = engineChoiceRef.current;
+        const previous = current ?? freshModel ?? model;
+        const engine =
+          requestedEngine ??
+          (choice?.owner === 'new' ? choice.engine : undefined) ??
+          workModelEngine(previous.model, previous.providerType);
+        return (engine === 'strands' && !strandsEnabled) ||
+          !workModelSupportsEngine(model, engine)
+          ? current
+          : selectWorkEngine(model, engine);
+      });
       return;
     }
+    const currentTask = useWorkStore.getState().selectedTask;
+    if (currentTask?.id !== selectedTask.id) return;
+    const pending = pendingModelSelection.current;
+    const currentModel =
+      pending?.taskId === currentTask.id ? pending.option : currentTask;
+    const choice = engineChoiceRef.current;
+    const engine =
+      requestedEngine ??
+      (choice?.owner === currentTask.id ? choice.engine : undefined) ??
+      workModelEngine(currentModel.model, currentModel.providerType);
+    if (
+      (engine === 'strands' && !strandsEnabled) ||
+      !workModelSupportsEngine(model, engine)
+    )
+      return;
+    const selection = {
+      taskId: currentTask.id,
+      option: selectWorkEngine(model, engine),
+    };
+    pendingModelSelection.current = selection;
     try {
       await updateTask(selectedTask.id, {
-        model: model.model,
-        providerType: model.providerType,
-        providerId: model.providerId,
+        model: selection.option.model,
+        providerType: selection.option.providerType,
+        providerId: selection.option.providerId,
       });
     } catch (updateError) {
       toast.error(
@@ -857,7 +1097,24 @@ export default function WorkPage() {
           })
         )
       );
+    } finally {
+      if (pendingModelSelection.current === selection) {
+        pendingModelSelection.current = null;
+      }
     }
+  };
+
+  const changeEngine = (engine: WorkEngine) => {
+    const choice = { owner: taskId ?? 'new', engine };
+    engineChoiceRef.current = choice;
+    setEngineChoice(choice);
+    const current = selectedTask ? selectedWorkModel : freshModel;
+    if (current && workModelSupportsEngine(current, engine))
+      void changeModel(current, engine);
+  };
+
+  const refreshModels = async () => {
+    await Promise.all([loadChatModels(), loadCapabilities()]);
   };
 
   const stopRun = async () => {
@@ -1058,9 +1315,16 @@ export default function WorkPage() {
             defaultValue: 'Docker ready',
           });
   const activeTask = selectedTask ? isWorkTaskActive(selectedTask) : false;
+  const taskEngine =
+    chosenEngine ??
+    (selectedTask
+      ? workModelEngine(selectedTask.model, selectedTask.providerType)
+      : freshEngine);
+  const taskEngineUnavailable =
+    !!selectedTask && taskEngine === 'strands' && !strandsEnabled;
   const taskModel = selectedTask
     ? {
-        model: selectedTask.model,
+        model: baseWorkModel(selectedTask.model, selectedTask.providerType),
         providerType: selectedTask.providerType,
         providerId: selectedTask.providerId || undefined,
       }
@@ -1069,24 +1333,41 @@ export default function WorkPage() {
     ? workModelSelectionKey(taskModel)
     : freshModel?.key || '';
   const persistedModelOption =
-    taskModel && !modelOptions.some(option => option.key === selectedModelKey)
+    taskModel &&
+    !allModelOptions.some(option => option.key === selectedModelKey)
       ? {
           ...taskModel,
           key: selectedModelKey,
           label: `${taskModel.model} · ${
-            taskModel.providerType === 'plugin'
-              ? taskModel.providerId || 'plugin'
-              : 'Ollama'
+            taskModel.providerType === 'ollama'
+              ? 'Ollama'
+              : taskModel.providerId || 'plugin'
           }`,
           remote:
-            taskModel.providerType === 'plugin' ||
-            taskModel.model.toLowerCase().endsWith(':cloud') ||
-            taskModel.model.toLowerCase().endsWith('-cloud'),
+            taskModel.providerType !== 'ollama' ||
+            baseWorkModel(taskModel.model, taskModel.providerType)
+              .toLowerCase()
+              .endsWith(':cloud') ||
+            baseWorkModel(taskModel.model, taskModel.providerType)
+              .toLowerCase()
+              .endsWith('-cloud'),
         }
       : undefined;
-  const effectiveModelOptions = persistedModelOption
-    ? [persistedModelOption, ...modelOptions]
-    : modelOptions;
+  const selectedBaseModel =
+    persistedModelOption ??
+    allModelOptions.find(option => option.key === selectedModelKey);
+  const availableTaskModels = modelOptions;
+  const effectiveModelOptions =
+    persistedModelOption &&
+    workModelSupportsEngine(persistedModelOption, taskEngine)
+      ? [persistedModelOption, ...availableTaskModels]
+      : availableTaskModels;
+  const selectedWorkModel = selectedTask
+    ? selectedBaseModel &&
+      workModelSupportsEngine(selectedBaseModel, taskEngine)
+      ? selectWorkEngine(selectedBaseModel, taskEngine)
+      : undefined
+    : freshModel;
   const status = workStatusPresentation[selectedTask?.status ?? 'idle'];
   const statusLabel = t(status.labelKey, {
     defaultValue: status.label,
@@ -1164,7 +1445,7 @@ export default function WorkPage() {
                   event.currentTarget.blur();
                 }
               }}
-              className='min-w-0 max-w-sm flex-1 truncate rounded-lg border border-transparent bg-transparent px-2 py-1 text-sm font-semibold text-ink outline-none hover:border-line focus:border-primary-500 focus:bg-surface'
+              className='min-w-0 max-w-sm flex-1 truncate rounded-lg border border-transparent bg-transparent px-2 py-1 text-sm font-semibold text-ink outline-hidden hover:border-line focus:border-primary-500 focus:bg-surface'
               aria-label={t('work.tasks.rename', {
                 defaultValue: 'Task title',
               })}
@@ -1184,7 +1465,7 @@ export default function WorkPage() {
               className='hidden h-7 shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 font-mono text-[11px] text-ink-muted sm:inline-flex'
             >
               <FolderOpen aria-hidden='true' className='h-3.5 w-3.5' />
-              <span className='max-w-[16rem] truncate'>
+              <span dir='ltr' className='max-w-[16rem] truncate'>
                 {selectedTask.hostPath}
               </span>
             </span>
@@ -1194,10 +1475,6 @@ export default function WorkPage() {
             <span
               data-testid='work-compact-status'
               className='inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-2 text-[11px] font-medium text-ink-muted xl:hidden'
-              aria-label={t('work.tasks.status', {
-                status: statusLabel,
-                defaultValue: 'Status: {{status}}',
-              })}
               title={t('work.tasks.status', {
                 status: statusLabel,
                 defaultValue: 'Status: {{status}}',
@@ -1214,7 +1491,17 @@ export default function WorkPage() {
                 )}
                 style={{ backgroundColor: status.color }}
               />
-              <span className='hidden md:inline'>{statusLabel}</span>
+              {/* Text, not aria-label: a label on a plain span is not reliably
+                  announced, and the visible label is hidden below md. */}
+              <span className='sr-only'>
+                {t('work.tasks.status', {
+                  status: statusLabel,
+                  defaultValue: 'Status: {{status}}',
+                })}
+              </span>
+              <span aria-hidden='true' className='hidden md:inline'>
+                {statusLabel}
+              </span>
             </span>
           )}
 
@@ -1301,8 +1588,8 @@ export default function WorkPage() {
               className={cn(
                 'inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[11px] font-medium',
                 runtimeUnavailable
-                  ? 'border-transparent bg-error-500 text-[#0D0D0C]'
-                  : 'border-transparent bg-success-500 text-[#0D0D0C]'
+                  ? 'border-transparent bg-error-500 text-black'
+                  : 'border-transparent bg-success-500 text-black'
               )}
               title={
                 runtimeUnavailable
@@ -1326,7 +1613,7 @@ export default function WorkPage() {
               <span className='hidden h-7 max-w-44 items-center gap-1.5 truncate rounded-full border border-line bg-surface px-2.5 text-[11px] font-medium text-ink-muted md:inline-flex'>
                 <HardDrive className='h-3.5 w-3.5 shrink-0' />
                 <span dir='ltr' className='truncate'>
-                  {selectedTask.model}
+                  {baseWorkModel(selectedTask.model, selectedTask.providerType)}
                 </span>
               </span>
             )}
@@ -1375,7 +1662,7 @@ export default function WorkPage() {
                   role='menu'
                   aria-labelledby='work-task-actions-trigger'
                   onKeyDown={handleTaskActionsKeyDown}
-                  className='absolute end-0 top-10 z-40 min-w-44 rounded-xl border border-line bg-surface-overlay p-1.5 shadow-overlay'
+                  className='absolute inset-e-0 top-10 z-40 min-w-44 rounded-xl border border-line bg-surface-overlay p-1.5 shadow-overlay'
                 >
                   <button
                     type='button'
@@ -1401,7 +1688,8 @@ export default function WorkPage() {
         {recovering && recovery && (
           <div
             data-testid='work-recovery-notice'
-            className='flex shrink-0 flex-wrap items-center gap-2 border-b border-amber-500/20 bg-amber-500/10 px-4 py-2 text-xs text-ink'
+            role='status'
+            className='flex shrink-0 flex-wrap items-center gap-2 border-b border-warning-500/20 bg-warning-500/10 px-4 py-2 text-xs text-ink'
           >
             <CircleAlert className='h-4 w-4 shrink-0' />
             <span dir='auto' className='min-w-0 flex-1'>
@@ -1442,7 +1730,7 @@ export default function WorkPage() {
                 data-testid='work-recovery-notice-retry'
                 onClick={() => void retryRecovery()}
                 disabled={retryingRecovery}
-                className='shrink-0 rounded-md border border-amber-500/40 px-2 py-1 font-medium transition-colors hover:bg-amber-500/20 disabled:opacity-60'
+                className='shrink-0 rounded-md border border-warning-500/40 px-2 py-1 font-medium transition-colors hover:bg-warning-500/20 disabled:opacity-60'
               >
                 {retryingRecovery
                   ? t('work.recovery.retrying', { defaultValue: 'Retrying…' })
@@ -1454,11 +1742,15 @@ export default function WorkPage() {
 
         {(unavailableForConfiguration || error) && (
           <div
+            // The configuration notice interrupts; ordinary errors are
+            // announced by the effect that de-duplicates them with toasts.
+            role={unavailableForConfiguration ? 'alert' : undefined}
+            data-testid='work-error-banner'
             className={cn(
               'flex shrink-0 items-center gap-2 border-b px-4 py-2 text-xs',
               unavailableForConfiguration
                 ? 'border-error-500/20 bg-error-500/10 text-error-700'
-                : 'border-amber-500/20 bg-amber-500/10 text-ink'
+                : 'border-warning-500/20 bg-warning-500/10 text-ink'
             )}
           >
             <CircleAlert className='h-4 w-4 shrink-0' />
@@ -1467,18 +1759,18 @@ export default function WorkPage() {
                 ? capabilities?.reason ||
                   t('work.runtime.reason', {
                     defaultValue:
-                      'A Work runtime and an available Ollama or plugin model provider are required.',
+                      'A Work runtime and an available model provider are required.',
                   })
                 : error}
             </span>
             {error && !unavailableForConfiguration && (
               <button
                 type='button'
-                className='rounded-md p-1 hover:bg-black/5'
+                className='inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-interactive-hover'
                 onClick={clearError}
                 aria-label={t('common.close')}
               >
-                ×
+                <X className='h-4 w-4' />
               </button>
             )}
           </div>
@@ -1488,25 +1780,18 @@ export default function WorkPage() {
           <div className='relative min-h-0 flex-1 overflow-y-auto'>
             <section
               data-testid='work-landing'
-              className='mx-auto flex min-h-full w-full max-w-3xl flex-col items-center justify-center px-4 py-6 sm:px-8 sm:py-12'
+              className='mx-auto flex min-h-full w-full max-w-3xl flex-col items-center justify-center px-4 py-8 sm:px-8 sm:py-10'
             >
-              <div className='flex flex-col items-center text-center'>
-                <div className='mb-3 flex items-center justify-center gap-3'>
-                  <LogoMark
-                    size='sm'
-                    label={null}
-                    className='h-9 w-9 shrink-0 p-0 text-ink'
-                  />
-                  <h2 className='max-w-3xl text-balance text-[clamp(1.75rem,3.5vw,2.35rem)] font-medium leading-tight tracking-[-0.02em] text-ink rtl:tracking-normal'>
-                    {t('work.landing.title', {
-                      defaultValue: 'Start a new Work task',
-                    })}
-                  </h2>
-                </div>
-                <p className='max-w-xl text-balance text-[15px] leading-relaxed text-ink-subtle'>
+              <div className='flex max-w-xl flex-col items-center text-center'>
+                <h2 className='text-balance text-[clamp(1.5rem,2.8vw,2rem)] font-medium leading-tight tracking-tight text-ink rtl:tracking-normal'>
+                  {t('work.landing.title', {
+                    defaultValue: 'What would you like to work on?',
+                  })}
+                </h2>
+                <p className='mt-2 max-w-md text-balance text-sm leading-relaxed text-ink-muted'>
                   {t('work.landing.description', {
                     defaultValue:
-                      'Give a local model a durable, isolated workspace. It can inspect files, run tools, and continue where it left off when you return.',
+                      'Describe a task. Your model gets its own workspace.',
                   })}
                 </p>
               </div>
@@ -1516,14 +1801,18 @@ export default function WorkPage() {
                 hostWorkspacesEnabled) && (
                 <div
                   data-testid='work-landing-options'
-                  className='mt-6 grid w-full min-w-0 grid-cols-1 gap-4 sm:grid-cols-2'
+                  className='mt-6 grid w-full min-w-0 grid-cols-1 gap-x-3 gap-y-3 sm:grid-cols-2'
                 >
                   {policies.length > 0 && (
                     <div className='min-w-0'>
                       <label
                         htmlFor='work-policy'
-                        className='mb-1.5 block text-xs font-medium text-ink-muted'
+                        className='mb-1.5 flex items-center gap-1.5 text-xs font-medium text-ink-muted'
                       >
+                        <SlidersHorizontal
+                          className='h-3.5 w-3.5'
+                          aria-hidden='true'
+                        />
                         {t('work.policy.label', {
                           defaultValue: 'Runtime policy',
                         })}
@@ -1533,7 +1822,7 @@ export default function WorkPage() {
                         data-testid='work-policy'
                         value={policyId}
                         onChange={event => setPolicyId(event.target.value)}
-                        className='w-full min-w-0 rounded-xl border border-line bg-surface px-3 py-2 text-[13px] text-ink outline-none transition-colors focus:border-line-strong focus-visible:ring-2 focus-visible:ring-primary-500/30'
+                        className='h-11 min-h-[44px] w-full min-w-0 rounded-xl border border-line/80 bg-surface/90 px-3 py-2 text-[13px] text-ink outline-hidden transition-colors focus:border-line-strong focus-visible:ring-2 focus-visible:ring-primary-500/30 motion-reduce:transition-none'
                       >
                         <option value=''>
                           {t('work.policy.default', {
@@ -1552,8 +1841,9 @@ export default function WorkPage() {
                     <div className='min-w-0'>
                       <label
                         htmlFor='work-persona'
-                        className='mb-1.5 block text-xs font-medium text-ink-muted'
+                        className='mb-1.5 flex items-center gap-1.5 text-xs font-medium text-ink-muted'
                       >
+                        <Bot className='h-3.5 w-3.5' aria-hidden='true' />
                         {t('work.persona.label', {
                           defaultValue: 'Hire as an agent (optional)',
                         })}
@@ -1561,9 +1851,10 @@ export default function WorkPage() {
                       <select
                         id='work-persona'
                         data-testid='work-persona'
+                        aria-describedby='work-persona-description'
                         value={personaId}
                         onChange={event => setPersonaId(event.target.value)}
-                        className='w-full min-w-0 rounded-xl border border-line bg-surface px-3 py-2 text-[13px] text-ink outline-none transition-colors focus:border-line-strong focus-visible:ring-2 focus-visible:ring-primary-500/30'
+                        className='h-11 min-h-[44px] w-full min-w-0 rounded-xl border border-line/80 bg-surface/90 px-3 py-2 text-[13px] text-ink outline-hidden transition-colors focus:border-line-strong focus-visible:ring-2 focus-visible:ring-primary-500/30 motion-reduce:transition-none'
                       >
                         <option value=''>
                           {t('work.persona.none', {
@@ -1576,23 +1867,28 @@ export default function WorkPage() {
                           </option>
                         ))}
                       </select>
-                      <p className='mt-1.5 text-xs leading-relaxed text-ink-muted'>
-                        {personaId
-                          ? t('work.persona.hint', {
-                              defaultValue:
-                                'This task becomes a named agent: it keeps the persona, stays pinned in the sidebar, and reports a one-line status after each run.',
-                            })
-                          : t('work.persona.description', {
-                              defaultValue:
-                                'Pick a persona to turn this task into a persistent agent with its own identity.',
-                            })}
-                      </p>
                     </div>
+                  )}
+                  {personaList.length > 0 && (
+                    <p
+                      id='work-persona-description'
+                      className='text-xs leading-relaxed text-ink-subtle sm:col-span-2'
+                    >
+                      {personaId
+                        ? t('work.persona.hint', {
+                            defaultValue:
+                              'This task becomes a named agent: it keeps the persona, stays pinned in the sidebar, and reports a one-line status after each run.',
+                          })
+                        : t('work.persona.description', {
+                            defaultValue:
+                              'Choose a persona to keep this task as a named agent.',
+                          })}
+                    </p>
                   )}
                   {!hasComputerPolicy &&
                     authenticatedUser?.role === 'admin' && (
                       <div
-                        className='flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-3 sm:col-span-2'
+                        className='flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-xl border border-line/60 bg-surface/70 px-3 py-2.5 sm:col-span-2'
                         data-testid='work-policy-setup-hint'
                       >
                         <div className='min-w-0 flex-1 basis-48'>
@@ -1611,7 +1907,7 @@ export default function WorkPage() {
                           data-testid='work-computer-enable'
                           onClick={() => void enableComputer()}
                           disabled={computerSetupBusy}
-                          className='flex shrink-0 items-center gap-2 rounded-lg border border-line bg-surface-raised px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-surface-subtle disabled:opacity-60'
+                          className='flex min-h-[44px] shrink-0 items-center gap-2 rounded-lg border border-line bg-surface-raised px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-surface-subtle disabled:opacity-60 motion-reduce:transition-none'
                         >
                           {computerSetupBusy && (
                             <span className='h-3 w-3 animate-spin rounded-full border border-ink/20 border-t-ink' />
@@ -1644,7 +1940,7 @@ export default function WorkPage() {
                             ? `${hostWorkspaceRoots[0]}/my-project`
                             : '/path/to/folder'
                         }
-                        className='w-full min-w-0 rounded-xl border border-line bg-surface px-3 py-2 font-mono text-[13px] text-ink outline-none transition-colors placeholder:text-ink-subtle focus:border-line-strong focus-visible:ring-2 focus-visible:ring-primary-500/30'
+                        className='min-h-[44px] w-full min-w-0 rounded-xl border border-line bg-surface px-3 py-2 font-mono text-[13px] text-ink outline-hidden transition-colors placeholder:text-ink-subtle focus:border-line-strong focus-visible:ring-2 focus-visible:ring-primary-500/30 motion-reduce:transition-none'
                       />
                       <p className='mt-1.5 text-xs leading-relaxed text-ink-muted'>
                         {hostPath.trim()
@@ -1661,34 +1957,59 @@ export default function WorkPage() {
                   )}
                 </div>
               )}
+              {((freshModelUnavailableMessage && !loadingModels) ||
+                freshEngineUnavailable) && (
+                <p
+                  role='status'
+                  data-testid='work-model-unavailable'
+                  className='mt-4 text-sm text-ink-muted'
+                >
+                  {freshEngineUnavailable
+                    ? t('work.composer.strandsDisabled')
+                    : freshModelUnavailableMessage}
+                </p>
+              )}
               <WorkComposer
                 variant='landing'
                 dictationOwnerKey='landing'
                 initialMessage={
                   !taskId && delegatedGoal ? delegatedGoal : undefined
                 }
-                models={modelOptions}
+                models={freshModelOptions}
                 selectorModels={models}
-                modelKey={freshModel?.key || ''}
+                selectedModel={freshModel}
+                engine={freshEngine}
+                strandsEnabled={strandsEnabled}
                 running={false}
                 loading={actionLoading}
-                disabled={runtimeUnavailable}
+                disabled={
+                  runtimeUnavailable ||
+                  freshModelUnavailable ||
+                  freshEngineUnavailable
+                }
                 remoteDisclosureDismissed={
                   preferences.workRemoteProviderDisclosureDismissed
                 }
                 remoteDisclosureSaving={remoteDisclosureSaving}
+                think={freshThink}
+                inheritedThink={freshInheritedThink}
+                onThinkChange={think => setThinkChoice({ owner: 'new', think })}
                 onModelChange={changeModel}
+                onEngineChange={changeEngine}
                 onDismissRemoteDisclosure={dismissRemoteDisclosure}
-                onModelsRefresh={loadChatModels}
+                onModelsRefresh={refreshModels}
                 onSubmit={submitMessage}
                 onCancel={stopRun}
               />
               <div
                 data-testid='work-workspace-note'
                 role='note'
-                className='mt-4 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-[10px] leading-relaxed text-ink-subtle'
+                className='mt-3 flex max-w-2xl items-start justify-center gap-2 text-center text-[11px] leading-relaxed text-ink-subtle'
               >
-                <Boxes aria-hidden='true' className='h-3.5 w-3.5' />
+                <Boxes
+                  aria-hidden='true'
+                  className='mt-0.5 h-3.5 w-3.5 shrink-0'
+                />
                 <span>
                   {t('work.composer.hint', {
                     defaultValue:
@@ -1713,6 +2034,11 @@ export default function WorkPage() {
                   onLoadOlder={() => loadOlderMessages(selectedTask.id)}
                   onOpenFile={openWorkspaceFile}
                 />
+                {taskEngineUnavailable && (
+                  <p role='status' className='px-5 py-2 text-sm text-ink-muted'>
+                    {t('work.composer.strandsDisabled')}
+                  </p>
+                )}
                 <WorkComposer
                   key={selectedTask.id}
                   dictationOwnerKey={selectedTask.id}
@@ -1724,17 +2050,29 @@ export default function WorkPage() {
                     .map(item => ({ id: item.id, name: item.title }))}
                   models={effectiveModelOptions}
                   selectorModels={models}
-                  modelKey={selectedModelKey}
+                  selectedModel={selectedWorkModel}
+                  engine={taskEngine}
+                  strandsEnabled={strandsEnabled}
                   running={activeTask}
                   loading={actionLoading}
-                  disabled={runtimeUnavailable}
+                  disabled={
+                    runtimeUnavailable ||
+                    taskEngineUnavailable ||
+                    !selectedWorkModel
+                  }
                   remoteDisclosureDismissed={
                     preferences.workRemoteProviderDisclosureDismissed
                   }
                   remoteDisclosureSaving={remoteDisclosureSaving}
+                  think={taskThink}
+                  inheritedThink={taskInheritedThink}
+                  onThinkChange={think =>
+                    setThinkChoice({ owner: selectedTask.id, think })
+                  }
                   onModelChange={changeModel}
+                  onEngineChange={changeEngine}
                   onDismissRemoteDisclosure={dismissRemoteDisclosure}
-                  onModelsRefresh={loadChatModels}
+                  onModelsRefresh={refreshModels}
                   onSubmit={submitMessage}
                   onCancel={stopRun}
                 />
@@ -1789,7 +2127,7 @@ export default function WorkPage() {
         ) : (
           <div className='flex min-h-0 flex-1 flex-col items-center justify-center px-6 text-center'>
             {loadingTask ? (
-              <div className='text-sm text-ink-muted'>
+              <div role='status' className='text-sm text-ink-muted'>
                 {t('work.tasks.loading', { defaultValue: 'Loading task…' })}
               </div>
             ) : (

@@ -88,7 +88,7 @@ The Usage page (`/usage`) charts user-attributed model and provider work.
 Metering happens at each supported execution boundary and currently covers:
 
 - local Ollama chat calls, including native Chat and Ollama-backed Work calls;
-- installed agent CLI chat calls;
+- installed agent CLI chat calls and Strands engine calls;
 - plugin-backed chat, streaming and non-streaming;
 - plugin embeddings, image generation, speech to text, text to speech, sound,
   and video; and
@@ -124,6 +124,38 @@ The page offers 7, 30, and 90-day ranges over a single admin-only endpoint,
 reported tokens, success rate, average latency, and the share of calls that
 reported token usage. Reading the page is read-only and uses the deployment's
 existing usage ledger.
+
+### Agent usage
+
+The **Agents** section near the top (**Calls to CLI agents and the Strands
+engine**) shows Claude Code, Codex, OpenCode, Pi, and Strands separately. It
+includes each agent's calls, reported tokens,
+failed or cancelled calls, average duration, and up to 20 most-used models.
+Agent totals cover all matching calls in the selected period, independently of
+the larger provider and model tables' display limits. These are subsets of the
+page totals, not additional billable events.
+
+An agent with no records says **No recorded calls in this period**. This does
+not indicate whether its CLI is installed or signed in. Calls without reported
+token metadata say **Tokens not reported**; missing counters are not estimated.
+The page refreshes every 20 seconds while visible and provides a manual refresh.
+
+CLI usage records one invocation and the token counters reported by that CLI.
+Cumulative snapshots replace older snapshots, and repeated per-step reports are
+deduplicated. Cache and reasoning counters are combined according to each CLI's
+protocol, without counting subsets twice. Cancelled invocations and partial
+responses that exit unsuccessfully retain their actual outcome.
+
+Strands calls are attributed to the **Strands** agent. The engine has no model
+provider of its own; every model call it makes goes through Libre WebUI's
+Ollama or plugin providers. Calls made outside LWUI are not imported. Older
+records without token counters remain unmetered.
+
+The endpoint exposes this bounded breakdown in `agents`, including all five
+supported names even when their counters are zero. Reading it does not discover
+CLI models, launch agents, or contact providers. Older servers without this
+field can show recorded agent entries from their provider breakdown; missing
+agent entries on those servers are not presented as confirmed zero usage.
 
 ### Explore models and providers
 

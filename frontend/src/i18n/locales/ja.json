@@ -38,14 +38,22 @@
     "custom": "カスタム",
     "remove": "削除",
     "home": "ホーム",
-    "more": "多"
+    "more": "多",
+    "provider": "プロバイダー",
+    "agent": "エージェント",
+    "reasoning": "推論",
+    "skipToContent": "コンテンツへスキップ"
   },
   "brand": {
     "name": "Alcore",
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "backendConnectionFailed": "バックエンドサービスへの接続に失敗しました"
+    "backendConnectionFailed": "バックエンドサービスへの接続に失敗しました",
+    "ollamaUnavailable": "Ollama サービスを利用できません。プラグインモデルは引き続き使用できる場合があります。",
+    "connecting": "バックエンドに接続中… ({{attempt}}/{{total}})",
+    "startingUp": "起動中…",
+    "backendUnreachableHint": "バックエンドが実行中であることを確認して、もう一度お試しください。"
   },
   "auth": {
     "login": {
@@ -206,7 +214,9 @@
       "removed": "パスキーを削除しました。",
       "removeFailed": "パスキーを削除できませんでした。",
       "signInButton": "パスキーでサインイン",
-      "signInFailed": "パスキーでのサインインに失敗しました。"
+      "signInFailed": "パスキーでのサインインに失敗しました。",
+      "removeConfirmTitle": "このパスキーを削除しますか？",
+      "removeConfirmDescription": "「{{name}}」ではサインインできなくなります。あとで再登録できます。"
     },
     "alcore": {
       "title": "This server uses Alcore Auth for sign-in.",
@@ -272,6 +282,12 @@
       "tryAgain": "Try again",
       "restart": "Restart sign-in",
       "support": "Need help? Contact your server admin or see"
+    },
+    "password": {
+      "show": "パスワードを表示",
+      "hide": "パスワードを非表示",
+      "showConfirmation": "確認用パスワードを表示",
+      "hideConfirmation": "確認用パスワードを非表示"
     }
   },
   "setup": {
@@ -324,7 +340,8 @@
       "envNote": "このキーはbackend/.envファイルにENCRYPTION_KEYとして保存されています",
       "acknowledgment": "暗号化キーを安全な場所に保存しました。紛失するとデータ損失の可能性があることを理解しています。",
       "confirmRequired": "暗号化キーを保存したことを確認してください",
-      "continue": "Alcoreを開始"
+      "continue": "Alcoreを開始",
+      "loadFailed": "暗号化キーを読み込めませんでした。再試行して続行してください。"
     },
     "connectModels": {
       "title": "モデルを接続",
@@ -418,7 +435,8 @@
       "toolsOn": "ツールは有効 — モデルは承認済みのツールを呼び出せます",
       "toolsOff": "このメッセージでモデルにツールを呼び出させる",
       "thinkingOn": "思考オン ({{level}})",
-      "thinkingOff": "回答前に考える"
+      "thinkingOff": "回答前に考える",
+      "thinkingUpdateFailed": "思考の設定を更新できませんでした"
     },
     "session": {
       "new": "新しいチャット",
@@ -454,7 +472,8 @@
         "move": "フォルダーへ移動",
         "remove": "フォルダーから外す",
         "delete": "フォルダーを削除",
-        "deleteConfirm": "このフォルダーを削除しますか？中のチャットは残ります。"
+        "deleteConfirm": "このフォルダーを削除しますか？中のチャットは残ります。",
+        "rename": "フォルダー名を変更"
       },
       "shareChat": "チャットを共有…"
     },
@@ -472,7 +491,8 @@
       "selectBeforePrivateChat": "プライベートチャットを開始する前に利用可能なモデルを選択してください",
       "selectBeforeSending": "送信する前に利用可能なモデルを選択してください",
       "selectBeforeRegenerating": "再生成する前に利用可能なモデルを選択してください",
-      "connectDescription": "まだモデルが接続されていません。下記からソースを選んでください — ローカルランタイム、自分のサーバー、またはクラウドAPI — 1分もかからずにチャットを始められます。"
+      "connectDescription": "まだモデルが接続されていません。下記からソースを選んでください — ローカルランタイム、自分のサーバー、またはクラウドAPI — 1分もかからずにチャットを始められます。",
+      "pullCommand": "ollama pull llama3.2:3b"
     },
     "footer": {
       "disclaimer": "LLMは間違えることがあります - 重要な情報は確認してください",
@@ -486,7 +506,13 @@
       "browse": "参照",
       "unsupportedFileType": "サポートされていないファイル形式です: {{name}}",
       "maxImagesAllowed": "画像は最大 {{count}} 枚まで追加できます",
-      "imageTooLarge": "画像 {{name}} は大きすぎます（最大 10 MB）"
+      "imageTooLarge": "画像 {{name}} は大きすぎます（最大 10 MB）",
+      "readFailed": "{{name}} を読み込めませんでした",
+      "uploadAlt": "アップロード {{number}}",
+      "removeImage": "画像 {{number}} を削除",
+      "addMore": "画像を追加 ({{count}}/{{max}})",
+      "uploading": "アップロード中",
+      "removeDocument": "{{name}} を削除"
     },
     "structuredOutput": {
       "title": "レスポンス形式",
@@ -537,7 +563,8 @@
       "compactionOff": "このチャットでは無効"
     },
     "message": {
-      "sources": "出典"
+      "sources": "出典",
+      "copyFailed": "クリップボードにコピーできませんでした"
     },
     "toasts": {
       "chatCreated": "新しいチャットが作成されました",
@@ -581,7 +608,8 @@
       "generationRateLimitedWeekly": "Weekly budget spent — new chats pause until Monday 00:00 UTC. Try again later or upgrade your plan.",
       "generationRateLimitedMonthly": "Monthly budget spent — new chats pause until the 1st of next month (UTC). Try again later or upgrade your plan.",
       "generationFailedSupport": "The reply couldn't be finished — retry, and if it keeps happening report it from Settings > About > GitHub issues.",
-      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access."
+      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access.",
+      "archiveFailed": "このチャットをアーカイブできませんでした"
     },
     "documents": {
       "title": "コンテキスト内のドキュメント"
@@ -614,7 +642,25 @@
     "delegate": {
       "action": "Run as Work task"
     },
-    "sharedReadOnly": "{{owner}} が共有 — 閲覧のみ"
+    "sharedReadOnly": "{{owner}} が共有 — 閲覧のみ",
+    "branch": {
+      "variants": "{{count}}件のバリアント",
+      "variants_plural": "{{count}}件のバリアント",
+      "selectVariant": "バリアント {{number}} を選択",
+      "generating": "生成中...",
+      "select": "選択"
+    },
+    "sources": {
+      "fullContextFailed": "ドキュメント全体の設定を更新できませんでした",
+      "usedByRetrieval": "返信で使用",
+      "triggerLabel": "出典 ({{count}})"
+    },
+    "announce": {
+      "replyFinished": "{{name}}の返信: {{text}}",
+      "replyFinishedNoText": "{{name}}が返信を完了しました。",
+      "codeBlock": "コードブロック",
+      "generationStopped": "生成を停止しました"
+    }
   },
   "sidebar": {
     "navigation": {
@@ -636,10 +682,12 @@
       "prompts": "プロンプト",
       "skills": "スキル",
       "tools": "ツール",
-      "channels": "チャンネル"
+      "channels": "チャンネル",
+      "strands": "Strands"
     },
     "toggleSize": "サイドバーのサイズを切り替え",
-    "expandSidebar": "サイドバーを展開"
+    "expandSidebar": "サイドバーを展開",
+    "ariaLabel": "サイドバー"
   },
   "user": {
     "menu": {
@@ -696,7 +744,8 @@
       "sessions": "セッション",
       "apiKeys": "APIキー",
       "notifications": "通知",
-      "apiPlatform": "API Platform"
+      "apiPlatform": "API Platform",
+      "ollamaDisabled": "Ollama は管理者によって無効化されています"
     },
     "appearance": {
       "title": "外観",
@@ -921,7 +970,8 @@
       "modelPrice": "Price / 1M",
       "modelStatus": "Status",
       "modelFree": "Free",
-      "modelDeprecated": "Deprecated"
+      "modelDeprecated": "Deprecated",
+      "dismissError": "エラーを閉じる"
     },
     "generation": {
       "title": "生成オプション",
@@ -1024,7 +1074,8 @@
         "deleteFailed": "コレクションを削除できませんでした",
         "assignFailed": "ドキュメントを移動できませんでした",
         "share": "コレクションを共有",
-        "shared": "共有"
+        "shared": "共有",
+        "assignTo": "{{name}} のコレクション"
       },
       "library": {
         "title": "アップロード済みドキュメント",
@@ -1166,7 +1217,8 @@
         "title": "アーカイブ済みチャット",
         "empty": "アーカイブ済みのチャットはありません",
         "unarchive": "アーカイブ解除"
-      }
+      },
+      "clearAllConfirm": "すべてのチャット履歴を削除してもよろしいですか？この操作は元に戻せません。"
     },
     "about": {
       "title": "概要",
@@ -1178,43 +1230,36 @@
       "features": {
         "privacy": {
           "title": "プライバシー優先",
-          "description": "データはお使いのデバイスに保存されます"
+          "description": "Self-hosted workspace — your data stays under your control"
         },
         "openSource": {
           "title": "オープンソース",
-          "description": "無料でオープンソースのソフトウェア"
+          "description": "Open-source software maintained by the Alcore team"
         },
         "localInference": {
           "title": "ローカル推論",
-          "description": "OllamaでAIモデルをローカル実行"
+          "description": "Use local Ollama models or connect to your Alcore provider"
         }
       },
-      "openSourceBy": "{{company}}によるオープンソース",
+      "openSourceBy": "Built by {{company}}",
       "links": {
         "title": "リンク",
-        "github": "GitHub",
-        "githubDescription": "ソースコードを見る・貢献する",
         "website": "ウェブサイト",
-        "websiteDescription": "ウェブサイトを訪問",
+        "websiteDescription": "Visit the Alcore website",
         "documentation": "ドキュメント",
         "reportIssue": "問題を報告",
         "reportIssueDescription": "バグ報告・機能リクエスト",
-        "documentationDescription": "ガイド、チュートリアル、APIリファレンス",
-        "forgejo": "Forgejoミラー",
-        "forgejoDescription": "セルフホストForgejoリポジトリ",
-        "sponsor": "スポンサー",
-        "sponsorDescription": "プロジェクトの資金を支援",
-        "star": "GitHub でスターを付ける",
-        "starDescription": "スターは他の人がプロジェクトを見つける助けになります"
+        "documentationDescription": "Guides and documentation for Alcore"
       },
       "version": "バージョン {{version}}",
       "updates": {
-        "checking": "更新を確認しています…",
-        "upToDate": "最新バージョンを使用中です",
-        "updateAvailable": "バージョン {{version}} が利用可能です",
-        "ahead": "最新リリースより先行しています（{{version}}）",
-        "checkFailed": "更新を確認できませんでした",
         "viewChangelog": "変更履歴を見る"
+      },
+      "ollama": {
+        "title": "Ollamaステータス",
+        "version": "バージョン",
+        "healthy": "正常",
+        "unhealthy": "異常"
       }
     },
     "groups": {
@@ -1280,7 +1325,11 @@
       "unknownDevice": "不明なデバイス",
       "createdAt": "サインイン",
       "lastSeenAt": "最終アクティブ",
-      "expiresAt": "有効期限"
+      "expiresAt": "有効期限",
+      "signOutConfirmTitle": "このセッションをサインアウトしますか？",
+      "signOutConfirmDescription": "{{device}} はすぐにサインアウトされ、再度サインインが必要になります。",
+      "signOutOthersConfirmTitle": "他のセッションをサインアウトしますか？",
+      "signOutOthersConfirmDescription": "他の {{count}} 件のセッションがすぐにサインアウトされます。このセッションはサインインしたままです。"
     },
     "apiKeys": {
       "title": "APIキー",
@@ -1314,7 +1363,9 @@
       "createdAt": "作成日",
       "lastUsedAt": "最終使用",
       "expiresAt": "有効期限",
-      "neverExpires": "無期限"
+      "neverExpires": "無期限",
+      "revokeConfirmTitle": "「{{name}}」を失効させますか？",
+      "revokeConfirmDescription": "この API キーを使用しているものはすべて、すぐに動作しなくなります。この操作は元に戻せません。"
     },
     "notifications": {
       "title": "通知",
@@ -1484,7 +1535,20 @@
   "models": {
     "title": "モデル",
     "noModels": "モデルがインストールされていません",
-    "noModelsFound": "モデルが見つかりません"
+    "noModelsFound": "モデルが見つかりません",
+    "subtitle": "Ollamaモデルのプル、管理、監視",
+    "installed": "インストール済みモデル",
+    "available": "利用可能なモデル",
+    "pull": "モデルをプル",
+    "pulling": "プル中...",
+    "delete": "モデルを削除",
+    "deleting": "削除中...",
+    "size": "サイズ",
+    "modified": "更新日時",
+    "family": "ファミリー",
+    "parameters": "パラメータ",
+    "quantization": "量子化",
+    "pullFirst": "モデルをプルして開始"
   },
   "personas": {
     "title": "ペルソナ",
@@ -1516,7 +1580,8 @@
     "model": "モデル",
     "size": "サイズ",
     "quality": "品質",
-    "created": "作成日"
+    "created": "作成日",
+    "lightboxLabel": "画像プレビュー"
   },
   "errors": {
     "generic": "エラーが発生しました",
@@ -1565,7 +1630,13 @@
   },
   "modelManager": {
     "sections": {
-      "catalog": "モデルカタログ"
+      "catalog": "モデルカタログ",
+      "pull": "新しいモデルをプル",
+      "library": "ライブラリを閲覧",
+      "huggingface": "HuggingFace Hub",
+      "running": "実行中のモデル",
+      "local": "ローカルモデル",
+      "advanced": "詳細アクション"
     },
     "catalog": {
       "searchPlaceholder": "名前またはプロバイダーでモデルを検索...",
@@ -1588,12 +1659,159 @@
       "hide": "ユーザーに非表示にする",
       "show": "ユーザーに表示する",
       "star": "{{name}}にスターを付ける",
-      "unstar": "{{name}}のスターを外す"
+      "unstar": "{{name}}のスターを外す",
+      "providerOllama": "Ollama",
+      "filterLabel": "モデルを絞り込む",
+      "displayName": "{{name}} の表示名"
     },
     "huggingface": {
       "checkingGguf": "GGUFファイルを確認中...",
       "noGgufAvailable": "Ollamaで直接プルできるGGUFファイルがありません",
-      "ggufFilesCount": "GGUFファイル ({{count}}) - Ollamaに直接プル"
+      "ggufFilesCount": "GGUFファイル ({{count}}) - Ollamaに直接プル",
+      "browseAll": "HuggingFaceで全て見る",
+      "noModelsFound": "モデルが見つかりません",
+      "noResults": "モデルが見つかりません。検索条件やフィルターを調整してください。",
+      "browseAllLink": "すべて見る",
+      "search": "HuggingFaceモデルを検索...",
+      "by": "作成者",
+      "gated": "アクセス制限",
+      "viewOnHF": "HuggingFaceで表示",
+      "sortDownloads": "ダウンロード数",
+      "sortLikes": "いいね",
+      "sortRecent": "最近",
+      "taskTextGeneration": "テキスト生成",
+      "taskTextToSpeech": "音声合成",
+      "taskTextToImage": "画像生成",
+      "taskSpeechRecognition": "音声認識",
+      "tasks": {
+        "textGen": "テキスト生成",
+        "tts": "音声合成",
+        "image": "画像生成",
+        "stt": "音声認識"
+      },
+      "sort": {
+        "downloads": "ダウンロード数順",
+        "likes": "人気順",
+        "recent": "更新順"
+      }
+    },
+    "title": "モデル",
+    "loading": "モデルを読み込み中...",
+    "systemStatus": {
+      "online": "Ollamaオンライン",
+      "offline": "Ollamaオフライン",
+      "models": "モデル",
+      "models_plural": "モデル",
+      "running": "実行中",
+      "vram": "VRAM"
+    },
+    "pull": {
+      "placeholder": "モデル名を入力（例: llama3.2:3b, deepseek-r1:14b）",
+      "button": "プル",
+      "cancel": "キャンセル",
+      "popular": "人気のモデル:",
+      "browseAll": "ollama.comですべてのモデルを閲覧",
+      "success": "モデル{{name}}のプルに成功しました",
+      "cancelled": "モデルのプルがキャンセルされました",
+      "failed": "モデルのプルに失敗しました",
+      "enterName": "モデル名を入力してください",
+      "restricted": "このインスタンスでは、モデルのインストールは管理者のみに制限されています。"
+    },
+    "progress": {
+      "starting": "初期化中...",
+      "pulling": "モデルをダウンロード中...",
+      "pullingLayer": "ダウンロード中",
+      "verifying": "整合性を検証中...",
+      "verifyingDigest": "sha256ダイジェストを検証中",
+      "writing": "マニフェストを書き込み中...",
+      "cleaning": "クリーンアップ中..."
+    },
+    "library": {
+      "available": "利用可能",
+      "search": "モデルを検索...",
+      "noResults": "条件に一致するモデルが見つかりません",
+      "installed": "インストール済み",
+      "more": "+{{count}}件",
+      "refresh": "ライブラリを更新"
+    },
+    "local": {
+      "noModels": "まだモデルがインストールされていません",
+      "pullToStart": "上でモデルをプルして開始",
+      "installed": "インストール済み",
+      "running": "実行中",
+      "info": "情報",
+      "copy": "コピー",
+      "delete": "削除",
+      "deleteConfirm": "モデル「{{name}}」を削除してもよろしいですか？",
+      "deleteSuccess": "モデル{{name}}が正常に削除されました",
+      "deleteFailed": "モデルの削除に失敗しました"
+    },
+    "advanced": {
+      "createModel": "モデルを作成",
+      "fromModelfile": "Modelfileから",
+      "copyModel": "モデルをコピー",
+      "duplicateExisting": "既存を複製",
+      "testEmbeddings": "埋め込みをテスト",
+      "generateVectors": "ベクトルを生成",
+      "healthCheck": "ヘルスチェック",
+      "testConnection": "接続をテスト",
+      "healthy": "Ollamaは正常です！"
+    },
+    "modals": {
+      "details": {
+        "title": "モデル詳細",
+        "info": "モデル情報",
+        "family": "ファミリー",
+        "parameters": "パラメータ",
+        "quantization": "量子化",
+        "format": "フォーマット",
+        "systemPrompt": "システムプロンプト",
+        "template": "テンプレート",
+        "license": "ライセンス",
+        "modelfile": "Modelfile",
+        "noDetails": "詳細がありません"
+      },
+      "copy": {
+        "title": "モデルをコピー",
+        "source": "ソースモデル",
+        "selectModel": "モデルを選択...",
+        "newName": "新しいモデル名",
+        "placeholder": "例: my-custom-model",
+        "copying": "コピー中...",
+        "button": "モデルをコピー",
+        "success": "モデルが{{name}}にコピーされました",
+        "failed": "モデルのコピーに失敗しました",
+        "enterBoth": "ソースと宛先の名前を両方入力してください"
+      },
+      "create": {
+        "title": "カスタムモデルを作成",
+        "name": "モデル名",
+        "namePlaceholder": "例: my-assistant",
+        "modelfile": "Modelfile",
+        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
+        "see": "参照：",
+        "docs": "Modelfileドキュメント",
+        "docsLink": "（構文リファレンス）",
+        "creating": "作成中...",
+        "button": "モデルを作成",
+        "success": "モデル{{name}}が正常に作成されました",
+        "failed": "モデルの作成に失敗しました",
+        "enterBoth": "モデル名とModelfileの内容を入力してください"
+      },
+      "embeddings": {
+        "title": "埋め込みをテスト",
+        "model": "埋め込みモデル",
+        "selectModel": "モデルを選択...",
+        "recommended": "推奨: nomic-embed-text, mxbai-embed-large",
+        "input": "入力テキスト",
+        "placeholder": "埋め込みを生成するテキストを入力...",
+        "generating": "生成中...",
+        "button": "埋め込みを生成",
+        "result": "結果（{{count}}次元）",
+        "success": "{{count}}次元の埋め込みベクトルを生成しました",
+        "failed": "埋め込みの生成に失敗しました",
+        "enterBoth": "モデルを選択してテキストを入力してください"
+      }
     }
   },
   "personaManager": {
@@ -1615,7 +1833,10 @@
     "deleteConfirm": "「{{name}}」を削除してもよろしいですか？",
     "deleteSuccess": "ペルソナ「{{name}}」が正常に削除されました",
     "downloadSuccess": "ペルソナ「{{name}}」が正常にダウンロードされました",
-    "failed": "ペルソナの{{action}}に失敗しました"
+    "failed": "ペルソナの{{action}}に失敗しました",
+    "loadFailed": "ペルソナを読み込めませんでした。",
+    "deleteFailed": "ペルソナを削除できませんでした",
+    "downloadFailed": "ペルソナをダウンロードできませんでした"
   },
   "personaForm": {
     "title": {
@@ -1747,7 +1968,8 @@
       "promptHint": "このペルソナでの新しいチャットを毎回このプロンプトで始めます。",
       "noPrompt": "プロンプトなし",
       "version": "バインディングのリビジョン {{version}}"
-    }
+    },
+    "sections": "ペルソナのセクション"
   },
   "personaCard": {
     "enhanced": "拡張",
@@ -1764,7 +1986,16 @@
     "backupSuccess": "ペルソナのバックアップが正常にダウンロードされました",
     "dnaSuccess": "ペルソナDNAが正常にエクスポートされました",
     "failed": "{{action}}に失敗しました",
-    "shareTooltip": "このペルソナを共有"
+    "shareTooltip": "このペルソナを共有",
+    "wipeFailed": "メモリを消去できませんでした",
+    "backupFailed": "ペルソナをバックアップできませんでした",
+    "exportDnaFailed": "ペルソナ DNA をエクスポートできませんでした",
+    "favorite": "お気に入り",
+    "memoryStatus": {
+      "active": "有効",
+      "wiped": "消去済み",
+      "backed_up": "バックアップ済み"
+    }
   },
   "userManager": {
     "title": "ユーザー管理",
@@ -1793,7 +2024,10 @@
     "noUsersMatching": "検索に一致するユーザーがいません",
     "columns": {
       "role": "役割",
-      "created": "作成日"
+      "created": "作成日",
+      "user": "ユーザー",
+      "email": "メール",
+      "actions": "アクション"
     },
     "roles": {
       "admin": "管理者",
@@ -1832,7 +2066,10 @@
       "createSuccess": "ユーザーが正常に作成されました",
       "updateSuccess": "ユーザーが正常に更新されました",
       "createFailed": "ユーザーの作成に失敗しました",
-      "updateFailed": "ユーザーの更新に失敗しました"
+      "updateFailed": "ユーザーの更新に失敗しました",
+      "usernamePlaceholder": "ユーザー名を入力",
+      "emailPlaceholder": "メールを入力（任意）",
+      "passwordPlaceholder": "パスワードを入力"
     },
     "workAccess": {
       "title": "Work へのアクセス",
@@ -1925,7 +2162,28 @@
       "memberOf": "所属グループ",
       "featuresLabel": "機能アクセス",
       "grantsLabel": "付与された権限",
-      "grantVia": "経由"
+      "grantVia": "経由",
+      "deleteConfirmTitle": "グループ「{{name}}」を削除しますか？",
+      "deleteConfirmDescription": "メンバーは、このグループ経由でのみ得ていたアクセス権を失います。アカウント自体は削除されません。",
+      "statuses": {
+        "active": "有効",
+        "pending": "承認待ち"
+      },
+      "features": {
+        "work": "作業",
+        "model-download": "モデルのダウンロード",
+        "web-search": "ウェブ検索",
+        "strands": "Strands エンジン",
+        "tools": "ツール",
+        "stt": "音声認識",
+        "tts": "音声合成",
+        "voice-mode": "音声モード",
+        "voice-cloning": "音声クローン"
+      },
+      "grantViaKinds": {
+        "user": "直接付与",
+        "group": "グループ"
+      }
     },
     "audit": {
       "title": "セキュリティ監査ログ",
@@ -2012,13 +2270,60 @@
       "save": "保存",
       "saving": "保存中…",
       "saved": "メール設定を保存しました。",
-      "saveFailed": "メール設定を保存できませんでした。"
+      "saveFailed": "メール設定を保存できませんでした。",
+      "security": {
+        "starttls": "STARTTLS（ポート587）",
+        "tls": "TLS（ポート465）",
+        "none": "なし（信頼できるネットワーク限定）"
+      },
+      "templateTitle": "メールの外観",
+      "templateHint": "ニュースダイジェストや通知メールに使う、ライトまたはダークのテンプレートを選択します。",
+      "themeLabel": "メールテンプレート",
+      "themeLight": "ライト",
+      "themeDark": "ダーク",
+      "previewTitle": "テンプレートのプレビュー",
+      "previewLoading": "プレビューを読み込み中…",
+      "previewFailed": "メールのプレビューを読み込めませんでした。",
+      "previewHeading": "ニュースダイジェスト",
+      "previewIntro": "毎日のニュースメールのプレビューです。",
+      "previewMarkdown": "## 今日の注目ニュース\n\n- テクノロジーと研究の最新情報\n- 選択したソースからのニュース\n\n**まとめ：** 毎日のニュースをすぐに読めます。",
+      "previewLinkLabel": "結果を開く"
+    },
+    "modelAccess": {
+      "title": "モデルのダウンロード",
+      "description": "すべてのアクティブユーザーに Ollama と Hugging Face ブラウザからのモデル取得を許可します。管理者は常にモデルをダウンロードできます。",
+      "saved": "モデルダウンロードのアクセスを更新しました",
+      "saveFailed": "モデルダウンロードのアクセスを更新できませんでした"
+    },
+    "ollamaProvider": {
+      "title": "Ollamaプロバイダー",
+      "description": "オフにすると、アプリはOllamaのチェックを完全に停止します — ヘルスチェックも警告もありません。エンドポイントはOllama互換の任意のゲートウェイを指定できます。",
+      "saved": "Ollamaプロバイダーの設定を保存しました",
+      "saveFailed": "Ollamaプロバイダーの設定を保存できませんでした",
+      "baseUrlLabel": "OllamaエンドポイントURL"
+    },
+    "strandsAccess": {
+      "title": "Strands エンジン",
+      "description": "組み込みの Strands エージェントを使えるユーザーを選びます。各セッション専用のワークスペース内でファイルを読み取り・編集できますが、シェルコマンドは実行できません。",
+      "saved": "Strands のアクセス設定を更新しました",
+      "saveFailed": "Strands のアクセス設定を更新できませんでした",
+      "lockedByEnv": "環境変数 LIBRE_STRANDS_ACCESS で固定されています。",
+      "modes": {
+        "disabled": "オフ",
+        "admins": "管理者",
+        "all-users": "すべてのユーザー"
+      }
+    },
+    "agentCliAccess": {
+      "title": "エージェントCLIモデル",
+      "description": "管理者はインストール済みのPi、OpenCode、Codex、Claude Codeをチャットモデルとして使用できます。これらはWorkサンドボックスの外でホスト上で実行されます。",
+      "lockedByEnv": "環境変数 AGENT_CLI_MODELS_ENABLED によって固定されています。"
     }
   },
   "usageAnalytics": {
     "eyebrow": "管理",
     "title": "プロバイダーの使用状況",
-    "description": "このインスタンスで有効なプラグイン全体の送信API呼び出しとモデル消費量を追跡します。",
+    "description": "このインスタンスのプロバイダーとエージェントのモデルリクエストと使用量を確認できます。",
     "days": "{{count}}日間",
     "refresh": "使用状況を更新",
     "loadFailed": "プロバイダーの使用状況を読み込めませんでした。",
@@ -2065,7 +2370,7 @@
       "notCharted": "選択すると、このモデルをグラフに読み込みます"
     },
     "providers": {
-      "title": "有効なプラグインのトラフィック",
+      "title": "プロバイダーとエージェントのトラフィック",
       "description": "プロバイダー別のリクエスト数、信頼性、応答時間。",
       "share": "呼び出しの {{percent}}%",
       "failures": "失敗またはキャンセル：{{count}} 件",
@@ -2083,7 +2388,7 @@
     },
     "empty": {
       "title": "プロバイダ呼び出しはまだありません",
-      "description": "有効なプラグインがチャット、Work、埋め込み、画像、音声、サウンド、または動画のリクエストを処理すると、呼び出しがここに表示されます。"
+      "description": "プロバイダーやエージェントがチャット、Work、埋め込み、画像、音声、サウンド、動画のリクエストを処理すると、ここに表示されます。"
     },
     "privacyNote": "使用量はサーバー上の送信プラグイン境界で計測されます。Alcoreはプロバイダ、モデル、タイミング、ステータス、および報告されたカウンターを保存しますが、プロンプト、レスポンス、エンドポイント、資格情報、またはプロバイダのエラー本文は保存しません。トークン合計には、プロバイダが使用量メタデータを返した呼び出しのみが含まれます。",
     "heatmap": {
@@ -2095,6 +2400,14 @@
       "less": "少",
       "more": "多",
       "yearTotal": "過去1年間で{{formatted}}回の呼び出し"
+    },
+    "agents": {
+      "title": "エージェント",
+      "description": "CLI エージェントと Strands エンジンの呼び出し。",
+      "noCalls": "この期間に記録された呼び出しはありません",
+      "unreported": "トークン数は未報告",
+      "topModels": "使用頻度の高いモデル",
+      "legacy": "このサーバーは完全なエージェント内訳を提供していません。利用可能なエージェント記録を以下に表示します。"
     }
   },
   "systemPage": {
@@ -2309,7 +2622,11 @@
       "harmful": "有害",
       "formatting": "書式"
     },
-    "feedbackComment": "コメントを追加…"
+    "feedbackComment": "コメントを追加…",
+    "user": "ユーザー",
+    "feedbackFailed": "フィードバックを保存できませんでした",
+    "openImage": "画像 {{number}} を開く",
+    "uploadedImageAlt": "アップロードした画像 {{number}}"
   },
   "imageGallery": {
     "title": "画像ギャラリー",
@@ -2321,7 +2638,8 @@
     "deleteSuccess": "画像が削除されました",
     "deleteFailed": "画像の削除に失敗しました",
     "loadMore": "さらに読み込む（{{current}}/{{total}}）",
-    "loadFailed": "ギャラリーの読み込みに失敗しました"
+    "loadFailed": "ギャラリーの読み込みに失敗しました",
+    "downloadFailed": "画像のダウンロードに失敗しました"
   },
   "imageGeneration": {
     "title": "画像を生成",
@@ -2397,7 +2715,10 @@
       "image": "画像",
       "video": "動画",
       "audio": "オーディオ"
-    }
+    },
+    "deleteConfirmTitle": "この項目を削除しますか？",
+    "deleteConfirmDescription": "生成されたメディアは完全に削除されます。",
+    "previewFailed": "プレビューを表示できません"
   },
   "errorBoundary": {
     "title": "エラーが発生しました",
@@ -2475,7 +2796,8 @@
     "previousVersion": "前のバージョン",
     "nextVersion": "次のバージョン",
     "print": "Print",
-    "exportCsv": "Export CSV"
+    "exportCsv": "Export CSV",
+    "resizePanel": "パネルのサイズを変更"
   },
   "personaImportExport": {
     "title": "ペルソナのインポート＆エクスポート",
@@ -2513,7 +2835,10 @@
     "generation": "生成:",
     "modelLoad": "モデル読み込み:",
     "totalTime": "合計時間:",
-    "generatedAt": "生成日時:"
+    "generatedAt": "生成日時:",
+    "notAvailable": "なし",
+    "tokenCount": "{{tokens}} トークン",
+    "tokensPerSecond": "{{value}} t/s"
   },
   "userMenu": {
     "loggedOut": "ログアウトしました",
@@ -2572,7 +2897,9 @@
       "httpWarning": "HTTPは認証情報やトラフィックを暗号化しません。信頼できるネットワークでのみ使用してください。",
       "invalidBaseUrl": "ベースURLにクエリ文字列やフラグメントを含めることはできません。",
       "invalidApiPath": "/で始まり、URL、クエリ、フラグメント、または..セグメントを含まない必要があります",
-      "tooLong": "値が長すぎます"
+      "tooLong": "値が長すぎます",
+      "resetConfirmTitle": "デフォルトに戻しますか？",
+      "resetConfirmDescription": "API キーやその他の認証情報を含め、{{name}} に保存されているすべての値が消去されます。この操作は元に戻せません。"
     }
   },
   "huggingface": {
@@ -2592,7 +2919,10 @@
   },
   "demoMode": {
     "title": "デモモード",
-    "github": "GitHub"
+    "github": "GitHub",
+    "defaultMessage": "これは紹介用のデモ版です。Ollama バックエンドには接続されていません。",
+    "viewOnGithub": "GitHub で見る",
+    "dismiss": "閉じる"
   },
   "libreClaw": {
     "title": "エージェント",
@@ -2755,8 +3085,8 @@
       "status": "ステータス：{{status}}"
     },
     "landing": {
-      "title": "新しい作業タスクを開始",
-      "description": "ローカルモデルまたは設定済みプロバイダーのモデルに、永続的で隔離されたワークスペースを提供します。モデルはファイルの確認やツールの実行ができ、次回も続きから作業できます。",
+      "title": "何に取り組みたいですか？",
+      "description": "タスクを説明してください。モデルに専用のワークスペースが用意されます。",
       "isolated": "隔離",
       "isolatedBody": "各タスクには専用のコンテナとファイルがあります。",
       "durable": "永続的",
@@ -2785,7 +3115,11 @@
         "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
         "attachTooMany": "Only {{max}} files can be attached at once.",
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
-      }
+      },
+      "engine": "エンジン",
+      "libreModels": "Libre WebUIモデル",
+      "strandsDisabled": "このアカウントでは Strands エンジンを利用できません。",
+      "modelLabel": "モデル"
     },
     "conversation": {
       "ready": "ワークスペースの準備ができました",
@@ -2825,8 +3159,18 @@
         "checksPending": "検証保留",
         "stallNudges": "停滞通知",
         "ambiguityNudges": "再確認通知",
-        "stoppedBy": "停止理由"
-      }
+        "stoppedBy": "停止理由",
+        "reasons": {
+          "round": "ラウンド上限",
+          "toolCall": "ツール呼び出し上限",
+          "approvalTimeout": "承認タイムアウト",
+          "computerStall": "コンピューターが停止"
+        }
+      },
+      "skillTraceSavedWorked": "記録: 成功",
+      "skillTraceSavedFailed": "記録: 失敗",
+      "connectionClosed": "作業のライブ接続が閉じられました。",
+      "reconnectingBackground": "ライブ更新をバックグラウンドで再接続しています。"
     },
     "runtime": {
       "unavailable": "ランタイムを利用できません",
@@ -2834,7 +3178,7 @@
       "readyOllama": "Docker 準備完了",
       "readyPlugin": "Docker + プラグイン準備完了",
       "readyHybrid": "Docker + モデル準備完了",
-      "reason": "Docker と、利用可能な Ollama またはプラグインのモデルプロバイダーが必要です。"
+      "reason": "Workランタイムと利用可能なモデルプロバイダーが必要です。"
     },
     "workspace": {
       "label": "ワークスペース表示",
@@ -2869,7 +3213,11 @@
       "changes": "変更",
       "changesSince": "前のターン以降の変更点",
       "diffLabel": "前のターン以降の変更: {{path}}",
-      "diffFolded": "変更のない行 {{count}} 行"
+      "diffFolded": "変更のない行 {{count}} 行",
+      "diffAdded": "追加",
+      "diffRemoved": "削除",
+      "unsavedChanges": "未保存の変更",
+      "editingLocked": "ターンの完了後に編集できるようになります。"
     },
     "activity": {
       "empty": "コマンド、ファイル操作、ツールの結果がここに表示されます。",
@@ -2880,7 +3228,9 @@
         "toolCall": "ツール呼び出し",
         "toolResult": "ツール結果",
         "error": "エラー"
-      }
+      },
+      "arguments": "ツールの引数",
+      "output": "ツールの出力"
     },
     "preview": {
       "command": "任意の起動コマンド",
@@ -2909,7 +3259,8 @@
       "saveFailed": "このファイルを保存できませんでした。",
       "saved": "ファイルを保存しました。",
       "previewFailed": "プレビューを開始できませんでした。",
-      "previewStopFailed": "プレビューを停止できませんでした。"
+      "previewStopFailed": "プレビューを停止できませんでした。",
+      "sendFailed": "メッセージを送信できませんでした。"
     },
     "terminal": {
       "connecting": "サンドボックスでシェルを開いています…",
@@ -2961,7 +3312,18 @@
       "noFilterMatches": "このフィルターに一致する変更ファイルはありません。",
       "allChanges": "すべての変更",
       "diffTruncated": "この差分は省略されています。",
-      "binaryFile": "バイナリファイルのため、テキスト差分はありません。"
+      "binaryFile": "バイナリファイルのため、テキスト差分はありません。",
+      "statusLabels": {
+        "modified": "変更",
+        "added": "追加",
+        "deleted": "削除",
+        "renamed": "名前変更",
+        "copied": "コピー",
+        "typeChanged": "タイプ変更",
+        "untracked": "未追跡"
+      },
+      "stagedState": "ステージ済み",
+      "aheadBehind": "{{ahead}} 先行、{{behind}} 遅れ"
     },
     "hostWorkspace": {
       "hint": "分離ワークスペースの場合は空欄のまま、またはこのマシンのフォルダーをタスクに指定します。",
@@ -2988,7 +3350,8 @@
       "unmute": "ミュート解除",
       "mute": "ミュート",
       "finished": "このタスクは完了しています。画面を戻すには再度開いてください。",
-      "reopenOpen": "タスクを再度開いて画面を開く"
+      "reopenOpen": "タスクを再度開いて画面を開く",
+      "teachSaveFailed": "このデモンストレーションを保存できませんでした。"
     },
     "computerSetup": {
       "title": "Work Computer",
@@ -3004,7 +3367,7 @@
       "label": "エージェントとして雇う（任意）",
       "none": "ペルソナなし（単発タスク）",
       "hint": "このタスクは名前付きエージェントになります。ペルソナを保持し、サイドバーに固定され、実行のたびに1行のステータスを報告します。",
-      "description": "ペルソナを選ぶと、このタスクは独自のアイデンティティを持つ永続的なエージェントになります。"
+      "description": "このタスクを名前付きのエージェントとして保持するには、ペルソナを選択してください。"
     },
     "agent": {
       "openScreen": "全画面ビューを開く",
@@ -3025,7 +3388,11 @@
       "approvalsToggleFailed": "承認の設定を更新できませんでした。",
       "approvalRuleLine": "常に許可",
       "approvalRuleDelete": "ルールを削除",
-      "approvalRuleDeleteFailed": "ルールを削除できませんでした。"
+      "approvalRuleDeleteFailed": "ルールを削除できませんでした。",
+      "routinesLoadFailed": "ルーティンを読み込めませんでした。",
+      "skillsLoadFailed": "教えたスキルを読み込めませんでした。",
+      "approvalsLoadFailed": "承認設定を読み込めませんでした。",
+      "routinePaused": "一時停止中"
     },
     "approval": {
       "title": "承認が必要です",
@@ -3033,7 +3400,16 @@
       "allowOnce": "一度許可する",
       "allowAlways": "常に許可する",
       "deny": "拒否",
-      "failed": "判断を送信できませんでした。"
+      "failed": "判断を送信できませんでした。",
+      "details": "アクションの詳細",
+      "fields": {
+        "command": "コマンド",
+        "path": "パス",
+        "from": "元",
+        "to": "先",
+        "actions": "アクション",
+        "recursive": "再帰"
+      }
     },
     "idleStopHint": "{{minutes}} 分間操作がないと停止します。",
     "runs": {
@@ -3045,7 +3421,8 @@
         "needsInput": "入力待ち",
         "failed": "失敗",
         "cancelled": "キャンセル済み"
-      }
+      },
+      "loadFailed": "実行履歴を読み込めませんでした。"
     },
     "recovery": {
       "pending": "Work は新しい操作を受け付ける前に、{{pending}} 件のサンドボックスのクリーンアップを確認しています。",
@@ -3057,6 +3434,17 @@
       "retrySucceeded": "保留中のクリーンアップ {{attempted}} 件中 {{cleared}} 件を完了しました。",
       "retryPending": "保留中のクリーンアップ {{attempted}} 件を再試行中です。",
       "retryFailed": "保留中のクリーンアップを再試行できませんでした。"
+    },
+    "computer": {
+      "setupFailed": "Work Computer をセットアップできませんでした。"
+    },
+    "announce": {
+      "completed": "{{title}}が完了しました。",
+      "needsInput": "{{title}}には入力または承認が必要です。",
+      "failed": "{{title}}が失敗しました。",
+      "cancelled": "{{title}}を停止しました。",
+      "approvalNeeded": "{{tool}}を実行するには、{{title}}の承認が必要です。",
+      "untitledTask": "このタスク"
     }
   },
   "personaBackground": {
@@ -3088,7 +3476,21 @@
     "reselectProvider": "このモデルを固定するにはプロバイダーを再選択してください",
     "unavailable": "利用不可",
     "unavailableSelections": "利用できない選択",
-    "agentModels": "エージェント"
+    "agentModels": "エージェント",
+    "searchOllama": "Ollamaライブラリを検索...",
+    "searchHuggingFace": "HuggingFaceを検索...",
+    "searchModels": "モデルを検索...",
+    "ollamaModels": "Ollamaモデル",
+    "installed": "インストール済み",
+    "use": "使用",
+    "pull": "ダウンロード",
+    "pullRestricted": "このインスタンスでは、モデルのインストールは管理者のみに制限されています。",
+    "adminOnlyPull": "管理者のみ",
+    "showAll": "すべて表示 ({{total}})",
+    "sources": "モデルの提供元",
+    "defaultModel": "デフォルトモデル",
+    "contextSize": "コンテキスト {{size}}",
+    "via": "{{provider}} 経由"
   },
   "whatsNew": {
     "title": "新機能",
@@ -3145,7 +3547,16 @@
     "unpin": "ピン留めを解除",
     "pinned": "ピン留め済み",
     "export": "Markdownでダウンロード",
-    "sharedWithYou": "共有されています"
+    "sharedWithYou": "共有されています",
+    "titleLabel": "ノートのタイトル",
+    "loadFailed": "読み込めませんでした。もう一度お試しください。",
+    "restoreConfirmTitle": "このバージョンを復元しますか？",
+    "restoreConfirmDescription": "ノートの本文がこの以前のバージョンに置き換えられます。",
+    "deleteAttachmentConfirmTitle": "{{name}} を削除しますか？",
+    "deleteAttachmentConfirmDescription": "添付ファイルはこのノートから完全に削除されます。",
+    "attachmentDeleteFailed": "添付ファイルを削除できませんでした",
+    "revokeFailed": "アクセスを取り消せませんでした",
+    "sharePermissionLabel": "権限"
   },
   "calendar": {
     "title": "カレンダー",
@@ -3190,7 +3601,22 @@
     "importFailed": "ファイルをインポートできませんでした",
     "importResult": "{{total}} 件の予定をインポートしました",
     "importIcs": "インポート",
-    "exportIcs": "エクスポート"
+    "exportIcs": "エクスポート",
+    "chipStatus": {
+      "automation": "スケジュール済みの自動化",
+      "runSucceeded": "自動化の実行が成功しました",
+      "runFailed": "自動化の実行が失敗しました"
+    },
+    "newEventOn": "{{date}} に新しい予定",
+    "showDay": "{{date}} の予定をすべて表示",
+    "deleteEventConfirmTitle": "「{{title}}」を削除しますか？",
+    "deleteEventConfirmDescription": "この予定は完全に削除されます。",
+    "deleteRecurringEventConfirmDescription": "この繰り返しの予定と、すべての回が完全に削除されます。",
+    "shareCalendarNamed": "カレンダー {{name}} を共有",
+    "deleteCalendarNamed": "カレンダー {{name}} を削除",
+    "deleteCalendarConfirmTitle": "カレンダー「{{name}}」を削除しますか？",
+    "deleteCalendarConfirmDescription": "カレンダーとその予定は完全に削除されます。",
+    "calendarDeleteFailed": "カレンダーを削除できませんでした"
   },
   "automations": {
     "title": "自動化",
@@ -3317,13 +3743,17 @@
         "work-approval": "エージェントが承認を待っている",
         "system": "システム通知が届く"
       }
-    }
+    },
+    "deleteConfirmTitle": "「{{name}}」を削除しますか？",
+    "deleteConfirmDescription": "自動化とそのスケジュールは完全に削除されます。過去の実行は実行履歴に残ります。"
   },
   "home": {
     "active": "アクティブ",
     "continue": "続行",
     "start": "開始",
-    "explore": "探索"
+    "explore": "探索",
+    "greeting": "{{greeting}}。",
+    "greetingWithName": "{{greeting}}、{{name}}さん。"
   },
   "palette": {
     "empty": "一致なし。",
@@ -3336,7 +3766,14 @@
     "work": "作業",
     "messages": "メッセージ",
     "notes": "ノート",
-    "documents": "ドキュメント"
+    "documents": "ドキュメント",
+    "searching": "検索中…",
+    "searchFailed": "ワークスペースの検索に失敗しました。一致するチャットとアクションのみ表示しています。",
+    "results": "結果",
+    "escKey": "esc",
+    "hintNavigate": "移動",
+    "hintOpen": "開く",
+    "hintClose": "閉じる"
   },
   "tabs": {
     "actions": "タブ操作",
@@ -3540,7 +3977,8 @@
       "button": "フォルダーから",
       "missingSkillMd": "フォルダーには SKILL.md ファイルが必要です",
       "done": "{{count}} 個の同梱ファイル付きでスキルをインポートしました"
-    }
+    },
+    "toggleLabel": "スキル {{name}} を有効にする"
   },
   "toolsPage": {
     "title": "ツール",
@@ -3701,7 +4139,14 @@
     "added": "{{name}} と共有しました",
     "failed": "共有に失敗しました",
     "userNotFound": "その名前のユーザーは見つかりません",
-    "groupNotFound": "その名前のグループは見つかりません"
+    "groupNotFound": "その名前のグループは見つかりません",
+    "principalKind": "ユーザーまたはグループと共有",
+    "principalName": "ユーザー名またはグループ名",
+    "permission": "権限",
+    "sharing": "共有",
+    "loading": "共有を読み込み中",
+    "loadFailed": "共有を読み込めませんでした",
+    "revokeFailed": "アクセスを取り消せませんでした"
   },
   "channels": {
     "title": "チャンネル",
@@ -3760,13 +4205,44 @@
     "toolCalls": {
       "summary": "使用したツール ({{total}})",
       "deniedHint": "変更を伴うツールはチャンネルでは拒否されます。チャットから実行してください。"
-    }
+    },
+    "confirmEdit": "編集を保存",
+    "cancelEdit": "編集をキャンセル",
+    "reactWith": "{{emoji}} でリアクション",
+    "deleteMessageConfirmTitle": "このメッセージを削除しますか？",
+    "deleteMessageConfirmDescription": "このチャンネルの全員からメッセージが削除されます。",
+    "unreadCount": "未読 {{total}} 件",
+    "send": "メッセージを送信",
+    "invite": "メンバーを招待",
+    "closeThread": "スレッドを閉じる",
+    "removeAttachment": "添付ファイルを削除",
+    "loadFailed": "読み込めませんでした。もう一度お試しください。",
+    "editFailed": "メッセージを編集できませんでした",
+    "deleteMessageFailed": "メッセージを削除できませんでした",
+    "pinFailed": "ピン留めを変更できませんでした",
+    "reactFailed": "リアクションを保存できませんでした",
+    "downloadFailed": "ファイルをダウンロードできませんでした",
+    "removeMemberConfirm": "{{name}} をこのチャンネルから削除しますか？",
+    "removeMemberConfirmDescription": "チャンネルとそのメッセージにアクセスできなくなります。",
+    "removeMemberNamed": "{{name}} をチャンネルから削除",
+    "removeMemberFailed": "メンバーを削除できませんでした",
+    "leaveConfirm": "{{name}} から退出しますか？",
+    "leaveConfirmDescription": "プライベートチャンネルに再参加するには、もう一度招待される必要があります。",
+    "leaveFailed": "チャンネルから退出できませんでした",
+    "joinFailed": "チャンネルに参加できませんでした",
+    "deleteConfirm": "{{name}} を削除しますか？",
+    "deleteConfirmDescription": "チャンネルとすべてのメッセージが、全メンバーに対して完全に削除されます。",
+    "deleteFailed": "チャンネルを削除できませんでした",
+    "saveFailed": "チャンネルを保存できませんでした"
   },
   "notifications": {
     "title": "通知",
     "empty": "未読の通知はありません。",
     "markAllRead": "すべて既読にする",
-    "markRead": "既読にする"
+    "markRead": "既読にする",
+    "titleWithUnread": "通知 (未読 {{unread}} 件)",
+    "unread": "未読",
+    "loadFailed": "通知を読み込めませんでした。"
   },
   "voiceMode": {
     "title": "ボイスモード",
@@ -3901,7 +4377,12 @@
       "failed": "失敗",
       "cancelled": "キャンセル"
     },
-    "noFeedback": "まだフィードバックがありません。返答を評価してデータセットを作りましょう。"
+    "noFeedback": "まだフィードバックがありません。返答を評価してデータセットを作りましょう。",
+    "deleteSetConfirmTitle": "「{{name}}」を削除しますか？",
+    "deleteSetConfirmDescription": "評価セットとそのプロンプトは完全に削除されます。",
+    "deleteSetFailed": "評価セットを削除できませんでした",
+    "runError": "エラー: {{detail}}",
+    "cancelFailed": "実行をキャンセルできませんでした"
   },
   "passwordStrength": {
     "levels": {
@@ -3915,6 +4396,14 @@
       "hasCase": "大文字と小文字",
       "hasNumber": "数字を1つ以上",
       "tooLong": "72バイト以内"
+    },
+    "requirements": "12 文字以上、72 UTF-8 バイト以内で、大文字、小文字、数字を含めてください。",
+    "errors": {
+      "minLength": "パスワードは 12 文字以上にしてください。",
+      "tooLong": "パスワードは 72 UTF-8 バイト以内にしてください。",
+      "uppercase": "パスワードには大文字を含めてください。",
+      "lowercase": "パスワードには小文字を含めてください。",
+      "number": "パスワードには数字を含めてください。"
     }
   },
   "connectModels": {
@@ -3933,7 +4422,8 @@
       "enable": "プロバイダーを有効にする",
       "enabling": "有効にしています…",
       "enabled": "{{name}}が接続されました — そのモデルが利用可能になりました",
-      "enableFailed": "プロバイダーを有効にできませんでした"
+      "enableFailed": "プロバイダーを有効にできませんでした",
+      "urlLabel": "サーバー URL"
     },
     "cloud": {
       "title": "クラウドAPI",
@@ -3942,7 +4432,70 @@
       "connect": "接続",
       "connecting": "接続中…",
       "connected": "{{name}}が接続されました — そのモデルが利用可能になりました",
-      "saveFailed": "APIキーを保存できませんでした"
+      "saveFailed": "APIキーを保存できませんでした",
+      "keyLabel": "{{name}} API キー"
+    },
+    "ollama": {
+      "status": {
+        "checking": "利用可能か確認中…",
+        "healthy": "実行中で、ローカルモデルの準備ができています",
+        "offline": "このマシンでは検出されませんでした",
+        "disabled": "無効 — チェックは実行されません"
+      },
+      "recheck": "再確認",
+      "enable": "有効にする",
+      "disable": "Ollamaのチェックを停止",
+      "enabledToast": "Ollamaプロバイダーを有効にしました",
+      "disabledToast": "Ollamaのチェックを無効にしました — 設定でいつでも再度有効にできます",
+      "settingsFailed": "Ollamaの設定を更新できませんでした",
+      "offlineHint": "ollama.comからOllamaをインストールすると自動的に検出されます。または、下記のいずれかのオプションをご利用ください。Ollamaを使う予定がない場合は、チェックをオフにできます。",
+      "healthyHint": "Ollamaは接続済みです。モデルページでモデルをプルすれば、すぐにチャットを始められます。"
     }
+  },
+  "modelDownload": {
+    "success": "{{name}}をダウンロードしました",
+    "failed": "ダウンロードに失敗しました: {{error}}",
+    "startFailed": "ダウンロードを開始できませんでした",
+    "cancelled": "ダウンロードがキャンセルされました"
+  },
+  "strands": {
+    "title": "Strands",
+    "subtitle": "Libre WebUI のモデルで動く組み込みエージェントエンジン。",
+    "subtitleVersion": "組み込みエージェントエンジン、harness {{version}}。",
+    "newSession": "新しいセッション",
+    "sessions": "セッション",
+    "noSessions": "セッションはまだありません。作成して開始してください。",
+    "empty": "ワークスペース内のファイルの読み取りや編集をエージェントに依頼できます。",
+    "placeholder": "エンジンに依頼を入力…",
+    "model": "モデル",
+    "defaultModel": "既定のモデル",
+    "send": "送信",
+    "stop": "停止",
+    "reasoning": "推論",
+    "tool": {
+      "running": "実行中",
+      "done": "完了",
+      "failed": "失敗しました"
+    },
+    "cancelled": "キャンセルされました",
+    "turnLimit": "ターン上限で停止しました。",
+    "messageCount": "メッセージ: {{count}}",
+    "deleteSession": "セッションを削除",
+    "deleteConfirm": "「{{title}}」と履歴を削除しますか？",
+    "loadFailed": "Strands を読み込めませんでした。",
+    "createFailed": "セッションを作成できませんでした。",
+    "deleteFailed": "セッションを削除できませんでした。",
+    "saveFailed": "セッションを保存できませんでした。",
+    "turnFailed": "エンジンがターンを完了できませんでした"
+  },
+  "notFound": {
+    "title": "ページが見つかりません",
+    "description": "このページは存在しないか、移動した可能性があります。"
+  },
+  "themeToggle": {
+    "switchToLight": "ライトモードに切り替え",
+    "switchToDark": "ダークモードに切り替え",
+    "switchToAmoled": "ピュアブラックモードに切り替え",
+    "switchToCelestial": "セレスティアルモードに切り替え"
   }
 }

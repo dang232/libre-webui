@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+import type { ThinkingPreference } from './index';
+
 export type WorkTaskStatus =
   | 'idle'
   | 'preparing'
@@ -243,6 +245,10 @@ export interface WorkCapabilities {
   runtimeAvailable?: boolean;
   ollamaAvailable?: boolean;
   pluginAvailable?: boolean;
+  /** Whether this account may run Work tasks on the Strands engine. */
+  strands?: {
+    enabled: boolean;
+  };
   reason?: string;
   /** Present only while cleanups are pending; `reason` still carries prose. */
   recovery?: {
@@ -305,6 +311,8 @@ export interface WorkRun {
   changedFiles?: string[] | null;
   /** Short machine reason for the terminal transition, e.g. `failed:error`. */
   exitState?: string | null;
+  /** Reasoning level the run asked for; absent means the model default. */
+  think?: ThinkingPreference | null;
   createdAt: number;
   startedAt?: number | null;
   finishedAt?: number | null;
@@ -424,6 +432,8 @@ export interface CreateWorkTaskRequest {
   personaId?: string;
   /** Pin the task above ad-hoc tasks as a persistent named agent. */
   isAgent?: boolean;
+  /** Reasoning level for the first run; omitted leaves the model default. */
+  think?: ThinkingPreference;
 }
 
 export interface WorkPolicy {
@@ -492,6 +502,8 @@ export interface StartWorkRunRequest {
   model: string;
   providerType: WorkProviderType;
   providerId?: string;
+  /** Reasoning level for this run; omitted leaves the model default. */
+  think?: ThinkingPreference;
 }
 
 export interface UpdateWorkTaskRequest {

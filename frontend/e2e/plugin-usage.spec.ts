@@ -24,8 +24,7 @@ const systemInfo = {
   hasUsers: true,
   userCount: 2,
   signupEnabled: true,
-  // The Agents entry only exists when an administrator enabled the feature.
-  agentsEnabled: true,
+  strandsAccess: 'admins',
   version: '0.17.0-e2e',
   turnstile: { enabled: false },
 };
@@ -317,6 +316,192 @@ async function openModelUsage(
   await expect(page.getByTestId('plugin-usage-chart')).toBeVisible();
 }
 
+const agentUsageFixture = (): PluginUsageAnalytics => ({
+  ...modelUsageFixture(),
+  agents: [
+    {
+      agentId: 'strands',
+      agentName: 'Strands',
+      calls: 12,
+      tokens: 410,
+      errors: 1,
+      averageLatencyMs: 900,
+      meteredCalls: 10,
+      models: [
+        {
+          model: 'strands:lwui:ollama:qwen3',
+          calls: 10,
+          tokens: 410,
+          errors: 1,
+          meteredCalls: 10,
+        },
+        {
+          model: 'strands:lwui:ollama:llama3',
+          calls: 2,
+          tokens: 0,
+          errors: 0,
+          meteredCalls: 0,
+        },
+      ],
+    },
+    {
+      agentId: 'codex',
+      agentName: 'Codex',
+      calls: 3,
+      tokens: 0,
+      errors: 0,
+      averageLatencyMs: 1800,
+      meteredCalls: 0,
+      models: [
+        {
+          model: 'codex:gpt-6-astra',
+          calls: 3,
+          tokens: 0,
+          errors: 0,
+          meteredCalls: 0,
+        },
+      ],
+    },
+    {
+      agentId: 'opencode',
+      agentName: 'OpenCode',
+      calls: 1,
+      tokens: 0,
+      errors: 0,
+      averageLatencyMs: 1200,
+      meteredCalls: 1,
+      models: [
+        {
+          model: 'opencode:reported-zero',
+          calls: 1,
+          tokens: 0,
+          errors: 0,
+          meteredCalls: 1,
+        },
+      ],
+    },
+    ...[
+      { agentId: 'claude-code', agentName: 'Claude Code' },
+      { agentId: 'pi', agentName: 'Pi' },
+    ].map(agent => ({
+      ...agent,
+      calls: 0,
+      tokens: 0,
+      errors: 0,
+      averageLatencyMs: 0,
+      meteredCalls: 0,
+      models: [],
+    })),
+  ],
+});
+
+test('agent usage appears before cost and charts with recorded, unmetered, and zero states', async ({
+  page,
+}) => {
+  const usage = agentUsageFixture();
+  await openModelUsage(page, usage);
+  const agents = page.getByTestId('usage-agent-breakdown');
+  await expect(
+    agents.getByRole('heading', { name: 'Agents', exact: true })
+  ).toBeInViewport();
+  await expect(agents.locator('[data-agent]')).toHaveCount(5);
+  expect((await agents.boundingBox())!.y).toBeLessThan(
+    (await page.getByTestId('cost-governance-panel').boundingBox())!.y
+  );
+  expect((await agents.boundingBox())!.y).toBeLessThan(
+    (await page.getByTestId('plugin-usage-chart').boundingBox())!.y
+  );
+  const strands = agents.locator('[data-agent="strands"]');
+  await expect(strands.locator('[data-agent-metric="calls"]')).toHaveText('12');
+  await expect(strands.locator('[data-agent-metric="tokens"]')).toHaveText(
+    '410'
+  );
+  await expect(strands).toContainText('Usage reported on 10 call(s)');
+  await expect(strands).toContainText('Average latency: 900 ms');
+  await expect(strands).toContainText('1 failed or cancelled');
+  const flash = strands.locator(
+    '[data-agent-model="strands:lwui:ollama:qwen3"]'
+  );
+  await expect(flash.getByRole('cell').nth(1)).toHaveText('10');
+  await expect(flash.getByRole('cell').nth(2)).toHaveText('410');
+  await expect(agents.locator('[data-agent="codex"]')).toContainText(
+    'Tokens not reported'
+  );
+  await expect(
+    agents.locator('[data-agent="opencode"] [data-agent-metric="tokens"]')
+  ).toHaveText('0');
+  for (const id of ['claude-code', 'pi']) {
+    const empty = agents.locator(`[data-agent="${id}"]`);
+    await expect(empty.locator('[data-agent-metric="calls"]')).toHaveText('0');
+    await expect(empty).toContainText('No recorded calls in this period');
+    await expect(empty.locator('[data-agent-model]')).toHaveCount(0);
+  }
+  await expect(agents).not.toContainText('installed');
+  await expect(agents).not.toContainText('Ollama');
+  await expect(
+    page.getByTestId('usage-model-table').locator('tbody tr')
+  ).toHaveCount(usage.models.length);
+  await expect(
+    page.getByTestId('plugin-usage-chart').getByTestId('usage-model-line')
+  ).toHaveCount(usage.modelSeries!.length);
+});
+
+test('agent usage refreshes while visible and suspends polling in the background', async ({
+  page,
+}) => {
+  await page.clock.install();
+  const usage = agentUsageFixture();
+  await openModelUsage(page, usage);
+  let refreshes = 0;
+  await page.route('**/api/plugins/usage?**', route => {
+    refreshes += 1;
+    const refreshed = structuredClone(usage);
+    refreshed.agents![0].calls = 12 + refreshes;
+    return route.fulfill({ json: { success: true, data: refreshed } });
+  });
+  const calls = page.locator(
+    '[data-agent="strands"] [data-agent-metric="calls"]'
+  );
+  await page.clock.fastForward(20_000);
+  await expect(calls).toHaveText('13');
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () => 'hidden',
+    });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await page.clock.fastForward(60_000);
+  expect(refreshes).toBe(1);
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () => 'visible',
+    });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await page.clock.fastForward(20_000);
+  await expect.poll(() => refreshes).toBeGreaterThan(1);
+  await expect(calls).not.toHaveText('13');
+  const beforeClick = refreshes;
+  await page
+    .getByRole('button', { name: 'Refresh usage', exact: true })
+    .click();
+  await expect.poll(() => refreshes).toBeGreaterThan(beforeClick);
+});
+
+test('older usage responses identify incomplete agent coverage without fabricated zero agents', async ({
+  page,
+}) => {
+  await openModelUsage(page);
+  const agents = page.getByTestId('usage-agent-breakdown');
+  await expect(agents).toContainText(
+    'This server does not provide a complete agent breakdown.'
+  );
+  await expect(agents.locator('[data-agent]')).toHaveCount(0);
+  await expect(agents).not.toContainText('No recorded calls in this period');
+});
+
 test('administrators open provider usage from the user menu', async ({
   page,
 }) => {
@@ -407,13 +592,15 @@ test('administrators open provider usage from the user menu', async ({
   await page.getByTestId('app-tab-new').click();
   const newTabMenu = page.getByTestId('app-tab-new-menu');
   const newTabLabels = await newTabMenu.getByRole('menuitem').allTextContents();
-  const agentsIndex = newTabLabels.findIndex(label => label.includes('Agents'));
+  const strandsIndex = newTabLabels.findIndex(label =>
+    label.includes('Strands')
+  );
   const systemIndex = newTabLabels.findIndex(label => label.includes('System'));
   const usageIndex = newTabLabels.findIndex(label =>
     label.includes('Provider Usage')
   );
-  expect(agentsIndex).toBeGreaterThan(-1);
-  expect(systemIndex).toBeGreaterThan(agentsIndex);
+  expect(strandsIndex).toBeGreaterThan(-1);
+  expect(systemIndex).toBeGreaterThan(strandsIndex);
   expect(usageIndex).toBeGreaterThan(systemIndex);
   // User Management moved into Settings; it is no longer a page tab.
   expect(newTabLabels.some(label => label.includes('User Management'))).toBe(
@@ -918,7 +1105,7 @@ for (const variant of [
     await page.setViewportSize({ width: 390, height: 844 });
     await openModelUsage(
       page,
-      modelUsageFixture(),
+      agentUsageFixture(),
       variant.mode,
       variant.language
     );
@@ -939,6 +1126,11 @@ for (const variant of [
       await expect(page.locator('html')).not.toHaveClass(/dark/);
     }
     const chart = page.getByTestId('plugin-usage-chart');
+    const agents = page.getByTestId('usage-agent-breakdown');
+    await expect(agents.locator('[data-agent]')).toHaveCount(5);
+    await expect(
+      agents.locator('[data-agent="strands"] [data-agent-metric="tokens"]')
+    ).toHaveText('410');
     await expect(chart.getByTestId('usage-model-line')).toHaveCount(3);
     await expect(page.getByTestId('usage-heatmap')).toBeVisible();
     await expect(page.getByTestId('usage-model-table')).toBeVisible();
@@ -979,6 +1171,10 @@ for (const variant of [
     // Keep the narrow layout, but fit the full card below the sticky tab bar
     // in the review image after exercising the shorter mobile viewport.
     await page.setViewportSize({ width: 390, height: 1200 });
+    await agents.scrollIntoViewIfNeeded();
+    await agents.screenshot({
+      path: `/tmp/libre-usage-agents-${variant.screenshot}.png`,
+    });
     await chart.scrollIntoViewIfNeeded();
     await chart.screenshot({
       path: `/tmp/libre-usage-${variant.screenshot}.png`,

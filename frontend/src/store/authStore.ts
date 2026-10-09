@@ -48,7 +48,7 @@ interface AuthState {
   /** True when the server runs Auth-only mode (local forms hidden). */
   isAlcoreMode: () => boolean;
   canUseWork: () => boolean;
-  canUseAgents: () => boolean;
+  canUseStrands: () => boolean;
   refreshWorkAccess: () => Promise<void>;
 }
 
@@ -204,13 +204,15 @@ export const useAuthStore = create<AuthState>()(
         return workAccess?.allowed === true;
       },
 
-      // Whether the interface should offer the Agents section (Libre Claw).
-      // The feature is an explicit administrator opt-in reported through
-      // system info; the backend enforces it on every request regardless.
-      canUseAgents: () => {
+      // Whether the interface should offer the Strands agent engine. The
+      // access mode comes from system info and starts disabled; the backend
+      // enforces it on every request regardless of what is shown here.
+      canUseStrands: () => {
         const { systemInfo, user } = get();
-        if (systemInfo?.agentsEnabled !== true) return false;
+        const mode = systemInfo?.strandsAccess ?? 'disabled';
+        if (mode === 'disabled') return false;
         if (systemInfo?.requiresAuth === false) return true;
+        if (mode === 'all-users') return Boolean(user);
         return user?.role === 'admin';
       },
 

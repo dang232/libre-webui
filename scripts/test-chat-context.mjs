@@ -1312,6 +1312,170 @@ test('non-stream plugin payloads override a persisted streaming preference', () 
   assert.equal(payload.stream, false);
 });
 
+test('Kimi Code policy hides obsolete sampling controls after upgrades', () => {
+  const existingPlugin = {
+    id: 'kimi-code',
+    variables: [
+      { name: 'endpoint' },
+      { name: 'temperature' },
+      { name: 'max_tokens' },
+      { name: 'top_p' },
+      { name: 'frequency_penalty' },
+      { name: 'presence_penalty' },
+      { name: 'stream' },
+    ],
+  };
+  const normalized =
+    pluginChatAdapter.applyPluginDefinitionPolicy(existingPlugin);
+
+  assert.deepEqual(
+    normalized.variables.map(variable => variable.name),
+    ['endpoint', 'max_tokens', 'stream']
+  );
+  assert.equal(existingPlugin.variables.length, 7);
+
+  const otherPlugin = { ...existingPlugin, id: 'openai' };
+  assert.equal(
+    pluginChatAdapter.applyPluginDefinitionPolicy(otherPlugin),
+    otherPlugin
+  );
+});
+
+test('buildPluginChatPayload adapts Anthropic multimodal chat requests', () => {
+  const { payload, headers } = pluginChatAdapter.buildPluginChatPayload(
+    { id: 'anthropic' },
+    'claude-opus-4-6',
+    [
+      { role: 'system', content: 'Be concise.' },
+      {
+        role: 'user',
+        content: 'describe',
+        images: ['data:image/png;base64,aGVsbG8='],
+      },
+    ],
+    { temperature: 0.2, num_predict: 128, stop: ['END'] },
+    { top_p: 0.8 }
+  );
+
+  assert.deepEqual(headers, { 'anthropic-version': '2023-06-01' });
+  assert.equal(payload.system, 'Be concise.');
+  assert.equal(payload.model, 'claude-opus-4-6');
+  assert.equal(payload.max_tokens, 128);
+  assert.equal(payload.top_p, 0.8);
+  assert.equal('temperature' in payload, false);
+  assert.equal(payload.stop_sequences[0], 'END');
+  assert.equal(payload.messages.length, 1);
+  assert.equal(payload.messages[0].content[0].type, 'image');
+  assert.equal(payload.messages[0].content[0].source.media_type, 'image/png');
+  assert.equal(payload.messages[0].content[0].source.data, 'aGVsbG8=');
+  assert.deepEqual(payload.messages[0].content[1], {
+    type: 'text',
+    text: 'describe',
+  });
+});
+
+test('buildPluginChatPayload uses Anthropic defaults for Claude Opus 5', () => {
+  const { payload, headers } = pluginChatAdapter.buildPluginChatPayload(
+    { id: 'anthropic' },
+    'claude-opus-5',
+    [{ role: 'user', content: 'Review this change.' }],
+    { temperature: 0.2, num_predict: 128 },
+    { top_p: 0.8 },
+    true
+  );
+
+  assert.deepEqual(headers, { 'anthropic-version': '2023-06-01' });
+  assert.equal(payload.model, 'claude-opus-5');
+  assert.equal(payload.max_tokens, 128);
+  assert.equal(payload.stream, true);
+  assert.equal('temperature' in payload, false);
+  assert.equal('top_p' in payload, false);
+  assert.equal('frequency_penalty' in payload, false);
+  assert.equal('presence_penalty' in payload, false);
+  assert.deepEqual(payload.messages, [
+    { role: 'user', content: 'Review this change.' },
+  ]);
+});
+
+test('buildPluginChatPayload sends adaptive thinking to Claude Sonnet 5.5', () => {
+  const build = (model, think, extra = {}) =>
+    pluginChatAdapter.buildPluginChatPayload(
+      { id: 'anthropic' },
+      model,
+      [{ role: 'user', content: 'Plan the migration.' }],
+      { temperature: 0.2, think, ...extra },
+      { top_p: 0.8 },
+      true
+    ).payload;
+
+  const high = build('claude-sonnet-5-5', 'high', { num_predict: 4096 });
+  assert.deepEqual(high.thinking, { type: 'adaptive' });
+  assert.deepEqual(high.output_config, { effort: 'high' });
+  assert.equal(high.max_tokens, 4096);
+  assert.equal('temperature' in high, false);
+  assert.equal('top_p' in high, false);
+
+  const on = build('claude-sonnet-5-5', true);
+  assert.deepEqual(on.thinking, { type: 'adaptive' });
+  assert.equal('output_config' in on, false);
+  assert.equal(on.max_tokens, 16384);
+
+  // Sonnet 5.5 rejects `disabled`; `between_tools` is its lowest setting.
+  const off = build('claude-sonnet-5-5', false, { num_predict: 512 });
+  assert.deepEqual(off.thinking, { type: 'between_tools' });
+  assert.equal('output_config' in off, false);
+
+  const unset = build('claude-sonnet-5-5', undefined);
+  assert.equal('thinking' in unset, false);
+  assert.equal('output_config' in unset, false);
+
+  const bedrock = build('anthropic.claude-sonnet-5-5', 'low', {
+    num_predict: 200000,
+  });
+  assert.deepEqual(bedrock.thinking, { type: 'adaptive' });
+  assert.deepEqual(bedrock.output_config, { effort: 'low' });
+  assert.equal(bedrock.max_tokens, 128000);
+
+  // Opus 5.5 is adaptive too but has no way to turn thinking off.
+  const opus = build('claude-opus-5-5', 'medium');
+  assert.deepEqual(opus.thinking, { type: 'adaptive' });
+  assert.deepEqual(opus.output_config, { effort: 'medium' });
+  assert.equal('thinking' in build('claude-opus-5-5', false), false);
+
+  // Older models keep manual budgets.
+  assert.equal(build('claude-sonnet-4-6', 'low').thinking.type, 'enabled');
+});
+
+test('convertProviderResponse normalizes Gemini responses', () => {
+  const response = pluginChatAdapter.convertProviderResponse(
+    { id: 'gemini' },
+    {
+      candidates: [
+        {
+          content: {
+            parts: [{ text: 'Hello ' }, { text: 'there' }],
+          },
+          finishReason: 'MAX_TOKENS',
+        },
+      ],
+      usageMetadata: {
+        promptTokenCount: 3,
+        candidatesTokenCount: 4,
+      },
+    },
+    'gemini-test'
+  );
+
+  assert.equal(response.model, 'gemini-test');
+  assert.equal(response.choices[0].message.content, 'Hello there');
+  assert.equal(response.choices[0].finish_reason, 'length');
+  assert.deepEqual(response.usage, {
+    prompt_tokens: 3,
+    completion_tokens: 4,
+    total_tokens: 7,
+  });
+});
+
 test('streamOpenAICompatibleResponse parses content and tool call deltas', async () => {
   const body = [
     'data: {"choices":[{"delta":{"reasoning_content":"Plan "}}]}',

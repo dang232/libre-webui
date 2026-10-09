@@ -147,6 +147,18 @@ class SQLitePluginCredentialRepository implements PluginCredentialRepository {
     );
   }
 
+  async rebind(id: string, from: string, to: string): Promise<boolean> {
+    return (
+      this.database
+        .prepare(
+          `UPDATE plugin_credentials
+              SET routing_auth_fingerprint = ?
+            WHERE id = ? AND routing_auth_fingerprint = ?`
+        )
+        .run(to, id, from).changes === 1
+    );
+  }
+
   async listByUser(userId: string): Promise<StoredPluginCredential[]> {
     return this.database
       .prepare('SELECT * FROM plugin_credentials WHERE user_id = ?')
@@ -668,6 +680,48 @@ class SQLitePluginUsageRepository implements PluginUsageRepository {
           ORDER BY calls DESC, tokens DESC LIMIT 100`
       )
       .all(from, to) as Array<Record<string, unknown>>;
+  }
+
+  async agentUsage(from: number, to: number, agentIds: readonly string[]) {
+    if (agentIds.length === 0) return [];
+    return this.database
+      .prepare(
+        `WITH agent_events AS (
+         SELECT substr(plugin_id, 11) AS agent_id,
+                model, total_tokens, status, duration_ms
+           FROM plugin_usage_events
+          WHERE created_at >= ? AND created_at <= ?
+            AND plugin_id IN (${agentIds.map(() => '?').join(',')})
+       ), agent_totals AS (
+         SELECT agent_id, NULL AS model, COUNT(*) AS calls,
+                COALESCE(SUM(total_tokens), 0) AS tokens,
+                SUM(CASE WHEN status <> 'success' THEN 1 ELSE 0 END) AS errors,
+                COUNT(total_tokens) AS metered_calls,
+                ROUND(AVG(duration_ms)) AS average_latency_ms
+           FROM agent_events GROUP BY agent_id
+       ), model_totals AS (
+         SELECT agent_id, model, COUNT(*) AS calls,
+                COALESCE(SUM(total_tokens), 0) AS tokens,
+                SUM(CASE WHEN status <> 'success' THEN 1 ELSE 0 END) AS errors,
+                COUNT(total_tokens) AS metered_calls,
+                ROUND(AVG(duration_ms)) AS average_latency_ms
+           FROM agent_events GROUP BY agent_id, model
+       ), ranked_models AS (
+         SELECT *, ROW_NUMBER() OVER (
+           PARTITION BY agent_id ORDER BY calls DESC, tokens DESC, model ASC
+         ) AS model_rank FROM model_totals
+       ), summaries AS (
+         SELECT * FROM agent_totals
+         UNION ALL
+         SELECT agent_id, model, calls, tokens, errors, metered_calls, average_latency_ms
+           FROM ranked_models WHERE model_rank <= 20
+       )
+       SELECT * FROM summaries
+        ORDER BY agent_id ASC, model IS NOT NULL ASC, calls DESC, tokens DESC, model ASC`
+      )
+      .all(from, to, ...agentIds.map(id => `agent-cli:${id}`)) as Array<
+      Record<string, unknown>
+    >;
   }
 
   async heatmap(from: number, to: number, bucketMs: number) {

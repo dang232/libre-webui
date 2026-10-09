@@ -38,14 +38,22 @@
     "custom": "自定义",
     "remove": "移除",
     "home": "主页",
-    "more": "多"
+    "more": "多",
+    "provider": "提供商",
+    "agent": "智能体",
+    "reasoning": "推理",
+    "skipToContent": "跳到内容"
   },
   "brand": {
     "name": "Alcore",
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "backendConnectionFailed": "无法连接后端服务"
+    "backendConnectionFailed": "无法连接后端服务",
+    "ollamaUnavailable": "Ollama 服务不可用。仍可使用插件模型。",
+    "connecting": "正在连接后端…（{{attempt}}/{{total}}）",
+    "startingUp": "正在启动…",
+    "backendUnreachableHint": "请确认后端正在运行，然后重试。"
   },
   "auth": {
     "login": {
@@ -206,7 +214,9 @@
       "removed": "已移除通行密钥。",
       "removeFailed": "无法移除通行密钥。",
       "signInButton": "使用通行密钥登录",
-      "signInFailed": "通行密钥登录失败。"
+      "signInFailed": "通行密钥登录失败。",
+      "removeConfirmTitle": "移除此通行密钥？",
+      "removeConfirmDescription": "“{{name}}”将不能再用于登录。你可以稍后重新注册。"
     },
     "alcore": {
       "title": "This server uses Alcore Auth for sign-in.",
@@ -272,6 +282,12 @@
       "tryAgain": "Try again",
       "restart": "Restart sign-in",
       "support": "Need help? Contact your server admin or see"
+    },
+    "password": {
+      "show": "显示密码",
+      "hide": "隐藏密码",
+      "showConfirmation": "显示确认密码",
+      "hideConfirmation": "隐藏确认密码"
     }
   },
   "setup": {
@@ -324,7 +340,8 @@
       "envNote": "此密钥也保存在您的 backend/.env 文件中，名为 ENCRYPTION_KEY",
       "acknowledgment": "我已将加密密钥保存在安全的位置，并了解丢失它可能导致数据丢失。",
       "confirmRequired": "请确认您已保存加密密钥",
-      "continue": "继续使用 Alcore"
+      "continue": "继续使用 Alcore",
+      "loadFailed": "无法加载加密密钥。请重试以继续。"
     },
     "connectModels": {
       "title": "连接您的模型",
@@ -418,7 +435,8 @@
       "toolsOn": "工具已开启 — 模型可以调用已批准的工具",
       "toolsOff": "允许模型在这条消息中调用工具",
       "thinkingOn": "思考已开启 ({{level}})",
-      "thinkingOff": "回答前先思考"
+      "thinkingOff": "回答前先思考",
+      "thinkingUpdateFailed": "无法更新思考设置"
     },
     "session": {
       "new": "新对话",
@@ -454,7 +472,8 @@
         "move": "移动到文件夹",
         "remove": "从文件夹中移除",
         "delete": "删除文件夹",
-        "deleteConfirm": "删除此文件夹？其中的聊天会保留。"
+        "deleteConfirm": "删除此文件夹？其中的聊天会保留。",
+        "rename": "重命名文件夹"
       },
       "shareChat": "共享聊天…"
     },
@@ -472,7 +491,8 @@
       "selectBeforePrivateChat": "开始私密聊天前请选择一个可用的模型",
       "selectBeforeSending": "发送前请选择一个可用的模型",
       "selectBeforeRegenerating": "重新生成前请选择一个可用的模型",
-      "connectDescription": "还没有连接任何模型。从下面选择一个来源——本地运行时、您自己的服务器，或云端 API——不到一分钟即可开始对话。"
+      "connectDescription": "还没有连接任何模型。从下面选择一个来源——本地运行时、您自己的服务器，或云端 API——不到一分钟即可开始对话。",
+      "pullCommand": "ollama pull llama3.2:3b"
     },
     "footer": {
       "disclaimer": "大语言模型可能会犯错——请核实重要信息",
@@ -486,7 +506,13 @@
       "browse": "浏览",
       "unsupportedFileType": "不支持的文件类型：{{name}}",
       "maxImagesAllowed": "最多允许 {{count}} 张图片",
-      "imageTooLarge": "图片 {{name}} 过大（最大 10MB）"
+      "imageTooLarge": "图片 {{name}} 过大（最大 10MB）",
+      "readFailed": "无法读取 {{name}}",
+      "uploadAlt": "上传 {{number}}",
+      "removeImage": "移除图片 {{number}}",
+      "addMore": "添加更多图片（{{count}}/{{max}}）",
+      "uploading": "正在上传",
+      "removeDocument": "移除 {{name}}"
     },
     "structuredOutput": {
       "title": "响应格式",
@@ -537,7 +563,8 @@
       "compactionOff": "此对话中关闭"
     },
     "message": {
-      "sources": "来源"
+      "sources": "来源",
+      "copyFailed": "无法复制到剪贴板"
     },
     "toasts": {
       "chatCreated": "已创建新聊天",
@@ -581,7 +608,8 @@
       "generationRateLimitedWeekly": "Weekly budget spent — new chats pause until Monday 00:00 UTC. Try again later or upgrade your plan.",
       "generationRateLimitedMonthly": "Monthly budget spent — new chats pause until the 1st of next month (UTC). Try again later or upgrade your plan.",
       "generationFailedSupport": "The reply couldn't be finished — retry, and if it keeps happening report it from Settings > About > GitHub issues.",
-      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access."
+      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access.",
+      "archiveFailed": "无法归档此对话"
     },
     "documents": {
       "title": "上下文中的文档"
@@ -614,7 +642,25 @@
     "delegate": {
       "action": "Run as Work task"
     },
-    "sharedReadOnly": "由 {{owner}} 共享 — 仅可查看"
+    "sharedReadOnly": "由 {{owner}} 共享 — 仅可查看",
+    "branch": {
+      "variants": "{{count}} 个变体",
+      "variants_plural": "{{count}} 个变体",
+      "selectVariant": "选择变体 {{number}}",
+      "generating": "生成中...",
+      "select": "选择"
+    },
+    "sources": {
+      "fullContextFailed": "无法更新完整文档设置",
+      "usedByRetrieval": "用于回复",
+      "triggerLabel": "来源（{{count}}）"
+    },
+    "announce": {
+      "replyFinished": "{{name}} 回复:{{text}}",
+      "replyFinishedNoText": "{{name}} 已回复完毕。",
+      "codeBlock": "代码块",
+      "generationStopped": "已停止生成"
+    }
   },
   "sidebar": {
     "navigation": {
@@ -636,10 +682,12 @@
       "prompts": "提示词",
       "skills": "技能",
       "tools": "工具",
-      "channels": "频道"
+      "channels": "频道",
+      "strands": "Strands"
     },
     "toggleSize": "切换侧边栏大小",
-    "expandSidebar": "展开侧边栏"
+    "expandSidebar": "展开侧边栏",
+    "ariaLabel": "侧边栏"
   },
   "user": {
     "menu": {
@@ -696,7 +744,8 @@
       "sessions": "登录会话",
       "apiKeys": "API 密钥",
       "notifications": "通知",
-      "apiPlatform": "API Platform"
+      "apiPlatform": "API Platform",
+      "ollamaDisabled": "管理员已禁用 Ollama"
     },
     "appearance": {
       "title": "外观",
@@ -921,7 +970,8 @@
       "modelPrice": "Price / 1M",
       "modelStatus": "Status",
       "modelFree": "Free",
-      "modelDeprecated": "Deprecated"
+      "modelDeprecated": "Deprecated",
+      "dismissError": "关闭错误提示"
     },
     "generation": {
       "title": "生成选项",
@@ -1024,7 +1074,8 @@
         "deleteFailed": "无法删除集合",
         "assignFailed": "无法移动文档",
         "share": "共享合集",
-        "shared": "已共享"
+        "shared": "已共享",
+        "assignTo": "{{name}} 的集合"
       },
       "library": {
         "title": "已上传的文档",
@@ -1166,7 +1217,8 @@
         "title": "已归档的聊天",
         "empty": "没有已归档的聊天",
         "unarchive": "取消归档"
-      }
+      },
+      "clearAllConfirm": "确定要删除所有对话历史吗？此操作无法撤销。"
     },
     "about": {
       "title": "关于",
@@ -1178,43 +1230,36 @@
       "features": {
         "privacy": {
           "title": "隐私优先",
-          "description": "您的数据保存在本地设备"
+          "description": "Self-hosted workspace — your data stays under your control"
         },
         "openSource": {
           "title": "开源软件",
-          "description": "免费且开源的软件"
+          "description": "Open-source software maintained by the Alcore team"
         },
         "localInference": {
           "title": "本地推理",
-          "description": "使用 Ollama 在本地运行 AI 模型"
+          "description": "Use local Ollama models or connect to your Alcore provider"
         }
       },
-      "openSourceBy": "由 {{company}} 开源",
+      "openSourceBy": "Built by {{company}}",
       "links": {
         "title": "链接",
-        "github": "GitHub",
-        "githubDescription": "查看源代码并贡献",
         "website": "网站",
-        "websiteDescription": "访问我们的网站",
+        "websiteDescription": "Visit the Alcore website",
         "documentation": "文档",
         "reportIssue": "报告问题",
         "reportIssueDescription": "错误报告和功能请求",
-        "documentationDescription": "指南、教程和API参考",
-        "forgejo": "Forgejo镜像",
-        "forgejoDescription": "自托管Forgejo仓库",
-        "sponsor": "赞助",
-        "sponsorDescription": "帮助资助本项目",
-        "star": "在 GitHub 上加星",
-        "starDescription": "星标能帮助更多人发现这个项目"
+        "documentationDescription": "Guides and documentation for Alcore"
       },
       "version": "版本 {{version}}",
       "updates": {
-        "checking": "正在检查更新…",
-        "upToDate": "您正在使用最新版本",
-        "updateAvailable": "版本 {{version}} 已发布",
-        "ahead": "领先于最新发布版本（{{version}}）",
-        "checkFailed": "无法检查更新",
         "viewChangelog": "查看更新日志"
+      },
+      "ollama": {
+        "title": "Ollama 状态",
+        "version": "版本",
+        "healthy": "正常",
+        "unhealthy": "异常"
       }
     },
     "groups": {
@@ -1280,7 +1325,11 @@
       "unknownDevice": "未知设备",
       "createdAt": "登录时间",
       "lastSeenAt": "最近活动",
-      "expiresAt": "过期时间"
+      "expiresAt": "过期时间",
+      "signOutConfirmTitle": "退出此登录会话？",
+      "signOutConfirmDescription": "{{device}} 将立即退出登录，需要重新登录。",
+      "signOutOthersConfirmTitle": "退出其他登录会话？",
+      "signOutOthersConfirmDescription": "其他 {{count}} 个会话将立即退出登录。当前会话保持登录。"
     },
     "apiKeys": {
       "title": "API 密钥",
@@ -1314,7 +1363,9 @@
       "createdAt": "创建时间",
       "lastUsedAt": "最近使用",
       "expiresAt": "过期时间",
-      "neverExpires": "永不"
+      "neverExpires": "永不",
+      "revokeConfirmTitle": "撤销“{{name}}”？",
+      "revokeConfirmDescription": "所有使用此 API 密钥的内容将立即停止工作。此操作无法撤销。"
     },
     "notifications": {
       "title": "通知",
@@ -1484,7 +1535,20 @@
   "models": {
     "title": "模型",
     "noModels": "未安装模型",
-    "noModelsFound": "未找到模型"
+    "noModelsFound": "未找到模型",
+    "subtitle": "拉取、管理和监控您的 Ollama 模型",
+    "installed": "已安装模型",
+    "available": "可用模型",
+    "pull": "拉取模型",
+    "pulling": "拉取中...",
+    "delete": "删除模型",
+    "deleting": "删除中...",
+    "size": "大小",
+    "modified": "修改时间",
+    "family": "系列",
+    "parameters": "参数",
+    "quantization": "量化",
+    "pullFirst": "拉取模型以开始使用"
   },
   "personas": {
     "title": "角色",
@@ -1516,7 +1580,8 @@
     "model": "模型",
     "size": "尺寸",
     "quality": "质量",
-    "created": "创建时间"
+    "created": "创建时间",
+    "lightboxLabel": "图片预览"
   },
   "errors": {
     "generic": "发生错误",
@@ -1565,7 +1630,13 @@
   },
   "modelManager": {
     "sections": {
-      "catalog": "模型目录"
+      "catalog": "模型目录",
+      "pull": "拉取新模型",
+      "library": "浏览模型库",
+      "huggingface": "HuggingFace Hub",
+      "running": "运行中的模型",
+      "local": "本地模型",
+      "advanced": "高级操作"
     },
     "catalog": {
       "searchPlaceholder": "按名称或提供方搜索模型...",
@@ -1588,12 +1659,159 @@
       "hide": "对用户隐藏",
       "show": "对用户显示",
       "star": "为 {{name}} 加星",
-      "unstar": "取消 {{name}} 的星标"
+      "unstar": "取消 {{name}} 的星标",
+      "providerOllama": "Ollama",
+      "filterLabel": "筛选模型",
+      "displayName": "{{name}} 的显示名称"
     },
     "huggingface": {
       "checkingGguf": "正在检查 GGUF 文件...",
       "noGgufAvailable": "没有可用于直接 Ollama 拉取的 GGUF 文件",
-      "ggufFilesCount": "GGUF 文件 ({{count}}) - 直接拉取到 Ollama"
+      "ggufFilesCount": "GGUF 文件 ({{count}}) - 直接拉取到 Ollama",
+      "browseAll": "在 HuggingFace 上浏览全部",
+      "noModelsFound": "未找到模型",
+      "noResults": "未找到模型。请尝试调整搜索或筛选条件。",
+      "browseAllLink": "浏览全部",
+      "search": "搜索 HuggingFace 模型...",
+      "by": "作者",
+      "gated": "受限访问",
+      "viewOnHF": "在 HuggingFace 上查看",
+      "sortDownloads": "下载量",
+      "sortLikes": "点赞",
+      "sortRecent": "最近",
+      "taskTextGeneration": "文本生成",
+      "taskTextToSpeech": "语音合成",
+      "taskTextToImage": "图像生成",
+      "taskSpeechRecognition": "语音识别",
+      "tasks": {
+        "textGen": "文本生成",
+        "tts": "语音合成",
+        "image": "图像生成",
+        "stt": "语音识别"
+      },
+      "sort": {
+        "downloads": "下载最多",
+        "likes": "最受欢迎",
+        "recent": "最近更新"
+      }
+    },
+    "title": "模型",
+    "loading": "加载模型中...",
+    "systemStatus": {
+      "online": "Ollama 在线",
+      "offline": "Ollama 离线",
+      "models": "模型",
+      "models_plural": "模型",
+      "running": "运行中",
+      "vram": "显存"
+    },
+    "pull": {
+      "placeholder": "输入模型名称（例如：llama3.2:3b、deepseek-r1:14b）",
+      "button": "拉取",
+      "cancel": "取消",
+      "popular": "热门模型：",
+      "browseAll": "在 ollama.com 浏览所有模型",
+      "success": "模型 {{name}} 拉取成功",
+      "cancelled": "模型拉取已取消",
+      "failed": "拉取模型失败",
+      "enterName": "请输入模型名称",
+      "restricted": "此实例上的模型安装仅限管理员。"
+    },
+    "progress": {
+      "starting": "初始化中...",
+      "pulling": "下载模型中...",
+      "pullingLayer": "下载中",
+      "verifying": "验证完整性...",
+      "verifyingDigest": "验证 sha256 摘要",
+      "writing": "写入清单...",
+      "cleaning": "清理中..."
+    },
+    "library": {
+      "available": "可用",
+      "search": "搜索模型...",
+      "noResults": "未找到符合条件的模型",
+      "installed": "已安装",
+      "more": "+{{count}} 更多",
+      "refresh": "刷新模型库"
+    },
+    "local": {
+      "noModels": "尚未安装模型",
+      "pullToStart": "拉取上方的模型以开始使用",
+      "installed": "已安装",
+      "running": "运行中",
+      "info": "信息",
+      "copy": "复制",
+      "delete": "删除",
+      "deleteConfirm": "确定要删除模型 \"{{name}}\" 吗？",
+      "deleteSuccess": "模型 {{name}} 删除成功",
+      "deleteFailed": "删除模型失败"
+    },
+    "advanced": {
+      "createModel": "创建模型",
+      "fromModelfile": "从 Modelfile",
+      "copyModel": "复制模型",
+      "duplicateExisting": "复制现有模型",
+      "testEmbeddings": "测试嵌入",
+      "generateVectors": "生成向量",
+      "healthCheck": "健康检查",
+      "testConnection": "测试连接",
+      "healthy": "Ollama 运行正常！"
+    },
+    "modals": {
+      "details": {
+        "title": "模型详情",
+        "info": "模型信息",
+        "family": "系列",
+        "parameters": "参数",
+        "quantization": "量化",
+        "format": "格式",
+        "systemPrompt": "系统提示词",
+        "template": "模板",
+        "license": "许可证",
+        "modelfile": "Modelfile",
+        "noDetails": "无可用详情"
+      },
+      "copy": {
+        "title": "复制模型",
+        "source": "源模型",
+        "selectModel": "选择模型...",
+        "newName": "新模型名称",
+        "placeholder": "例如：my-custom-model",
+        "copying": "复制中...",
+        "button": "复制模型",
+        "success": "模型已复制到 {{name}}",
+        "failed": "复制模型失败",
+        "enterBoth": "请输入源名称和目标名称"
+      },
+      "create": {
+        "title": "创建自定义模型",
+        "name": "模型名称",
+        "namePlaceholder": "例如：my-assistant",
+        "modelfile": "Modelfile",
+        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
+        "see": "查看",
+        "docs": "Modelfile 文档",
+        "docsLink": "语法参考",
+        "creating": "创建中...",
+        "button": "创建模型",
+        "success": "模型 {{name}} 创建成功",
+        "failed": "创建模型失败",
+        "enterBoth": "请输入模型名称和 Modelfile 内容"
+      },
+      "embeddings": {
+        "title": "测试嵌入",
+        "model": "嵌入模型",
+        "selectModel": "选择模型...",
+        "recommended": "推荐：nomic-embed-text、mxbai-embed-large",
+        "input": "输入文本",
+        "placeholder": "输入要生成嵌入的文本...",
+        "generating": "生成中...",
+        "button": "生成嵌入",
+        "result": "结果（{{count}} 维）",
+        "success": "生成了 {{count}} 维嵌入向量",
+        "failed": "生成嵌入失败",
+        "enterBoth": "请选择模型并输入文本"
+      }
     }
   },
   "personaManager": {
@@ -1615,7 +1833,10 @@
     "deleteConfirm": "确定要删除 \"{{name}}\" 吗？",
     "deleteSuccess": "角色 \"{{name}}\" 删除成功",
     "downloadSuccess": "角色 \"{{name}}\" 下载成功",
-    "failed": "{{action}}角色失败"
+    "failed": "{{action}}角色失败",
+    "loadFailed": "无法加载你的角色。",
+    "deleteFailed": "删除角色失败",
+    "downloadFailed": "下载角色失败"
   },
   "personaForm": {
     "title": {
@@ -1747,7 +1968,8 @@
       "promptHint": "用这个提示词开启与该角色的每一次新对话。",
       "noPrompt": "不使用提示词",
       "version": "绑定修订 {{version}}"
-    }
+    },
+    "sections": "角色分区"
   },
   "personaCard": {
     "enhanced": "增强",
@@ -1764,7 +1986,16 @@
     "backupSuccess": "角色备份下载成功",
     "dnaSuccess": "角色 DNA 导出成功",
     "failed": "{{action}}失败",
-    "shareTooltip": "共享此角色"
+    "shareTooltip": "共享此角色",
+    "wipeFailed": "清除记忆失败",
+    "backupFailed": "备份角色失败",
+    "exportDnaFailed": "导出角色 DNA 失败",
+    "favorite": "收藏",
+    "memoryStatus": {
+      "active": "活跃",
+      "wiped": "已清除",
+      "backed_up": "已备份"
+    }
   },
   "userManager": {
     "title": "用户管理",
@@ -1793,7 +2024,10 @@
     "noUsersMatching": "未找到符合搜索条件的用户",
     "columns": {
       "role": "角色",
-      "created": "创建时间"
+      "created": "创建时间",
+      "user": "用户",
+      "email": "邮箱",
+      "actions": "操作"
     },
     "roles": {
       "admin": "管理员",
@@ -1832,7 +2066,10 @@
       "createSuccess": "用户创建成功",
       "updateSuccess": "用户更新成功",
       "createFailed": "创建用户失败",
-      "updateFailed": "更新用户失败"
+      "updateFailed": "更新用户失败",
+      "usernamePlaceholder": "输入用户名",
+      "emailPlaceholder": "输入邮箱（可选）",
+      "passwordPlaceholder": "输入密码"
     },
     "workAccess": {
       "title": "Work 访问权限",
@@ -1925,7 +2162,28 @@
       "memberOf": "所属用户组",
       "featuresLabel": "功能权限",
       "grantsLabel": "授权",
-      "grantVia": "来自"
+      "grantVia": "来自",
+      "deleteConfirmTitle": "删除用户组“{{name}}”？",
+      "deleteConfirmDescription": "成员将失去仅通过此用户组获得的访问权限。账户本身不会被删除。",
+      "statuses": {
+        "active": "活跃",
+        "pending": "待审批"
+      },
+      "features": {
+        "work": "工作",
+        "model-download": "模型下载",
+        "web-search": "网络搜索",
+        "strands": "Strands 引擎",
+        "tools": "工具",
+        "stt": "语音转文字",
+        "tts": "文字转语音",
+        "voice-mode": "语音模式",
+        "voice-cloning": "语音克隆"
+      },
+      "grantViaKinds": {
+        "user": "直接授权",
+        "group": "用户组"
+      }
     },
     "audit": {
       "title": "安全审计日志",
@@ -2012,13 +2270,60 @@
       "save": "保存",
       "saving": "保存中…",
       "saved": "邮件设置已保存。",
-      "saveFailed": "无法保存邮件设置。"
+      "saveFailed": "无法保存邮件设置。",
+      "security": {
+        "starttls": "STARTTLS（端口 587）",
+        "tls": "TLS（端口 465）",
+        "none": "无（仅限受信任网络）"
+      },
+      "templateTitle": "邮件外观",
+      "templateHint": "为新闻摘要和通知邮件选择浅色或深色模板。",
+      "themeLabel": "邮件模板",
+      "themeLight": "浅色",
+      "themeDark": "深色",
+      "previewTitle": "模板预览",
+      "previewLoading": "正在加载预览…",
+      "previewFailed": "无法加载邮件预览。",
+      "previewHeading": "你的新闻摘要",
+      "previewIntro": "每日新闻邮件的预览。",
+      "previewMarkdown": "## 今日要闻\n\n- 科技与研究动态\n- 来自你所选来源的新闻\n\n**摘要：** 每日新闻已准备好，供你阅读。",
+      "previewLinkLabel": "打开结果"
+    },
+    "modelAccess": {
+      "title": "模型下载",
+      "description": "允许所有活跃用户通过 Ollama 和 Hugging Face 浏览器拉取模型。管理员始终可以下载模型。",
+      "saved": "模型下载权限已更新",
+      "saveFailed": "无法更新模型下载权限"
+    },
+    "ollamaProvider": {
+      "title": "Ollama 提供商",
+      "description": "关闭后，应用将完全停止检查 Ollama — 不进行健康探测，不显示警告。该端点可以指向任何兼容 Ollama 的网关。",
+      "saved": "Ollama 提供商设置已保存",
+      "saveFailed": "无法保存 Ollama 提供商设置",
+      "baseUrlLabel": "Ollama 端点 URL"
+    },
+    "strandsAccess": {
+      "title": "Strands 引擎",
+      "description": "选择谁可以使用内置的 Strands 智能体。它可以读取和编辑每个会话私有工作区中的文件，但不能运行 shell 命令。",
+      "saved": "Strands 访问权限已更新",
+      "saveFailed": "无法更新 Strands 访问权限",
+      "lockedByEnv": "由环境变量 LIBRE_STRANDS_ACCESS 固定。",
+      "modes": {
+        "disabled": "关",
+        "admins": "管理员",
+        "all-users": "所有用户"
+      }
+    },
+    "agentCliAccess": {
+      "title": "CLI代理模型",
+      "description": "管理员可以将已安装的Pi、OpenCode、Codex和Claude Code用作聊天模型。它们在宿主机上运行，位于Work沙盒之外。",
+      "lockedByEnv": "已由环境变量 AGENT_CLI_MODELS_ENABLED 固定。"
     }
   },
   "usageAnalytics": {
     "eyebrow": "管理",
     "title": "提供商使用情况",
-    "description": "跟踪此实例上已启用插件的出站 API 调用和模型消耗。",
+    "description": "跟踪此实例中各提供商和代理的模型请求及使用量。",
     "days": "{{count}} 天",
     "refresh": "刷新使用情况",
     "loadFailed": "无法加载提供商使用情况。",
@@ -2065,7 +2370,7 @@
       "notCharted": "选择以在图表中加载此模型"
     },
     "providers": {
-      "title": "已启用插件的流量",
+      "title": "提供商和代理流量",
       "description": "按提供商查看请求量、可靠性和响应时间。",
       "share": "占调用总数的 {{percent}}%",
       "failures": "{{count}} 次失败或已取消",
@@ -2083,7 +2388,7 @@
     },
     "empty": {
       "title": "暂无提供商调用",
-      "description": "当已启用的插件处理聊天、工作、嵌入、图像、语音、声音或视频请求后，调用将显示在此处。"
+      "description": "提供商或代理处理聊天、Work、嵌入、图像、语音、声音或视频请求后，请求将显示在此处。"
     },
     "privacyNote": "使用量在服务器的出站插件边界处进行计量。Alcore 存储提供商、模型、计时、状态和已报告的计数器——绝不存储提示词、响应、端点、凭据或提供商错误正文。Token 总量仅包含提供商返回使用元数据的调用。",
     "heatmap": {
@@ -2095,6 +2400,14 @@
       "less": "少",
       "more": "多",
       "yearTotal": "过去一年共 {{formatted}} 次调用"
+    },
+    "agents": {
+      "title": "智能体",
+      "description": "对 CLI 智能体和 Strands 引擎的调用。",
+      "noCalls": "此期间没有记录的调用",
+      "unreported": "未报告令牌数",
+      "topModels": "最常用模型",
+      "legacy": "此服务器不提供完整的代理明细。下方显示可用的代理记录。"
     }
   },
   "systemPage": {
@@ -2309,7 +2622,11 @@
       "harmful": "有害",
       "formatting": "格式"
     },
-    "feedbackComment": "添加评论…"
+    "feedbackComment": "添加评论…",
+    "user": "用户",
+    "feedbackFailed": "无法保存你的反馈",
+    "openImage": "打开图片 {{number}}",
+    "uploadedImageAlt": "已上传的图片 {{number}}"
   },
   "imageGallery": {
     "title": "图像库",
@@ -2321,7 +2638,8 @@
     "deleteSuccess": "图像已删除",
     "deleteFailed": "删除图像失败",
     "loadMore": "加载更多（{{current}} / {{total}}）",
-    "loadFailed": "加载图库失败"
+    "loadFailed": "加载图库失败",
+    "downloadFailed": "下载图像失败"
   },
   "imageGeneration": {
     "title": "生成图像",
@@ -2397,7 +2715,10 @@
       "image": "图像",
       "video": "视频",
       "audio": "音频"
-    }
+    },
+    "deleteConfirmTitle": "删除此项目？",
+    "deleteConfirmDescription": "生成的媒体将被永久删除。",
+    "previewFailed": "无法预览"
   },
   "errorBoundary": {
     "title": "出错了",
@@ -2475,7 +2796,8 @@
     "previousVersion": "上一版本",
     "nextVersion": "下一版本",
     "print": "Print",
-    "exportCsv": "Export CSV"
+    "exportCsv": "Export CSV",
+    "resizePanel": "调整面板大小"
   },
   "personaImportExport": {
     "title": "导入和导出角色",
@@ -2513,7 +2835,10 @@
     "generation": "生成:",
     "modelLoad": "模型加载:",
     "totalTime": "总时间:",
-    "generatedAt": "生成于:"
+    "generatedAt": "生成于:",
+    "notAvailable": "不适用",
+    "tokenCount": "{{tokens}} 个 token",
+    "tokensPerSecond": "{{value}} t/s"
   },
   "userMenu": {
     "loggedOut": "已成功退出",
@@ -2572,7 +2897,9 @@
       "httpWarning": "HTTP 不会加密凭据或流量。仅在受信任的网络中使用。",
       "invalidBaseUrl": "基础 URL 不能包含查询字符串或片段。",
       "invalidApiPath": "必须以 / 开头，且不包含 URL、查询、片段或 .. 段",
-      "tooLong": "值过长"
+      "tooLong": "值过长",
+      "resetConfirmTitle": "重置为默认值？",
+      "resetConfirmDescription": "这将清除 {{name}} 的所有已存储值，包括 API 密钥和其他凭据。此操作无法撤销。"
     }
   },
   "huggingface": {
@@ -2592,7 +2919,10 @@
   },
   "demoMode": {
     "title": "演示模式",
-    "github": "GitHub"
+    "github": "GitHub",
+    "defaultMessage": "这是仅用于演示的版本。Ollama 后端未连接。",
+    "viewOnGithub": "在 GitHub 上查看",
+    "dismiss": "关闭"
   },
   "libreClaw": {
     "title": "智能体",
@@ -2755,8 +3085,8 @@
       "status": "状态：{{status}}"
     },
     "landing": {
-      "title": "开始新的工作任务",
-      "description": "为本地模型或已配置提供商的模型提供一个持久、隔离的工作区。它可以检查文件、运行工具，并在您回来后从上次位置继续。",
+      "title": "你想开展什么工作？",
+      "description": "描述一项任务。你的模型将获得自己的工作空间。",
       "isolated": "隔离",
       "isolatedBody": "每个任务都有自己的容器和文件。",
       "durable": "持久",
@@ -2785,7 +3115,11 @@
         "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
         "attachTooMany": "Only {{max}} files can be attached at once.",
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
-      }
+      },
+      "engine": "引擎",
+      "libreModels": "Libre WebUI模型",
+      "strandsDisabled": "你的账户无法使用 Strands 引擎。",
+      "modelLabel": "模型"
     },
     "conversation": {
       "ready": "工作区已就绪",
@@ -2825,8 +3159,18 @@
         "checksPending": "检查待定",
         "stallNudges": "停滞提醒",
         "ambiguityNudges": "重新定位提醒",
-        "stoppedBy": "停止原因"
-      }
+        "stoppedBy": "停止原因",
+        "reasons": {
+          "round": "轮数上限",
+          "toolCall": "工具调用上限",
+          "approvalTimeout": "审批超时",
+          "computerStall": "计算机停滞"
+        }
+      },
+      "skillTraceSavedWorked": "已记录：有效",
+      "skillTraceSavedFailed": "已记录：失败",
+      "connectionClosed": "“工作”的实时连接已关闭。",
+      "reconnectingBackground": "实时更新正在后台重新连接。"
     },
     "runtime": {
       "unavailable": "运行时不可用",
@@ -2834,7 +3178,7 @@
       "readyOllama": "Docker 已就绪",
       "readyPlugin": "Docker + 插件已就绪",
       "readyHybrid": "Docker + 模型已就绪",
-      "reason": "需要 Docker 以及可用的 Ollama 或插件模型提供商。"
+      "reason": "需要Work运行环境和可用的模型提供商。"
     },
     "workspace": {
       "label": "工作区视图",
@@ -2869,7 +3213,11 @@
       "changes": "更改",
       "changesSince": "自上一轮以来的更改",
       "diffLabel": "自上一轮以来的更改：{{path}}",
-      "diffFolded": "{{count}} 行未更改"
+      "diffFolded": "{{count}} 行未更改",
+      "diffAdded": "已添加",
+      "diffRemoved": "已移除",
+      "unsavedChanges": "未保存的更改",
+      "editingLocked": "本轮结束后才能编辑。"
     },
     "activity": {
       "empty": "命令、文件操作和工具结果将显示在这里。",
@@ -2880,7 +3228,9 @@
         "toolCall": "工具调用",
         "toolResult": "工具结果",
         "error": "错误"
-      }
+      },
+      "arguments": "工具参数",
+      "output": "工具输出"
     },
     "preview": {
       "command": "可选启动命令",
@@ -2909,7 +3259,8 @@
       "saveFailed": "无法保存此文件。",
       "saved": "文件已保存。",
       "previewFailed": "无法启动预览。",
-      "previewStopFailed": "无法停止预览。"
+      "previewStopFailed": "无法停止预览。",
+      "sendFailed": "无法发送该消息。"
     },
     "terminal": {
       "connecting": "正在沙箱中打开 Shell…",
@@ -2961,7 +3312,18 @@
       "noFilterMatches": "没有与此筛选条件匹配的已更改文件。",
       "allChanges": "全部更改",
       "diffTruncated": "此差异已被截断。",
-      "binaryFile": "二进制文件，无文本差异。"
+      "binaryFile": "二进制文件，无文本差异。",
+      "statusLabels": {
+        "modified": "已修改",
+        "added": "已添加",
+        "deleted": "已删除",
+        "renamed": "已重命名",
+        "copied": "已复制",
+        "typeChanged": "类型已更改",
+        "untracked": "未跟踪"
+      },
+      "stagedState": "已暂存",
+      "aheadBehind": "领先 {{ahead}}，落后 {{behind}}"
     },
     "hostWorkspace": {
       "hint": "留空以使用隔离工作区，或将任务指向本机的一个文件夹。",
@@ -2988,7 +3350,8 @@
       "unmute": "取消静音",
       "mute": "静音",
       "finished": "此任务已结束。重新打开它以恢复其屏幕。",
-      "reopenOpen": "重新打开任务并打开屏幕"
+      "reopenOpen": "重新打开任务并打开屏幕",
+      "teachSaveFailed": "无法保存此演示。"
     },
     "computerSetup": {
       "title": "Work Computer",
@@ -3004,7 +3367,7 @@
       "label": "雇用为智能体（可选）",
       "none": "无角色（一次性任务）",
       "hint": "此任务将成为一个具名智能体：保留角色、固定在侧边栏，并在每次运行后报告一行状态。",
-      "description": "选择一个角色，把此任务变成拥有自己身份的常驻智能体。"
+      "description": "选择一个角色，将此任务保留为有名称的智能体。"
     },
     "agent": {
       "openScreen": "打开全屏视图",
@@ -3025,7 +3388,11 @@
       "approvalsToggleFailed": "无法更新审批设置。",
       "approvalRuleLine": "始终允许",
       "approvalRuleDelete": "移除规则",
-      "approvalRuleDeleteFailed": "无法移除该规则。"
+      "approvalRuleDeleteFailed": "无法移除该规则。",
+      "routinesLoadFailed": "无法加载例行任务。",
+      "skillsLoadFailed": "无法加载已教授的技能。",
+      "approvalsLoadFailed": "无法加载审批设置。",
+      "routinePaused": "已暂停"
     },
     "approval": {
       "title": "需要批准",
@@ -3033,7 +3400,16 @@
       "allowOnce": "允许一次",
       "allowAlways": "始终允许",
       "deny": "拒绝",
-      "failed": "无法发送该决定。"
+      "failed": "无法发送该决定。",
+      "details": "操作详情",
+      "fields": {
+        "command": "命令",
+        "path": "路径",
+        "from": "从",
+        "to": "到",
+        "actions": "操作",
+        "recursive": "递归"
+      }
     },
     "idleStopHint": "无活动 {{minutes}} 分钟后停止。",
     "runs": {
@@ -3045,7 +3421,8 @@
         "needsInput": "需要输入",
         "failed": "失败",
         "cancelled": "已取消"
-      }
+      },
+      "loadFailed": "无法加载运行历史。"
     },
     "recovery": {
       "pending": "Work 正在确认 {{pending}} 项沙箱清理，之后才会接受新操作。",
@@ -3057,6 +3434,17 @@
       "retrySucceeded": "已清理 {{attempted}} 项中的 {{cleared}} 项待处理清理。",
       "retryPending": "仍在重试 {{attempted}} 项待处理清理。",
       "retryFailed": "无法重试待处理的清理项。"
+    },
+    "computer": {
+      "setupFailed": "无法设置工作计算机。"
+    },
+    "announce": {
+      "completed": "{{title}} 已完成。",
+      "needsInput": "{{title}} 需要您输入或批准。",
+      "failed": "{{title}} 失败。",
+      "cancelled": "{{title}} 已停止。",
+      "approvalNeeded": "{{title}} 需要您批准才能运行 {{tool}}。",
+      "untitledTask": "此任务"
     }
   },
   "personaBackground": {
@@ -3088,7 +3476,21 @@
     "reselectProvider": "重新选择提供方以固定此模型",
     "unavailable": "不可用",
     "unavailableSelections": "不可用的选择",
-    "agentModels": "智能体"
+    "agentModels": "智能体",
+    "searchOllama": "搜索Ollama库...",
+    "searchHuggingFace": "搜索HuggingFace...",
+    "searchModels": "搜索模型...",
+    "ollamaModels": "Ollama模型",
+    "installed": "已安装",
+    "use": "使用",
+    "pull": "下载",
+    "pullRestricted": "此实例上的模型安装仅限管理员。",
+    "adminOnlyPull": "仅管理员",
+    "showAll": "显示全部 ({{total}})",
+    "sources": "模型来源",
+    "defaultModel": "默认模型",
+    "contextSize": "{{size}} 上下文",
+    "via": "通过 {{provider}}"
   },
   "whatsNew": {
     "title": "新功能",
@@ -3145,7 +3547,16 @@
     "unpin": "取消置顶",
     "pinned": "已置顶",
     "export": "下载为 Markdown",
-    "sharedWithYou": "与你共享"
+    "sharedWithYou": "与你共享",
+    "titleLabel": "笔记标题",
+    "loadFailed": "无法加载。请重试。",
+    "restoreConfirmTitle": "恢复此版本？",
+    "restoreConfirmDescription": "笔记内容将被替换为此较早版本。",
+    "deleteAttachmentConfirmTitle": "删除 {{name}}？",
+    "deleteAttachmentConfirmDescription": "该附件将从此笔记中永久删除。",
+    "attachmentDeleteFailed": "无法删除附件",
+    "revokeFailed": "无法撤销访问权限",
+    "sharePermissionLabel": "权限"
   },
   "calendar": {
     "title": "日历",
@@ -3190,7 +3601,22 @@
     "importFailed": "文件导入失败",
     "importResult": "已导入 {{total}} 个日程",
     "importIcs": "导入",
-    "exportIcs": "导出"
+    "exportIcs": "导出",
+    "chipStatus": {
+      "automation": "定时自动化",
+      "runSucceeded": "自动化运行成功",
+      "runFailed": "自动化运行失败"
+    },
+    "newEventOn": "{{date}} 的新事件",
+    "showDay": "显示 {{date}} 的所有事件",
+    "deleteEventConfirmTitle": "删除“{{title}}”？",
+    "deleteEventConfirmDescription": "此事件将被永久删除。",
+    "deleteRecurringEventConfirmDescription": "此重复事件及其所有重复项将被永久删除。",
+    "shareCalendarNamed": "共享日历 {{name}}",
+    "deleteCalendarNamed": "删除日历 {{name}}",
+    "deleteCalendarConfirmTitle": "删除日历“{{name}}”？",
+    "deleteCalendarConfirmDescription": "该日历及其中的事件将被永久删除。",
+    "calendarDeleteFailed": "无法删除该日历"
   },
   "automations": {
     "title": "自动化",
@@ -3317,13 +3743,17 @@
         "work-approval": "智能体正在等待你的批准",
         "system": "系统通知到达"
       }
-    }
+    },
+    "deleteConfirmTitle": "删除“{{name}}”？",
+    "deleteConfirmDescription": "该自动化及其计划将被永久删除。过往运行记录仍保留在运行历史中。"
   },
   "home": {
     "active": "活跃",
     "continue": "继续",
     "start": "开始",
-    "explore": "探索"
+    "explore": "探索",
+    "greeting": "{{greeting}}。",
+    "greetingWithName": "{{greeting}}，{{name}}。"
   },
   "palette": {
     "empty": "没有匹配项。",
@@ -3336,7 +3766,14 @@
     "work": "工作",
     "messages": "消息",
     "notes": "笔记",
-    "documents": "文档"
+    "documents": "文档",
+    "searching": "正在搜索…",
+    "searchFailed": "工作区搜索失败。仅显示匹配的对话和操作。",
+    "results": "结果",
+    "escKey": "esc",
+    "hintNavigate": "导航",
+    "hintOpen": "打开",
+    "hintClose": "关闭"
   },
   "tabs": {
     "actions": "标签页操作",
@@ -3540,7 +3977,8 @@
       "button": "从文件夹导入",
       "missingSkillMd": "文件夹中需要包含 SKILL.md 文件",
       "done": "技能已导入，包含 {{count}} 个随附文件"
-    }
+    },
+    "toggleLabel": "启用技能 {{name}}"
   },
   "toolsPage": {
     "title": "工具",
@@ -3701,7 +4139,14 @@
     "added": "已与 {{name}} 共享",
     "failed": "共享失败",
     "userNotFound": "没有该用户名的用户",
-    "groupNotFound": "没有该名称的群组"
+    "groupNotFound": "没有该名称的群组",
+    "principalKind": "与用户或用户组共享",
+    "principalName": "用户名或用户组名称",
+    "permission": "权限",
+    "sharing": "共享",
+    "loading": "正在加载共享",
+    "loadFailed": "无法加载共享",
+    "revokeFailed": "无法撤销访问权限"
   },
   "channels": {
     "title": "频道",
@@ -3760,13 +4205,44 @@
     "toolCalls": {
       "summary": "已使用的工具（{{total}}）",
       "deniedHint": "会更改内容的工具在频道中会被拒绝。请在聊天中运行它们。"
-    }
+    },
+    "confirmEdit": "保存编辑",
+    "cancelEdit": "取消编辑",
+    "reactWith": "用 {{emoji}} 回应",
+    "deleteMessageConfirmTitle": "删除这条消息？",
+    "deleteMessageConfirmDescription": "该消息将对此频道中的所有人移除。",
+    "unreadCount": "{{total}} 条未读",
+    "send": "发送消息",
+    "invite": "邀请成员",
+    "closeThread": "关闭话题",
+    "removeAttachment": "移除附件",
+    "loadFailed": "无法加载。请重试。",
+    "editFailed": "无法编辑该消息",
+    "deleteMessageFailed": "无法删除该消息",
+    "pinFailed": "无法更改置顶状态",
+    "reactFailed": "无法保存回应",
+    "downloadFailed": "无法下载该文件",
+    "removeMemberConfirm": "将 {{name}} 移出此频道？",
+    "removeMemberConfirmDescription": "对方将无法再访问该频道及其消息。",
+    "removeMemberNamed": "将 {{name}} 移出频道",
+    "removeMemberFailed": "无法移除该成员",
+    "leaveConfirm": "退出 {{name}}？",
+    "leaveConfirmDescription": "退出后需要再次受邀才能重新加入私有频道。",
+    "leaveFailed": "无法退出频道",
+    "joinFailed": "无法加入频道",
+    "deleteConfirm": "删除 {{name}}？",
+    "deleteConfirmDescription": "该频道及其所有消息将对每位成员永久删除。",
+    "deleteFailed": "无法删除该频道",
+    "saveFailed": "无法保存该频道"
   },
   "notifications": {
     "title": "通知",
     "empty": "没有未读通知。",
     "markAllRead": "全部标为已读",
-    "markRead": "标为已读"
+    "markRead": "标为已读",
+    "titleWithUnread": "通知（{{unread}} 条未读）",
+    "unread": "未读",
+    "loadFailed": "无法加载通知。"
   },
   "voiceMode": {
     "title": "语音模式",
@@ -3901,7 +4377,12 @@
       "failed": "失败",
       "cancelled": "已取消"
     },
-    "noFeedback": "还没有反馈——为回复评分以构建你的数据集。"
+    "noFeedback": "还没有反馈——为回复评分以构建你的数据集。",
+    "deleteSetConfirmTitle": "删除“{{name}}”？",
+    "deleteSetConfirmDescription": "该评测集及其提示词将被永久删除。",
+    "deleteSetFailed": "无法删除评测集",
+    "runError": "错误：{{detail}}",
+    "cancelFailed": "无法取消此次运行"
   },
   "passwordStrength": {
     "levels": {
@@ -3915,6 +4396,14 @@
       "hasCase": "大写和小写字母",
       "hasNumber": "至少一个数字",
       "tooLong": "不超过 72 字节"
+    },
+    "requirements": "至少 12 个字符，不超过 72 个 UTF-8 字节，并包含大写字母、小写字母和数字。",
+    "errors": {
+      "minLength": "密码至少需要 12 个字符。",
+      "tooLong": "密码不能超过 72 个 UTF-8 字节。",
+      "uppercase": "密码必须包含大写字母。",
+      "lowercase": "密码必须包含小写字母。",
+      "number": "密码必须包含数字。"
     }
   },
   "connectModels": {
@@ -3933,7 +4422,8 @@
       "enable": "启用提供商",
       "enabling": "正在启用…",
       "enabled": "{{name}} 已连接 — 其模型现已可用",
-      "enableFailed": "无法启用该提供商"
+      "enableFailed": "无法启用该提供商",
+      "urlLabel": "服务器 URL"
     },
     "cloud": {
       "title": "云端 API",
@@ -3942,7 +4432,70 @@
       "connect": "连接",
       "connecting": "连接中…",
       "connected": "{{name}} 已连接 — 其模型现已可用",
-      "saveFailed": "无法保存 API 密钥"
+      "saveFailed": "无法保存 API 密钥",
+      "keyLabel": "{{name}} API 密钥"
+    },
+    "ollama": {
+      "status": {
+        "checking": "正在检查可用性…",
+        "healthy": "正在运行，可用于本地模型",
+        "offline": "未在此设备上检测到",
+        "disabled": "已停用 — 不会运行任何检查"
+      },
+      "recheck": "重新检查",
+      "enable": "启用",
+      "disable": "停止检查 Ollama",
+      "enabledToast": "已启用 Ollama 提供商",
+      "disabledToast": "已停用 Ollama 检查 — 您可以在设置中重新启用",
+      "settingsFailed": "无法更新 Ollama 设置",
+      "offlineHint": "从 ollama.com 安装 Ollama，系统会自动检测到它 — 或者改用下面的选项之一。如果您不打算使用 Ollama，可以关闭其检查。",
+      "healthyHint": "Ollama 已连接。从模型页面拉取一个模型，即可开始对话。"
     }
+  },
+  "modelDownload": {
+    "success": "已下载 {{name}}",
+    "failed": "下载失败：{{error}}",
+    "startFailed": "无法开始下载",
+    "cancelled": "下载已取消"
+  },
+  "strands": {
+    "title": "Strands",
+    "subtitle": "在你的 Libre WebUI 模型上运行的内置智能体引擎。",
+    "subtitleVersion": "内置智能体引擎，harness {{version}}。",
+    "newSession": "新建会话",
+    "sessions": "会话",
+    "noSessions": "还没有会话。新建一个即可开始。",
+    "empty": "让智能体读取或编辑其工作区中的文件。",
+    "placeholder": "让引擎做点什么…",
+    "model": "模型",
+    "defaultModel": "默认模型",
+    "send": "发送",
+    "stop": "停止",
+    "reasoning": "推理",
+    "tool": {
+      "running": "正在运行",
+      "done": "完成",
+      "failed": "失败"
+    },
+    "cancelled": "取消",
+    "turnLimit": "已在轮次上限处停止。",
+    "messageCount": "消息：{{count}}",
+    "deleteSession": "删除会话",
+    "deleteConfirm": "删除“{{title}}”及其历史记录？",
+    "loadFailed": "无法加载 Strands。",
+    "createFailed": "无法创建会话。",
+    "deleteFailed": "无法删除会话。",
+    "saveFailed": "无法保存会话。",
+    "turnFailed": "引擎无法完成本轮对话"
+  },
+  "notFound": {
+    "title": "页面未找到",
+    "description": "此页面不存在或已被移动。"
+  },
+  "themeToggle": {
+    "switchToLight": "切换到浅色模式",
+    "switchToDark": "切换到深色模式",
+    "switchToAmoled": "切换到纯黑模式",
+    "switchToCelestial": "切换到星空模式"
   }
 }

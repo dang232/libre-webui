@@ -43,7 +43,11 @@ const ElectronTitleBar: React.FC = () => {
     />
   );
 };
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster, ToastBar, resolveValue } from 'react-hot-toast';
+import { RefreshCw, X } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { ConfirmDialogHost } from '@/components/ui/ConfirmDialog';
+import { LiveAnnouncerHost } from '@/components/ui/LiveAnnouncer';
 import { Sidebar } from '@/components/Sidebar';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { ErrorBoundary, RouteErrorScreen } from '@/components/ErrorBoundary';
@@ -62,6 +66,7 @@ import { useAppStore } from '@/store/appStore';
 import { useAuthStore } from '@/store/authStore';
 import { useInitializeApp } from '@/hooks/useInitializeApp';
 import { useScrollFades } from '@/hooks/useScrollFades';
+import { useBackgroundWorkAnnouncements } from '@/hooks/useBackgroundWorkAnnouncements';
 import { UserService } from '@/services/userService';
 import {
   useKeyboardShortcuts,
@@ -71,7 +76,6 @@ import { cn } from '@/utils';
 import { createLogger } from '@/utils/logger';
 import websocketService from '@/utils/websocket';
 import { armTTSAudioPlaybackUnlock } from '@/utils/ttsBatching';
-import toast from 'react-hot-toast';
 
 const logger = createLogger('app');
 
@@ -91,7 +95,7 @@ const GalleryPage = React.lazy(() => import('@/pages/GalleryPage'));
 const NotesPage = React.lazy(() => import('@/pages/NotesPage'));
 const CalendarPage = React.lazy(() => import('@/pages/CalendarPage'));
 const AutomationsPage = React.lazy(() => import('@/pages/AutomationsPage'));
-const LibreClawPage = React.lazy(() => import('@/pages/LibreClawPage'));
+const StrandsPage = React.lazy(() => import('@/pages/StrandsPage'));
 const ChannelsPage = React.lazy(() => import('@/pages/ChannelsPage'));
 const WorkPage = React.lazy(() => import('@/pages/WorkPage'));
 const UserManagementPage = React.lazy(
@@ -119,6 +123,9 @@ const FirstTimeSetup = React.lazy(() =>
 
 // Import LoginPage directly (not lazy) to avoid suspense issues during auth redirects
 import { LoginPage } from '@/pages/LoginPage';
+import NotFoundPage from '@/pages/NotFoundPage';
+
+const BACKEND_RETRY_LIMIT = 15;
 
 // The Auth redirect-handoff callback must resolve without workspace state.
 const AlcoreCallbackPage = React.lazy(
@@ -132,12 +139,13 @@ const AlcoreSignupPage = React.lazy(() => import('@/pages/AlcoreSignupPage'));
 const PageLoader = () => {
   const { t } = useTranslation();
   return (
-    <div className='flex h-full min-h-screen items-center justify-center bg-gray-50 dark:bg-dark-100'>
-      <div className='flex flex-col items-center gap-3'>
-        <div className='h-8 w-8 rounded-full border-4 border-gray-200 border-t-primary-500 animate-spin dark:border-dark-300 dark:border-t-primary-400'></div>
-        <div className='text-gray-600 dark:text-dark-600'>
-          {t('common.loading')}
-        </div>
+    <div className='flex h-full items-center justify-center'>
+      <div role='status' className='flex flex-col items-center gap-3'>
+        <div
+          aria-hidden='true'
+          className='h-8 w-8 rounded-full border-4 border-line border-t-primary-500 animate-spin dark:border-t-primary-400'
+        />
+        <div className='text-sm text-ink-muted'>{t('common.loading')}</div>
       </div>
     </div>
   );
@@ -151,7 +159,7 @@ const SidebarLayoutSpacer: React.FC<{ isOpen: boolean; compact: boolean }> = ({
     aria-hidden='true'
     data-sidebar-layout-spacer=''
     className={cn(
-      'hidden md:block flex-shrink-0 transition-[width] duration-200 ease-out motion-reduce:transition-none',
+      'hidden md:block shrink-0 transition-[width] duration-200 ease-out motion-reduce:transition-none',
       isOpen ? (compact ? 'w-16' : 'w-72') : 'w-0'
     )}
   />
@@ -167,7 +175,7 @@ const ArtifactLayoutSpacer: React.FC = () => {
     <div
       aria-hidden='true'
       className={cn(
-        'hidden md:block flex-shrink-0',
+        'hidden md:block shrink-0',
         !artifactPanelResizing && 'transition-[width] duration-300 ease-out'
       )}
       style={{ width: artifactPanelOpen ? artifactPanelWidth : 0 }}
@@ -193,7 +201,12 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   demoMessage,
   children,
 }) => {
+  const { t } = useTranslation();
   const { pathname } = useLocation();
+  // The shell only renders for an authorized workspace, so Work runs that
+  // finish off-screen can be announced from here on any page.
+  const workEnabled = useAuthStore(state => state.canUseWork());
+  useBackgroundWorkAnnouncements(workEnabled);
   const savedBackground = useAppStore(
     state => state.preferences.backgroundSettings
   );
@@ -210,6 +223,12 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
       className='relative flex h-dvh min-h-0 overflow-hidden bg-sidebar text-ink'
       data-app-shell=''
     >
+      <a
+        href='#app-main'
+        className='sr-only focus:not-sr-only focus:fixed focus:inset-s-3 focus:top-3 focus:z-2147483647 focus:rounded-xl focus:bg-ink focus:px-4 focus:py-2.5 focus:text-sm focus:font-medium focus:text-ink-inverse focus:shadow-overlay'
+      >
+        {t('common.skipToContent')}
+      </a>
       <ElectronTitleBar />
       <CelestialSky />
       <Sidebar isOpen={sidebarOpen} onClose={onCloseSidebar} />
@@ -225,16 +244,18 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
         {showDemoBanner && <DemoModeBanner message={demoMessage} />}
         <AppTabBar />
         <main
+          id='app-main'
+          tabIndex={-1}
           data-app-main=''
           data-wallpaper={hasWallpaper ? 'true' : undefined}
-          className='relative isolate min-h-0 flex-1 overflow-hidden bg-canvas lg:rounded-[1.5rem] lg:border lg:border-black/[0.06] dark:lg:border-white/[0.07] lg:shadow-[0_1px_2px_rgba(0,0,0,0.03),0_18px_60px_rgba(15,23,42,0.04)]'
+          className='relative isolate min-h-0 flex-1 overflow-hidden bg-canvas focus:outline-hidden lg:rounded-3xl lg:border lg:border-black/6 dark:lg:border-white/[0.07] lg:shadow-[0_1px_2px_rgba(0,0,0,0.03),0_18px_60px_rgba(15,23,42,0.04)]'
         >
           <BackgroundRenderer active={hasWallpaper} />
           <div
             className='relative z-10 h-full min-h-0'
             data-wallpaper-content=''
           >
-            <ErrorBoundary>
+            <ErrorBoundary resetKey={pathname}>
               <Suspense fallback={<PageLoader />}>{children}</Suspense>
             </ErrorBoundary>
           </div>
@@ -460,7 +481,7 @@ const AppContent: React.FC = () => {
 
   // Auto-retry connection to backend when it's not available
   React.useEffect(() => {
-    if (!systemInfo && !authLoading && retryCount < 15) {
+    if (!systemInfo && !authLoading && retryCount < BACKEND_RETRY_LIMIT) {
       const timer = setTimeout(async () => {
         setRetryCount(c => c + 1);
         try {
@@ -478,6 +499,7 @@ const AppContent: React.FC = () => {
   // Alcore mode is exempt: local bootstrap is disabled there, and the first
   // Auth sign-in claims the bootstrap administrator slot through the same
   // first-account rule (todo 45).
+  const retriesExhausted = retryCount >= BACKEND_RETRY_LIMIT;
   const inFirstTimeSetup =
     !setupComplete &&
     systemInfo?.requiresAuth === true &&
@@ -487,15 +509,19 @@ const AppContent: React.FC = () => {
   // Show loading spinner while initializing auth
   if (authLoading) {
     return (
-      <div className='min-h-screen bg-gray-50 dark:bg-dark-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
+      <div className='min-h-dvh bg-canvas flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
         <div className='sm:mx-auto sm:w-full sm:max-w-md'>
           <div className='flex flex-col items-center'>
-            <LogoMark size='lg' className='text-gray-900 dark:text-gray-100' />
+            <LogoMark size='lg' className='text-ink' />
           </div>
         </div>
 
-        <div className='mt-8 flex flex-col items-center gap-4'>
-          <div className='w-8 h-8 border-4 border-gray-300 dark:border-gray-600 border-t-primary-500 dark:border-t-primary-400 rounded-full animate-spin'></div>
+        <div role='status' className='mt-8 flex flex-col items-center gap-4'>
+          <div
+            aria-hidden='true'
+            className='w-8 h-8 border-4 border-line border-t-primary-500 dark:border-t-primary-400 rounded-full animate-spin'
+          />
+          <span className='sr-only'>{t('common.loading')}</span>
         </div>
       </div>
     );
@@ -504,22 +530,43 @@ const AppContent: React.FC = () => {
   // Show loading screen while waiting for backend
   if (!systemInfo) {
     return (
-      <div className='min-h-screen bg-gray-50 dark:bg-dark-50 flex items-center justify-center p-4'>
-        <div className='text-center'>
+      <div className='min-h-dvh bg-canvas flex items-center justify-center p-4'>
+        <div className='max-w-sm text-center'>
           <div className='mb-8'>
-            <LogoMark
-              size='lg'
-              className='mx-auto text-gray-900 dark:text-white'
-            />
+            <LogoMark size='lg' className='mx-auto text-ink' />
           </div>
-          <div className='flex justify-center mb-4'>
-            <div className='w-8 h-8 border-4 border-gray-300 dark:border-dark-300 border-t-primary-500 dark:border-t-primary-400 rounded-full animate-spin'></div>
-          </div>
-          <p className='text-gray-600 dark:text-dark-600 text-sm'>
-            {retryCount > 0
-              ? `Connecting to backend... (${retryCount}/15)`
-              : 'Starting up...'}
-          </p>
+          {retriesExhausted ? (
+            // Stop implying progress once automatic retries have ended.
+            <div role='alert' className='space-y-4'>
+              <p className='text-sm font-medium text-ink'>
+                {t('appInitialization.backendConnectionFailed')}
+              </p>
+              <p className='text-sm text-ink-muted'>
+                {t('appInitialization.backendUnreachableHint')}
+              </p>
+              <Button type='button' onClick={() => setRetryCount(0)}>
+                <RefreshCw className='h-4 w-4' />
+                {t('common.retry')}
+              </Button>
+            </div>
+          ) : (
+            <div role='status'>
+              <div className='flex justify-center mb-4'>
+                <div
+                  aria-hidden='true'
+                  className='w-8 h-8 border-4 border-line border-t-primary-500 dark:border-t-primary-400 rounded-full animate-spin'
+                />
+              </div>
+              <p className='text-ink-muted text-sm'>
+                {retryCount > 0
+                  ? t('appInitialization.connecting', {
+                      attempt: retryCount,
+                      total: BACKEND_RETRY_LIMIT,
+                    })
+                  : t('appInitialization.startingUp')}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -543,8 +590,15 @@ const AppContent: React.FC = () => {
   // Show loading state while processing OAuth
   if (!oauthProcessed) {
     return (
-      <div className='min-h-screen bg-gray-50 dark:bg-dark-50 flex items-center justify-center'>
-        <div className='w-8 h-8 border-4 border-gray-300 dark:border-gray-600 border-t-primary-500 dark:border-t-primary-400 rounded-full animate-spin'></div>
+      <div
+        role='status'
+        className='min-h-dvh bg-canvas flex items-center justify-center'
+      >
+        <div
+          aria-hidden='true'
+          className='w-8 h-8 border-4 border-line border-t-primary-500 dark:border-t-primary-400 rounded-full animate-spin'
+        />
+        <span className='sr-only'>{t('common.loading')}</span>
       </div>
     );
   }
@@ -588,10 +642,10 @@ const AppContent: React.FC = () => {
               }
             />
             <Route
-              path='/agents'
+              path='/strands'
               element={
-                <ProtectedRoute requireAdmin={true} requireAgents={true}>
-                  <LibreClawPage />
+                <ProtectedRoute requireStrands={true}>
+                  <StrandsPage />
                 </ProtectedRoute>
               }
             />
@@ -612,6 +666,7 @@ const AppContent: React.FC = () => {
                 </ProtectedRoute>
               }
             />
+            <Route path='/artifacts' element={<ArtifactDemoPage />} />
             <Route path='/login' element={<LoginPage />} />
             <Route path='/signup' element={<AlcoreSignupPage />} />
             {/* R25: /register is an alias for the real signup form — never a silent login render. */}
@@ -624,6 +679,7 @@ const AppContent: React.FC = () => {
                 </Suspense>
               }
             />
+            <Route path='*' element={<NotFoundPage />} />
           </Routes>
         </ShellLayout>
       ) : (
@@ -679,13 +735,10 @@ const AppContent: React.FC = () => {
                       }
                     />
                     <Route
-                      path='/agents'
+                      path='/strands'
                       element={
-                        <ProtectedRoute
-                          requireAdmin={true}
-                          requireAgents={true}
-                        >
-                          <LibreClawPage />
+                        <ProtectedRoute requireStrands={true}>
+                          <StrandsPage />
                         </ProtectedRoute>
                       }
                     />
@@ -715,6 +768,7 @@ const AppContent: React.FC = () => {
                         </ProtectedRoute>
                       }
                     />
+                    <Route path='*' element={<NotFoundPage />} />
                   </Routes>
                 </ShellLayout>
               </ProtectedRoute>
@@ -747,6 +801,9 @@ const AppContent: React.FC = () => {
         </Suspense>
       )}
 
+      <ConfirmDialogHost />
+      <LiveAnnouncerHost />
+
       <Toaster
         position={isRTL(i18n.language) ? 'top-left' : 'top-right'}
         toastOptions={{
@@ -759,7 +816,6 @@ const AppContent: React.FC = () => {
             borderRadius: '0.75rem',
             boxShadow:
               '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-            cursor: 'pointer',
           },
           success: {
             iconTheme: {
@@ -768,8 +824,11 @@ const AppContent: React.FC = () => {
             },
           },
           error: {
+            // Errors stay long enough to read and never inherit the user's
+            // accent color. Their alert role is applied where they render.
+            duration: 7000,
             iconTheme: {
-              primary: 'rgb(var(--color-primary-600))',
+              primary: '#ef4444',
               secondary: '#ffffff',
             },
           },
@@ -778,7 +837,46 @@ const AppContent: React.FC = () => {
           top: 80, // Position below header (header height + some margin)
           insetInlineEnd: 20,
         }}
-      />
+      >
+        {notification =>
+          notification.type === 'custom' ? (
+            <>{resolveValue(notification.message, notification)}</>
+          ) : (
+            <ToastBar
+              // react-hot-toast stamps every toast as a polite status when it
+              // is created, which per-type options cannot override. Errors
+              // must interrupt, so their message is promoted to an alert.
+              toast={
+                notification.type === 'error'
+                  ? {
+                      ...notification,
+                      ariaProps: { role: 'alert', 'aria-live': 'assertive' },
+                    }
+                  : notification
+              }
+            >
+              {({ icon, message }) => (
+                <>
+                  {icon}
+                  {message}
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    tabIndex={0}
+                    className='h-11 w-11 shrink-0 p-0'
+                    aria-label={t('common.close')}
+                    title={t('common.close')}
+                    data-testid='toast-dismiss-button'
+                    onClick={() => toast.dismiss(notification.id)}
+                  >
+                    <X className='h-4 w-4' aria-hidden='true' />
+                  </Button>
+                </>
+              )}
+            </ToastBar>
+          )
+        }
+      </Toaster>
 
       {hasWorkspaceAccess && (
         <CommandPalette

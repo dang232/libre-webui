@@ -30,7 +30,14 @@ import {
   Upload,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { Button, IconAction, ModalShell, Switch } from '@/components/ui';
+import {
+  Button,
+  EmptyState,
+  IconAction,
+  LoadingState,
+  ModalShell,
+  Switch,
+} from '@/components/ui';
 import { SettingsTabHeader } from './SettingsTabHeader';
 import { SkillModal } from '@/components/skills/SkillModal';
 import { WorkspaceTemplateGrid } from './WorkspaceTemplateGrid';
@@ -392,31 +399,29 @@ export const SettingsSkillsTab: React.FC = () => {
         }
       />
 
-      {loading ? null : skills.length === 0 ? (
-        <div className='px-3 py-16 text-center'>
-          <GraduationCap className='mx-auto mb-3 h-6 w-6 text-gray-300 dark:text-dark-400' />
-          <p className='text-sm text-gray-500 dark:text-dark-500'>
-            {t('skillsPage.empty')}
-          </p>
-          <p className='mx-auto mt-2 max-w-md text-[13px] leading-6 text-gray-400 dark:text-dark-500'>
-            {t('skillsPage.emptyHint')}
-          </p>
-        </div>
+      {loading ? (
+        <LoadingState srOnly />
+      ) : skills.length === 0 ? (
+        <EmptyState
+          icon={GraduationCap}
+          title={t('skillsPage.empty')}
+          description={t('skillsPage.emptyHint')}
+        />
       ) : (
         <div className='space-y-2'>
           {skills.map(skill => (
             <div
               key={skill.id}
               data-testid='skill-row'
-              className='rounded-2xl border border-black/[0.06] bg-white/60 px-4 py-3 dark:border-white/[0.07] dark:bg-dark-100/60'
+              className='rounded-2xl border border-black/6 bg-white/60 px-4 py-3 dark:border-white/[0.07] dark:bg-dark-100/60'
             >
               <div className='flex flex-wrap items-start gap-3'>
-                <div className='min-w-0 flex-[1_1_16rem] [overflow-wrap:anywhere]'>
+                <div className='min-w-0 flex-[1_1_16rem] wrap-anywhere'>
                   <div className='flex flex-wrap items-center gap-2'>
                     <p className='max-w-full text-[14px] font-medium text-gray-900 dark:text-dark-900'>
                       {skill.name}
                     </p>
-                    <code className='max-w-full rounded-md bg-black/[0.04] px-1.5 py-0.5 text-[11px] text-gray-500 dark:bg-white/[0.06] dark:text-dark-500'>
+                    <code className='max-w-full rounded-md bg-black/4 px-1.5 py-0.5 text-[11px] text-gray-500 dark:bg-white/6 dark:text-dark-500'>
                       ${skill.slug}
                     </code>
                     <span className='text-[11px] text-gray-400 dark:text-dark-500'>
@@ -437,6 +442,9 @@ export const SettingsSkillsTab: React.FC = () => {
                     checked={skill.enabled}
                     disabled={togglingId === skill.id}
                     onChange={checked => void handleToggle(skill, checked)}
+                    aria-label={t('skillsPage.toggleLabel', {
+                      name: skill.name,
+                    })}
                   />
                   <IconAction
                     icon={History}

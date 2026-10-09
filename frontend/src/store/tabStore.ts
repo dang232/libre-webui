@@ -34,7 +34,7 @@ const PAGE_TAB_PATHS = [
   '/channels',
   '/personas',
   '/gallery',
-  '/agents',
+  '/strands',
   '/usage',
   '/system',
   '/artifacts',

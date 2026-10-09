@@ -18,9 +18,9 @@
 import express, { Request, Response } from 'express';
 import { authenticate, requireAdmin } from '../middleware/auth.js';
 import {
-  agentsEnabledLockedByEnv,
-  getAgentsEnabled,
-  setAgentsEnabled,
+  agentCliModelsEnabledLockedByEnv as agentsEnabledLockedByEnv,
+  getAgentCliModelsEnabled as getAgentsEnabled,
+  setAgentCliModelsEnabled as setAgentsEnabled,
 } from '../services/agentAccessService.js';
 import alcoreClawService, {
   AlcoreClawPermissionResolution,

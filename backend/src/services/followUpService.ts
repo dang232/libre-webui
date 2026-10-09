@@ -23,6 +23,10 @@ import type {
   PluginResponse,
 } from '../types/index.js';
 import { normalizeChatProviderSelection } from '../utils/chatProviderSelection.js';
+import {
+  resolveStrandsAuxiliaryTarget,
+  type StrandsAuxiliaryTargetResolver,
+} from './titleGenerationService.js';
 
 const FOLLOW_UP_GENERATION_OPTIONS: GenerationOptions = {
   temperature: 0.7,
@@ -103,6 +107,7 @@ interface FollowUpServiceDependencies {
   pluginService: PluginServiceDependency;
   now?: () => number;
   logger?: Pick<Console, 'error'>;
+  resolveStrandsProviderTarget?: StrandsAuxiliaryTargetResolver;
 }
 
 export class FollowUpService {
@@ -111,6 +116,7 @@ export class FollowUpService {
   private pluginService: PluginServiceDependency;
   private now: () => number;
   private logger: Pick<Console, 'error'>;
+  private resolveStrandsProviderTarget: StrandsAuxiliaryTargetResolver;
 
   constructor({
     chatService,
@@ -118,12 +124,14 @@ export class FollowUpService {
     pluginService,
     now = Date.now,
     logger = console,
+    resolveStrandsProviderTarget = resolveStrandsAuxiliaryTarget,
   }: FollowUpServiceDependencies) {
     this.chatService = chatService;
     this.chatGenerationService = chatGenerationService;
     this.pluginService = pluginService;
     this.now = now;
     this.logger = logger;
+    this.resolveStrandsProviderTarget = resolveStrandsProviderTarget;
   }
 
   /**
@@ -176,12 +184,33 @@ export class FollowUpService {
     assistantMessage: string,
     userId: string
   ): Promise<string> {
+    let model = session.model;
+    // A persona's binding describes the pseudo-model; its backing model
+    // finds its own provider by name.
+    let providerSelection =
+      model.startsWith('persona:') && session.providerType !== 'agent'
+        ? undefined
+        : normalizeChatProviderSelection(session);
+    if (providerSelection?.providerType === 'agent') {
+      // Other harnesses own their models and offer no plain text call.
+      if (providerSelection.providerId !== 'strands') return '';
+      // Ask the engine's underlying model directly, without an agent turn.
+      const resolved = await this.resolveStrandsProviderTarget(model, userId);
+      model = resolved.model;
+      providerSelection = normalizeChatProviderSelection(resolved);
+    }
     const target = await this.chatGenerationService.prepareGenerationTarget(
-      session.model,
+      model,
       userId,
       FOLLOW_UP_GENERATION_OPTIONS,
-      normalizeChatProviderSelection(session)
+      providerSelection
     );
+    if (
+      providerSelection?.providerType === 'plugin' &&
+      target.activePlugin?.id !== providerSelection.providerId
+    ) {
+      throw new Error('The selected follow-up provider is unavailable.');
+    }
     const prompt = buildFollowUpPrompt(userMessage, assistantMessage);
 
     if (target.activePlugin) {

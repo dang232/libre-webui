@@ -15,9 +15,21 @@
  * limitations under the License.
  */
 
+import {
+  fetchPluginChat,
+  pluginChatProtocol,
+  requestPluginChat,
+} from '../utils/bedrockMantle.js';
 import { createHash } from 'crypto';
+import {
+  isWorkStrandsModel,
+  workProviderModel,
+} from '../strands/work-model.js';
+import { userIdHasStrandsAccess } from './strandsAccessService.js';
 import type {
   GenerationOptions,
+  OllamaChatMessage,
+  OllamaChatResponse,
   ProviderChatMessage,
   ProviderChatRequest,
   ProviderChatResponse,
@@ -26,9 +38,17 @@ import type {
 } from '../types/index.js';
 import {
   getOpenAICompatibleSamplingParameters,
+  openAICompatibleReasoningFields,
+  resolveAnthropicThinking,
+  resolveGeminiThinking,
   resolvePluginChatParameters,
   type PluginVariables,
 } from '../utils/pluginChatAdapter.js';
+import {
+  normalizeThinkingPreference,
+  thinkingBudgetTokens,
+  thinkingEffort,
+} from '../utils/thinkingOptions.js';
 import {
   OPENAI_RESPONSES_OUTPUT_ITEMS_METADATA_KEY,
   OPENAI_RESPONSES_STATE_SCOPE_METADATA_KEY,
@@ -39,6 +59,7 @@ import {
   toOpenAIResponsesTools,
 } from '../utils/openAIResponsesAdapter.js';
 import {
+  streamAnthropicResponse,
   streamOpenAICompatibleResponse,
   streamOpenAIResponsesResponse,
   type PluginStreamChunk,
@@ -66,6 +87,11 @@ import pluginUsageService, {
   type ProviderTokenUsage,
 } from './pluginUsageService.js';
 import type { WorkProviderSelection } from '../types/work.js';
+
+// The codex-oauth provider plugin was removed from the Alcore line, but the
+// restored upstream payload paths still key codex-specific behavior off its
+// plugin id. The id is stable upstream API, so it stays a local constant.
+const CODEX_OAUTH_PLUGIN_ID = 'codex-oauth';
 
 type JsonObject = Record<string, unknown>;
 
@@ -114,6 +140,7 @@ interface WorkModelProviderDependencies {
   >;
   post: ProviderPost;
   recordPluginUsage?: (usage: PluginUsageEventInput) => void;
+  strandsAccess?: (userId: string) => Promise<boolean>;
 }
 
 export interface WorkModelStreamObserver {
@@ -153,7 +180,7 @@ export class WorkModelProviderService {
     provider: WorkProviderSelection,
     userId: string
   ): Promise<void> {
-    const cleaned = model.trim();
+    const cleaned = await this.providerModel(model, provider, userId);
     if (!cleaned) {
       throw new WorkModelProviderError(
         'A Work model is required.',
@@ -189,6 +216,7 @@ export class WorkModelProviderService {
     provider: WorkProviderSelection,
     userId: string
   ): Promise<string | undefined> {
+    model = await this.providerModel(model, provider, userId);
     if (provider.providerType !== 'plugin') return undefined;
     const providerId = provider.providerId?.trim();
     if (!providerId) return undefined;
@@ -221,6 +249,7 @@ export class WorkModelProviderService {
     provider: WorkProviderSelection,
     userId: string
   ): Promise<string> {
+    model = await this.providerModel(model, provider, userId);
     if (provider.providerType === 'ollama') {
       throw new WorkModelProviderError(
         'The Ollama provider has been removed.',
@@ -295,7 +324,7 @@ export class WorkModelProviderService {
     }
     const plugin = await this.requireExactPlugin(
       provider.providerId,
-      request.model,
+      streamRequest.model,
       userId
     );
     return this.generatePluginStream(
@@ -305,6 +334,36 @@ export class WorkModelProviderService {
       observer,
       signal
     );
+  }
+
+  private async providerModel(
+    model: string,
+    _provider: WorkProviderSelection,
+    userId: string
+  ): Promise<string> {
+    // The Strands engine prefix selects the Work driver, not a provider. Every
+    // provider call re-checks access, so revoking Strands stops live runs at
+    // their next model step. Only the underlying model reaches the provider.
+    if (isWorkStrandsModel(model)) {
+      const allowed = this.dependencies.strandsAccess ?? userIdHasStrandsAccess;
+      if (!(await allowed(userId))) {
+        throw new WorkModelProviderError(
+          'The Strands engine is not enabled for this account.',
+          403,
+          'WORK_STRANDS_DISABLED'
+        );
+      }
+      const underlying = workProviderModel(model);
+      if (!underlying || isWorkStrandsModel(underlying)) {
+        throw new WorkModelProviderError(
+          'Choose a provider model for the Strands engine.',
+          422,
+          'WORK_MODEL_TOOLS_UNSUPPORTED'
+        );
+      }
+      return underlying;
+    }
+    return model.trim();
   }
 
   private async hasConfiguredPlugin(userId: string): Promise<boolean> {
@@ -417,11 +476,17 @@ export class WorkModelProviderService {
 
     const startedAt = Date.now();
     try {
-      const response = await this.dependencies.post(endpoint, payload, {
-        headers,
-        signal,
-        timeout: 300_000,
-      });
+      const response = await requestPluginChat(
+        plugin,
+        endpoint,
+        request.model,
+        url =>
+          this.dependencies.post(url, payload, {
+            headers,
+            signal,
+            timeout: 300_000,
+          })
+      );
       const normalized = normalizePluginWorkResponse(
         plugin,
         (response.data ?? {}) as JsonObject,
@@ -513,7 +578,7 @@ export class WorkModelProviderService {
 
     const startedAt = Date.now();
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetchPluginChat(plugin, endpoint, request.model, {
         method: 'POST',
         headers,
         body: JSON.stringify(payload),
@@ -551,9 +616,15 @@ export class WorkModelProviderService {
         return normalized;
       }
       const chunks =
-        apiConfig.apiMode === 'responses'
-          ? streamOpenAIResponsesResponse(response, providerStateScope)
-          : streamOpenAICompatibleResponse(response);
+        pluginChatProtocol(plugin, request.model) === 'anthropic'
+          ? streamAnthropicResponse(response)
+          : plugin.id === 'gemini'
+            ? streamGeminiWorkResponse(response)
+            : apiConfig.apiMode === 'responses'
+              ? streamOpenAIResponsesResponse(response, providerStateScope, {
+                  allowEmptyTerminalOutput: plugin.id === CODEX_OAUTH_PLUGIN_ID,
+                })
+              : streamOpenAICompatibleResponse(response);
       const normalized = await collectPluginWorkStream(
         chunks,
         request.model,
@@ -636,18 +707,53 @@ export function buildPluginWorkPayload(
 ): { payload: JsonObject; extraHeaders: Record<string, string> } {
   const options = (request.options || {}) as GenerationOptions;
   const params = resolvePluginChatParameters(options, variables);
+  if (pluginChatProtocol(plugin, request.model) === 'anthropic') {
+    return {
+      payload: buildAnthropicWorkPayload(
+        request.model,
+        request.messages,
+        request.tools || [],
+        params.maxTokens,
+        Boolean(request.stream),
+        options.think
+      ),
+      extraHeaders: { 'anthropic-version': '2023-06-01' },
+    };
+  }
+  if (plugin.id === 'gemini') {
+    return {
+      payload: buildGeminiWorkPayload(
+        request.messages,
+        request.tools || [],
+        params,
+        options.think
+      ),
+      extraHeaders: {},
+    };
+  }
   if (apiMode === 'responses') {
     const sampling = getOpenAICompatibleSamplingParameters(plugin, params);
     const tools = toOpenAIResponsesTools(request.tools || []);
+    // The ChatGPT-backed codex endpoint rejects sampling parameters outright.
+    const supportsSampling = plugin.id !== CODEX_OAUTH_PLUGIN_ID;
+    const reasoningEffort = thinkingEffort(options.think);
     return {
       payload: {
         model: request.model,
         input: toOpenAIResponsesWorkInput(request.messages, providerStateScope),
         ...(tools.length ? { tools, tool_choice: 'auto' } : {}),
-        temperature: sampling.temperature,
-        top_p: sampling.top_p,
-        max_output_tokens: params.maxTokens,
-        stream: Boolean(request.stream),
+        ...(supportsSampling
+          ? {
+              temperature: sampling.temperature,
+              top_p: sampling.top_p,
+              max_output_tokens: params.maxTokens,
+            }
+          : {}),
+        // The codex endpoint rejects non-streaming requests outright.
+        stream: supportsSampling ? Boolean(request.stream) : true,
+        ...(reasoningEffort
+          ? { reasoning: { effort: reasoningEffort, summary: 'auto' } }
+          : {}),
         store: false,
         include: ['reasoning.encrypted_content'],
       },
@@ -662,6 +768,7 @@ export function buildPluginWorkPayload(
       tool_choice: request.tools?.length ? 'auto' : undefined,
       ...getOpenAICompatibleSamplingParameters(plugin, params),
       max_tokens: params.maxTokens,
+      ...openAICompatibleReasoningFields(plugin, options.think),
       stream: Boolean(request.stream),
     },
     extraHeaders: {},
@@ -676,6 +783,12 @@ export function normalizePluginWorkResponse(
     inferPluginApiMode(plugin.endpoint),
   providerStateScope?: string
 ): ProviderChatResponse {
+  if (pluginChatProtocol(plugin, model) === 'anthropic') {
+    return normalizeAnthropicWorkResponse(response, model);
+  }
+  if (plugin.id === 'gemini') {
+    return normalizeGeminiWorkResponse(response, model);
+  }
   if (apiMode === 'responses') {
     return normalizeOpenAIResponsesWorkResponse(
       response,
@@ -902,7 +1015,249 @@ export function toOpenAIResponsesWorkInput(
   return input;
 }
 
-// Work tool screenshots are raw base64 PNG (the shared wire convention); a
+/** Work's output ceiling when the user set none: room for a large tool call. */
+const WORK_DEFAULT_MAX_TOKENS = 4096;
+
+/**
+ * The ceiling for a run that asked for a thinking budget and set no limit of
+ * its own: the budget plus Work's usual answer room.
+ */
+const workCeilingForThinking = (
+  think: unknown,
+  withoutBudget: number | undefined
+): number | undefined => {
+  const budget = thinkingBudgetTokens(think);
+  return budget === undefined
+    ? withoutBudget
+    : WORK_DEFAULT_MAX_TOKENS + budget;
+};
+
+function buildAnthropicWorkPayload(
+  model: string,
+  messages: OllamaChatMessage[],
+  tools: JsonObject[],
+  maxTokens?: number,
+  stream = false,
+  think?: unknown
+): JsonObject {
+  const system = messages
+    .filter(message => message.role === 'system')
+    .map(message => message.content)
+    .join('\n');
+  const providerMessages: Array<{
+    role: 'user' | 'assistant';
+    content: JsonObject[];
+  }> = [];
+  let pendingCalls: Array<{ id: string; name: string }> = [];
+  let appendToolResult = false;
+
+  for (const [messageIndex, message] of messages.entries()) {
+    if (message.role === 'system') continue;
+    if (message.role === 'assistant') {
+      const blocks: JsonObject[] = [];
+      const toolCalls = normalizeOutboundToolCalls(message.tool_calls);
+      const anthropicThinkingBlocks = toolCalls.flatMap(call => {
+        const metadata = asObject(call.providerMetadata);
+        return Array.isArray(metadata?.anthropicThinkingBlocks)
+          ? metadata.anthropicThinkingBlocks.flatMap(block =>
+              asObject(block) ? [block as JsonObject] : []
+            )
+          : [];
+      });
+      blocks.push(...anthropicThinkingBlocks);
+      if (message.content) blocks.push({ type: 'text', text: message.content });
+      pendingCalls = toolCalls.map(call => ({
+        id: String(call.id),
+        name: String((call.function as JsonObject).name),
+      }));
+      for (const call of toolCalls) {
+        const fn = call.function as JsonObject;
+        blocks.push({
+          type: 'tool_use',
+          id: call.id,
+          name: fn.name,
+          input: parseToolArguments(fn.arguments),
+        });
+      }
+      providerMessages.push({ role: 'assistant', content: blocks });
+      appendToolResult = false;
+      continue;
+    }
+    if (message.role === 'tool') {
+      const matchIndex = pendingCalls.findIndex(
+        call => !message.tool_name || call.name === message.tool_name
+      );
+      const matching =
+        matchIndex >= 0 ? pendingCalls.splice(matchIndex, 1)[0] : undefined;
+      // Anthropic tool_result blocks accept image content natively — the
+      // screenshot rides inside the result itself.
+      const block = {
+        type: 'tool_result',
+        tool_use_id: matching?.id || `work-tool-${messageIndex}`,
+        content: message.images?.length
+          ? [
+              { type: 'text', text: message.content },
+              ...message.images.map(image => {
+                const source = workImageBase64(image);
+                return {
+                  type: 'image',
+                  source: {
+                    type: 'base64',
+                    media_type: source.mediaType,
+                    data: source.data,
+                  },
+                };
+              }),
+            ]
+          : message.content,
+      };
+      const previous = providerMessages[providerMessages.length - 1];
+      if (appendToolResult && previous?.role === 'user') {
+        previous.content.push(block);
+      } else {
+        providerMessages.push({ role: 'user', content: [block] });
+      }
+      appendToolResult = true;
+      continue;
+    }
+    providerMessages.push({
+      role: 'user',
+      content: [{ type: 'text', text: message.content }],
+    });
+    appendToolResult = false;
+  }
+
+  // An unset level keeps Work's own output ceiling. A chosen one sizes the
+  // request as Chat does, with Work's answer room on top of the budget so a
+  // large tool call is not squeezed out by thinking.
+  const thinking =
+    normalizeThinkingPreference(think) === undefined
+      ? undefined
+      : resolveAnthropicThinking(
+          model,
+          think,
+          maxTokens ?? workCeilingForThinking(think, undefined),
+          WORK_DEFAULT_MAX_TOKENS
+        );
+  return {
+    model,
+    system: system || undefined,
+    messages: providerMessages,
+    tools: toAnthropicTools(tools),
+    ...(thinking
+      ? { max_tokens: thinking.maxTokens, ...thinking.fields }
+      : { max_tokens: maxTokens ?? WORK_DEFAULT_MAX_TOKENS }),
+    stream,
+  };
+}
+
+function buildGeminiWorkPayload(
+  messages: OllamaChatMessage[],
+  tools: JsonObject[],
+  params: ReturnType<typeof resolvePluginChatParameters>,
+  think?: unknown
+): JsonObject {
+  const system = messages
+    .filter(message => message.role === 'system')
+    .map(message => message.content)
+    .join('\n');
+  const contents: Array<{ role: 'user' | 'model'; parts: JsonObject[] }> = [];
+  let pendingCalls: Array<{ id: string; name: string }> = [];
+
+  const append = (role: 'user' | 'model', part: JsonObject) => {
+    const previous = contents[contents.length - 1];
+    if (previous?.role === role) previous.parts.push(part);
+    else contents.push({ role, parts: [part] });
+  };
+
+  for (const [messageIndex, message] of messages.entries()) {
+    if (message.role === 'system') continue;
+    if (message.role === 'assistant') {
+      if (message.content) append('model', { text: message.content });
+      const calls = normalizeOutboundToolCalls(message.tool_calls);
+      pendingCalls = calls.map(call => ({
+        id: String(call.id),
+        name: String((call.function as JsonObject).name),
+      }));
+      for (const call of calls) {
+        const fn = call.function as JsonObject;
+        append('model', {
+          functionCall: {
+            id: call.id,
+            name: fn.name,
+            args: parseToolArguments(fn.arguments),
+          },
+          ...(typeof call.thoughtSignature === 'string'
+            ? { thoughtSignature: call.thoughtSignature }
+            : {}),
+        });
+      }
+      continue;
+    }
+    if (message.role === 'tool') {
+      const matchIndex = pendingCalls.findIndex(
+        call => !message.tool_name || call.name === message.tool_name
+      );
+      const matching =
+        matchIndex >= 0 ? pendingCalls.splice(matchIndex, 1)[0] : undefined;
+      append('user', {
+        functionResponse: {
+          id: matching?.id || `work-tool-${messageIndex}`,
+          name: message.tool_name || matching?.name || 'work_tool',
+          response: { result: message.content },
+        },
+      });
+      // Gemini functionResponse parts are text-only; the screenshot follows
+      // as an inlineData part in the same user turn.
+      for (const image of message.images ?? []) {
+        const source = workImageBase64(image);
+        append('user', {
+          inlineData: { mimeType: source.mediaType, data: source.data },
+        });
+      }
+      continue;
+    }
+    append('user', { text: message.content });
+  }
+
+  return {
+    systemInstruction: system ? { parts: [{ text: system }] } : undefined,
+    contents,
+    ...(tools.length
+      ? {
+          tools: [
+            {
+              functionDeclarations: tools.flatMap(tool => {
+                const fn = asObject(tool.function);
+                return fn
+                  ? [
+                      {
+                        name: fn.name,
+                        description: fn.description,
+                        parameters: fn.parameters,
+                      },
+                    ]
+                  : [];
+              }),
+            },
+          ],
+        }
+      : {}),
+    generationConfig: {
+      temperature: params.temperature,
+      topP: params.topP,
+      ...(normalizeThinkingPreference(think) === undefined
+        ? { maxOutputTokens: params.maxTokens ?? WORK_DEFAULT_MAX_TOKENS }
+        : resolveGeminiThinking(
+            think,
+            params.maxTokens ??
+              workCeilingForThinking(think, WORK_DEFAULT_MAX_TOKENS)
+          )),
+    },
+  };
+}
+
+// Work tool screenshots are raw base64 PNG (Ollama's wire convention); a
 // data: URL is accepted too and split where a provider needs the parts.
 function workImageDataUrl(image: string): string {
   return image.startsWith('data:') ? image : `data:image/png;base64,${image}`;
@@ -994,6 +1349,85 @@ function normalizeOpenAIResponsesWorkResponse(
         }
       : {}),
   };
+}
+
+function workImageBase64(image: string): { mediaType: string; data: string } {
+  const match = image.match(/^data:([^;]+);base64,(.+)$/);
+  return match
+    ? { mediaType: match[1], data: match[2] }
+    : { mediaType: 'image/png', data: image };
+}
+
+function normalizeAnthropicWorkResponse(
+  response: JsonObject,
+  model: string
+): OllamaChatResponse {
+  const blocks = Array.isArray(response.content) ? response.content : [];
+  const text: string[] = [];
+  const calls: JsonObject[] = [];
+  const thinkingBlocks: JsonObject[] = [];
+  const reasoning: string[] = [];
+  for (const [index, value] of blocks.entries()) {
+    const block = asObject(value);
+    if (block?.type === 'thinking' || block?.type === 'redacted_thinking') {
+      thinkingBlocks.push(block);
+      if (typeof block.thinking === 'string') reasoning.push(block.thinking);
+    }
+    if (block?.type === 'text' && typeof block.text === 'string') {
+      text.push(block.text);
+    }
+    if (block?.type === 'tool_use' && typeof block.name === 'string') {
+      calls.push({
+        id: typeof block.id === 'string' ? block.id : `work-anthropic-${index}`,
+        function: {
+          name: block.name,
+          arguments: asObject(block.input) || {},
+        },
+      });
+    }
+  }
+  if (thinkingBlocks.length > 0 && calls[0]) {
+    calls[0].providerMetadata = {
+      anthropicThinkingBlocks: thinkingBlocks,
+    };
+  }
+  return workResponse(model, text.join(''), calls, reasoning.join(''));
+}
+
+function normalizeGeminiWorkResponse(
+  response: JsonObject,
+  model: string
+): OllamaChatResponse {
+  const candidates = Array.isArray(response.candidates)
+    ? response.candidates
+    : [];
+  const candidate = asObject(candidates[0]);
+  const content = asObject(candidate?.content);
+  const parts = Array.isArray(content?.parts) ? content.parts : [];
+  const text: string[] = [];
+  const reasoning: string[] = [];
+  const calls: JsonObject[] = [];
+  for (const [index, value] of parts.entries()) {
+    const part = asObject(value);
+    if (typeof part?.text === 'string') {
+      if (part.thought === true) reasoning.push(part.text);
+      else text.push(part.text);
+    }
+    const call = asObject(part?.functionCall);
+    if (call && typeof call.name === 'string') {
+      calls.push({
+        id: typeof call.id === 'string' ? call.id : `work-gemini-${index}`,
+        ...(typeof part?.thoughtSignature === 'string'
+          ? { thoughtSignature: part.thoughtSignature }
+          : {}),
+        function: {
+          name: call.name,
+          arguments: asObject(call.args) || {},
+        },
+      });
+    }
+  }
+  return workResponse(model, text.join(''), calls, reasoning.join(''));
 }
 
 function workResponse(
@@ -1103,6 +1537,109 @@ async function collectPluginWorkStream(
   };
 }
 
+async function* streamGeminiWorkResponse(
+  response: Response
+): AsyncGenerator<PluginStreamChunk, void, unknown> {
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Plugin API error: ${response.status} - ${errorText.slice(0, 200)}`
+    );
+  }
+  if (!response.body) {
+    throw new Error('No response body for streaming');
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let callIndex = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith('data:')) continue;
+        let payload: JsonObject;
+        try {
+          payload = JSON.parse(trimmed.slice(5).trim()) as JsonObject;
+        } catch {
+          continue;
+        }
+        const streamError = providerStreamErrorMessage(payload);
+        if (streamError) {
+          throw new Error(`Plugin API error: ${streamError}`);
+        }
+        const candidates = Array.isArray(payload.candidates)
+          ? payload.candidates
+          : [];
+        const candidate = asObject(candidates[0]);
+        const candidateContent = asObject(candidate?.content);
+        const parts = Array.isArray(candidateContent?.parts)
+          ? candidateContent.parts
+          : [];
+        for (const rawPart of parts) {
+          const part = asObject(rawPart);
+          if (typeof part?.text === 'string' && part.text) {
+            yield part.thought === true
+              ? { type: 'reasoning', content: part.text }
+              : { type: 'content', content: part.text };
+          }
+          const call = asObject(part?.functionCall);
+          if (call && typeof call.name === 'string') {
+            yield {
+              type: 'tool_call',
+              toolCall: {
+                id:
+                  typeof call.id === 'string'
+                    ? call.id
+                    : `work-gemini-${callIndex++}`,
+                name: call.name,
+                arguments: JSON.stringify(asObject(call.args) || {}),
+                ...(typeof part?.thoughtSignature === 'string'
+                  ? {
+                      providerMetadata: {
+                        geminiThoughtSignature: part.thoughtSignature,
+                      },
+                    }
+                  : {}),
+              },
+            };
+          }
+        }
+        const usageMetadata = asObject(payload.usageMetadata);
+        if (usageMetadata) {
+          const promptTokens =
+            typeof usageMetadata.promptTokenCount === 'number'
+              ? usageMetadata.promptTokenCount
+              : undefined;
+          const completionTokens =
+            typeof usageMetadata.candidatesTokenCount === 'number'
+              ? usageMetadata.candidatesTokenCount
+              : undefined;
+          const totalTokens =
+            typeof usageMetadata.totalTokenCount === 'number'
+              ? usageMetadata.totalTokenCount
+              : promptTokens !== undefined || completionTokens !== undefined
+                ? (promptTokens || 0) + (completionTokens || 0)
+                : undefined;
+          yield {
+            type: 'usage',
+            usage: { promptTokens, completionTokens, totalTokens },
+          };
+        }
+      }
+    }
+    yield { type: 'done' };
+  } finally {
+    reader.releaseLock();
+  }
+}
+
 function normalizeOutboundToolCalls(value: unknown): JsonObject[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((raw, index) => {
@@ -1208,12 +1745,45 @@ function contentText(value: unknown): string {
     .join('');
 }
 
+function toAnthropicTools(tools: JsonObject[]): JsonObject[] {
+  return tools.flatMap(tool => {
+    const fn = asObject(tool.function);
+    if (!fn || typeof fn.name !== 'string') return [];
+    return [
+      {
+        name: fn.name,
+        description: fn.description,
+        input_schema: fn.parameters || {
+          type: 'object',
+          properties: {},
+        },
+      },
+    ];
+  });
+}
+
 function providerErrorMessage(value: unknown): string {
   const payload = asObject(value);
   const error = asObject(payload?.error);
   if (typeof error?.message === 'string') return error.message;
   if (typeof payload?.message === 'string') return payload.message;
   return 'Request failed.';
+}
+
+function providerStreamErrorMessage(value: unknown): string | undefined {
+  const payload = asObject(value);
+  if (!payload) return undefined;
+  const error = asObject(payload.error);
+  const message =
+    typeof error?.message === 'string'
+      ? error.message
+      : typeof payload.error === 'string'
+        ? payload.error
+        : typeof payload.message === 'string' &&
+            (payload.type === 'error' || payload.status === 'error')
+          ? payload.message
+          : undefined;
+  return message?.slice(0, 500);
 }
 
 function asObject(value: unknown): JsonObject | undefined {

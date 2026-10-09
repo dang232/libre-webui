@@ -86,6 +86,7 @@ Thumbs.db
 
 # Local development overrides
 plugins/openclaw-agent.json
+docker-compose.dev.external-ollama.watchtower.yml
 
 # Local Codex instructions
 /AGENTS-DEV.md
@@ -100,3 +101,11 @@ frontend/public/artifact-runtime/
 # related belongs here.
 /ios/
 /.omo
+
+# The local runtime data directory. It holds the database, the encryption key,
+# and engine session stores, so a broad `git add` must not publish a
+# deployment state or its key.
+/backend/data/
+
+# Local agent harness state (sessions, offloaded context)
+.agent/

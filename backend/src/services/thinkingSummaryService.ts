@@ -16,7 +16,11 @@
  */
 
 import type { GenerationTarget } from './chatGenerationService.js';
-import { AUTO_TITLE_CURRENT_MODEL } from './titleGenerationService.js';
+import {
+  AUTO_TITLE_CURRENT_MODEL,
+  resolveStrandsAuxiliaryTarget,
+  type StrandsAuxiliaryTargetResolver,
+} from './titleGenerationService.js';
 import type {
   ChatMessage,
   ChatProviderSelection,
@@ -57,11 +61,6 @@ export function parseThinkingSummaryRequest(
     string,
     unknown
   >;
-  if (typeof model !== 'string' || !model.trim() || model.length > 256) {
-    throw new ThinkingSummaryInputError(
-      'model must contain 1 to 256 characters.'
-    );
-  }
   if (
     typeof thinking !== 'string' ||
     !thinking.trim() ||
@@ -82,9 +81,26 @@ export function parseThinkingSummaryRequest(
     throw new ThinkingSummaryInputError('Provider fields must be strings.');
   }
   const provider = normalizeChatProviderSelection({ providerType, providerId });
-  if (provider?.providerType === 'agent') {
+  const usesStrands =
+    provider?.providerType === 'agent' && provider.providerId === 'strands';
+  if (provider?.providerType === 'agent' && !usesStrands) {
     throw new ChatProviderSelectionError(
       'Thinking summaries require a plugin model.'
+    );
+  }
+  const maxModelLength =
+    usesStrands &&
+    typeof model === 'string' &&
+    (model === 'strands' || model.startsWith('strands:'))
+      ? 2048
+      : 256;
+  if (
+    typeof model !== 'string' ||
+    !model.trim() ||
+    model.length > maxModelLength
+  ) {
+    throw new ThinkingSummaryInputError(
+      `model must contain 1 to ${maxModelLength} characters.`
     );
   }
   return { model: model.trim(), thinking: thinking.trim(), ...provider };
@@ -144,6 +160,7 @@ interface ThinkingSummaryDependencies {
     ): Promise<PluginResponse>;
   };
   timeoutMs?: number;
+  resolveStrandsProviderTarget?: StrandsAuxiliaryTargetResolver;
 }
 
 interface SummarizeThinkingOptions extends ChatProviderSelection {
@@ -209,20 +226,44 @@ export class ThinkingSummaryService {
       if (!session) return null;
 
       const usesCurrentModel = request.model === AUTO_TITLE_CURRENT_MODEL;
-      const model = usesCurrentModel
-        ? await wait(() =>
-            chatGenerationService.resolveActualModelName(session.model, userId)
-          )
-        : request.model;
-      const provider = usesCurrentModel
-        ? session.model.startsWith('persona:')
+      let provider = usesCurrentModel
+        ? session.model.startsWith('persona:') &&
+          session.providerType !== 'agent'
           ? undefined
           : normalizeChatProviderSelection(session)
         : normalizeChatProviderSelection(request);
-      if (provider?.providerType === 'agent') {
+      if (
+        request.model.startsWith('persona:') &&
+        provider?.providerType !== 'agent'
+      ) {
+        provider = undefined;
+      }
+      const usesStrands =
+        provider?.providerType === 'agent' && provider.providerId === 'strands';
+      if (provider?.providerType === 'agent' && !usesStrands) {
         throw new ChatProviderSelectionError(
           'Thinking summaries require a plugin model.'
         );
+      }
+      let model = usesCurrentModel
+        ? usesStrands
+          ? session.model
+          : await wait(() =>
+              chatGenerationService.resolveActualModelName(
+                session.model,
+                userId
+              )
+            )
+        : request.model;
+      if (usesStrands) {
+        const resolved = await wait(() =>
+          (
+            this.dependencies.resolveStrandsProviderTarget ??
+            resolveStrandsAuxiliaryTarget
+          )(model, userId)
+        );
+        model = resolved.model;
+        provider = normalizeChatProviderSelection(resolved);
       }
       const options: GenerationOptions = {
         temperature: 0.2,
@@ -239,12 +280,15 @@ export class ThinkingSummaryService {
         )
       );
       if (
-        provider?.providerType === 'plugin' &&
-        target.activePlugin?.id !== provider.providerId
+        target.providerType === 'agent' ||
+        (provider?.providerType === 'plugin' &&
+          target.activePlugin?.id !== provider.providerId) ||
+        (provider?.providerType === 'ollama' && target.activePlugin)
       ) {
         throw new Error('The selected summary provider is unavailable.');
       }
       const prompt = buildThinkingSummaryPrompt(request.thinking);
+      const { tools: _tools, ...textOptions } = target.mergedOptions;
       let raw: string;
       if (target.activePlugin) {
         const response = await wait(() =>
@@ -258,7 +302,7 @@ export class ThinkingSummaryService {
                 timestamp: Date.now(),
               },
             ],
-            { ...target.mergedOptions, ...options, num_predict: 256 },
+            { ...textOptions, ...options, num_predict: 256 },
             userId,
             target.activePlugin!.id,
             signal

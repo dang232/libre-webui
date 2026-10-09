@@ -38,14 +38,22 @@
     "custom": "Aangepast",
     "remove": "Verwijderen",
     "home": "Home",
-    "more": "Meer"
+    "more": "Meer",
+    "provider": "Provider",
+    "agent": "Agent",
+    "reasoning": "Redenering",
+    "skipToContent": "Naar inhoud springen"
   },
   "brand": {
     "name": "Alcore",
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "backendConnectionFailed": "Kan geen verbinding maken met de backendservice"
+    "backendConnectionFailed": "Kan geen verbinding maken met de backendservice",
+    "ollamaUnavailable": "De Ollama-service is niet beschikbaar. Pluginmodellen kunnen nog wel worden gebruikt.",
+    "connecting": "Verbinden met de backend… ({{attempt}}/{{total}})",
+    "startingUp": "Starten…",
+    "backendUnreachableHint": "Controleer of de backend draait en probeer het opnieuw."
   },
   "auth": {
     "login": {
@@ -206,7 +214,9 @@
       "removed": "Passkey verwijderd.",
       "removeFailed": "De passkey kon niet worden verwijderd.",
       "signInButton": "Inloggen met een passkey",
-      "signInFailed": "Inloggen met passkey mislukt."
+      "signInFailed": "Inloggen met passkey mislukt.",
+      "removeConfirmTitle": "Deze passkey verwijderen?",
+      "removeConfirmDescription": "Met \"{{name}}\" kun je niet meer inloggen. Je kunt hem later opnieuw registreren."
     },
     "alcore": {
       "title": "This server uses Alcore Auth for sign-in.",
@@ -272,6 +282,12 @@
       "tryAgain": "Try again",
       "restart": "Restart sign-in",
       "support": "Need help? Contact your server admin or see"
+    },
+    "password": {
+      "show": "Wachtwoord tonen",
+      "hide": "Wachtwoord verbergen",
+      "showConfirmation": "Wachtwoordbevestiging tonen",
+      "hideConfirmation": "Wachtwoordbevestiging verbergen"
     }
   },
   "setup": {
@@ -324,7 +340,8 @@
       "envNote": "Deze sleutel is ook opgeslagen in uw backend/.env bestand als ENCRYPTION_KEY",
       "acknowledgment": "Ik heb mijn encryptiesleutel op een veilige locatie opgeslagen en begrijp dat verlies ervan kan leiden tot gegevensverlies.",
       "confirmRequired": "Bevestig dat u de encryptiesleutel heeft opgeslagen",
-      "continue": "Doorgaan naar Alcore"
+      "continue": "Doorgaan naar Alcore",
+      "loadFailed": "Kon de versleutelingssleutel niet laden. Probeer opnieuw om door te gaan."
     },
     "connectModels": {
       "title": "Verbind uw modellen",
@@ -418,7 +435,8 @@
       "toolsOn": "Gereedschappen aan — het model mag goedgekeurde gereedschappen aanroepen",
       "toolsOff": "Het model gereedschappen laten aanroepen voor dit bericht",
       "thinkingOn": "Nadenken aan ({{level}})",
-      "thinkingOff": "Nadenken voor het antwoord"
+      "thinkingOff": "Nadenken voor het antwoord",
+      "thinkingUpdateFailed": "Kon de denkinstelling niet bijwerken"
     },
     "session": {
       "new": "Nieuwe chat",
@@ -454,7 +472,8 @@
         "move": "Verplaatsen naar map",
         "remove": "Uit map verwijderen",
         "delete": "Map verwijderen",
-        "deleteConfirm": "Deze map verwijderen? De chats erin blijven bewaard."
+        "deleteConfirm": "Deze map verwijderen? De chats erin blijven bewaard.",
+        "rename": "Map hernoemen"
       },
       "shareChat": "Chat delen…"
     },
@@ -472,7 +491,8 @@
       "selectBeforePrivateChat": "Selecteer een beschikbaar model voordat je een privéchat start",
       "selectBeforeSending": "Selecteer een beschikbaar model voordat je verzendt",
       "selectBeforeRegenerating": "Selecteer een beschikbaar model voordat je opnieuw genereert",
-      "connectDescription": "Er zijn nog geen modellen verbonden. Kies hieronder een bron — een lokale runtime, uw eigen server of een cloud-API — en binnen een minuut kunt u chatten."
+      "connectDescription": "Er zijn nog geen modellen verbonden. Kies hieronder een bron — een lokale runtime, uw eigen server of een cloud-API — en binnen een minuut kunt u chatten.",
+      "pullCommand": "ollama pull llama3.2:3b"
     },
     "footer": {
       "disclaimer": "LLM kan fouten maken - verifieer belangrijke informatie",
@@ -486,7 +506,13 @@
       "browse": "bladeren",
       "unsupportedFileType": "Bestandstype wordt niet ondersteund: {{name}}",
       "maxImagesAllowed": "Maximaal {{count}} afbeeldingen toegestaan",
-      "imageTooLarge": "Afbeelding {{name}} is te groot (max. 10 MB)"
+      "imageTooLarge": "Afbeelding {{name}} is te groot (max. 10 MB)",
+      "readFailed": "Kon {{name}} niet lezen",
+      "uploadAlt": "Upload {{number}}",
+      "removeImage": "Afbeelding {{number}} verwijderen",
+      "addMore": "Meer afbeeldingen toevoegen ({{count}}/{{max}})",
+      "uploading": "Uploaden",
+      "removeDocument": "{{name}} verwijderen"
     },
     "structuredOutput": {
       "title": "Antwoordformaat",
@@ -537,7 +563,8 @@
       "compactionOff": "Uit voor deze chat"
     },
     "message": {
-      "sources": "Bronnen"
+      "sources": "Bronnen",
+      "copyFailed": "Kon niet naar het klembord kopiëren"
     },
     "toasts": {
       "chatCreated": "Nieuwe chat aangemaakt",
@@ -581,7 +608,8 @@
       "generationRateLimitedWeekly": "Weekly budget spent — new chats pause until Monday 00:00 UTC. Try again later or upgrade your plan.",
       "generationRateLimitedMonthly": "Monthly budget spent — new chats pause until the 1st of next month (UTC). Try again later or upgrade your plan.",
       "generationFailedSupport": "The reply couldn't be finished — retry, and if it keeps happening report it from Settings > About > GitHub issues.",
-      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access."
+      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access.",
+      "archiveFailed": "Kon deze chat niet archiveren"
     },
     "documents": {
       "title": "Documenten in context"
@@ -614,7 +642,25 @@
     "delegate": {
       "action": "Run as Work task"
     },
-    "sharedReadOnly": "Gedeeld door {{owner}} — alleen lezen"
+    "sharedReadOnly": "Gedeeld door {{owner}} — alleen lezen",
+    "branch": {
+      "variants": "{{count}} variant",
+      "variants_plural": "{{count}} varianten",
+      "selectVariant": "Variant {{number}} selecteren",
+      "generating": "genereren...",
+      "select": "selecteren"
+    },
+    "sources": {
+      "fullContextFailed": "Kon de instelling voor volledig document niet bijwerken",
+      "usedByRetrieval": "Gebruikt in antwoorden",
+      "triggerLabel": "Bronnen ({{count}})"
+    },
+    "announce": {
+      "replyFinished": "{{name}} antwoordde: {{text}}",
+      "replyFinishedNoText": "{{name}} is klaar met antwoorden.",
+      "codeBlock": "codeblok",
+      "generationStopped": "Generatie gestopt"
+    }
   },
   "sidebar": {
     "navigation": {
@@ -636,10 +682,12 @@
       "prompts": "Prompts",
       "skills": "Vaardigheden",
       "tools": "Gereedschappen",
-      "channels": "Kanalen"
+      "channels": "Kanalen",
+      "strands": "Strands"
     },
     "toggleSize": "Zijbalk grootte wijzigen",
-    "expandSidebar": "Zijbalk uitvouwen"
+    "expandSidebar": "Zijbalk uitvouwen",
+    "ariaLabel": "Zijbalk"
   },
   "user": {
     "menu": {
@@ -696,7 +744,8 @@
       "sessions": "Sessies",
       "apiKeys": "API-sleutels",
       "notifications": "Meldingen",
-      "apiPlatform": "API Platform"
+      "apiPlatform": "API Platform",
+      "ollamaDisabled": "Ollama is uitgeschakeld door een beheerder"
     },
     "appearance": {
       "title": "Weergave",
@@ -921,7 +970,8 @@
       "modelPrice": "Price / 1M",
       "modelStatus": "Status",
       "modelFree": "Free",
-      "modelDeprecated": "Deprecated"
+      "modelDeprecated": "Deprecated",
+      "dismissError": "Fout sluiten"
     },
     "generation": {
       "title": "Generatieopties",
@@ -1024,7 +1074,8 @@
         "deleteFailed": "Collectie kon niet worden verwijderd",
         "assignFailed": "Document kon niet worden verplaatst",
         "share": "Collectie delen",
-        "shared": "gedeeld"
+        "shared": "gedeeld",
+        "assignTo": "Collectie voor {{name}}"
       },
       "library": {
         "title": "Geüploade documenten",
@@ -1166,7 +1217,8 @@
         "title": "Gearchiveerde chats",
         "empty": "Geen gearchiveerde chats",
         "unarchive": "Herstellen"
-      }
+      },
+      "clearAllConfirm": "Weet je zeker dat je de hele chatgeschiedenis wilt verwijderen? Dit kan niet ongedaan worden gemaakt."
     },
     "about": {
       "title": "Over",
@@ -1178,43 +1230,36 @@
       "features": {
         "privacy": {
           "title": "Privacy eerst",
-          "description": "Uw gegevens blijven op uw apparaat"
+          "description": "Self-hosted workspace — your data stays under your control"
         },
         "openSource": {
           "title": "Open Source",
-          "description": "Vrije en open source software"
+          "description": "Open-source software maintained by the Alcore team"
         },
         "localInference": {
           "title": "Lokale inferentie",
-          "description": "Voer AI-modellen lokaal uit met Ollama"
+          "description": "Use local Ollama models or connect to your Alcore provider"
         }
       },
-      "openSourceBy": "Open source door {{company}}",
+      "openSourceBy": "Built by {{company}}",
       "links": {
         "title": "Links",
-        "github": "GitHub",
-        "githubDescription": "Bekijk broncode en draag bij",
         "website": "Website",
-        "websiteDescription": "Bezoek onze website",
+        "websiteDescription": "Visit the Alcore website",
         "documentation": "Documentatie",
         "reportIssue": "Problemen melden",
         "reportIssueDescription": "Bugmeldingen & functieverzoeken",
-        "documentationDescription": "Handleidingen, tutorials en API-referentie",
-        "forgejo": "Forgejo-spiegel",
-        "forgejoDescription": "Zelf-gehoste Forgejo-repository",
-        "sponsor": "Sponsor",
-        "sponsorDescription": "Help het project financieren",
-        "star": "Ster op GitHub",
-        "starDescription": "Een ster helpt anderen het project te ontdekken"
+        "documentationDescription": "Guides and documentation for Alcore"
       },
       "version": "Versie {{version}}",
       "updates": {
-        "checking": "Zoeken naar updates…",
-        "upToDate": "Je gebruikt de nieuwste versie",
-        "updateAvailable": "Versie {{version}} is beschikbaar",
-        "ahead": "Loopt voor op de laatste release ({{version}})",
-        "checkFailed": "Kon niet op updates controleren",
         "viewChangelog": "Changelog bekijken"
+      },
+      "ollama": {
+        "title": "Ollama-status",
+        "version": "Versie",
+        "healthy": "Gezond",
+        "unhealthy": "Ongezond"
       }
     },
     "groups": {
@@ -1280,7 +1325,11 @@
       "unknownDevice": "Onbekend apparaat",
       "createdAt": "Ingelogd",
       "lastSeenAt": "Laatst actief",
-      "expiresAt": "Verloopt"
+      "expiresAt": "Verloopt",
+      "signOutConfirmTitle": "Deze sessie uitloggen?",
+      "signOutConfirmDescription": "{{device}} wordt direct uitgelogd en moet opnieuw inloggen.",
+      "signOutOthersConfirmTitle": "Andere sessies uitloggen?",
+      "signOutOthersConfirmDescription": "{{count}} andere sessies worden direct uitgelogd. Deze sessie blijft ingelogd."
     },
     "apiKeys": {
       "title": "API-sleutels",
@@ -1314,7 +1363,9 @@
       "createdAt": "Aangemaakt",
       "lastUsedAt": "Laatst gebruikt",
       "expiresAt": "Verloopt",
-      "neverExpires": "Nooit"
+      "neverExpires": "Nooit",
+      "revokeConfirmTitle": "\"{{name}}\" intrekken?",
+      "revokeConfirmDescription": "Alles wat deze API-sleutel gebruikt, werkt direct niet meer. Dit kan niet ongedaan worden gemaakt."
     },
     "notifications": {
       "title": "Meldingen",
@@ -1484,7 +1535,20 @@
   "models": {
     "title": "Modellen",
     "noModels": "Geen modellen geïnstalleerd",
-    "noModelsFound": "Geen modellen gevonden"
+    "noModelsFound": "Geen modellen gevonden",
+    "subtitle": "Pull, beheer en monitor uw Ollama-modellen",
+    "installed": "Geïnstalleerde modellen",
+    "available": "Beschikbare modellen",
+    "pull": "Model ophalen",
+    "pulling": "Ophalen...",
+    "delete": "Model verwijderen",
+    "deleting": "Verwijderen...",
+    "size": "Grootte",
+    "modified": "Gewijzigd",
+    "family": "Familie",
+    "parameters": "Parameters",
+    "quantization": "Kwantisatie",
+    "pullFirst": "Haal een model op om te beginnen"
   },
   "personas": {
     "title": "Personas",
@@ -1516,7 +1580,8 @@
     "model": "Model",
     "size": "Grootte",
     "quality": "Kwaliteit",
-    "created": "Aangemaakt"
+    "created": "Aangemaakt",
+    "lightboxLabel": "Afbeeldingsvoorbeeld"
   },
   "errors": {
     "generic": "Er is een fout opgetreden",
@@ -1565,7 +1630,13 @@
   },
   "modelManager": {
     "sections": {
-      "catalog": "Modelcatalogus"
+      "catalog": "Modelcatalogus",
+      "pull": "Nieuw model ophalen",
+      "library": "Bibliotheek doorzoeken",
+      "huggingface": "HuggingFace Hub",
+      "running": "Actieve modellen",
+      "local": "Lokale modellen",
+      "advanced": "Geavanceerde acties"
     },
     "catalog": {
       "searchPlaceholder": "Zoek modellen op naam of aanbieder...",
@@ -1588,12 +1659,159 @@
       "hide": "Verbergen voor gebruikers",
       "show": "Tonen aan gebruikers",
       "star": "{{name}} markeren met ster",
-      "unstar": "Ster van {{name}} verwijderen"
+      "unstar": "Ster van {{name}} verwijderen",
+      "providerOllama": "Ollama",
+      "filterLabel": "Modellen filteren",
+      "displayName": "Weergavenaam voor {{name}}"
     },
     "huggingface": {
       "checkingGguf": "GGUF-bestanden zoeken...",
       "noGgufAvailable": "Geen GGUF-bestanden beschikbaar voor directe Ollama pull",
-      "ggufFilesCount": "GGUF-bestanden ({{count}}) - Direct naar Ollama pullen"
+      "ggufFilesCount": "GGUF-bestanden ({{count}}) - Direct naar Ollama pullen",
+      "browseAll": "Alles bekijken op HuggingFace",
+      "noModelsFound": "Geen modellen gevonden",
+      "noResults": "Geen modellen gevonden. Probeer je zoekopdracht of filters aan te passen.",
+      "browseAllLink": "Alles bekijken",
+      "search": "HuggingFace-modellen zoeken...",
+      "by": "door",
+      "gated": "Beperkte toegang",
+      "viewOnHF": "Bekijk op HuggingFace",
+      "sortDownloads": "Downloads",
+      "sortLikes": "Likes",
+      "sortRecent": "Recent",
+      "taskTextGeneration": "Tekstgeneratie",
+      "taskTextToSpeech": "Tekst naar spraak",
+      "taskTextToImage": "Tekst naar afbeelding",
+      "taskSpeechRecognition": "Spraakherkenning",
+      "tasks": {
+        "textGen": "Tekstgeneratie",
+        "tts": "Tekst naar spraak",
+        "image": "Tekst naar afbeelding",
+        "stt": "Spraakherkenning"
+      },
+      "sort": {
+        "downloads": "Meest gedownload",
+        "likes": "Meest geliked",
+        "recent": "Recent bijgewerkt"
+      }
+    },
+    "title": "Modellen",
+    "loading": "Modellen laden...",
+    "systemStatus": {
+      "online": "Ollama online",
+      "offline": "Ollama offline",
+      "models": "model",
+      "models_plural": "modellen",
+      "running": "actief",
+      "vram": "VRAM"
+    },
+    "pull": {
+      "placeholder": "Voer modelnaam in (bijv. llama3.2:3b, deepseek-r1:14b)",
+      "button": "Ophalen",
+      "cancel": "Annuleren",
+      "popular": "Populaire modellen:",
+      "browseAll": "Bekijk alle modellen op ollama.com",
+      "success": "Model {{name}} succesvol opgehaald",
+      "cancelled": "Model ophalen geannuleerd",
+      "failed": "Kon model niet ophalen",
+      "enterName": "Voer een modelnaam in",
+      "restricted": "Modelinstallatie is op deze instantie beperkt tot beheerders."
+    },
+    "progress": {
+      "starting": "Initialiseren...",
+      "pulling": "Model downloaden...",
+      "pullingLayer": "downloaden",
+      "verifying": "Integriteit verifiëren...",
+      "verifyingDigest": "sha256-digest verifiëren",
+      "writing": "Manifest schrijven...",
+      "cleaning": "Opruimen..."
+    },
+    "library": {
+      "available": "beschikbaar",
+      "search": "Modellen zoeken...",
+      "noResults": "Geen modellen gevonden die aan uw criteria voldoen",
+      "installed": "Geïnstalleerd",
+      "more": "+{{count}} meer",
+      "refresh": "Bibliotheek vernieuwen"
+    },
+    "local": {
+      "noModels": "Nog geen modellen geïnstalleerd",
+      "pullToStart": "Haal hierboven een model op om te beginnen",
+      "installed": "geïnstalleerd",
+      "running": "Actief",
+      "info": "Info",
+      "copy": "Kopiëren",
+      "delete": "Verwijderen",
+      "deleteConfirm": "Weet u zeker dat u model \"{{name}}\" wilt verwijderen?",
+      "deleteSuccess": "Model {{name}} succesvol verwijderd",
+      "deleteFailed": "Kon model niet verwijderen"
+    },
+    "advanced": {
+      "createModel": "Model aanmaken",
+      "fromModelfile": "Vanuit Modelfile",
+      "copyModel": "Model kopiëren",
+      "duplicateExisting": "Bestaande dupliceren",
+      "testEmbeddings": "Embeddings testen",
+      "generateVectors": "Vectoren genereren",
+      "healthCheck": "Gezondheidscontrole",
+      "testConnection": "Verbinding testen",
+      "healthy": "Ollama is gezond!"
+    },
+    "modals": {
+      "details": {
+        "title": "Modeldetails",
+        "info": "Modelinformatie",
+        "family": "Familie",
+        "parameters": "Parameters",
+        "quantization": "Kwantisatie",
+        "format": "Formaat",
+        "systemPrompt": "Systeemprompt",
+        "template": "Sjabloon",
+        "license": "Licentie",
+        "modelfile": "Modelfile",
+        "noDetails": "Geen details beschikbaar"
+      },
+      "copy": {
+        "title": "Model kopiëren",
+        "source": "Bronmodel",
+        "selectModel": "Selecteer een model...",
+        "newName": "Nieuwe modelnaam",
+        "placeholder": "bijv. mijn-aangepast-model",
+        "copying": "Kopiëren...",
+        "button": "Model kopiëren",
+        "success": "Model gekopieerd naar {{name}}",
+        "failed": "Kon model niet kopiëren",
+        "enterBoth": "Voer zowel bron- als doelnamen in"
+      },
+      "create": {
+        "title": "Aangepast model aanmaken",
+        "name": "Modelnaam",
+        "namePlaceholder": "bijv. mijn-assistent",
+        "modelfile": "Modelfile",
+        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM Je bent een behulpzame assistent.",
+        "see": "Zie",
+        "docs": "Modelfile-documentatie",
+        "docsLink": "voor syntaxreferentie",
+        "creating": "Aanmaken...",
+        "button": "Model aanmaken",
+        "success": "Model {{name}} succesvol aangemaakt",
+        "failed": "Kon model niet aanmaken",
+        "enterBoth": "Voer modelnaam en Modelfile-inhoud in"
+      },
+      "embeddings": {
+        "title": "Embeddings testen",
+        "model": "Embedding-model",
+        "selectModel": "Selecteer een model...",
+        "recommended": "Aanbevolen: nomic-embed-text, mxbai-embed-large",
+        "input": "Invoertekst",
+        "placeholder": "Voer tekst in om embeddings voor te genereren...",
+        "generating": "Genereren...",
+        "button": "Embeddings genereren",
+        "result": "Resultaat ({{count}} dimensies)",
+        "success": "{{count}}-dimensionale embeddingvector gegenereerd",
+        "failed": "Kon embeddings niet genereren",
+        "enterBoth": "Selecteer een model en voer tekst in"
+      }
     }
   },
   "personaManager": {
@@ -1615,7 +1833,10 @@
     "deleteConfirm": "Weet u zeker dat u \"{{name}}\" wilt verwijderen?",
     "deleteSuccess": "Persona \"{{name}}\" succesvol verwijderd",
     "downloadSuccess": "Persona \"{{name}}\" succesvol gedownload",
-    "failed": "Kon persona niet {{action}}"
+    "failed": "Kon persona niet {{action}}",
+    "loadFailed": "Je persona's konden niet worden geladen.",
+    "deleteFailed": "Persona verwijderen mislukt",
+    "downloadFailed": "Persona downloaden mislukt"
   },
   "personaForm": {
     "title": {
@@ -1747,7 +1968,8 @@
       "promptHint": "Een prompt waarmee elke nieuwe chat met deze persona begint.",
       "noPrompt": "Geen prompt",
       "version": "Koppelingsrevisie {{version}}"
-    }
+    },
+    "sections": "Persona-secties"
   },
   "personaCard": {
     "enhanced": "Verbeterd",
@@ -1764,7 +1986,16 @@
     "backupSuccess": "Persona-back-up succesvol gedownload",
     "dnaSuccess": "Persona-DNA succesvol geëxporteerd",
     "failed": "{{action}} mislukt",
-    "shareTooltip": "Deze persona delen"
+    "shareTooltip": "Deze persona delen",
+    "wipeFailed": "Herinneringen wissen mislukt",
+    "backupFailed": "Back-up van persona maken mislukt",
+    "exportDnaFailed": "Persona-DNA exporteren mislukt",
+    "favorite": "Favoriet",
+    "memoryStatus": {
+      "active": "Actief",
+      "wiped": "Gewist",
+      "backed_up": "Back-up gemaakt"
+    }
   },
   "userManager": {
     "title": "Gebruikersbeheer",
@@ -1793,7 +2024,10 @@
     "noUsersMatching": "Geen gebruikers die overeenkomen met uw zoekopdracht",
     "columns": {
       "role": "Rol",
-      "created": "Aangemaakt"
+      "created": "Aangemaakt",
+      "user": "Gebruiker",
+      "email": "E-mail",
+      "actions": "Acties"
     },
     "roles": {
       "admin": "Admin",
@@ -1832,7 +2066,10 @@
       "createSuccess": "Gebruiker succesvol aangemaakt",
       "updateSuccess": "Gebruiker succesvol bijgewerkt",
       "createFailed": "Kon gebruiker niet aanmaken",
-      "updateFailed": "Kon gebruiker niet bijwerken"
+      "updateFailed": "Kon gebruiker niet bijwerken",
+      "usernamePlaceholder": "Voer gebruikersnaam in",
+      "emailPlaceholder": "Voer e-mail in (optioneel)",
+      "passwordPlaceholder": "Voer wachtwoord in"
     },
     "workAccess": {
       "title": "Work-toegang",
@@ -1925,7 +2162,28 @@
       "memberOf": "Groepen",
       "featuresLabel": "Functietoegang",
       "grantsLabel": "Toekenningen",
-      "grantVia": "via"
+      "grantVia": "via",
+      "deleteConfirmTitle": "Groep \"{{name}}\" verwijderen?",
+      "deleteConfirmDescription": "Leden verliezen toegang die ze alleen via deze groep hadden. De accounts zelf worden niet verwijderd.",
+      "statuses": {
+        "active": "Actief",
+        "pending": "In afwachting van goedkeuring"
+      },
+      "features": {
+        "work": "Werk",
+        "model-download": "Modellen downloaden",
+        "web-search": "Zoeken op het web",
+        "strands": "Strands-engine",
+        "tools": "Tools",
+        "stt": "Spraak naar tekst",
+        "tts": "Tekst naar spraak",
+        "voice-mode": "Spraakmodus",
+        "voice-cloning": "Stemklonen"
+      },
+      "grantViaKinds": {
+        "user": "directe toekenning",
+        "group": "groep"
+      }
     },
     "audit": {
       "title": "Beveiligingsauditlog",
@@ -2012,13 +2270,60 @@
       "save": "Opslaan",
       "saving": "Opslaan…",
       "saved": "E-mailinstellingen opgeslagen.",
-      "saveFailed": "De e-mailinstellingen konden niet worden opgeslagen."
+      "saveFailed": "De e-mailinstellingen konden niet worden opgeslagen.",
+      "security": {
+        "starttls": "STARTTLS (poort 587)",
+        "tls": "TLS (poort 465)",
+        "none": "Geen (alleen vertrouwd netwerk)"
+      },
+      "templateTitle": "Uiterlijk van e-mails",
+      "templateHint": "Kies een licht of donker sjabloon voor nieuwsoverzichten en meldingsmails.",
+      "themeLabel": "E-mailsjabloon",
+      "themeLight": "Licht",
+      "themeDark": "Donker",
+      "previewTitle": "Voorbeeld van sjabloon",
+      "previewLoading": "Voorbeeld laden…",
+      "previewFailed": "Het e-mailvoorbeeld kon niet worden geladen.",
+      "previewHeading": "Je nieuwsoverzicht",
+      "previewIntro": "Een voorbeeld van je dagelijkse nieuwsmail.",
+      "previewMarkdown": "## Hoogtepunten van vandaag\n\n- Updates over technologie en onderzoek\n- Nieuws uit je geselecteerde bronnen\n\n**Samenvatting:** Je dagelijkse nieuws staat klaar om te lezen.",
+      "previewLinkLabel": "Resultaat openen"
+    },
+    "modelAccess": {
+      "title": "Modeldownloads",
+      "description": "Sta alle actieve gebruikers toe modellen op te halen via Ollama en de Hugging Face-browser. Beheerders kunnen altijd modellen downloaden.",
+      "saved": "Toegang tot modeldownloads bijgewerkt",
+      "saveFailed": "Kon toegang tot modeldownloads niet bijwerken"
+    },
+    "ollamaProvider": {
+      "title": "Ollama-provider",
+      "description": "Indien uitgeschakeld, stopt de app volledig met controleren op Ollama — geen statuscontroles, geen waarschuwingen. Het eindpunt kan naar elke Ollama-compatibele gateway wijzen.",
+      "saved": "Instellingen voor Ollama-provider opgeslagen",
+      "saveFailed": "Kon de instellingen voor de Ollama-provider niet opslaan",
+      "baseUrlLabel": "Ollama-eindpunt-URL"
+    },
+    "strandsAccess": {
+      "title": "Strands-engine",
+      "description": "Kies wie de ingebouwde Strands-agent mag gebruiken. Hij kan bestanden lezen en bewerken in de privéwerkruimte van elke sessie, maar kan geen shell-opdrachten uitvoeren.",
+      "saved": "Strands-toegang bijgewerkt",
+      "saveFailed": "Strands-toegang kon niet worden bijgewerkt",
+      "lockedByEnv": "Vastgelegd door de omgevingsvariabele LIBRE_STRANDS_ACCESS.",
+      "modes": {
+        "disabled": "Uit",
+        "admins": "Beheerders",
+        "all-users": "Alle gebruikers"
+      }
+    },
+    "agentCliAccess": {
+      "title": "CLI-agentmodellen",
+      "description": "Beheerders kunnen geïnstalleerde Pi, OpenCode, Codex en Claude Code als chatmodellen gebruiken. Ze draaien op de host, buiten de Work-sandboxes.",
+      "lockedByEnv": "Vastgezet door de omgevingsvariabele AGENT_CLI_MODELS_ENABLED."
     }
   },
   "usageAnalytics": {
     "eyebrow": "Beheer",
     "title": "Providergebruik",
-    "description": "Volg uitgaande API-aanroepen en modelverbruik via de ingeschakelde plugins op deze instantie.",
+    "description": "Volg modelaanvragen en gebruik van de providers en agents op deze instantie.",
     "days": "{{count}} dagen",
     "refresh": "Gebruik vernieuwen",
     "loadFailed": "Providergebruik kon niet worden geladen.",
@@ -2065,7 +2370,7 @@
       "notCharted": "Selecteer om dit model in de grafiek te laden"
     },
     "providers": {
-      "title": "Verkeer van ingeschakelde plug-ins",
+      "title": "Provider- en agentverkeer",
       "description": "Aanvraagvolume, betrouwbaarheid en reactietijd per provider.",
       "share": "{{percent}}% van de aanroepen",
       "failures": "{{count}} mislukt of geannuleerd",
@@ -2083,7 +2388,7 @@
     },
     "empty": {
       "title": "Nog geen provider-aanroepen",
-      "description": "Aanroepen verschijnen hier nadat een ingeschakelde plug-in chat-, Work-, embedding-, afbeeldings-, spraak-, geluids- of videoverzoeken afhandelt."
+      "description": "Aanvragen verschijnen hier nadat een provider of agent chat, Work, embeddings, afbeeldingen, spraak, geluid of video heeft verwerkt."
     },
     "privacyNote": "Gebruik wordt op de server gemeten op de grens van de uitgaande plug-in. Alcore slaat provider, model, timing, status en gerapporteerde tellers op—nooit prompts, antwoorden, endpoints, inloggegevens of foutmeldingen van de provider. Token totalen bevatten alleen aanroepen waarbij de provider gebruiks-metadata retourneerde.",
     "heatmap": {
@@ -2095,6 +2400,14 @@
       "less": "Minder",
       "more": "Meer",
       "yearTotal": "{{formatted}} aanroepen in het afgelopen jaar"
+    },
+    "agents": {
+      "title": "Agents",
+      "description": "Aanroepen van CLI-agents en de Strands-engine.",
+      "noCalls": "Geen geregistreerde aanroepen in deze periode",
+      "unreported": "Tokens niet gerapporteerd",
+      "topModels": "Meest gebruikte modellen",
+      "legacy": "Deze server biedt geen volledig agentoverzicht. Beschikbare agentregistraties staan hieronder."
     }
   },
   "systemPage": {
@@ -2309,7 +2622,11 @@
       "harmful": "Schadelijk",
       "formatting": "Opmaak"
     },
-    "feedbackComment": "Voeg een opmerking toe…"
+    "feedbackComment": "Voeg een opmerking toe…",
+    "user": "Gebruiker",
+    "feedbackFailed": "Kon je feedback niet opslaan",
+    "openImage": "Afbeelding {{number}} openen",
+    "uploadedImageAlt": "Geüploade afbeelding {{number}}"
   },
   "imageGallery": {
     "title": "Afbeeldingengalerij",
@@ -2321,7 +2638,8 @@
     "deleteSuccess": "Afbeelding verwijderd",
     "deleteFailed": "Kon afbeelding niet verwijderen",
     "loadMore": "Meer laden ({{current}} van {{total}})",
-    "loadFailed": "Kon galerij niet laden"
+    "loadFailed": "Kon galerij niet laden",
+    "downloadFailed": "Kon afbeelding niet downloaden"
   },
   "imageGeneration": {
     "title": "Afbeelding genereren",
@@ -2397,7 +2715,10 @@
       "image": "Afbeeldingen",
       "video": "Video's",
       "audio": "Audio"
-    }
+    },
+    "deleteConfirmTitle": "Dit item verwijderen?",
+    "deleteConfirmDescription": "De gegenereerde media worden definitief verwijderd.",
+    "previewFailed": "Voorbeeld niet beschikbaar"
   },
   "errorBoundary": {
     "title": "Er is iets misgegaan",
@@ -2475,7 +2796,8 @@
     "previousVersion": "Vorige versie",
     "nextVersion": "Volgende versie",
     "print": "Print",
-    "exportCsv": "Export CSV"
+    "exportCsv": "Export CSV",
+    "resizePanel": "Paneel vergroten of verkleinen"
   },
   "personaImportExport": {
     "title": "Personas importeren & exporteren",
@@ -2513,7 +2835,10 @@
     "generation": "Generatie:",
     "modelLoad": "Model laden:",
     "totalTime": "Totale tijd:",
-    "generatedAt": "Gegenereerd om:"
+    "generatedAt": "Gegenereerd om:",
+    "notAvailable": "n.v.t.",
+    "tokenCount": "{{tokens}} tokens",
+    "tokensPerSecond": "{{value}} t/s"
   },
   "userMenu": {
     "loggedOut": "Succesvol uitgelogd",
@@ -2572,7 +2897,9 @@
       "httpWarning": "HTTP versleutelt geen inloggegevens of verkeer. Gebruik dit alleen op een vertrouwd netwerk.",
       "invalidBaseUrl": "Basis-URL's mogen geen queryreeks of fragment bevatten.",
       "invalidApiPath": "Moet beginnen met / en geen URL, query, fragment of .. segment bevatten",
-      "tooLong": "Waarde is te lang"
+      "tooLong": "Waarde is te lang",
+      "resetConfirmTitle": "Terugzetten naar standaardwaarden?",
+      "resetConfirmDescription": "Hiermee worden alle opgeslagen waarden voor {{name}} gewist, inclusief API-sleutels en andere inloggegevens. Dit kan niet ongedaan worden gemaakt."
     }
   },
   "huggingface": {
@@ -2592,7 +2919,10 @@
   },
   "demoMode": {
     "title": "Demomodus",
-    "github": "GitHub"
+    "github": "GitHub",
+    "defaultMessage": "Dit is een demoversie, alleen bedoeld voor presentatie. De Ollama-backend is niet verbonden.",
+    "viewOnGithub": "Bekijken op GitHub",
+    "dismiss": "Sluiten"
   },
   "libreClaw": {
     "title": "Agents",
@@ -2755,8 +3085,8 @@
       "status": "Status: {{status}}"
     },
     "landing": {
-      "title": "Een nieuwe werktaak starten",
-      "description": "Geef een lokaal model of een model van een geconfigureerde aanbieder een duurzame, geïsoleerde werkruimte. Het kan bestanden inspecteren, tools uitvoeren en bij terugkeer doorgaan waar het gebleven was.",
+      "title": "Waar wil je aan werken?",
+      "description": "Beschrijf een taak. Je model krijgt een eigen werkruimte.",
       "isolated": "Geïsoleerd",
       "isolatedBody": "Elke taak krijgt een eigen container en bestanden.",
       "durable": "Duurzaam",
@@ -2785,7 +3115,11 @@
         "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
         "attachTooMany": "Only {{max}} files can be attached at once.",
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
-      }
+      },
+      "engine": "Engine",
+      "libreModels": "Libre WebUI-modellen",
+      "strandsDisabled": "De Strands-engine is niet beschikbaar voor je account.",
+      "modelLabel": "Model"
     },
     "conversation": {
       "ready": "Werkruimte gereed",
@@ -2825,8 +3159,18 @@
         "checksPending": "Controles in behandeling",
         "stallNudges": "Vastloopmeldingen",
         "ambiguityNudges": "Herijkingsmeldingen",
-        "stoppedBy": "Gestopt door"
-      }
+        "stoppedBy": "Gestopt door",
+        "reasons": {
+          "round": "rondelimiet",
+          "toolCall": "limiet voor toolaanroepen",
+          "approvalTimeout": "time-out voor goedkeuring",
+          "computerStall": "computer liep vast"
+        }
+      },
+      "skillTraceSavedWorked": "Genoteerd: werkte",
+      "skillTraceSavedFailed": "Genoteerd: mislukt",
+      "connectionClosed": "De live Werk-verbinding is gesloten.",
+      "reconnectingBackground": "Live-updates worden op de achtergrond opnieuw verbonden."
     },
     "runtime": {
       "unavailable": "Runtime niet beschikbaar",
@@ -2834,7 +3178,7 @@
       "readyOllama": "Docker gereed",
       "readyPlugin": "Docker + plugin gereed",
       "readyHybrid": "Docker + modellen gereed",
-      "reason": "Docker en een beschikbare modelprovider via Ollama of een plug-in zijn vereist."
+      "reason": "Een Work-runtime en een beschikbare modelprovider zijn vereist."
     },
     "workspace": {
       "label": "Werkruimteweergaven",
@@ -2869,7 +3213,11 @@
       "changes": "Wijzigingen",
       "changesSince": "Wat er is veranderd sinds de laatste beurt",
       "diffLabel": "Wijzigingen sinds de laatste beurt: {{path}}",
-      "diffFolded": "{{count}} ongewijzigde regels"
+      "diffFolded": "{{count}} ongewijzigde regels",
+      "diffAdded": "Toegevoegd",
+      "diffRemoved": "Verwijderd",
+      "unsavedChanges": "niet-opgeslagen wijzigingen",
+      "editingLocked": "Bewerken wordt ontgrendeld zodra de beurt klaar is."
     },
     "activity": {
       "empty": "Opdrachten, bestandsbewerkingen en toolresultaten verschijnen hier.",
@@ -2880,7 +3228,9 @@
         "toolCall": "Toolaanroep",
         "toolResult": "Toolresultaat",
         "error": "Fout"
-      }
+      },
+      "arguments": "Toolargumenten",
+      "output": "Tooluitvoer"
     },
     "preview": {
       "command": "Optionele startopdracht",
@@ -2909,7 +3259,8 @@
       "saveFailed": "Dit bestand kon niet worden opgeslagen.",
       "saved": "Bestand opgeslagen.",
       "previewFailed": "Het voorbeeld kon niet worden gestart.",
-      "previewStopFailed": "Het voorbeeld kon niet worden gestopt."
+      "previewStopFailed": "Het voorbeeld kon niet worden gestopt.",
+      "sendFailed": "Het bericht kon niet worden verzonden."
     },
     "terminal": {
       "connecting": "Een shell in de sandbox openen…",
@@ -2961,7 +3312,18 @@
       "noFilterMatches": "Geen gewijzigde bestanden komen overeen met dit filter.",
       "allChanges": "Alle wijzigingen",
       "diffTruncated": "Deze diff is ingekort.",
-      "binaryFile": "Binair bestand, geen tekstdiff."
+      "binaryFile": "Binair bestand, geen tekstdiff.",
+      "statusLabels": {
+        "modified": "Gewijzigd",
+        "added": "Toegevoegd",
+        "deleted": "Verwijderd",
+        "renamed": "Hernoemd",
+        "copied": "Gekopieerd",
+        "typeChanged": "Type gewijzigd",
+        "untracked": "Niet gevolgd"
+      },
+      "stagedState": "staged",
+      "aheadBehind": "{{ahead}} voor, {{behind}} achter"
     },
     "hostWorkspace": {
       "hint": "Laat leeg voor een geïsoleerde werkruimte, of wijs de taak naar een map op deze machine.",
@@ -2988,7 +3350,8 @@
       "unmute": "Geluid aan",
       "mute": "Dempen",
       "finished": "Deze taak is voltooid. Open hem opnieuw om het scherm terug te halen.",
-      "reopenOpen": "Taak heropenen en scherm openen"
+      "reopenOpen": "Taak heropenen en scherm openen",
+      "teachSaveFailed": "Kon deze demonstratie niet opslaan."
     },
     "computerSetup": {
       "title": "Work Computer",
@@ -3004,7 +3367,7 @@
       "label": "Aannemen als agent (optioneel)",
       "none": "Geen persona (eenmalige taak)",
       "hint": "Deze taak wordt een benoemde agent: hij behoudt de persona, blijft vastgezet in de zijbalk en meldt na elke run een statusregel.",
-      "description": "Kies een persona om van deze taak een blijvende agent met een eigen identiteit te maken."
+      "description": "Kies een persona om deze taak als een benoemde agent te behouden."
     },
     "agent": {
       "openScreen": "Volledige schermweergave openen",
@@ -3025,7 +3388,11 @@
       "approvalsToggleFailed": "De goedkeuringsinstelling kon niet worden bijgewerkt.",
       "approvalRuleLine": "Altijd toegestaan",
       "approvalRuleDelete": "Regel verwijderen",
-      "approvalRuleDeleteFailed": "De regel kon niet worden verwijderd."
+      "approvalRuleDeleteFailed": "De regel kon niet worden verwijderd.",
+      "routinesLoadFailed": "Kon routines niet laden.",
+      "skillsLoadFailed": "Kon aangeleerde vaardigheden niet laden.",
+      "approvalsLoadFailed": "Kon goedkeuringsinstellingen niet laden.",
+      "routinePaused": "Gepauzeerd"
     },
     "approval": {
       "title": "Goedkeuring nodig",
@@ -3033,7 +3400,16 @@
       "allowOnce": "Eén keer toestaan",
       "allowAlways": "Altijd toestaan",
       "deny": "Weigeren",
-      "failed": "De beslissing kon niet worden verzonden."
+      "failed": "De beslissing kon niet worden verzonden.",
+      "details": "Actiedetails",
+      "fields": {
+        "command": "Opdracht",
+        "path": "Pad",
+        "from": "Van",
+        "to": "Naar",
+        "actions": "Acties",
+        "recursive": "Recursief"
+      }
     },
     "idleStopHint": "Stopt na {{minutes}} minuten zonder activiteit.",
     "runs": {
@@ -3045,7 +3421,8 @@
         "needsInput": "Invoer nodig",
         "failed": "Mislukt",
         "cancelled": "Geannuleerd"
-      }
+      },
+      "loadFailed": "Kon runhistorie niet laden."
     },
     "recovery": {
       "pending": "Work bevestigt {{pending}} sandbox-opschoning(en) voordat het nieuwe bewerkingen accepteert.",
@@ -3057,6 +3434,17 @@
       "retrySucceeded": "{{cleared}} van {{attempted}} openstaande opschoningen voltooid.",
       "retryPending": "Nog steeds bezig met het opnieuw proberen van {{attempted}} openstaande opschoningen.",
       "retryFailed": "De openstaande opschoningen konden niet opnieuw worden geprobeerd."
+    },
+    "computer": {
+      "setupFailed": "De Work Computer kon niet worden ingesteld."
+    },
+    "announce": {
+      "completed": "{{title}} is klaar.",
+      "needsInput": "{{title}} heeft je invoer of goedkeuring nodig.",
+      "failed": "{{title}} is mislukt.",
+      "cancelled": "{{title}} is gestopt.",
+      "approvalNeeded": "{{title}} heeft je goedkeuring nodig om {{tool}} uit te voeren.",
+      "untitledTask": "Deze taak"
     }
   },
   "personaBackground": {
@@ -3088,7 +3476,21 @@
     "reselectProvider": "selecteer opnieuw een provider om dit model vast te zetten",
     "unavailable": "niet beschikbaar",
     "unavailableSelections": "Niet-beschikbare selecties",
-    "agentModels": "Agents"
+    "agentModels": "Agents",
+    "searchOllama": "Ollama bibliotheek doorzoeken...",
+    "searchHuggingFace": "HuggingFace doorzoeken...",
+    "searchModels": "Modellen zoeken...",
+    "ollamaModels": "Ollama-modellen",
+    "installed": "Geïnstalleerd",
+    "use": "Gebruiken",
+    "pull": "Downloaden",
+    "pullRestricted": "Modelinstallatie is op deze instantie beperkt tot beheerders.",
+    "adminOnlyPull": "Alleen beheerders",
+    "showAll": "Alles tonen ({{total}})",
+    "sources": "Modelbronnen",
+    "defaultModel": "Standaardmodel",
+    "contextSize": "{{size}} context",
+    "via": "via {{provider}}"
   },
   "whatsNew": {
     "title": "Wat is nieuw",
@@ -3145,7 +3547,16 @@
     "unpin": "Notitie losmaken",
     "pinned": "Vastgezet",
     "export": "Downloaden als Markdown",
-    "sharedWithYou": "Met jou gedeeld"
+    "sharedWithYou": "Met jou gedeeld",
+    "titleLabel": "Notitietitel",
+    "loadFailed": "Kon dit niet laden. Probeer het opnieuw.",
+    "restoreConfirmTitle": "Deze versie herstellen?",
+    "restoreConfirmDescription": "De tekst van de notitie wordt vervangen door deze eerdere versie.",
+    "deleteAttachmentConfirmTitle": "{{name}} verwijderen?",
+    "deleteAttachmentConfirmDescription": "De bijlage wordt definitief uit deze notitie verwijderd.",
+    "attachmentDeleteFailed": "Kon de bijlage niet verwijderen",
+    "revokeFailed": "Kon toegang niet intrekken",
+    "sharePermissionLabel": "Toestemming"
   },
   "calendar": {
     "title": "Kalender",
@@ -3190,7 +3601,22 @@
     "importFailed": "Het bestand kon niet worden geïmporteerd",
     "importResult": "{{total}} evenementen geïmporteerd",
     "importIcs": "Importeren",
-    "exportIcs": "Exporteren"
+    "exportIcs": "Exporteren",
+    "chipStatus": {
+      "automation": "Geplande automatisering",
+      "runSucceeded": "Automatiseringsrun geslaagd",
+      "runFailed": "Automatiseringsrun mislukt"
+    },
+    "newEventOn": "Nieuwe afspraak op {{date}}",
+    "showDay": "Alle afspraken op {{date}} tonen",
+    "deleteEventConfirmTitle": "\"{{title}}\" verwijderen?",
+    "deleteEventConfirmDescription": "Deze afspraak wordt definitief verwijderd.",
+    "deleteRecurringEventConfirmDescription": "Deze terugkerende afspraak en alle herhalingen worden definitief verwijderd.",
+    "shareCalendarNamed": "Kalender {{name}} delen",
+    "deleteCalendarNamed": "Kalender {{name}} verwijderen",
+    "deleteCalendarConfirmTitle": "Kalender \"{{name}}\" verwijderen?",
+    "deleteCalendarConfirmDescription": "De kalender en alle afspraken erin worden definitief verwijderd.",
+    "calendarDeleteFailed": "De kalender kon niet worden verwijderd"
   },
   "automations": {
     "title": "Automatiseringen",
@@ -3317,13 +3743,17 @@
         "work-approval": "een agent op je goedkeuring wacht",
         "system": "er een systeemmelding binnenkomt"
       }
-    }
+    },
+    "deleteConfirmTitle": "\"{{name}}\" verwijderen?",
+    "deleteConfirmDescription": "De automatisering en het schema worden definitief verwijderd. Eerdere runs blijven in de runhistorie."
   },
   "home": {
     "active": "actief",
     "continue": "Doorgaan",
     "start": "Starten",
-    "explore": "Verkennen"
+    "explore": "Verkennen",
+    "greeting": "{{greeting}}.",
+    "greetingWithName": "{{greeting}}, {{name}}."
   },
   "palette": {
     "empty": "Geen resultaten.",
@@ -3336,7 +3766,14 @@
     "work": "Werk",
     "messages": "Berichten",
     "notes": "Notities",
-    "documents": "Documenten"
+    "documents": "Documenten",
+    "searching": "Zoeken…",
+    "searchFailed": "Zoeken in de werkruimte mislukt. Alleen overeenkomende chats en acties worden getoond.",
+    "results": "Resultaten",
+    "escKey": "esc",
+    "hintNavigate": "Navigeren",
+    "hintOpen": "Openen",
+    "hintClose": "Sluiten"
   },
   "tabs": {
     "actions": "Tabbladacties",
@@ -3540,7 +3977,8 @@
       "button": "Uit map",
       "missingSkillMd": "De map heeft een SKILL.md-bestand nodig",
       "done": "Skill geïmporteerd met {{count}} meegeleverde bestanden"
-    }
+    },
+    "toggleLabel": "Vaardigheid {{name}} inschakelen"
   },
   "toolsPage": {
     "title": "Gereedschappen",
@@ -3701,7 +4139,14 @@
     "added": "Gedeeld met {{name}}",
     "failed": "Delen mislukt",
     "userNotFound": "Geen gebruiker met die naam",
-    "groupNotFound": "Geen groep met die naam"
+    "groupNotFound": "Geen groep met die naam",
+    "principalKind": "Delen met een gebruiker of groep",
+    "principalName": "Gebruikersnaam of groepsnaam",
+    "permission": "Toestemming",
+    "sharing": "Delen",
+    "loading": "Shares laden",
+    "loadFailed": "Kon shares niet laden",
+    "revokeFailed": "Kon toegang niet intrekken"
   },
   "channels": {
     "title": "Kanalen",
@@ -3760,13 +4205,44 @@
     "toolCalls": {
       "summary": "Gebruikte gereedschappen ({{total}})",
       "deniedHint": "Gereedschappen die iets wijzigen worden in kanalen geweigerd. Voer ze uit vanuit een chat."
-    }
+    },
+    "confirmEdit": "Bewerking opslaan",
+    "cancelEdit": "Bewerking annuleren",
+    "reactWith": "Reageren met {{emoji}}",
+    "deleteMessageConfirmTitle": "Dit bericht verwijderen?",
+    "deleteMessageConfirmDescription": "Het bericht wordt voor iedereen in dit kanaal verwijderd.",
+    "unreadCount": "{{total}} ongelezen",
+    "send": "Bericht verzenden",
+    "invite": "Lid uitnodigen",
+    "closeThread": "Draad sluiten",
+    "removeAttachment": "Bijlage verwijderen",
+    "loadFailed": "Kon dit niet laden. Probeer het opnieuw.",
+    "editFailed": "Het bericht kon niet worden bewerkt",
+    "deleteMessageFailed": "Het bericht kon niet worden verwijderd",
+    "pinFailed": "De pin kon niet worden gewijzigd",
+    "reactFailed": "De reactie kon niet worden opgeslagen",
+    "downloadFailed": "Het bestand kon niet worden gedownload",
+    "removeMemberConfirm": "{{name}} uit dit kanaal verwijderen?",
+    "removeMemberConfirmDescription": "Diegene verliest toegang tot het kanaal en de berichten.",
+    "removeMemberNamed": "{{name}} uit kanaal verwijderen",
+    "removeMemberFailed": "Het lid kon niet worden verwijderd",
+    "leaveConfirm": "{{name}} verlaten?",
+    "leaveConfirmDescription": "Je moet opnieuw worden uitgenodigd om weer lid te worden van een privékanaal.",
+    "leaveFailed": "Je kon het kanaal niet verlaten",
+    "joinFailed": "Je kon niet aan het kanaal deelnemen",
+    "deleteConfirm": "{{name}} verwijderen?",
+    "deleteConfirmDescription": "Het kanaal en alle berichten worden definitief verwijderd voor alle leden.",
+    "deleteFailed": "Het kanaal kon niet worden verwijderd",
+    "saveFailed": "Het kanaal kon niet worden opgeslagen"
   },
   "notifications": {
     "title": "Meldingen",
     "empty": "Je bent helemaal bij.",
     "markAllRead": "Alles als gelezen markeren",
-    "markRead": "Als gelezen markeren"
+    "markRead": "Als gelezen markeren",
+    "titleWithUnread": "Meldingen ({{unread}} ongelezen)",
+    "unread": "Ongelezen",
+    "loadFailed": "Kon meldingen niet laden."
   },
   "voiceMode": {
     "title": "Spraakmodus",
@@ -3901,7 +4377,12 @@
       "failed": "Mislukt",
       "cancelled": "Geannuleerd"
     },
-    "noFeedback": "Nog geen feedback — beoordeel antwoorden om je dataset op te bouwen."
+    "noFeedback": "Nog geen feedback — beoordeel antwoorden om je dataset op te bouwen.",
+    "deleteSetConfirmTitle": "\"{{name}}\" verwijderen?",
+    "deleteSetConfirmDescription": "De evaluatieset en de bijbehorende prompts worden definitief verwijderd.",
+    "deleteSetFailed": "De evaluatieset kon niet worden verwijderd",
+    "runError": "Fout: {{detail}}",
+    "cancelFailed": "De run kon niet worden geannuleerd"
   },
   "passwordStrength": {
     "levels": {
@@ -3915,6 +4396,14 @@
       "hasCase": "Hoofd- en kleine letters",
       "hasNumber": "Minstens één cijfer",
       "tooLong": "Maximaal 72 bytes"
+    },
+    "requirements": "Gebruik minstens 12 tekens, maximaal 72 UTF-8-bytes, met hoofdletters, kleine letters en een cijfer.",
+    "errors": {
+      "minLength": "Het wachtwoord moet minstens 12 tekens bevatten.",
+      "tooLong": "Het wachtwoord mag maximaal 72 UTF-8-bytes bevatten.",
+      "uppercase": "Het wachtwoord moet een hoofdletter bevatten.",
+      "lowercase": "Het wachtwoord moet een kleine letter bevatten.",
+      "number": "Het wachtwoord moet een cijfer bevatten."
     }
   },
   "connectModels": {
@@ -3933,7 +4422,8 @@
       "enable": "Provider inschakelen",
       "enabling": "Inschakelen…",
       "enabled": "{{name}} verbonden — de modellen zijn nu beschikbaar",
-      "enableFailed": "Kon de provider niet inschakelen"
+      "enableFailed": "Kon de provider niet inschakelen",
+      "urlLabel": "Server-URL"
     },
     "cloud": {
       "title": "Cloud-API",
@@ -3942,7 +4432,70 @@
       "connect": "Verbinden",
       "connecting": "Verbinden…",
       "connected": "{{name}} verbonden — de modellen zijn nu beschikbaar",
-      "saveFailed": "Kon de API-sleutel niet opslaan"
+      "saveFailed": "Kon de API-sleutel niet opslaan",
+      "keyLabel": "{{name}} API-sleutel"
+    },
+    "ollama": {
+      "status": {
+        "checking": "Beschikbaarheid controleren…",
+        "healthy": "Actief en klaar voor lokale modellen",
+        "offline": "Niet gedetecteerd op deze machine",
+        "disabled": "Uitgeschakeld — er worden geen controles uitgevoerd"
+      },
+      "recheck": "Opnieuw controleren",
+      "enable": "Inschakelen",
+      "disable": "Stoppen met controleren op Ollama",
+      "enabledToast": "Ollama-provider ingeschakeld",
+      "disabledToast": "Ollama-controles uitgeschakeld — u kunt ze weer inschakelen in Instellingen",
+      "settingsFailed": "Kon de Ollama-instellingen niet bijwerken",
+      "offlineHint": "Installeer Ollama vanaf ollama.com en het wordt automatisch gedetecteerd — of gebruik in plaats daarvan een van de onderstaande opties. Als u niet van plan bent Ollama te gebruiken, kunt u de controles uitschakelen.",
+      "healthyHint": "Ollama is verbonden. Haal een model op via Modellen en u kunt chatten."
     }
+  },
+  "modelDownload": {
+    "success": "Model {{name}} opgehaald",
+    "failed": "Kon model niet ophalen: {{error}}",
+    "startFailed": "Kon het ophalen niet starten",
+    "cancelled": "Ophalen geannuleerd"
+  },
+  "strands": {
+    "title": "Strands",
+    "subtitle": "Ingebouwde agent-engine die op je Libre WebUI-modellen draait.",
+    "subtitleVersion": "Ingebouwde agent-engine, harness {{version}}.",
+    "newSession": "Nieuwe sessie",
+    "sessions": "Sessies",
+    "noSessions": "Nog geen sessies. Maak er een om te beginnen.",
+    "empty": "Vraag de agent om bestanden in zijn werkruimte te lezen of te bewerken.",
+    "placeholder": "Vraag de engine iets te doen…",
+    "model": "Model",
+    "defaultModel": "Standaardmodel",
+    "send": "Verzenden",
+    "stop": "Stoppen",
+    "reasoning": "Redenering",
+    "tool": {
+      "running": "Wordt uitgevoerd",
+      "done": "Klaar",
+      "failed": "Mislukt"
+    },
+    "cancelled": "Geannuleerd",
+    "turnLimit": "Gestopt bij de beurtlimiet.",
+    "messageCount": "Berichten: {{count}}",
+    "deleteSession": "Sessie verwijderen",
+    "deleteConfirm": "\"{{title}}\" en de geschiedenis verwijderen?",
+    "loadFailed": "Strands kon niet worden geladen.",
+    "createFailed": "Sessie kon niet worden aangemaakt.",
+    "deleteFailed": "Sessie kon niet worden verwijderd.",
+    "saveFailed": "De sessie kon niet worden opgeslagen.",
+    "turnFailed": "De engine kon de beurt niet afronden"
+  },
+  "notFound": {
+    "title": "Pagina niet gevonden",
+    "description": "Deze pagina bestaat niet of is verplaatst."
+  },
+  "themeToggle": {
+    "switchToLight": "Overschakelen naar lichte modus",
+    "switchToDark": "Overschakelen naar donkere modus",
+    "switchToAmoled": "Overschakelen naar zuiver zwarte modus",
+    "switchToCelestial": "Overschakelen naar hemelse modus"
   }
 }

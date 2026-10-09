@@ -45,6 +45,7 @@ import { SidebarWorkTasks } from '@/components/sidebar/SidebarWorkTasks';
 import { isDefaultSessionTitle } from '@/hooks/useChat';
 import { usePendingUserApprovals } from '@/hooks/usePendingUserApprovals';
 import { useAutomationRunNotifications } from '@/hooks/useAutomationRunNotifications';
+import { noteExplicitLogout } from '@/utils/postLoginPath';
 
 const logger = createLogger('components:sidebar');
 const SettingsModal = React.lazy(() =>
@@ -89,7 +90,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const loadingWorkTasks = useWorkStore(state => state.loadingTasks);
   const workActionLoading = useWorkStore(state => state.actionLoading);
   const deleteWorkTask = useWorkStore(state => state.deleteTask);
-  const { user, isAdmin, systemInfo, setUser, canUseWork, canUseAgents } =
+  const { user, isAdmin, systemInfo, setUser, canUseWork, canUseStrands } =
     useAuthStore();
   const {
     theme,
@@ -125,7 +126,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [avatarValue, setAvatarValue] = useState('');
   const [isSavingAvatar, setIsSavingAvatar] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const sidebarRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
 
   const currentSessionIdFromUrl =
     location.pathname.match(/^\/c\/([^/]+)$/)?.[1] || null;
@@ -181,10 +182,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
       }
     };
 
+    // The expanded sidebar is a modal-style overlay below 768px, so Escape
+    // collapses it back to the rail.
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.defaultPrevented) return;
+      // Dialogs opened from the sidebar register their Escape later; let
+      // them close first instead of collapsing the list behind them.
+      if (document.querySelector('[role="dialog"][aria-modal="true"]')) {
+        return;
+      }
+      toggleSidebarCompact();
+    };
+
     if (isOpen && !sidebarCompact && window.innerWidth < 768) {
       document.addEventListener('mousedown', handleClickOutside);
-      return () =>
+      document.addEventListener('keydown', handleEscape);
+      return () => {
         document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('keydown', handleEscape);
+      };
     }
   }, [isOpen, sidebarCompact, toggleSidebarCompact]);
 
@@ -285,6 +301,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         const isCurrentSession = currentSessionId === sessionId;
 
         await deleteSession(sessionId);
+        // The store reports its own failure and resolves, so a surviving
+        // session means nothing was deleted: stay put.
+        if (useChatStore.getState().sessions.some(s => s.id === sessionId)) {
+          return;
+        }
         logger.debug('Session deleted successfully');
         useTabStore.getState().closeTab(`chat:${sessionId}`);
 
@@ -298,6 +319,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         }
       } catch (_error) {
         logger.error('Error deleting session:', _error);
+        toast.error(t('chat.toasts.deleteFailed'));
       }
     }
   };
@@ -311,17 +333,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
     e: React.MouseEvent
   ) => {
     e.stopPropagation();
-    await setSessionArchived(sessionId, true);
-    useTabStore.getState().closeTab(`chat:${sessionId}`);
-    if (currentSessionId === sessionId) {
-      const remainingSessions = sessions.filter(
-        s => s.id !== sessionId && !s.archived
-      );
-      if (remainingSessions.length > 0) {
-        navigate(`/c/${remainingSessions[0].id}`, { replace: true });
-      } else {
-        navigate('/', { replace: true });
+    try {
+      await setSessionArchived(sessionId, true);
+      // The store rolls back and resolves on failure instead of throwing.
+      const archived = useChatStore
+        .getState()
+        .sessions.find(s => s.id === sessionId)?.archived;
+      if (!archived) {
+        toast.error(t('chat.toasts.archiveFailed'));
+        return;
       }
+      useTabStore.getState().closeTab(`chat:${sessionId}`);
+      if (currentSessionId === sessionId) {
+        const remainingSessions = sessions.filter(
+          s => s.id !== sessionId && !s.archived
+        );
+        if (remainingSessions.length > 0) {
+          navigate(`/c/${remainingSessions[0].id}`, { replace: true });
+        } else {
+          navigate('/', { replace: true });
+        }
+      }
+    } catch (error) {
+      logger.error('Error archiving session:', error);
+      toast.error(t('chat.toasts.archiveFailed'));
     }
   };
 
@@ -349,6 +384,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const handleLogout = async () => {
+    noteExplicitLogout();
     try {
       await authApi.logout();
       const { logout } = useAuthStore.getState();
@@ -386,13 +422,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <>
-      <div
+      <aside
         ref={sidebarRef}
+        aria-label={t('sidebar.ariaLabel')}
+        // Off-screen is not hidden: keep the collapsed sidebar out of the
+        // tab order and accessibility tree.
+        inert={!isOpen}
         data-testid='sidebar'
         data-app-sidebar=''
         className={cn(
           // Both sidebar sizes share the tab bar's frame without a seam.
-          'fixed inset-y-0 start-0 z-50 border-0 [box-shadow:none] transform transition-[width,transform,background-color] duration-200 ease-out motion-reduce:transition-none',
+          'fixed inset-y-0 inset-s-0 z-50 border-0 [box-shadow:none] transform transition-[width,transform,background-color] duration-200 ease-out motion-reduce:transition-none',
           sidebarCompact
             ? 'w-16'
             : 'w-72 max-sm:w-[calc(100vw-4.5rem)] max-sm:max-w-80',
@@ -411,7 +451,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       >
         {isElectron && (
           <div
-            className='absolute top-0 start-16 end-0 h-8 z-[60]'
+            className='absolute top-0 inset-s-16 inset-e-0 h-8 z-60'
             style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
           />
         )}
@@ -420,12 +460,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div
             data-testid='sidebar-browse-scroll-region'
             className={cn(
-              'min-h-0 flex-1 [&>*]:transition-none',
+              'min-h-0 flex-1 *:transition-none',
               // Keep each mode's content at its final width while the frame
               // moves, so labels do not wrap and icons do not sweep sideways.
               sidebarCompact
-                ? 'scroll-region flex flex-col gap-[4px] pb-[8px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>*]:w-16'
-                : 'flex flex-col overflow-hidden [&>*]:w-72 max-sm:[&>*]:w-[calc(100vw-4.5rem)] max-sm:[&>*]:max-w-80'
+                ? 'scroll-region flex flex-col gap-[4px] pb-[8px] scrollbar-none [&::-webkit-scrollbar]:hidden *:w-16'
+                : 'flex flex-col overflow-hidden *:w-72 max-sm:*:w-[calc(100vw-4.5rem)] max-sm:*:max-w-80'
             )}
           >
             <SidebarHeader
@@ -443,7 +483,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <SidebarNavigation
               sidebarCompact={sidebarCompact}
               activePath={location.pathname}
-              showAgents={canUseAgents()}
+              showStrands={canUseStrands()}
               unseenRunCount={unseenRunCount}
               onMobileNavigate={compactOnMobile}
             />
@@ -516,7 +556,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             />
           </div>
         </div>
-      </div>
+      </aside>
 
       {settingsOpen && (
         <React.Suspense fallback={null}>

@@ -38,14 +38,22 @@
     "custom": "กำหนดเอง",
     "remove": "ลบ",
     "home": "หน้าหลัก",
-    "more": "มาก"
+    "more": "มาก",
+    "provider": "ผู้ให้บริการ",
+    "agent": "เอเจนต์",
+    "reasoning": "การใช้เหตุผล",
+    "skipToContent": "ข้ามไปยังเนื้อหา"
   },
   "brand": {
     "name": "Alcore",
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "backendConnectionFailed": "ไม่สามารถเชื่อมต่อกับบริการแบ็กเอนด์ได้"
+    "backendConnectionFailed": "ไม่สามารถเชื่อมต่อกับบริการแบ็กเอนด์ได้",
+    "ollamaUnavailable": "บริการ Ollama ไม่พร้อมใช้งาน แต่ยังสามารถใช้โมเดลจากปลั๊กอินได้",
+    "connecting": "กำลังเชื่อมต่อแบ็กเอนด์… ({{attempt}}/{{total}})",
+    "startingUp": "กำลังเริ่มต้น…",
+    "backendUnreachableHint": "ตรวจสอบว่าแบ็กเอนด์ทำงานอยู่ แล้วลองอีกครั้ง"
   },
   "auth": {
     "login": {
@@ -206,7 +214,9 @@
       "removed": "ลบพาสคีย์แล้ว",
       "removeFailed": "ไม่สามารถลบพาสคีย์ได้",
       "signInButton": "เข้าสู่ระบบด้วยพาสคีย์",
-      "signInFailed": "เข้าสู่ระบบด้วยพาสคีย์ไม่สำเร็จ"
+      "signInFailed": "เข้าสู่ระบบด้วยพาสคีย์ไม่สำเร็จ",
+      "removeConfirmTitle": "ลบพาสคีย์นี้หรือไม่",
+      "removeConfirmDescription": "\"{{name}}\" จะใช้ลงชื่อเข้าใช้ไม่ได้อีก คุณลงทะเบียนใหม่ได้ภายหลัง"
     },
     "alcore": {
       "title": "This server uses Alcore Auth for sign-in.",
@@ -272,6 +282,12 @@
       "tryAgain": "Try again",
       "restart": "Restart sign-in",
       "support": "Need help? Contact your server admin or see"
+    },
+    "password": {
+      "show": "แสดงรหัสผ่าน",
+      "hide": "ซ่อนรหัสผ่าน",
+      "showConfirmation": "แสดงการยืนยันรหัสผ่าน",
+      "hideConfirmation": "ซ่อนการยืนยันรหัสผ่าน"
     }
   },
   "setup": {
@@ -324,7 +340,8 @@
       "envNote": "คีย์นี้ยังถูกบันทึกในไฟล์ backend/.env เป็น ENCRYPTION_KEY",
       "acknowledgment": "ฉันได้บันทึกคีย์เข้ารหัสในที่ปลอดภัยและเข้าใจว่าการสูญเสียอาจส่งผลให้ข้อมูลสูญหาย",
       "confirmRequired": "กรุณายืนยันว่าคุณได้บันทึกคีย์เข้ารหัสแล้ว",
-      "continue": "ดำเนินการต่อไปยัง Alcore"
+      "continue": "ดำเนินการต่อไปยัง Alcore",
+      "loadFailed": "โหลดคีย์เข้ารหัสไม่ได้ ลองอีกครั้งเพื่อดำเนินการต่อ"
     },
     "connectModels": {
       "title": "เชื่อมต่อโมเดลของคุณ",
@@ -418,7 +435,8 @@
       "toolsOn": "เปิดใช้เครื่องมือแล้ว — โมเดลเรียกใช้เครื่องมือที่อนุมัติไว้ได้",
       "toolsOff": "ให้โมเดลเรียกใช้เครื่องมือในข้อความนี้",
       "thinkingOn": "เปิดการคิด ({{level}})",
-      "thinkingOff": "คิดก่อนตอบ"
+      "thinkingOff": "คิดก่อนตอบ",
+      "thinkingUpdateFailed": "อัปเดตการตั้งค่าการคิดไม่ได้"
     },
     "session": {
       "new": "แชทใหม่",
@@ -454,7 +472,8 @@
         "move": "ย้ายไปยังโฟลเดอร์",
         "remove": "นำออกจากโฟลเดอร์",
         "delete": "ลบโฟลเดอร์",
-        "deleteConfirm": "ลบโฟลเดอร์นี้? แชทข้างในจะยังอยู่"
+        "deleteConfirm": "ลบโฟลเดอร์นี้? แชทข้างในจะยังอยู่",
+        "rename": "เปลี่ยนชื่อโฟลเดอร์"
       },
       "shareChat": "แชร์แชต…"
     },
@@ -472,7 +491,8 @@
       "selectBeforePrivateChat": "เลือกโมเดลที่พร้อมใช้งานก่อนเริ่มแชทส่วนตัว",
       "selectBeforeSending": "เลือกโมเดลที่พร้อมใช้งานก่อนส่งข้อความ",
       "selectBeforeRegenerating": "เลือกโมเดลที่พร้อมใช้งานก่อนสร้างคำตอบใหม่",
-      "connectDescription": "ยังไม่มีการเชื่อมต่อโมเดล เลือกแหล่งที่มาด้านล่าง — รันไทม์ในเครื่อง เซิร์ฟเวอร์ของคุณเอง หรือ Cloud API — แล้วคุณจะเริ่มแชทได้ในเวลาไม่ถึงนาที"
+      "connectDescription": "ยังไม่มีการเชื่อมต่อโมเดล เลือกแหล่งที่มาด้านล่าง — รันไทม์ในเครื่อง เซิร์ฟเวอร์ของคุณเอง หรือ Cloud API — แล้วคุณจะเริ่มแชทได้ในเวลาไม่ถึงนาที",
+      "pullCommand": "ollama pull llama3.2:3b"
     },
     "footer": {
       "disclaimer": "LLM อาจทำผิดพลาด - ตรวจสอบข้อมูลสำคัญ",
@@ -486,7 +506,13 @@
       "browse": "เรียกดู",
       "unsupportedFileType": "ไม่รองรับประเภทไฟล์: {{name}}",
       "maxImagesAllowed": "อนุญาตให้ใช้รูปภาพได้สูงสุด {{count}} รูป",
-      "imageTooLarge": "รูปภาพ {{name}} มีขนาดใหญ่เกินไป (สูงสุด 10MB)"
+      "imageTooLarge": "รูปภาพ {{name}} มีขนาดใหญ่เกินไป (สูงสุด 10MB)",
+      "readFailed": "อ่าน {{name}} ไม่ได้",
+      "uploadAlt": "อัปโหลด {{number}}",
+      "removeImage": "ลบรูปภาพที่ {{number}}",
+      "addMore": "เพิ่มรูปภาพ ({{count}}/{{max}})",
+      "uploading": "กำลังอัปโหลด",
+      "removeDocument": "ลบ {{name}}"
     },
     "structuredOutput": {
       "title": "รูปแบบการตอบกลับ",
@@ -537,7 +563,8 @@
       "compactionOff": "ปิดสำหรับแชทนี้"
     },
     "message": {
-      "sources": "แหล่งที่มา"
+      "sources": "แหล่งที่มา",
+      "copyFailed": "คัดลอกไปยังคลิปบอร์ดไม่ได้"
     },
     "toasts": {
       "chatCreated": "สร้างแชทใหม่แล้ว",
@@ -581,7 +608,8 @@
       "generationRateLimitedWeekly": "Weekly budget spent — new chats pause until Monday 00:00 UTC. Try again later or upgrade your plan.",
       "generationRateLimitedMonthly": "Monthly budget spent — new chats pause until the 1st of next month (UTC). Try again later or upgrade your plan.",
       "generationFailedSupport": "The reply couldn't be finished — retry, and if it keeps happening report it from Settings > About > GitHub issues.",
-      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access."
+      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access.",
+      "archiveFailed": "เก็บแชทนี้เข้าคลังไม่ได้"
     },
     "documents": {
       "title": "เอกสารในบริบท"
@@ -614,7 +642,25 @@
     "delegate": {
       "action": "Run as Work task"
     },
-    "sharedReadOnly": "แชร์โดย {{owner}} — ดูได้อย่างเดียว"
+    "sharedReadOnly": "แชร์โดย {{owner}} — ดูได้อย่างเดียว",
+    "branch": {
+      "variants": "{{count}} ตัวเลือก",
+      "variants_plural": "{{count}} ตัวเลือก",
+      "selectVariant": "เลือกตัวเลือกที่ {{number}}",
+      "generating": "กำลังสร้าง...",
+      "select": "เลือก"
+    },
+    "sources": {
+      "fullContextFailed": "อัปเดตการตั้งค่าเอกสารฉบับเต็มไม่ได้",
+      "usedByRetrieval": "ใช้ในคำตอบ",
+      "triggerLabel": "แหล่งที่มา ({{count}})"
+    },
+    "announce": {
+      "replyFinished": "{{name}} ตอบว่า: {{text}}",
+      "replyFinishedNoText": "{{name}} ตอบเสร็จแล้ว",
+      "codeBlock": "บล็อกโค้ด",
+      "generationStopped": "หยุดการสร้างแล้ว"
+    }
   },
   "sidebar": {
     "navigation": {
@@ -636,10 +682,12 @@
       "prompts": "พรอมต์",
       "skills": "ทักษะ",
       "tools": "เครื่องมือ",
-      "channels": "แชนเนล"
+      "channels": "แชนเนล",
+      "strands": "Strands"
     },
     "toggleSize": "สลับขนาดแถบด้านข้าง",
-    "expandSidebar": "ขยายแถบด้านข้าง"
+    "expandSidebar": "ขยายแถบด้านข้าง",
+    "ariaLabel": "แถบด้านข้าง"
   },
   "user": {
     "menu": {
@@ -696,7 +744,8 @@
       "sessions": "เซสชัน",
       "apiKeys": "คีย์ API",
       "notifications": "การแจ้งเตือน",
-      "apiPlatform": "API Platform"
+      "apiPlatform": "API Platform",
+      "ollamaDisabled": "ผู้ดูแลระบบปิดใช้งาน Ollama แล้ว"
     },
     "appearance": {
       "title": "รูปลักษณ์",
@@ -921,7 +970,8 @@
       "modelPrice": "Price / 1M",
       "modelStatus": "Status",
       "modelFree": "Free",
-      "modelDeprecated": "Deprecated"
+      "modelDeprecated": "Deprecated",
+      "dismissError": "ปิดข้อผิดพลาด"
     },
     "generation": {
       "title": "ตัวเลือกการสร้าง",
@@ -1024,7 +1074,8 @@
         "deleteFailed": "ลบคอลเลกชันไม่สำเร็จ",
         "assignFailed": "ย้ายเอกสารไม่สำเร็จ",
         "share": "แชร์คอลเลกชัน",
-        "shared": "แชร์แล้ว"
+        "shared": "แชร์แล้ว",
+        "assignTo": "คอลเลกชันสำหรับ {{name}}"
       },
       "library": {
         "title": "เอกสารที่อัปโหลด",
@@ -1166,7 +1217,8 @@
         "title": "แชทที่เก็บถาวร",
         "empty": "ไม่มีแชทที่เก็บถาวร",
         "unarchive": "เลิกเก็บถาวร"
-      }
+      },
+      "clearAllConfirm": "ต้องการลบประวัติแชททั้งหมดหรือไม่ ไม่สามารถย้อนกลับได้"
     },
     "about": {
       "title": "เกี่ยวกับ",
@@ -1178,43 +1230,36 @@
       "features": {
         "privacy": {
           "title": "ความเป็นส่วนตัวเป็นอันดับแรก",
-          "description": "ข้อมูลของคุณอยู่ในอุปกรณ์ของคุณ"
+          "description": "Self-hosted workspace — your data stays under your control"
         },
         "openSource": {
           "title": "โอเพ่นซอร์ส",
-          "description": "ซอฟต์แวร์ฟรีและโอเพ่นซอร์ส"
+          "description": "Open-source software maintained by the Alcore team"
         },
         "localInference": {
           "title": "การประมวลผลในเครื่อง",
-          "description": "รันโมเดล AI ในเครื่องด้วย Ollama"
+          "description": "Use local Ollama models or connect to your Alcore provider"
         }
       },
-      "openSourceBy": "โอเพ่นซอร์สโดย {{company}}",
+      "openSourceBy": "Built by {{company}}",
       "links": {
         "title": "ลิงก์",
-        "github": "GitHub",
-        "githubDescription": "ดูซอร์สโค้ดและมีส่วนร่วม",
         "website": "เว็บไซต์",
-        "websiteDescription": "เยี่ยมชมเว็บไซต์ของเรา",
+        "websiteDescription": "Visit the Alcore website",
         "documentation": "เอกสาร",
         "reportIssue": "รายงานปัญหา",
         "reportIssueDescription": "รายงานบั๊กและคำขอฟีเจอร์",
-        "documentationDescription": "คู่มือ บทช่วยสอน และข้อมูลอ้างอิง API",
-        "forgejo": "มิเรอร์ Forgejo",
-        "forgejoDescription": "คลัง Forgejo โฮสต์เอง",
-        "sponsor": "สนับสนุน",
-        "sponsorDescription": "ช่วยสนับสนุนทุนให้โครงการ",
-        "star": "ให้ดาวบน GitHub",
-        "starDescription": "ดาวช่วยให้คนอื่นค้นพบโปรเจกต์นี้"
+        "documentationDescription": "Guides and documentation for Alcore"
       },
       "version": "เวอร์ชัน {{version}}",
       "updates": {
-        "checking": "กำลังตรวจสอบการอัปเดต…",
-        "upToDate": "คุณใช้เวอร์ชันล่าสุดอยู่",
-        "updateAvailable": "มีเวอร์ชัน {{version}} ให้ใช้งาน",
-        "ahead": "ล้ำหน้ากว่ารุ่นล่าสุดที่เผยแพร่ ({{version}})",
-        "checkFailed": "ไม่สามารถตรวจสอบการอัปเดตได้",
         "viewChangelog": "ดูบันทึกการเปลี่ยนแปลง"
+      },
+      "ollama": {
+        "title": "สถานะ Ollama",
+        "version": "เวอร์ชัน",
+        "healthy": "สมบูรณ์",
+        "unhealthy": "ไม่สมบูรณ์"
       }
     },
     "groups": {
@@ -1280,7 +1325,11 @@
       "unknownDevice": "อุปกรณ์ที่ไม่รู้จัก",
       "createdAt": "เข้าสู่ระบบเมื่อ",
       "lastSeenAt": "ใช้งานล่าสุด",
-      "expiresAt": "หมดอายุ"
+      "expiresAt": "หมดอายุ",
+      "signOutConfirmTitle": "ออกจากระบบเซสชันนี้หรือไม่",
+      "signOutConfirmDescription": "{{device}} จะถูกออกจากระบบทันทีและต้องลงชื่อเข้าใช้อีกครั้ง",
+      "signOutOthersConfirmTitle": "ออกจากระบบเซสชันอื่นหรือไม่",
+      "signOutOthersConfirmDescription": "เซสชันอื่น {{count}} รายการจะถูกออกจากระบบทันที เซสชันนี้ยังคงลงชื่อเข้าใช้อยู่"
     },
     "apiKeys": {
       "title": "คีย์ API",
@@ -1314,7 +1363,9 @@
       "createdAt": "สร้างเมื่อ",
       "lastUsedAt": "ใช้ล่าสุด",
       "expiresAt": "หมดอายุ",
-      "neverExpires": "ไม่มีวันหมดอายุ"
+      "neverExpires": "ไม่มีวันหมดอายุ",
+      "revokeConfirmTitle": "เพิกถอน \"{{name}}\" หรือไม่",
+      "revokeConfirmDescription": "ทุกอย่างที่ใช้คีย์ API นี้จะหยุดทำงานทันที ไม่สามารถย้อนกลับได้"
     },
     "notifications": {
       "title": "การแจ้งเตือน",
@@ -1484,7 +1535,20 @@
   "models": {
     "title": "โมเดล",
     "noModels": "ไม่มีโมเดลที่ติดตั้ง",
-    "noModelsFound": "ไม่พบโมเดล"
+    "noModelsFound": "ไม่พบโมเดล",
+    "subtitle": "ดาวน์โหลด จัดการ และตรวจสอบโมเดล Ollama ของคุณ",
+    "installed": "โมเดลที่ติดตั้ง",
+    "available": "โมเดลที่มี",
+    "pull": "ดาวน์โหลดโมเดล",
+    "pulling": "กำลังดาวน์โหลด...",
+    "delete": "ลบโมเดล",
+    "deleting": "กำลังลบ...",
+    "size": "ขนาด",
+    "modified": "แก้ไขล่าสุด",
+    "family": "ตระกูล",
+    "parameters": "พารามิเตอร์",
+    "quantization": "การควอนไทเซชัน",
+    "pullFirst": "ดาวน์โหลดโมเดลเพื่อเริ่มต้น"
   },
   "personas": {
     "title": "เพอร์โซน่า",
@@ -1516,7 +1580,8 @@
     "model": "โมเดล",
     "size": "ขนาด",
     "quality": "คุณภาพ",
-    "created": "สร้างเมื่อ"
+    "created": "สร้างเมื่อ",
+    "lightboxLabel": "ตัวอย่างรูปภาพ"
   },
   "errors": {
     "generic": "เกิดข้อผิดพลาด",
@@ -1565,7 +1630,13 @@
   },
   "modelManager": {
     "sections": {
-      "catalog": "แคตตาล็อกโมเดล"
+      "catalog": "แคตตาล็อกโมเดล",
+      "pull": "ดาวน์โหลดโมเดลใหม่",
+      "library": "เรียกดูไลบรารี",
+      "huggingface": "HuggingFace Hub",
+      "running": "โมเดลที่กำลังทำงาน",
+      "local": "โมเดลในเครื่อง",
+      "advanced": "การดำเนินการขั้นสูง"
     },
     "catalog": {
       "searchPlaceholder": "ค้นหาโมเดลตามชื่อหรือผู้ให้บริการ...",
@@ -1588,12 +1659,159 @@
       "hide": "ซ่อนจากผู้ใช้",
       "show": "แสดงต่อผู้ใช้",
       "star": "ติดดาว {{name}}",
-      "unstar": "นำดาวออกจาก {{name}}"
+      "unstar": "นำดาวออกจาก {{name}}",
+      "providerOllama": "Ollama",
+      "filterLabel": "กรองโมเดล",
+      "displayName": "ชื่อที่แสดงสำหรับ {{name}}"
     },
     "huggingface": {
       "checkingGguf": "กำลังค้นหาไฟล์ GGUF...",
       "noGgufAvailable": "ไม่มีไฟล์ GGUF สำหรับดึงไปยัง Ollama โดยตรง",
-      "ggufFilesCount": "ไฟล์ GGUF ({{count}}) - ดึงไปยัง Ollama โดยตรง"
+      "ggufFilesCount": "ไฟล์ GGUF ({{count}}) - ดึงไปยัง Ollama โดยตรง",
+      "browseAll": "ดูทั้งหมดบน HuggingFace",
+      "noModelsFound": "ไม่พบโมเดล",
+      "noResults": "ไม่พบโมเดล ลองปรับการค้นหาหรือตัวกรอง",
+      "browseAllLink": "ดูทั้งหมด",
+      "search": "ค้นหาโมเดล HuggingFace...",
+      "by": "โดย",
+      "gated": "การเข้าถึงจำกัด",
+      "viewOnHF": "ดูบน HuggingFace",
+      "sortDownloads": "ดาวน์โหลด",
+      "sortLikes": "ถูกใจ",
+      "sortRecent": "ล่าสุด",
+      "taskTextGeneration": "การสร้างข้อความ",
+      "taskTextToSpeech": "ข้อความเป็นเสียง",
+      "taskTextToImage": "ข้อความเป็นภาพ",
+      "taskSpeechRecognition": "การรู้จำเสียง",
+      "tasks": {
+        "textGen": "การสร้างข้อความ",
+        "tts": "ข้อความเป็นเสียง",
+        "image": "ข้อความเป็นภาพ",
+        "stt": "การรู้จำเสียง"
+      },
+      "sort": {
+        "downloads": "ดาวน์โหลดมากที่สุด",
+        "likes": "ถูกใจมากที่สุด",
+        "recent": "อัปเดตล่าสุด"
+      }
+    },
+    "title": "โมเดล",
+    "loading": "กำลังโหลดโมเดล...",
+    "systemStatus": {
+      "online": "Ollama ออนไลน์",
+      "offline": "Ollama ออฟไลน์",
+      "models": "โมเดล",
+      "models_plural": "โมเดล",
+      "running": "กำลังทำงาน",
+      "vram": "VRAM"
+    },
+    "pull": {
+      "placeholder": "ป้อนชื่อโมเดล (เช่น llama3.2:3b, deepseek-r1:14b)",
+      "button": "ดาวน์โหลด",
+      "cancel": "ยกเลิก",
+      "popular": "โมเดลยอดนิยม:",
+      "browseAll": "เรียกดูโมเดลทั้งหมดที่ ollama.com",
+      "success": "ดาวน์โหลดโมเดล {{name}} สำเร็จ",
+      "cancelled": "ยกเลิกการดาวน์โหลดโมเดลแล้ว",
+      "failed": "ไม่สามารถดาวน์โหลดโมเดล",
+      "enterName": "กรุณาป้อนชื่อโมเดล",
+      "restricted": "การติดตั้งโมเดลบนอินสแตนซ์นี้จำกัดเฉพาะผู้ดูแลระบบเท่านั้น"
+    },
+    "progress": {
+      "starting": "กำลังเริ่มต้น...",
+      "pulling": "กำลังดาวน์โหลดโมเดล...",
+      "pullingLayer": "กำลังดาวน์โหลด",
+      "verifying": "กำลังตรวจสอบความถูกต้อง...",
+      "verifyingDigest": "กำลังตรวจสอบ sha256 digest",
+      "writing": "กำลังเขียน manifest...",
+      "cleaning": "กำลังล้างข้อมูล..."
+    },
+    "library": {
+      "available": "มี",
+      "search": "ค้นหาโมเดล...",
+      "noResults": "ไม่พบโมเดลที่ตรงกับเกณฑ์ของคุณ",
+      "installed": "ติดตั้งแล้ว",
+      "more": "+{{count}} เพิ่มเติม",
+      "refresh": "รีเฟรชไลบรารี"
+    },
+    "local": {
+      "noModels": "ยังไม่มีโมเดลที่ติดตั้ง",
+      "pullToStart": "ดาวน์โหลดโมเดลด้านบนเพื่อเริ่มต้น",
+      "installed": "ติดตั้งแล้ว",
+      "running": "กำลังทำงาน",
+      "info": "ข้อมูล",
+      "copy": "คัดลอก",
+      "delete": "ลบ",
+      "deleteConfirm": "คุณแน่ใจหรือไม่ว่าต้องการลบโมเดล \"{{name}}\"?",
+      "deleteSuccess": "ลบโมเดล {{name}} สำเร็จ",
+      "deleteFailed": "ไม่สามารถลบโมเดล"
+    },
+    "advanced": {
+      "createModel": "สร้างโมเดล",
+      "fromModelfile": "จาก Modelfile",
+      "copyModel": "คัดลอกโมเดล",
+      "duplicateExisting": "ทำซ้ำที่มีอยู่",
+      "testEmbeddings": "ทดสอบ Embeddings",
+      "generateVectors": "สร้างเวกเตอร์",
+      "healthCheck": "ตรวจสอบสุขภาพ",
+      "testConnection": "ทดสอบการเชื่อมต่อ",
+      "healthy": "Ollama สมบูรณ์!"
+    },
+    "modals": {
+      "details": {
+        "title": "รายละเอียดโมเดล",
+        "info": "ข้อมูลโมเดล",
+        "family": "ตระกูล",
+        "parameters": "พารามิเตอร์",
+        "quantization": "การควอนไทเซชัน",
+        "format": "รูปแบบ",
+        "systemPrompt": "Prompt ระบบ",
+        "template": "เทมเพลต",
+        "license": "ใบอนุญาต",
+        "modelfile": "Modelfile",
+        "noDetails": "ไม่มีรายละเอียด"
+      },
+      "copy": {
+        "title": "คัดลอกโมเดล",
+        "source": "โมเดลต้นทาง",
+        "selectModel": "เลือกโมเดล...",
+        "newName": "ชื่อโมเดลใหม่",
+        "placeholder": "เช่น my-custom-model",
+        "copying": "กำลังคัดลอก...",
+        "button": "คัดลอกโมเดล",
+        "success": "คัดลอกโมเดลไปยัง {{name}} แล้ว",
+        "failed": "ไม่สามารถคัดลอกโมเดล",
+        "enterBoth": "กรุณาป้อนชื่อต้นทางและปลายทาง"
+      },
+      "create": {
+        "title": "สร้างโมเดลกำหนดเอง",
+        "name": "ชื่อโมเดล",
+        "namePlaceholder": "เช่น my-assistant",
+        "modelfile": "Modelfile",
+        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
+        "see": "ดู",
+        "docs": "เอกสาร Modelfile",
+        "docsLink": "สำหรับอ้างอิงไวยากรณ์",
+        "creating": "กำลังสร้าง...",
+        "button": "สร้างโมเดล",
+        "success": "สร้างโมเดล {{name}} สำเร็จ",
+        "failed": "ไม่สามารถสร้างโมเดล",
+        "enterBoth": "กรุณาป้อนชื่อโมเดลและเนื้อหา Modelfile"
+      },
+      "embeddings": {
+        "title": "ทดสอบ Embeddings",
+        "model": "โมเดล Embedding",
+        "selectModel": "เลือกโมเดล...",
+        "recommended": "แนะนำ: nomic-embed-text, mxbai-embed-large",
+        "input": "ข้อความนำเข้า",
+        "placeholder": "ป้อนข้อความเพื่อสร้าง embeddings...",
+        "generating": "กำลังสร้าง...",
+        "button": "สร้าง Embeddings",
+        "result": "ผลลัพธ์ ({{count}} มิติ)",
+        "success": "สร้างเวกเตอร์ embedding {{count}} มิติ",
+        "failed": "ไม่สามารถสร้าง embeddings",
+        "enterBoth": "กรุณาเลือกโมเดลและป้อนข้อความ"
+      }
     }
   },
   "personaManager": {
@@ -1615,7 +1833,10 @@
     "deleteConfirm": "คุณแน่ใจหรือไม่ว่าต้องการลบ \"{{name}}\"?",
     "deleteSuccess": "ลบเพอร์โซน่า \"{{name}}\" สำเร็จ",
     "downloadSuccess": "ดาวน์โหลดเพอร์โซน่า \"{{name}}\" สำเร็จ",
-    "failed": "ไม่สามารถ {{action}} เพอร์โซน่า"
+    "failed": "ไม่สามารถ {{action}} เพอร์โซน่า",
+    "loadFailed": "โหลดเพอร์โซน่าของคุณไม่ได้",
+    "deleteFailed": "ลบเพอร์โซน่าไม่สำเร็จ",
+    "downloadFailed": "ดาวน์โหลดเพอร์โซน่าไม่สำเร็จ"
   },
   "personaForm": {
     "title": {
@@ -1747,7 +1968,8 @@
       "promptHint": "พรอมต์ที่ใช้เริ่มต้นทุกแชทใหม่กับเพอร์โซน่านี้",
       "noPrompt": "ไม่มีพรอมต์",
       "version": "ฉบับแก้ไขการผูก {{version}}"
-    }
+    },
+    "sections": "ส่วนของเพอร์โซน่า"
   },
   "personaCard": {
     "enhanced": "ปรับปรุงแล้ว",
@@ -1764,7 +1986,16 @@
     "backupSuccess": "ดาวน์โหลดสำรองข้อมูลเพอร์โซน่าสำเร็จ",
     "dnaSuccess": "ส่งออก DNA เพอร์โซน่าสำเร็จ",
     "failed": "ไม่สามารถ {{action}}",
-    "shareTooltip": "แชร์เพอร์โซนานี้"
+    "shareTooltip": "แชร์เพอร์โซนานี้",
+    "wipeFailed": "ล้างความจำไม่สำเร็จ",
+    "backupFailed": "สำรองข้อมูลเพอร์โซน่าไม่สำเร็จ",
+    "exportDnaFailed": "ส่งออก DNA ของเพอร์โซน่าไม่สำเร็จ",
+    "favorite": "รายการโปรด",
+    "memoryStatus": {
+      "active": "ใช้งานอยู่",
+      "wiped": "ล้างแล้ว",
+      "backed_up": "สำรองข้อมูลแล้ว"
+    }
   },
   "userManager": {
     "title": "จัดการผู้ใช้",
@@ -1793,7 +2024,10 @@
     "noUsersMatching": "ไม่มีผู้ใช้ที่ตรงกับการค้นหาของคุณ",
     "columns": {
       "role": "บทบาท",
-      "created": "สร้างเมื่อ"
+      "created": "สร้างเมื่อ",
+      "user": "ผู้ใช้",
+      "email": "อีเมล",
+      "actions": "การดำเนินการ"
     },
     "roles": {
       "admin": "ผู้ดูแลระบบ",
@@ -1832,7 +2066,10 @@
       "createSuccess": "สร้างผู้ใช้สำเร็จ",
       "updateSuccess": "อัปเดตผู้ใช้สำเร็จ",
       "createFailed": "ไม่สามารถสร้างผู้ใช้",
-      "updateFailed": "ไม่สามารถอัปเดตผู้ใช้"
+      "updateFailed": "ไม่สามารถอัปเดตผู้ใช้",
+      "usernamePlaceholder": "ป้อนชื่อผู้ใช้",
+      "emailPlaceholder": "ป้อนอีเมล (ไม่บังคับ)",
+      "passwordPlaceholder": "ป้อนรหัสผ่าน"
     },
     "workAccess": {
       "title": "การเข้าถึง Work",
@@ -1925,7 +2162,28 @@
       "memberOf": "กลุ่ม",
       "featuresLabel": "การเข้าถึงฟีเจอร์",
       "grantsLabel": "การให้สิทธิ์",
-      "grantVia": "ผ่าน"
+      "grantVia": "ผ่าน",
+      "deleteConfirmTitle": "ลบกลุ่ม “{{name}}” หรือไม่",
+      "deleteConfirmDescription": "สมาชิกจะสูญเสียสิทธิ์เข้าถึงที่ได้รับผ่านกลุ่มนี้เท่านั้น บัญชีจะไม่ถูกลบ",
+      "statuses": {
+        "active": "ใช้งานอยู่",
+        "pending": "รออนุมัติ"
+      },
+      "features": {
+        "work": "งาน",
+        "model-download": "ดาวน์โหลดโมเดล",
+        "web-search": "ค้นหาเว็บ",
+        "strands": "เอนจิน Strands",
+        "tools": "เครื่องมือ",
+        "stt": "เสียงเป็นข้อความ",
+        "tts": "ข้อความเป็นเสียง",
+        "voice-mode": "โหมดเสียง",
+        "voice-cloning": "การโคลนเสียง"
+      },
+      "grantViaKinds": {
+        "user": "ให้สิทธิ์โดยตรง",
+        "group": "กลุ่ม"
+      }
     },
     "audit": {
       "title": "บันทึกตรวจสอบความปลอดภัย",
@@ -2012,13 +2270,60 @@
       "save": "บันทึก",
       "saving": "กำลังบันทึก…",
       "saved": "บันทึกการตั้งค่าอีเมลแล้ว",
-      "saveFailed": "ไม่สามารถบันทึกการตั้งค่าอีเมลได้"
+      "saveFailed": "ไม่สามารถบันทึกการตั้งค่าอีเมลได้",
+      "security": {
+        "starttls": "STARTTLS (พอร์ต 587)",
+        "tls": "TLS (พอร์ต 465)",
+        "none": "ไม่มี (เฉพาะเครือข่ายที่เชื่อถือได้เท่านั้น)"
+      },
+      "templateTitle": "รูปลักษณ์อีเมล",
+      "templateHint": "เลือกเทมเพลตสว่างหรือมืดสำหรับสรุปข่าวและอีเมลแจ้งเตือน",
+      "themeLabel": "เทมเพลตอีเมล",
+      "themeLight": "สว่าง",
+      "themeDark": "มืด",
+      "previewTitle": "ตัวอย่างเทมเพลต",
+      "previewLoading": "กำลังโหลดตัวอย่าง…",
+      "previewFailed": "โหลดตัวอย่างอีเมลไม่สำเร็จ",
+      "previewHeading": "สรุปข่าวของคุณ",
+      "previewIntro": "ตัวอย่างอีเมลข่าวประจำวันของคุณ",
+      "previewMarkdown": "## ข่าวเด่นวันนี้\n\n- อัปเดตด้านเทคโนโลยีและงานวิจัย\n- ข่าวจากแหล่งที่คุณเลือก\n\n**สรุป:** ข่าวประจำวันของคุณพร้อมให้อ่านแล้ว",
+      "previewLinkLabel": "เปิดผลลัพธ์"
+    },
+    "modelAccess": {
+      "title": "การดาวน์โหลดโมเดล",
+      "description": "อนุญาตให้ผู้ใช้ที่ใช้งานอยู่ทุกคนดึงโมเดลจาก Ollama และเบราว์เซอร์ Hugging Face ผู้ดูแลระบบดาวน์โหลดโมเดลได้เสมอ",
+      "saved": "อัปเดตสิทธิ์ดาวน์โหลดโมเดลแล้ว",
+      "saveFailed": "ไม่สามารถอัปเดตสิทธิ์ดาวน์โหลดโมเดลได้"
+    },
+    "ollamaProvider": {
+      "title": "ผู้ให้บริการ Ollama",
+      "description": "เมื่อปิดใช้งาน แอปจะหยุดตรวจสอบ Ollama ทั้งหมด — ไม่มีการตรวจสอบสถานะ ไม่มีคำเตือน Endpoint สามารถชี้ไปยังเกตเวย์ที่รองรับ Ollama ใดก็ได้",
+      "saved": "บันทึกการตั้งค่าผู้ให้บริการ Ollama แล้ว",
+      "saveFailed": "ไม่สามารถบันทึกการตั้งค่าผู้ให้บริการ Ollama ได้",
+      "baseUrlLabel": "URL ของ Endpoint ของ Ollama"
+    },
+    "strandsAccess": {
+      "title": "เอนจิน Strands",
+      "description": "เลือกผู้ที่ใช้เอเจนต์ Strands ในตัวได้ เอเจนต์สามารถอ่านและแก้ไขไฟล์ในพื้นที่ทำงานส่วนตัวของแต่ละเซสชัน แต่ไม่สามารถรันคำสั่งเชลล์ได้",
+      "saved": "อัปเดตสิทธิ์เข้าถึง Strands แล้ว",
+      "saveFailed": "ไม่สามารถอัปเดตสิทธิ์เข้าถึง Strands ได้",
+      "lockedByEnv": "กำหนดไว้โดยตัวแปรสภาพแวดล้อม LIBRE_STRANDS_ACCESS",
+      "modes": {
+        "disabled": "ปิด",
+        "admins": "ผู้ดูแลระบบ",
+        "all-users": "ผู้ใช้ทั้งหมด"
+      }
+    },
+    "agentCliAccess": {
+      "title": "โมเดลเอเจนต์ CLI",
+      "description": "ผู้ดูแลระบบสามารถใช้ Pi, OpenCode, Codex และ Claude Code ที่ติดตั้งไว้เป็นโมเดลแชตได้ โดยทำงานบนโฮสต์นอกแซนด์บ็อกซ์ของ Work",
+      "lockedByEnv": "ถูกกำหนดโดยตัวแปรสภาพแวดล้อม AGENT_CLI_MODELS_ENABLED"
     }
   },
   "usageAnalytics": {
     "eyebrow": "การดูแลระบบ",
     "title": "การใช้งานผู้ให้บริการ",
-    "description": "ติดตามการเรียก API ขาออกและการใช้งานโมเดลในปลั๊กอินที่เปิดใช้งานบนอินสแตนซ์นี้",
+    "description": "ติดตามคำขอโมเดลและการใช้งานจากผู้ให้บริการและเอเจนต์ในอินสแตนซ์นี้",
     "days": "{{count}} วัน",
     "refresh": "รีเฟรชการใช้งาน",
     "loadFailed": "ไม่สามารถโหลดการใช้งานผู้ให้บริการได้",
@@ -2065,7 +2370,7 @@
       "notCharted": "เลือกเพื่อโหลดโมเดลนี้ในแผนภูมิ"
     },
     "providers": {
-      "title": "การรับส่งข้อมูลของปลั๊กอินที่เปิดใช้งาน",
+      "title": "ทราฟฟิกผู้ให้บริการและเอเจนต์",
       "description": "ปริมาณคำขอ ความเชื่อถือได้ และเวลาตอบสนองแยกตามผู้ให้บริการ",
       "share": "{{percent}}% ของการเรียกใช้",
       "failures": "ล้มเหลวหรือยกเลิก {{count}} ครั้ง",
@@ -2083,7 +2388,7 @@
     },
     "empty": {
       "title": "ยังไม่มีการเรียกผู้ให้บริการ",
-      "description": "การเรียกจะปรากฏที่นี่หลังจากที่ปลั๊กอินที่เปิดใช้งานจัดการคำขอแชท, Work, การฝังข้อมูล, รูปภาพ, คำพูด, เสียง หรือวิดีโอ"
+      "description": "คำขอจะแสดงที่นี่หลังจากผู้ให้บริการหรือเอเจนต์ประมวลผลแชต, Work, การฝังเวกเตอร์, รูปภาพ, คำพูด, เสียง หรือวิดีโอ"
     },
     "privacyNote": "การใช้งานจะถูกวัดที่เซิร์ฟเวอร์ ณ ขอบเขตปลั๊กอินขาออก Alcore จัดเก็บผู้ให้บริการ, โมเดล, เวลา, สถานะ และตัวนับที่รายงานเท่านั้น ไม่เก็บพร้อมต์, การตอบกลับ, เอนด์พอยต์, ข้อมูลประจำตัว หรือเนื้อหาข้อผิดพลาดของผู้ให้บริการ จำนวนโทเคนรวมรวมเฉพาะการเรียกที่ผู้ให้บริการส่งกลับข้อมูลเมตาของการใช้งานเท่านั้น",
     "heatmap": {
@@ -2095,6 +2400,14 @@
       "less": "น้อย",
       "more": "มาก",
       "yearTotal": "{{formatted}} ครั้งในปีที่ผ่านมา"
+    },
+    "agents": {
+      "title": "เอเจนต์",
+      "description": "การเรียกเอเจนต์ CLI และเอนจิน Strands",
+      "noCalls": "ไม่มีการเรียกที่บันทึกไว้ในช่วงเวลานี้",
+      "unreported": "ไม่ได้รายงานโทเคน",
+      "topModels": "โมเดลที่ใช้มากที่สุด",
+      "legacy": "เซิร์ฟเวอร์นี้ไม่ได้ให้รายละเอียดเอเจนต์ครบถ้วน รายการเอเจนต์ที่มีจะแสดงด้านล่าง"
     }
   },
   "systemPage": {
@@ -2309,7 +2622,11 @@
       "harmful": "เป็นอันตราย",
       "formatting": "การจัดรูปแบบ"
     },
-    "feedbackComment": "เพิ่มความคิดเห็น…"
+    "feedbackComment": "เพิ่มความคิดเห็น…",
+    "user": "ผู้ใช้",
+    "feedbackFailed": "บันทึกความคิดเห็นของคุณไม่ได้",
+    "openImage": "เปิดรูปภาพที่ {{number}}",
+    "uploadedImageAlt": "รูปภาพที่อัปโหลด {{number}}"
   },
   "imageGallery": {
     "title": "แกลเลอรีรูปภาพ",
@@ -2321,7 +2638,8 @@
     "deleteSuccess": "ลบรูปภาพแล้ว",
     "deleteFailed": "ไม่สามารถลบรูปภาพ",
     "loadMore": "โหลดเพิ่มเติม ({{current}} จาก {{total}})",
-    "loadFailed": "ไม่สามารถโหลดแกลเลอรี"
+    "loadFailed": "ไม่สามารถโหลดแกลเลอรี",
+    "downloadFailed": "ไม่สามารถดาวน์โหลดรูปภาพ"
   },
   "imageGeneration": {
     "title": "สร้างรูปภาพ",
@@ -2397,7 +2715,10 @@
       "image": "รูปภาพ",
       "video": "วิดีโอ",
       "audio": "เสียง"
-    }
+    },
+    "deleteConfirmTitle": "ลบรายการนี้หรือไม่",
+    "deleteConfirmDescription": "สื่อที่สร้างขึ้นจะถูกลบถาวร",
+    "previewFailed": "ไม่มีตัวอย่าง"
   },
   "errorBoundary": {
     "title": "เกิดข้อผิดพลาด",
@@ -2475,7 +2796,8 @@
     "previousVersion": "เวอร์ชันก่อนหน้า",
     "nextVersion": "เวอร์ชันถัดไป",
     "print": "Print",
-    "exportCsv": "Export CSV"
+    "exportCsv": "Export CSV",
+    "resizePanel": "ปรับขนาดแผง"
   },
   "personaImportExport": {
     "title": "นำเข้าและส่งออกเพอร์โซน่า",
@@ -2513,7 +2835,10 @@
     "generation": "การสร้าง:",
     "modelLoad": "โหลดโมเดล:",
     "totalTime": "เวลาทั้งหมด:",
-    "generatedAt": "สร้างเมื่อ:"
+    "generatedAt": "สร้างเมื่อ:",
+    "notAvailable": "ไม่มีข้อมูล",
+    "tokenCount": "{{tokens}} โทเค็น",
+    "tokensPerSecond": "{{value}} t/s"
   },
   "userMenu": {
     "loggedOut": "ออกจากระบบสำเร็จ",
@@ -2572,7 +2897,9 @@
       "httpWarning": "HTTP ไม่เข้ารหัสข้อมูลประจำตัวหรือการรับส่งข้อมูล ใช้เฉพาะในเครือข่ายที่เชื่อถือได้เท่านั้น",
       "invalidBaseUrl": "URL พื้นฐานต้องไม่มี query string หรือ fragment",
       "invalidApiPath": "ต้องขึ้นต้นด้วย / และไม่มี URL, query, fragment หรือส่วน ..",
-      "tooLong": "ค่ายาวเกินไป"
+      "tooLong": "ค่ายาวเกินไป",
+      "resetConfirmTitle": "รีเซ็ตเป็นค่าเริ่มต้นหรือไม่",
+      "resetConfirmDescription": "การดำเนินการนี้จะล้างค่าที่เก็บไว้ทั้งหมดของ {{name}} รวมถึงคีย์ API และข้อมูลรับรองอื่น ๆ ไม่สามารถย้อนกลับได้"
     }
   },
   "huggingface": {
@@ -2592,7 +2919,10 @@
   },
   "demoMode": {
     "title": "โหมดสาธิต",
-    "github": "GitHub"
+    "github": "GitHub",
+    "defaultMessage": "นี่คือเวอร์ชันสาธิตสำหรับการนำเสนอเท่านั้น แบ็กเอนด์ Ollama ไม่ได้เชื่อมต่อ",
+    "viewOnGithub": "ดูบน GitHub",
+    "dismiss": "ปิด"
   },
   "libreClaw": {
     "title": "เอเจนต์",
@@ -2755,8 +3085,8 @@
       "status": "สถานะ: {{status}}"
     },
     "landing": {
-      "title": "เริ่มงานใหม่",
-      "description": "มอบพื้นที่ทำงานแบบถาวรและแยกอิสระให้โมเดลภายในเครื่องหรือโมเดลจากผู้ให้บริการที่กำหนดค่าไว้ โมเดลสามารถตรวจสอบไฟล์ เรียกใช้เครื่องมือ และทำงานต่อจากจุดเดิมเมื่อคุณกลับมา",
+      "title": "คุณอยากทำงานเกี่ยวกับอะไร?",
+      "description": "อธิบายงาน โมเดลของคุณจะมีพื้นที่ทำงานของตัวเอง",
       "isolated": "แยกอิสระ",
       "isolatedBody": "แต่ละงานมีคอนเทนเนอร์และไฟล์ของตนเอง",
       "durable": "ถาวร",
@@ -2785,7 +3115,11 @@
         "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
         "attachTooMany": "Only {{max}} files can be attached at once.",
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
-      }
+      },
+      "engine": "เอนจิน",
+      "libreModels": "โมเดล Libre WebUI",
+      "strandsDisabled": "เอนจิน Strands ไม่พร้อมใช้งานสำหรับบัญชีของคุณ",
+      "modelLabel": "โมเดล"
     },
     "conversation": {
       "ready": "พื้นที่ทำงานพร้อมแล้ว",
@@ -2825,8 +3159,18 @@
         "checksPending": "การตรวจสอบค้างอยู่",
         "stallNudges": "การแจ้งเตือนหยุดชะงัก",
         "ambiguityNudges": "การแจ้งเตือนปรับตำแหน่งใหม่",
-        "stoppedBy": "หยุดโดย"
-      }
+        "stoppedBy": "หยุดโดย",
+        "reasons": {
+          "round": "ถึงขีดจำกัดรอบ",
+          "toolCall": "ถึงขีดจำกัดการเรียกเครื่องมือ",
+          "approvalTimeout": "การอนุมัติหมดเวลา",
+          "computerStall": "คอมพิวเตอร์ค้าง"
+        }
+      },
+      "skillTraceSavedWorked": "บันทึกแล้ว: ใช้ได้",
+      "skillTraceSavedFailed": "บันทึกแล้ว: ไม่สำเร็จ",
+      "connectionClosed": "การเชื่อมต่อสดของงานถูกปิด",
+      "reconnectingBackground": "การอัปเดตสดกำลังเชื่อมต่อใหม่ในเบื้องหลัง"
     },
     "runtime": {
       "unavailable": "รันไทม์ไม่พร้อมใช้งาน",
@@ -2834,7 +3178,7 @@
       "readyOllama": "Docker พร้อมแล้ว",
       "readyPlugin": "Docker + ปลั๊กอินพร้อมแล้ว",
       "readyHybrid": "Docker + โมเดลพร้อมแล้ว",
-      "reason": "จำเป็นต้องมี Docker และผู้ให้บริการโมเดล Ollama หรือปลั๊กอินที่พร้อมใช้งาน"
+      "reason": "ต้องมีสภาพแวดล้อมการทำงาน Work และผู้ให้บริการโมเดลที่พร้อมใช้งาน"
     },
     "workspace": {
       "label": "มุมมองพื้นที่ทำงาน",
@@ -2869,7 +3213,11 @@
       "changes": "การเปลี่ยนแปลง",
       "changesSince": "สิ่งที่เปลี่ยนแปลงตั้งแต่เทิร์นล่าสุด",
       "diffLabel": "การเปลี่ยนแปลงตั้งแต่เทิร์นล่าสุด: {{path}}",
-      "diffFolded": "{{count}} บรรทัดที่ไม่เปลี่ยนแปลง"
+      "diffFolded": "{{count}} บรรทัดที่ไม่เปลี่ยนแปลง",
+      "diffAdded": "เพิ่มแล้ว",
+      "diffRemoved": "ลบแล้ว",
+      "unsavedChanges": "มีการเปลี่ยนแปลงที่ยังไม่บันทึก",
+      "editingLocked": "การแก้ไขจะปลดล็อกเมื่อรอบนี้เสร็จสิ้น"
     },
     "activity": {
       "empty": "คำสั่ง การดำเนินการกับไฟล์ และผลลัพธ์จากเครื่องมือจะปรากฏที่นี่",
@@ -2880,7 +3228,9 @@
         "toolCall": "การเรียกเครื่องมือ",
         "toolResult": "ผลลัพธ์จากเครื่องมือ",
         "error": "ข้อผิดพลาด"
-      }
+      },
+      "arguments": "อาร์กิวเมนต์ของเครื่องมือ",
+      "output": "ผลลัพธ์ของเครื่องมือ"
     },
     "preview": {
       "command": "คำสั่งเริ่มต้น (ไม่บังคับ)",
@@ -2909,7 +3259,8 @@
       "saveFailed": "ไม่สามารถบันทึกไฟล์นี้ได้",
       "saved": "บันทึกไฟล์แล้ว",
       "previewFailed": "ไม่สามารถเริ่มตัวอย่างได้",
-      "previewStopFailed": "ไม่สามารถหยุดตัวอย่างได้"
+      "previewStopFailed": "ไม่สามารถหยุดตัวอย่างได้",
+      "sendFailed": "ส่งข้อความไม่ได้"
     },
     "terminal": {
       "connecting": "กำลังเปิดเชลล์ในแซนด์บ็อกซ์…",
@@ -2961,7 +3312,18 @@
       "noFilterMatches": "ไม่มีไฟล์ที่เปลี่ยนแปลงตรงกับตัวกรองนี้",
       "allChanges": "การเปลี่ยนแปลงทั้งหมด",
       "diffTruncated": "diff นี้ถูกตัดทอน",
-      "binaryFile": "ไฟล์ไบนารี ไม่มี diff แบบข้อความ"
+      "binaryFile": "ไฟล์ไบนารี ไม่มี diff แบบข้อความ",
+      "statusLabels": {
+        "modified": "แก้ไขแล้ว",
+        "added": "เพิ่มแล้ว",
+        "deleted": "ลบแล้ว",
+        "renamed": "เปลี่ยนชื่อแล้ว",
+        "copied": "คัดลอกแล้ว",
+        "typeChanged": "เปลี่ยนประเภทแล้ว",
+        "untracked": "ยังไม่ติดตาม"
+      },
+      "stagedState": "สเตจแล้ว",
+      "aheadBehind": "นำหน้า {{ahead}} ตามหลัง {{behind}}"
     },
     "hostWorkspace": {
       "hint": "เว้นว่างสำหรับพื้นที่ทำงานแยก หรือชี้งานไปยังโฟลเดอร์บนเครื่องนี้",
@@ -2988,7 +3350,8 @@
       "unmute": "เปิดเสียง",
       "mute": "ปิดเสียง",
       "finished": "งานนี้เสร็จแล้ว เปิดอีกครั้งเพื่อนำหน้าจอกลับมา",
-      "reopenOpen": "เปิดงานอีกครั้งและเปิดหน้าจอ"
+      "reopenOpen": "เปิดงานอีกครั้งและเปิดหน้าจอ",
+      "teachSaveFailed": "บันทึกการสาธิตนี้ไม่ได้"
     },
     "computerSetup": {
       "title": "Work Computer",
@@ -3004,7 +3367,7 @@
       "label": "จ้างเป็นเอเจนต์ (ไม่บังคับ)",
       "none": "ไม่มีเพอร์โซน่า (งานครั้งเดียว)",
       "hint": "งานนี้จะกลายเป็นเอเจนต์ที่มีชื่อ: คงเพอร์โซน่าไว้ ปักหมุดในแถบด้านข้าง และรายงานสถานะหนึ่งบรรทัดหลังการทำงานแต่ละครั้ง",
-      "description": "เลือกเพอร์โซน่าเพื่อเปลี่ยนงานนี้ให้เป็นเอเจนต์ถาวรที่มีตัวตนของตัวเอง"
+      "description": "เลือกเพอร์โซน่าเพื่อเก็บงานนี้ไว้เป็นเอเจนต์ที่มีชื่อ"
     },
     "agent": {
       "openScreen": "เปิดมุมมองเต็มหน้าจอ",
@@ -3025,7 +3388,11 @@
       "approvalsToggleFailed": "ไม่สามารถอัปเดตการอนุมัติได้",
       "approvalRuleLine": "อนุญาตเสมอ",
       "approvalRuleDelete": "ลบกฎ",
-      "approvalRuleDeleteFailed": "ไม่สามารถลบกฎได้"
+      "approvalRuleDeleteFailed": "ไม่สามารถลบกฎได้",
+      "routinesLoadFailed": "โหลดกิจวัตรไม่ได้",
+      "skillsLoadFailed": "โหลดทักษะที่สอนไว้ไม่ได้",
+      "approvalsLoadFailed": "โหลดการตั้งค่าการอนุมัติไม่ได้",
+      "routinePaused": "หยุดชั่วคราว"
     },
     "approval": {
       "title": "ต้องได้รับการอนุมัติ",
@@ -3033,7 +3400,16 @@
       "allowOnce": "อนุญาตครั้งเดียว",
       "allowAlways": "อนุญาตเสมอ",
       "deny": "ปฏิเสธ",
-      "failed": "ไม่สามารถส่งผลการตัดสินใจได้"
+      "failed": "ไม่สามารถส่งผลการตัดสินใจได้",
+      "details": "รายละเอียดการดำเนินการ",
+      "fields": {
+        "command": "คำสั่ง",
+        "path": "พาธ",
+        "from": "จาก",
+        "to": "ไปยัง",
+        "actions": "การดำเนินการ",
+        "recursive": "แบบเรียกซ้ำ"
+      }
     },
     "idleStopHint": "จะหยุดหลังจากไม่มีความเคลื่อนไหว {{minutes}} นาที",
     "runs": {
@@ -3045,7 +3421,8 @@
         "needsInput": "ต้องการข้อมูลเพิ่มเติม",
         "failed": "ล้มเหลว",
         "cancelled": "ยกเลิกแล้ว"
-      }
+      },
+      "loadFailed": "โหลดประวัติการเรียกใช้ไม่ได้"
     },
     "recovery": {
       "pending": "Work กำลังยืนยันการล้างข้อมูลแซนด์บ็อกซ์ {{pending}} รายการ ก่อนที่จะยอมรับการทำงานใหม่",
@@ -3057,6 +3434,17 @@
       "retrySucceeded": "ล้างข้อมูลสำเร็จ {{cleared}} จาก {{attempted}} รายการที่รอดำเนินการ",
       "retryPending": "กำลังลองใหม่ {{attempted}} รายการที่รอดำเนินการ",
       "retryFailed": "ลองใหม่การล้างข้อมูลที่รอดำเนินการไม่สำเร็จ"
+    },
+    "computer": {
+      "setupFailed": "ตั้งค่าคอมพิวเตอร์ของงานไม่ได้"
+    },
+    "announce": {
+      "completed": "{{title}} เสร็จแล้ว",
+      "needsInput": "{{title}} ต้องการข้อมูลหรือการอนุมัติจากคุณ",
+      "failed": "{{title}} ล้มเหลว",
+      "cancelled": "{{title}} ถูกหยุดแล้ว",
+      "approvalNeeded": "{{title}} ต้องการการอนุมัติจากคุณเพื่อเรียกใช้ {{tool}}",
+      "untitledTask": "งานนี้"
     }
   },
   "personaBackground": {
@@ -3088,7 +3476,21 @@
     "reselectProvider": "เลือกผู้ให้บริการใหม่เพื่อปักหมุดโมเดลนี้",
     "unavailable": "ไม่พร้อมใช้งาน",
     "unavailableSelections": "ตัวเลือกที่ไม่พร้อมใช้งาน",
-    "agentModels": "เอเจนต์"
+    "agentModels": "เอเจนต์",
+    "searchOllama": "ค้นหาในไลบรารี Ollama...",
+    "searchHuggingFace": "ค้นหาใน HuggingFace...",
+    "searchModels": "ค้นหาโมเดล...",
+    "ollamaModels": "โมเดล Ollama",
+    "installed": "ติดตั้งแล้ว",
+    "use": "ใช้",
+    "pull": "ดาวน์โหลด",
+    "pullRestricted": "การติดตั้งโมเดลบนอินสแตนซ์นี้จำกัดเฉพาะผู้ดูแลระบบเท่านั้น",
+    "adminOnlyPull": "ผู้ดูแลระบบเท่านั้น",
+    "showAll": "แสดงทั้งหมด ({{total}})",
+    "sources": "แหล่งที่มาของโมเดล",
+    "defaultModel": "โมเดลเริ่มต้น",
+    "contextSize": "บริบท {{size}}",
+    "via": "ผ่าน {{provider}}"
   },
   "whatsNew": {
     "title": "มีอะไรใหม่",
@@ -3145,7 +3547,16 @@
     "unpin": "เลิกปักหมุดโน้ต",
     "pinned": "ปักหมุดแล้ว",
     "export": "ดาวน์โหลดเป็น Markdown",
-    "sharedWithYou": "แชร์กับคุณ"
+    "sharedWithYou": "แชร์กับคุณ",
+    "titleLabel": "ชื่อบันทึก",
+    "loadFailed": "โหลดไม่ได้ โปรดลองอีกครั้ง",
+    "restoreConfirmTitle": "กู้คืนเวอร์ชันนี้หรือไม่",
+    "restoreConfirmDescription": "ข้อความของบันทึกจะถูกแทนที่ด้วยเวอร์ชันก่อนหน้านี้",
+    "deleteAttachmentConfirmTitle": "ลบ {{name}} หรือไม่",
+    "deleteAttachmentConfirmDescription": "ไฟล์แนบจะถูกลบถาวรออกจากบันทึกนี้",
+    "attachmentDeleteFailed": "ลบไฟล์แนบไม่ได้",
+    "revokeFailed": "เพิกถอนการเข้าถึงไม่ได้",
+    "sharePermissionLabel": "สิทธิ์"
   },
   "calendar": {
     "title": "ปฏิทิน",
@@ -3190,7 +3601,22 @@
     "importFailed": "นำเข้าไฟล์ไม่สำเร็จ",
     "importResult": "นำเข้า {{total}} กิจกรรมแล้ว",
     "importIcs": "นำเข้า",
-    "exportIcs": "ส่งออก"
+    "exportIcs": "ส่งออก",
+    "chipStatus": {
+      "automation": "ระบบอัตโนมัติที่ตั้งเวลาไว้",
+      "runSucceeded": "การเรียกใช้ระบบอัตโนมัติสำเร็จ",
+      "runFailed": "การเรียกใช้ระบบอัตโนมัติล้มเหลว"
+    },
+    "newEventOn": "กิจกรรมใหม่ในวันที่ {{date}}",
+    "showDay": "แสดงกิจกรรมทั้งหมดในวันที่ {{date}}",
+    "deleteEventConfirmTitle": "ลบ \"{{title}}\" หรือไม่",
+    "deleteEventConfirmDescription": "กิจกรรมนี้จะถูกลบถาวร",
+    "deleteRecurringEventConfirmDescription": "กิจกรรมที่เกิดซ้ำนี้และทุกครั้งที่เกิดขึ้นจะถูกลบถาวร",
+    "shareCalendarNamed": "แชร์ปฏิทิน {{name}}",
+    "deleteCalendarNamed": "ลบปฏิทิน {{name}}",
+    "deleteCalendarConfirmTitle": "ลบปฏิทิน \"{{name}}\" หรือไม่",
+    "deleteCalendarConfirmDescription": "ปฏิทินและกิจกรรมในปฏิทินจะถูกลบถาวร",
+    "calendarDeleteFailed": "ลบปฏิทินไม่ได้"
   },
   "automations": {
     "title": "ระบบอัตโนมัติ",
@@ -3317,13 +3743,17 @@
         "work-approval": "เอเจนต์กำลังรอการอนุมัติจากคุณ",
         "system": "มีประกาศจากระบบเข้ามา"
       }
-    }
+    },
+    "deleteConfirmTitle": "ลบ \"{{name}}\" หรือไม่",
+    "deleteConfirmDescription": "ระบบอัตโนมัติและกำหนดการจะถูกลบถาวร การเรียกใช้ก่อนหน้านี้ยังคงอยู่ในประวัติการเรียกใช้"
   },
   "home": {
     "active": "ใช้งานอยู่",
     "continue": "ดำเนินการต่อ",
     "start": "เริ่ม",
-    "explore": "สำรวจ"
+    "explore": "สำรวจ",
+    "greeting": "{{greeting}}",
+    "greetingWithName": "{{greeting}} {{name}}"
   },
   "palette": {
     "empty": "ไม่พบรายการที่ตรงกัน",
@@ -3336,7 +3766,14 @@
     "work": "งาน",
     "messages": "ข้อความ",
     "notes": "โน้ต",
-    "documents": "เอกสาร"
+    "documents": "เอกสาร",
+    "searching": "กำลังค้นหา…",
+    "searchFailed": "ค้นหาในพื้นที่ทำงานไม่สำเร็จ แสดงเฉพาะแชทและการดำเนินการที่ตรงกัน",
+    "results": "ผลลัพธ์",
+    "escKey": "esc",
+    "hintNavigate": "ไปยัง",
+    "hintOpen": "เปิด",
+    "hintClose": "ปิด"
   },
   "tabs": {
     "actions": "การทำงานของแท็บ",
@@ -3540,7 +3977,8 @@
       "button": "จากโฟลเดอร์",
       "missingSkillMd": "โฟลเดอร์ต้องมีไฟล์ SKILL.md",
       "done": "นำเข้าทักษะพร้อมไฟล์ที่แนบมา {{count}} ไฟล์แล้ว"
-    }
+    },
+    "toggleLabel": "เปิดใช้ทักษะ {{name}}"
   },
   "toolsPage": {
     "title": "เครื่องมือ",
@@ -3701,7 +4139,14 @@
     "added": "แชร์กับ {{name}} แล้ว",
     "failed": "แชร์ไม่สำเร็จ",
     "userNotFound": "ไม่มีผู้ใช้ชื่อนี้",
-    "groupNotFound": "ไม่มีกลุ่มชื่อนี้"
+    "groupNotFound": "ไม่มีกลุ่มชื่อนี้",
+    "principalKind": "แชร์กับผู้ใช้หรือกลุ่ม",
+    "principalName": "ชื่อผู้ใช้หรือชื่อกลุ่ม",
+    "permission": "สิทธิ์",
+    "sharing": "การแชร์",
+    "loading": "กำลังโหลดการแชร์",
+    "loadFailed": "โหลดการแชร์ไม่ได้",
+    "revokeFailed": "เพิกถอนการเข้าถึงไม่ได้"
   },
   "channels": {
     "title": "แชนเนล",
@@ -3760,13 +4205,44 @@
     "toolCalls": {
       "summary": "เครื่องมือที่ใช้ ({{total}})",
       "deniedHint": "เครื่องมือที่เปลี่ยนแปลงข้อมูลจะถูกปฏิเสธในแชนเนล ให้รันจากแชทแทน"
-    }
+    },
+    "confirmEdit": "บันทึกการแก้ไข",
+    "cancelEdit": "ยกเลิกการแก้ไข",
+    "reactWith": "แสดงปฏิกิริยา {{emoji}}",
+    "deleteMessageConfirmTitle": "ลบข้อความนี้หรือไม่",
+    "deleteMessageConfirmDescription": "ข้อความจะถูกลบสำหรับทุกคนในแชนเนลนี้",
+    "unreadCount": "ยังไม่ได้อ่าน {{total}}",
+    "send": "ส่งข้อความ",
+    "invite": "เชิญสมาชิก",
+    "closeThread": "ปิดเธรด",
+    "removeAttachment": "ลบไฟล์แนบ",
+    "loadFailed": "โหลดไม่ได้ โปรดลองอีกครั้ง",
+    "editFailed": "แก้ไขข้อความไม่ได้",
+    "deleteMessageFailed": "ลบข้อความไม่ได้",
+    "pinFailed": "เปลี่ยนการปักหมุดไม่ได้",
+    "reactFailed": "บันทึกปฏิกิริยาไม่ได้",
+    "downloadFailed": "ดาวน์โหลดไฟล์ไม่ได้",
+    "removeMemberConfirm": "ลบ {{name}} ออกจากแชนเนลนี้หรือไม่",
+    "removeMemberConfirmDescription": "สมาชิกจะเข้าถึงแชนเนลและข้อความในแชนเนลไม่ได้อีก",
+    "removeMemberNamed": "ลบ {{name}} ออกจากแชนเนล",
+    "removeMemberFailed": "ลบสมาชิกไม่ได้",
+    "leaveConfirm": "ออกจาก {{name}} หรือไม่",
+    "leaveConfirmDescription": "คุณต้องได้รับเชิญอีกครั้งจึงจะกลับเข้าแชนเนลส่วนตัวได้",
+    "leaveFailed": "ออกจากแชนเนลไม่ได้",
+    "joinFailed": "เข้าร่วมแชนเนลไม่ได้",
+    "deleteConfirm": "ลบ {{name}} หรือไม่",
+    "deleteConfirmDescription": "แชนเนลและข้อความทั้งหมดจะถูกลบถาวรสำหรับสมาชิกทุกคน",
+    "deleteFailed": "ลบแชนเนลไม่ได้",
+    "saveFailed": "บันทึกแชนเนลไม่ได้"
   },
   "notifications": {
     "title": "การแจ้งเตือน",
     "empty": "อ่านครบทุกอย่างแล้ว",
     "markAllRead": "ทำเครื่องหมายว่าอ่านทั้งหมด",
-    "markRead": "ทำเครื่องหมายว่าอ่านแล้ว"
+    "markRead": "ทำเครื่องหมายว่าอ่านแล้ว",
+    "titleWithUnread": "การแจ้งเตือน (ยังไม่ได้อ่าน {{unread}})",
+    "unread": "ยังไม่ได้อ่าน",
+    "loadFailed": "โหลดการแจ้งเตือนไม่ได้"
   },
   "voiceMode": {
     "title": "โหมดเสียง",
@@ -3901,7 +4377,12 @@
       "failed": "ล้มเหลว",
       "cancelled": "ยกเลิกแล้ว"
     },
-    "noFeedback": "ยังไม่มีคำติชม — ให้คะแนนคำตอบเพื่อสร้างชุดข้อมูลของคุณ"
+    "noFeedback": "ยังไม่มีคำติชม — ให้คะแนนคำตอบเพื่อสร้างชุดข้อมูลของคุณ",
+    "deleteSetConfirmTitle": "ลบ \"{{name}}\" หรือไม่",
+    "deleteSetConfirmDescription": "ชุดการประเมินและพรอมต์ในชุดจะถูกลบถาวร",
+    "deleteSetFailed": "ลบชุดการประเมินไม่ได้",
+    "runError": "ข้อผิดพลาด: {{detail}}",
+    "cancelFailed": "ยกเลิกการเรียกใช้ไม่ได้"
   },
   "passwordStrength": {
     "levels": {
@@ -3915,6 +4396,14 @@
       "hasCase": "ตัวพิมพ์ใหญ่และตัวพิมพ์เล็ก",
       "hasNumber": "ตัวเลขอย่างน้อยหนึ่งตัว",
       "tooLong": "ไม่เกิน 72 ไบต์"
+    },
+    "requirements": "ใช้อย่างน้อย 12 อักขระ และไม่เกิน 72 ไบต์ UTF-8 โดยมีตัวพิมพ์ใหญ่ ตัวพิมพ์เล็ก และตัวเลข",
+    "errors": {
+      "minLength": "รหัสผ่านต้องมีอย่างน้อย 12 อักขระ",
+      "tooLong": "รหัสผ่านต้องไม่เกิน 72 ไบต์ UTF-8",
+      "uppercase": "รหัสผ่านต้องมีตัวพิมพ์ใหญ่",
+      "lowercase": "รหัสผ่านต้องมีตัวพิมพ์เล็ก",
+      "number": "รหัสผ่านต้องมีตัวเลข"
     }
   },
   "connectModels": {
@@ -3933,7 +4422,8 @@
       "enable": "เปิดใช้งานผู้ให้บริการ",
       "enabling": "กำลังเปิดใช้งาน…",
       "enabled": "เชื่อมต่อ {{name}} แล้ว — โมเดลของผู้ให้บริการนี้พร้อมใช้งานแล้ว",
-      "enableFailed": "ไม่สามารถเปิดใช้งานผู้ให้บริการได้"
+      "enableFailed": "ไม่สามารถเปิดใช้งานผู้ให้บริการได้",
+      "urlLabel": "URL ของเซิร์ฟเวอร์"
     },
     "cloud": {
       "title": "API บนคลาวด์",
@@ -3942,7 +4432,70 @@
       "connect": "เชื่อมต่อ",
       "connecting": "กำลังเชื่อมต่อ…",
       "connected": "เชื่อมต่อ {{name}} แล้ว — โมเดลของผู้ให้บริการนี้พร้อมใช้งานแล้ว",
-      "saveFailed": "ไม่สามารถบันทึก API Key ได้"
+      "saveFailed": "ไม่สามารถบันทึก API Key ได้",
+      "keyLabel": "คีย์ API ของ {{name}}"
+    },
+    "ollama": {
+      "status": {
+        "checking": "กำลังตรวจสอบความพร้อมใช้งาน…",
+        "healthy": "ทำงานอยู่และพร้อมสำหรับโมเดลในเครื่อง",
+        "offline": "ไม่พบในเครื่องนี้",
+        "disabled": "ปิดใช้งาน — จะไม่มีการตรวจสอบใดๆ"
+      },
+      "recheck": "ตรวจสอบอีกครั้ง",
+      "enable": "เปิดใช้งาน",
+      "disable": "หยุดตรวจสอบ Ollama",
+      "enabledToast": "เปิดใช้งานผู้ให้บริการ Ollama แล้ว",
+      "disabledToast": "ปิดใช้งานการตรวจสอบ Ollama แล้ว — คุณสามารถเปิดใช้งานอีกครั้งได้ในการตั้งค่า",
+      "settingsFailed": "ไม่สามารถอัปเดตการตั้งค่า Ollama ได้",
+      "offlineHint": "ติดตั้ง Ollama จาก ollama.com แล้วระบบจะตรวจพบโดยอัตโนมัติ — หรือใช้ตัวเลือกด้านล่างแทน หากคุณไม่ได้วางแผนจะใช้ Ollama คุณสามารถปิดการตรวจสอบนี้ได้",
+      "healthyHint": "เชื่อมต่อ Ollama แล้ว ดาวน์โหลดโมเดลจากหน้าโมเดล แล้วคุณก็พร้อมสำหรับการแชท"
     }
+  },
+  "modelDownload": {
+    "success": "ดาวน์โหลด {{name}} แล้ว",
+    "failed": "ดาวน์โหลดไม่สำเร็จ: {{error}}",
+    "startFailed": "ไม่สามารถเริ่มดาวน์โหลดได้",
+    "cancelled": "ยกเลิกการดาวน์โหลดแล้ว"
+  },
+  "strands": {
+    "title": "Strands",
+    "subtitle": "เอนจินเอเจนต์ในตัวที่ทำงานบนโมเดล Libre WebUI ของคุณ",
+    "subtitleVersion": "เอนจินเอเจนต์ในตัว, harness {{version}}",
+    "newSession": "เซสชันใหม่",
+    "sessions": "เซสชัน",
+    "noSessions": "ยังไม่มีเซสชัน สร้างหนึ่งรายการเพื่อเริ่ม",
+    "empty": "ขอให้เอเจนต์อ่านหรือแก้ไขไฟล์ในพื้นที่ทำงานของตน",
+    "placeholder": "ขอให้เอนจินทำบางสิ่ง…",
+    "model": "โมเดล",
+    "defaultModel": "โมเดลเริ่มต้น",
+    "send": "ส่ง",
+    "stop": "หยุด",
+    "reasoning": "การใช้เหตุผล",
+    "tool": {
+      "running": "กำลังทำงาน",
+      "done": "เสร็จแล้ว",
+      "failed": "ล้มเหลว"
+    },
+    "cancelled": "ยกเลิกแล้ว",
+    "turnLimit": "หยุดเมื่อถึงขีดจำกัดจำนวนรอบ",
+    "messageCount": "ข้อความ: {{count}}",
+    "deleteSession": "ลบเซสชัน",
+    "deleteConfirm": "ลบ \"{{title}}\" และประวัติหรือไม่",
+    "loadFailed": "ไม่สามารถโหลด Strands ได้",
+    "createFailed": "สร้างเซสชันไม่สำเร็จ",
+    "deleteFailed": "ลบเซสชันไม่สำเร็จ",
+    "saveFailed": "ไม่สามารถบันทึกเซสชันได้",
+    "turnFailed": "เอนจินทำงานรอบนี้ไม่สำเร็จ"
+  },
+  "notFound": {
+    "title": "ไม่พบหน้า",
+    "description": "ไม่มีหน้านี้หรืออาจถูกย้ายแล้ว"
+  },
+  "themeToggle": {
+    "switchToLight": "สลับเป็นโหมดสว่าง",
+    "switchToDark": "สลับเป็นโหมดมืด",
+    "switchToAmoled": "สลับเป็นโหมดดำสนิท",
+    "switchToCelestial": "สลับเป็นโหมดท้องฟ้า"
   }
 }

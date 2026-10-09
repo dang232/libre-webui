@@ -15,7 +15,13 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -64,7 +70,7 @@ const PAGE_META: Record<string, { icon: IconComponent; labelKey: string }> = {
   },
   '/personas': { icon: UserIcon, labelKey: 'sidebar.navigation.personas' },
   '/gallery': { icon: Sparkles, labelKey: 'sidebar.navigation.imagine' },
-  '/agents': { icon: Bot, labelKey: 'sidebar.navigation.agents' },
+  '/strands': { icon: Bot, labelKey: 'sidebar.navigation.strands' },
   '/usage': { icon: ChartNoAxesCombined, labelKey: 'usageAnalytics.title' },
   '/system': { icon: Server, labelKey: 'systemPage.title' },
   '/artifacts': { icon: Package, labelKey: 'tabs.artifacts' },
@@ -79,12 +85,18 @@ const tabIcon = (tab: AppTab): IconComponent => {
 
 const modKey = () => (isMac() ? '⌘' : 'Ctrl');
 
-const ADMIN_ONLY_TAB_PATHS = new Set(['/agents', '/usage', '/system']);
+const ADMIN_ONLY_TAB_PATHS = new Set(['/usage', '/system']);
 
-// Work tabs follow Work access (admins, or everyone once an administrator
-// opens Work up); the listed paths stay admin-only regardless.
-const isRestrictedTab = (tab: AppTab, canWork: boolean) =>
-  tab.kind === 'work' ? !canWork : ADMIN_ONLY_TAB_PATHS.has(tab.path);
+// Work and Strands tabs follow their access modes (admins, or everyone once
+// an administrator opens them up); the listed paths stay admin-only.
+const isRestrictedTab = (
+  tab: AppTab,
+  access: { work: boolean; strands: boolean }
+) => {
+  if (tab.kind === 'work') return !access.work;
+  if (tab.path === '/strands') return !access.strands;
+  return ADMIN_ONLY_TAB_PATHS.has(tab.path);
+};
 
 interface NewTabMenuItem {
   key: string;
@@ -119,7 +131,7 @@ export const AppTabBar: React.FC = () => {
   const sessions = useChatStore(state => state.sessions);
   const currentSession = useChatStore(state => state.currentSession);
   const workTasks = useWorkStore(state => state.tasks);
-  const { systemInfo, isAdmin, canUseWork, canUseAgents } = useAuthStore();
+  const { systemInfo, isAdmin, canUseWork, canUseStrands } = useAuthStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState<NewTabMenuPosition | null>(
     null
@@ -132,13 +144,20 @@ export const AppTabBar: React.FC = () => {
   const newTabButtonRef = useRef<HTMLButtonElement>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
+  const tabButtonsRef = useRef(new Map<string, HTMLButtonElement>());
+  const pendingFocusTabRef = useRef<string | null>(null);
 
   const admin = isAdmin();
   const showAdminWorkspace = systemInfo?.requiresAuth === false || admin;
   const showWork = canUseWork();
+  const showStrands = canUseStrands();
+  const tabAccess = useMemo(
+    () => ({ work: showWork, strands: showStrands }),
+    [showStrands, showWork]
+  );
   const accessibleTabs = showAdminWorkspace
     ? tabs
-    : tabs.filter(tab => !isRestrictedTab(tab, showWork));
+    : tabs.filter(tab => !isRestrictedTab(tab, tabAccess));
 
   useEffect(() => {
     syncWithPath(location.pathname);
@@ -185,22 +204,34 @@ export const AppTabBar: React.FC = () => {
     };
   }, [accessibleTabs.length, i18n.resolvedLanguage, tabs]);
 
-  // Keep the active tab visible when the strip overflows.
-  useEffect(() => {
+  // Keep the complete tab visible, including its sibling close control.
+  useLayoutEffect(() => {
     const strip = stripRef.current;
+    const focusId = pendingFocusTabRef.current;
+    const focusTarget = focusId ? tabButtonsRef.current.get(focusId) : null;
+    if (focusTarget) {
+      pendingFocusTabRef.current = null;
+      focusTarget.focus({ preventScroll: true });
+      focusTarget
+        .closest('[data-tab-item]')
+        ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      return;
+    }
     const active = strip?.querySelector<HTMLElement>('[data-active="true"]');
-    active?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    active
+      ?.closest('[data-tab-item]')
+      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }, [accessibleTabs.length, activeTabId]);
 
   useEffect(() => {
     if (!systemInfo || showAdminWorkspace) return;
     const restrictedTabIds = tabs
-      .filter(tab => isRestrictedTab(tab, showWork))
+      .filter(tab => isRestrictedTab(tab, tabAccess))
       .map(tab => tab.id);
     if (restrictedTabIds.length === 0) return;
     const fallback = closeTabs(restrictedTabIds, 'home');
     if (fallback) navigate(fallback.path, { replace: true });
-  }, [closeTabs, navigate, showAdminWorkspace, showWork, systemInfo, tabs]);
+  }, [closeTabs, navigate, showAdminWorkspace, systemInfo, tabAccess, tabs]);
 
   useEffect(() => {
     if (!menuOpen && !contextMenu) return;
@@ -217,6 +248,7 @@ export const AppTabBar: React.FC = () => {
     };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        if (menuOpen) newTabButtonRef.current?.focus();
         setMenuOpen(false);
         setContextMenu(null);
       }
@@ -273,6 +305,14 @@ export const AppTabBar: React.FC = () => {
       ?.focus();
   }, [contextMenu]);
 
+  const newTabMenuVisible = menuOpen && menuPosition !== null;
+  useEffect(() => {
+    if (!newTabMenuVisible) return;
+    newTabMenuRef.current
+      ?.querySelector<HTMLButtonElement>('[role="menuitem"]:not(:disabled)')
+      ?.focus();
+  }, [newTabMenuVisible]);
+
   const tabTitle = (tab: AppTab): string => {
     if (tab.kind === 'home') return t('tabs.home', 'Home');
     if (tab.kind === 'chat') {
@@ -299,11 +339,54 @@ export const AppTabBar: React.FC = () => {
     return meta ? t(meta.labelKey, tab.path.slice(1)) : tab.path.slice(1);
   };
 
+  // Name the browser tab after the active view so screen reader users hear
+  // where they landed. Only app-defined names are used: chat and Work titles
+  // are user content, and document.title leaks into browser history, window
+  // lists and screen sharing, so those views get a generic label.
+  const activeTab = accessibleTabs.find(tab => tab.id === activeTabId);
+  const activeDocumentTitle = !activeTab
+    ? ''
+    : activeTab.kind === 'chat'
+      ? currentSession?.isPrivate
+        ? t('chat.session.incognito', 'Incognito Chat')
+        : t('tabs.chat', 'Chat')
+      : activeTab.kind === 'work'
+        ? t('tabs.work', 'Work')
+        : tabTitle(activeTab);
+  useEffect(() => {
+    const brand = 'Libre WebUI';
+    document.title =
+      activeDocumentTitle && activeDocumentTitle !== brand
+        ? `${activeDocumentTitle} · ${brand}`
+        : brand;
+    return () => {
+      document.title = brand;
+    };
+  }, [activeDocumentTitle]);
+
+  const closeSingleTab = (tab: AppTab, restoreFocus: boolean) => {
+    const index = accessibleTabs.findIndex(item => item.id === tab.id);
+    if (restoreFocus) {
+      pendingFocusTabRef.current =
+        accessibleTabs[index + 1]?.id ??
+        accessibleTabs[index - 1]?.id ??
+        'home';
+    }
+    const fallback = closeTab(tab.id);
+    if (restoreFocus && fallback) pendingFocusTabRef.current = fallback.id;
+    if (fallback) navigate(fallback.path);
+  };
+
   const handleClose = (event: React.MouseEvent<HTMLElement>, tab: AppTab) => {
     event.stopPropagation();
     event.preventDefault();
-    const fallback = closeTab(tab.id);
-    if (fallback) navigate(fallback.path);
+    const item = event.currentTarget.closest('[data-tab-item]');
+    closeSingleTab(
+      tab,
+      tab.id === activeTabId ||
+        event.detail === 0 ||
+        Boolean(item?.contains(document.activeElement))
+    );
   };
 
   const openContextMenu = (tab: AppTab, x: number, y: number) => {
@@ -325,7 +408,7 @@ export const AppTabBar: React.FC = () => {
   };
 
   const handleTabContextMenu = (
-    event: React.MouseEvent<HTMLButtonElement>,
+    event: React.MouseEvent<HTMLElement>,
     tab: AppTab
   ) => {
     event.preventDefault();
@@ -348,11 +431,12 @@ export const AppTabBar: React.FC = () => {
     openContextMenu(tab, rect.left + 12, rect.bottom + 4);
   };
 
+  // Shared by both menus: the handler lives on the menu element itself.
   const handleContextMenuKeyDown = (
     event: React.KeyboardEvent<HTMLDivElement>
   ) => {
     const items = Array.from(
-      contextMenuRef.current?.querySelectorAll<HTMLButtonElement>(
+      event.currentTarget.querySelectorAll<HTMLButtonElement>(
         '[role="menuitem"]:not(:disabled)'
       ) ?? []
     );
@@ -377,7 +461,9 @@ export const AppTabBar: React.FC = () => {
   };
 
   const closeTabSet = (ids: string[], preferredTabId?: string) => {
+    pendingFocusTabRef.current = preferredTabId ?? activeTabId;
     const fallback = closeTabs(ids, preferredTabId);
+    if (fallback) pendingFocusTabRef.current = fallback.id;
     setContextMenu(null);
     if (fallback) navigate(fallback.path);
   };
@@ -420,14 +506,14 @@ export const AppTabBar: React.FC = () => {
       icon: PAGE_META[path].icon,
       action: () => navigate(path),
     })),
-    ...(canUseAgents()
+    ...(showStrands
       ? [
           {
-            key: '/agents',
-            label: t(PAGE_META['/agents'].labelKey, 'Agents'),
-            icon: PAGE_META['/agents'].icon,
+            key: '/strands',
+            label: t(PAGE_META['/strands'].labelKey, 'Strands'),
+            icon: PAGE_META['/strands'].icon,
             separatorBefore: true,
-            action: () => navigate('/agents'),
+            action: () => navigate('/strands'),
           },
         ]
       : []),
@@ -473,7 +559,7 @@ export const AppTabBar: React.FC = () => {
         ref={stripRef}
         role='tablist'
         aria-label={t('tabs.label', 'Open tabs')}
-        className='tab-scroll-fade flex min-w-0 items-center gap-1 overflow-x-auto p-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+        className='tab-scroll-fade flex min-w-0 items-center gap-1 overflow-x-auto p-0.5 scrollbar-none [&::-webkit-scrollbar]:hidden'
       >
         {accessibleTabs.map(tab => {
           const Icon =
@@ -482,51 +568,76 @@ export const AppTabBar: React.FC = () => {
               : tabIcon(tab);
           const isActive = tab.id === activeTabId;
           return (
-            <button
+            <div
               key={tab.id}
-              type='button'
-              role='tab'
-              aria-selected={isActive}
-              data-active={isActive || undefined}
-              data-tab-id={tab.id}
-              data-testid='app-tab'
-              title={tabTitle(tab)}
-              onClick={() => navigate(tab.path)}
+              data-tab-item={tab.id}
+              data-testid='app-tab-item'
               onContextMenu={event => handleTabContextMenu(event, tab)}
-              onKeyDown={event => handleTabContextKeyDown(event, tab)}
+              onMouseDown={event => {
+                // Firefox otherwise starts autoscroll inside the tab strip
+                // and consumes the auxiliary click used to close the tab.
+                if (event.button === 1) event.preventDefault();
+              }}
               onAuxClick={event => {
                 if (event.button === 1 && tab.id !== 'home') {
                   handleClose(event, tab);
                 }
               }}
               className={cn(
-                'group flex h-7 min-w-0 flex-none items-center gap-1.5 rounded-lg border text-[13px] transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40',
-                tab.id === 'home' ? 'px-2.5' : 'ps-2.5 pe-1',
+                'group flex h-7 min-w-0 flex-none items-center gap-1.5 rounded-lg border text-[13px] transition-colors duration-150',
+                tab.id !== 'home' && 'pe-1',
                 isActive
-                  ? 'border-black/[0.06] bg-gray-50 text-gray-950 shadow-subtle dark:border-white/[0.07] dark:bg-dark-100 dark:text-dark-950'
+                  ? 'border-black/6 bg-gray-50 text-gray-950 shadow-subtle dark:border-white/[0.07] dark:bg-dark-100 dark:text-dark-950'
                   : 'border-transparent text-gray-500 hover:bg-white/60 hover:text-gray-900 dark:text-dark-600 dark:hover:bg-dark-200/60 dark:hover:text-dark-900'
               )}
             >
-              <Icon className='h-3.5 w-3.5 shrink-0' />
-              <span className='max-w-[9rem] truncate'>{tabTitle(tab)}</span>
+              <button
+                ref={element => {
+                  if (element) tabButtonsRef.current.set(tab.id, element);
+                  else tabButtonsRef.current.delete(tab.id);
+                }}
+                type='button'
+                role='tab'
+                tabIndex={0}
+                aria-selected={isActive}
+                data-active={isActive || undefined}
+                data-tab-id={tab.id}
+                data-testid='app-tab'
+                title={tabTitle(tab)}
+                onClick={() => {
+                  // Route rendering may suspend. A quick close must already
+                  // treat this tab as active and navigate to its fallback.
+                  syncWithPath(tab.path);
+                  navigate(tab.path);
+                }}
+                onKeyDown={event => handleTabContextKeyDown(event, tab)}
+                className={cn(
+                  'flex h-full min-w-0 items-center gap-1.5 rounded-md ps-2.5 outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500',
+                  tab.id === 'home' && 'pe-2.5'
+                )}
+              >
+                <Icon className='h-3.5 w-3.5 shrink-0' />
+                <span className='max-w-36 truncate'>{tabTitle(tab)}</span>
+              </button>
               {tab.id !== 'home' && (
-                <span
-                  role='button'
-                  tabIndex={-1}
+                <button
+                  type='button'
+                  tabIndex={0}
                   aria-label={t('tabs.close', 'Close tab')}
                   data-testid='app-tab-close'
                   onClick={event => handleClose(event, tab)}
+                  onKeyDown={event => handleTabContextKeyDown(event, tab)}
                   className={cn(
-                    'flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-gray-400 transition-opacity hover:bg-black/[0.06] hover:text-gray-700 dark:text-dark-500 dark:hover:bg-white/[0.08] dark:hover:text-dark-800',
+                    'flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-gray-400 transition-opacity hover:bg-black/6 hover:text-gray-700 focus-visible:ring-2 focus-visible:ring-primary-500 dark:text-dark-500 dark:hover:bg-white/8 dark:hover:text-dark-800',
                     isActive
                       ? 'opacity-100'
-                      : 'sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-visible:opacity-100'
+                      : 'sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100'
                   )}
                 >
                   <X className='h-3 w-3' />
-                </span>
+                </button>
               )}
-            </button>
+            </div>
           );
         })}
       </div>
@@ -544,7 +655,7 @@ export const AppTabBar: React.FC = () => {
             data-testid='app-tab-context-menu'
             onContextMenu={event => event.preventDefault()}
             onKeyDown={handleContextMenuKeyDown}
-            className='fixed z-[100] w-56 rounded-xl border border-line bg-surface-overlay/95 p-1 shadow-overlay backdrop-blur-xl animate-fade-in motion-reduce:animate-none'
+            className='fixed z-100 w-56 rounded-xl border border-line bg-surface-overlay/95 p-1 shadow-overlay backdrop-blur-xl animate-fade-in motion-reduce:animate-none'
             style={{ left: contextMenu.x, top: contextMenu.y }}
           >
             <button
@@ -553,11 +664,10 @@ export const AppTabBar: React.FC = () => {
               data-testid='app-tab-context-close'
               disabled={contextTab.id === 'home'}
               onClick={() => {
-                const fallback = closeTab(contextTab.id);
+                closeSingleTab(contextTab, true);
                 setContextMenu(null);
-                if (fallback) navigate(fallback.path);
               }}
-              className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] text-ink-muted transition-colors hover:bg-black/[0.05] hover:text-ink disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-white/[0.06]'
+              className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] text-ink-muted transition-colors hover:bg-black/5 hover:text-ink disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-white/6'
             >
               <X className='h-4 w-4 shrink-0' />
               <span>{t('tabs.close', 'Close tab')}</span>
@@ -568,7 +678,7 @@ export const AppTabBar: React.FC = () => {
               data-testid='app-tab-context-close-others'
               disabled={otherTabIds.length === 0}
               onClick={() => closeTabSet(otherTabIds, contextTab.id)}
-              className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] text-ink-muted transition-colors hover:bg-black/[0.05] hover:text-ink disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-white/[0.06]'
+              className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] text-ink-muted transition-colors hover:bg-black/5 hover:text-ink disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-white/6'
             >
               <SquareX className='h-4 w-4 shrink-0' />
               <span>{t('tabs.closeOthers', 'Close other tabs')}</span>
@@ -579,7 +689,7 @@ export const AppTabBar: React.FC = () => {
               data-testid='app-tab-context-close-right'
               disabled={rightTabIds.length === 0}
               onClick={() => closeTabSet(rightTabIds, contextTab.id)}
-              className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] text-ink-muted transition-colors hover:bg-black/[0.05] hover:text-ink disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-white/[0.06]'
+              className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] text-ink-muted transition-colors hover:bg-black/5 hover:text-ink disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-white/6'
             >
               <PanelRightClose className='h-4 w-4 shrink-0' />
               <span>{t('tabs.closeRight', 'Close tabs to the right')}</span>
@@ -591,7 +701,7 @@ export const AppTabBar: React.FC = () => {
               data-testid='app-tab-context-close-all'
               disabled={allClosableTabIds.length === 0}
               onClick={() => closeTabSet(allClosableTabIds, 'home')}
-              className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] text-ink-muted transition-colors hover:bg-black/[0.05] hover:text-ink disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-white/[0.06]'
+              className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] text-ink-muted transition-colors hover:bg-black/5 hover:text-ink disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-white/6'
             >
               <ListX className='h-4 w-4 shrink-0' />
               <span>{t('tabs.closeAll', 'Close all tabs')}</span>
@@ -606,9 +716,10 @@ export const AppTabBar: React.FC = () => {
           type='button'
           aria-label={t('tabs.new', 'New tab')}
           aria-expanded={menuOpen}
+          aria-haspopup='menu'
           data-testid='app-tab-new'
           onClick={() => setMenuOpen(open => !open)}
-          className='flex h-7 w-7 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-white/60 hover:text-gray-900 dark:text-dark-600 dark:hover:bg-dark-200/60 dark:hover:text-dark-900 outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40'
+          className='flex h-7 w-7 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-white/60 hover:text-gray-900 dark:text-dark-600 dark:hover:bg-dark-200/60 dark:hover:text-dark-900 outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500'
         >
           <Plus className='h-4 w-4' />
         </button>
@@ -618,8 +729,17 @@ export const AppTabBar: React.FC = () => {
             <div
               ref={newTabMenuRef}
               role='menu'
+              aria-label={t('tabs.new', 'New tab')}
               data-testid='app-tab-new-menu'
-              className='fixed z-[100] max-h-[calc(100dvh-4rem)] overflow-y-auto rounded-xl border border-line bg-surface-overlay/95 p-1 shadow-overlay backdrop-blur-xl animate-fade-in motion-reduce:animate-none'
+              onKeyDown={event => {
+                if (event.key === 'Tab') {
+                  newTabButtonRef.current?.focus();
+                  setMenuOpen(false);
+                  return;
+                }
+                handleContextMenuKeyDown(event);
+              }}
+              className='fixed z-100 max-h-[calc(100dvh-4rem)] overflow-y-auto rounded-xl border border-line bg-surface-overlay/95 p-1 shadow-overlay backdrop-blur-xl animate-fade-in motion-reduce:animate-none'
               style={menuPosition}
             >
               {menuItems.map(item => (
@@ -634,7 +754,7 @@ export const AppTabBar: React.FC = () => {
                       setMenuOpen(false);
                       item.action();
                     }}
-                    className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] text-ink-muted transition-colors hover:bg-black/[0.05] hover:text-ink dark:hover:bg-white/[0.06]'
+                    className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] text-ink-muted transition-colors hover:bg-black/5 hover:text-ink dark:hover:bg-white/6'
                   >
                     <item.icon className='h-4 w-4 shrink-0' />
                     <span className='min-w-0 flex-1 truncate text-start'>

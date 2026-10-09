@@ -3216,3 +3216,4 @@ test('a failed run persists the error as its summary and a failed exit state', a
   // Work the run did before it failed is still recorded.
   assert.deepEqual(run.changedFiles, ['half-done.txt']);
 });
+

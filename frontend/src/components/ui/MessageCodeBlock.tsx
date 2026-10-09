@@ -26,6 +26,7 @@ import {
   Eye,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 import { useAppStore } from '@/store/appStore';
 import { generateId } from '@/utils';
 import { createLogger } from '@/utils/logger';
@@ -153,6 +154,7 @@ export function MessageCodeBlock({
       }, 2000);
     } catch (error) {
       logger.error('Failed to copy code:', error);
+      toast.error(t('chat.message.copyFailed'));
     }
   };
 
@@ -216,7 +218,7 @@ export function MessageCodeBlock({
             <button
               type='button'
               onClick={() => setManualExpanded(collapsed)}
-              className='flex h-7 w-7 items-center justify-center rounded-md text-ink-subtle transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/70 dark:text-dark-500 dark:hover:bg-white/[0.08] dark:hover:text-dark-900'
+              className='flex h-7 w-7 items-center justify-center rounded-md text-ink-subtle transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-400/70 dark:text-dark-500 dark:hover:bg-white/8 dark:hover:text-dark-900'
               title={
                 collapsed ? t('artifacts.expand') : t('artifacts.collapse')
               }
@@ -236,7 +238,7 @@ export function MessageCodeBlock({
             type='button'
             onClick={handleDownload}
             disabled={!code}
-            className='flex h-7 w-7 items-center justify-center rounded-md text-ink-subtle transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/70 disabled:cursor-default disabled:opacity-35 dark:text-dark-500 dark:hover:bg-white/[0.08] dark:hover:text-dark-900'
+            className='flex h-7 w-7 items-center justify-center rounded-md text-ink-subtle transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-400/70 disabled:cursor-default disabled:opacity-35 dark:text-dark-500 dark:hover:bg-white/8 dark:hover:text-dark-900'
             title={t('common.download')}
             aria-label={`${t('common.download')}: ${languageLabel}`}
           >
@@ -246,7 +248,7 @@ export function MessageCodeBlock({
             <button
               type='button'
               onClick={handlePreview}
-              className='flex h-7 w-7 items-center justify-center rounded-md text-ink-subtle transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/70 dark:text-dark-500 dark:hover:bg-white/[0.08] dark:hover:text-dark-900'
+              className='flex h-7 w-7 items-center justify-center rounded-md text-ink-subtle transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-400/70 dark:text-dark-500 dark:hover:bg-white/8 dark:hover:text-dark-900'
               title={t('artifacts.preview')}
               aria-label={`${t('artifacts.preview')}: ${languageLabel}`}
             >
@@ -257,7 +259,7 @@ export function MessageCodeBlock({
             type='button'
             onClick={handleCopy}
             disabled={!code}
-            className='flex h-7 w-7 items-center justify-center rounded-md text-ink-subtle transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/70 disabled:cursor-default disabled:opacity-35 dark:text-dark-500 dark:hover:bg-white/[0.08] dark:hover:text-dark-900'
+            className='flex h-7 w-7 items-center justify-center rounded-md text-ink-subtle transition-colors hover:bg-surface-subtle hover:text-ink focus:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-400/70 disabled:cursor-default disabled:opacity-35 dark:text-dark-500 dark:hover:bg-white/8 dark:hover:text-dark-900'
             title={copyLabel}
             aria-label={accessibleCopyLabel}
           >
