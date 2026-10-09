@@ -28,6 +28,7 @@ import {
   validateAlcoreSignup,
   type AlcoreSignupDeps,
 } from './alcoreSignup.ts';
+import en from '../i18n/locales/en.json';
 
 const STRONG = 'Sunrise-Bridge-42';
 
@@ -90,7 +91,14 @@ describe('validateAlcoreSignup', () => {
     });
     assert.equal(result.ok, false);
     assert.equal(result.code, 'passwordPolicy');
-    assert.match(result.detail ?? '', /12 characters/);
+    assert.equal(result.detail, 'passwordStrength.errors.minLength');
+    // The key must resolve to the user-facing policy sentence.
+    const resolved = (
+      en as unknown as {
+        passwordStrength: { errors: { minLength: string } };
+      }
+    ).passwordStrength.errors.minLength;
+    assert.match(resolved, /12 characters/);
   });
 });
 
