@@ -1,0 +1,14 @@
+# Container image vulnerability waivers (HIGH/CRITICAL gate).
+#
+# Each entry below names a CVE that has an upstream fix but cannot be
+# patched from this repository yet. Re-check on every base-image or
+# toolchain bump and delete the line once the fixed package lands.
+#
+# CVE-2026-78667 / CVE-2026-97031 (Go stdlib net/http + crypto/tls DoS):
+# present only through the Alpine docker-cli binary (Go 1.26.8), which the
+# runner stage needs so the Work runtime can drive the host daemon.
+# Alpine 3.24 has no rebuilt docker-cli with Go >= 1.26.9 yet; neither an
+# npm audit fix nor a lockfile change can reach it. The exposed surface is
+# the local Docker client, not a network server.
+CVE-2026-78667
+CVE-2026-97031
