@@ -3540,7 +3540,7 @@ test(
     assert.equal(prefixDryRun.sourceFingerprint, dryRun.sourceFingerprint);
     assert.match(
       prefixDryRun.warnings.join('\n'),
-      /exact version 10 migration-ledger prefix.*--resume can safely apply through version 33/i
+      /exact version 10 migration-ledger prefix.*--resume can safely apply through version 32/i
     );
     const codec = {
       encrypt: value => value,
