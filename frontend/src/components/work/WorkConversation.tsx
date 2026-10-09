@@ -148,6 +148,7 @@ function WorkAvatar({
   persona,
   size = 'message',
 }: WorkAvatarProps) {
+  const { t } = useTranslation();
   const [failedAvatar, setFailedAvatar] = useState<string | null>(null);
 
   if (role === 'assistant') {
@@ -187,7 +188,7 @@ function WorkAvatar({
     );
   }
 
-  const label = user?.username || 'User';
+  const label = user?.username || t('chatMessage.you');
   const avatar = user?.avatar?.trim() || '';
   const hasAvatar = Boolean(avatar) && avatar !== failedAvatar;
 
@@ -344,7 +345,7 @@ function ProviderReasoningMessage({ message }: { message: WorkMessage }) {
         <span className='flex min-w-0 items-center gap-2'>
           <Brain className='h-3.5 w-3.5 shrink-0 text-[rgb(48,121,255)]' />
           <span className='truncate'>
-            {t('libreClaw.metrics.reasoning', {
+            {t('common.reasoning', {
               defaultValue: 'Reasoning',
             })}
           </span>
@@ -609,10 +610,11 @@ export function WorkConversation({
                       persona={isUserMessage ? undefined : taskPersona}
                     />
                     <div
+                      data-user-bubble={isUserMessage ? '' : undefined}
                       className={cn(
                         'min-w-0 max-w-[88%]',
                         isUserMessage &&
-                          'rounded-2xl rounded-se-md bg-ink px-4 py-2.5 text-ink-inverse'
+                          'rounded-2xl rounded-se-md border border-line bg-surface-subtle px-4 py-2.5 text-ink'
                       )}
                     >
                       {isUserMessage ? (
@@ -620,7 +622,7 @@ export function WorkConversation({
                           {(delegatedBy || reportFrom) && (
                             <p
                               data-testid='work-delegation-label'
-                              className='mb-1 text-[11px] font-medium uppercase tracking-wide opacity-70'
+                              className='mb-1 text-[11px] font-medium uppercase tracking-wide opacity-70 rtl:tracking-normal'
                             >
                               {delegatedBy
                                 ? t('work.conversation.delegatedBy', {
@@ -635,7 +637,7 @@ export function WorkConversation({
                           )}
                           <p
                             dir='auto'
-                            className='whitespace-pre-wrap break-words text-sm leading-relaxed'
+                            className='whitespace-pre-wrap wrap-break-word text-sm leading-relaxed'
                           >
                             {message.content}
                           </p>
@@ -720,7 +722,7 @@ export function WorkConversation({
             followTailRef.current = true;
             setShowNewActivity(false);
           }}
-          className='absolute bottom-4 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-line bg-surface-overlay/95 px-3 py-2 text-xs font-medium text-ink shadow-overlay backdrop-blur transition-colors hover:bg-surface-raised'
+          className='absolute bottom-4 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-line bg-surface-overlay/95 px-3 py-2 text-xs font-medium text-ink shadow-overlay backdrop-blur-sm transition-colors hover:bg-surface-raised'
         >
           <ArrowDown className='h-3.5 w-3.5' />
           {t('work.live.newActivity', { defaultValue: 'New activity' })}

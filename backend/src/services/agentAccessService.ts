@@ -22,30 +22,52 @@
  * decision is a persisted system setting read on every check, mirroring the
  * Work access mode. The AGENT_CLI_MODELS_ENABLED environment variable, when
  * set, pins the value either way and locks the runtime toggle.
+ * Installations that saved the older shared agents decision keep it until an
+ * admin changes this setting.
  */
 
-import { getSystemSetting, setSystemSetting } from './systemSettingsService.js';
+import {
+  getSystemSettings,
+  setSystemSetting,
+} from './systemSettingsService.js';
 
-export const AGENTS_ENABLED_KEY = 'agents_enabled';
+/** Legacy shared decision, read only as the CLI fallback. */
+const LEGACY_AGENTS_ENABLED_KEY = 'agents_enabled';
+export const AGENT_CLI_MODELS_ENABLED_KEY = 'agent_cli_models_enabled';
 
-/** Whether the environment pins the setting, locking the admin toggle. */
-export function agentsEnabledLockedByEnv(): boolean {
-  const env = process.env.AGENT_CLI_MODELS_ENABLED;
-  return env === 'true' || env === 'false';
+function environmentDecision(name: string): boolean | undefined {
+  const value = process.env[name];
+  return value === 'true' ? true : value === 'false' ? false : undefined;
 }
 
-export async function getAgentsEnabled(): Promise<boolean> {
-  const env = process.env.AGENT_CLI_MODELS_ENABLED;
-  if (env === 'false') return false;
-  if (env === 'true') return true;
+export function agentCliModelsEnabledLockedByEnv(): boolean {
+  return environmentDecision('AGENT_CLI_MODELS_ENABLED') !== undefined;
+}
+
+export async function getAgentCliModelsEnabled(): Promise<boolean> {
+  const env = environmentDecision('AGENT_CLI_MODELS_ENABLED');
+  if (env !== undefined) return env;
   try {
-    return (await getSystemSetting(AGENTS_ENABLED_KEY)) === 'true';
+    const saved = await getSystemSettings([
+      AGENT_CLI_MODELS_ENABLED_KEY,
+      LEGACY_AGENTS_ENABLED_KEY,
+    ]);
+    if (
+      Object.prototype.hasOwnProperty.call(saved, AGENT_CLI_MODELS_ENABLED_KEY)
+    ) {
+      return saved[AGENT_CLI_MODELS_ENABLED_KEY] === 'true';
+    }
+    return saved[LEGACY_AGENTS_ENABLED_KEY] === 'true';
   } catch {
-    // No database means no persisted opt-in; stay disabled.
     return false;
   }
 }
 
-export async function setAgentsEnabled(enabled: boolean): Promise<void> {
-  await setSystemSetting(AGENTS_ENABLED_KEY, enabled ? 'true' : 'false');
+export async function setAgentCliModelsEnabled(
+  enabled: boolean
+): Promise<void> {
+  await setSystemSetting(
+    AGENT_CLI_MODELS_ENABLED_KEY,
+    enabled ? 'true' : 'false'
+  );
 }

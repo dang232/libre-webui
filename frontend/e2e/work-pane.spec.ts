@@ -334,7 +334,7 @@ test('creates a persistent Work task without exposing network controls', async (
 
   await expect(page.getByTestId('work-page')).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Start a new Work task' })
+    page.getByRole('heading', { name: 'What would you like to work on?' })
   ).toBeVisible();
   const landing = page.getByTestId('work-landing');
   await expect(landing).toBeVisible();
@@ -967,7 +967,7 @@ test('conversation file chips open the written file in the workspace', async ({
   await page.getByTestId('command-palette-input').fill('Other landing page');
   await page
     .getByTestId('command-palette')
-    .getByRole('button', { name: /Other landing page/ })
+    .getByRole('option', { name: /Other landing page/ })
     .click();
   await expect(page).toHaveURL(/\/work\/other-chip-task$/);
   await expect(page.getByText('No file has been opened here.')).toBeVisible();
@@ -1405,10 +1405,10 @@ test('loads plugin Work models when Ollama is offline', async ({ page }) => {
   await expect(
     page
       .getByTestId('work-model-select')
-      .locator('option', { hasText: 'remote-tools-model' })
+      .locator('option', { hasText: 'Remote Tools Model' })
   ).toHaveCount(1);
   await expect(page.getByTestId('work-model-selector-trigger')).toContainText(
-    'remote-tools-model'
+    'Remote Tools Model'
   );
   await expect(page.getByTestId('work-submit-button')).toBeDisabled();
 });
@@ -1715,7 +1715,7 @@ test('deletes the selected sidebar task directly without a second dirty prompt',
 
   await expect(page).toHaveURL(/\/work$/);
   await expect(
-    page.getByRole('heading', { name: 'Start a new Work task' })
+    page.getByRole('heading', { name: 'What would you like to work on?' })
   ).toBeVisible();
   expect(dialogs).toHaveLength(1);
   expect(dialogs[0]).toContain(
@@ -1745,9 +1745,14 @@ test('surfaces an initial list failure after a later silent poll fails', async (
   await page.goto('/work/list-error-workspace');
 
   await expect(page.getByText('Task detail loaded')).toBeVisible();
-  await expect(page.getByText('Initial Work task list failed')).toBeVisible({
-    timeout: 3_000,
-  });
+  await expect(page.getByTestId('work-error-banner')).toContainText(
+    'Initial Work task list failed',
+    { timeout: 3_000 }
+  );
+  // No toast covers a list failure, so the banner's text is announced.
+  await expect(page.getByTestId('live-announcer-assertive')).toHaveText(
+    'Initial Work task list failed'
+  );
 });
 
 test('loads bounded Work history pages without polling full task details', async ({
@@ -2200,16 +2205,19 @@ test('shows tool activity, saves files, and isolates preview content', async ({
   await expect(
     previewToolbar.getByRole('textbox', { name: 'Optional start command' })
   ).toBeVisible();
-  const accent600 = await page.evaluate(
-    () =>
-      `rgb(${getComputedStyle(document.documentElement)
-        .getPropertyValue('--color-primary-600')
-        .trim()
-        .split(/\s+/)
-        .join(', ')})`
+  // Primary actions use the neutral inverse treatment, not the accent.
+  const [inkFill, inkText] = await page.evaluate(() =>
+    ['--color-ink', '--color-ink-inverse'].map(
+      name =>
+        `rgb(${getComputedStyle(document.documentElement)
+          .getPropertyValue(name)
+          .trim()
+          .split(/\s+/)
+          .join(', ')})`
+    )
   );
-  await expect(startPreviewButton).toHaveCSS('background-color', accent600);
-  await expect(startPreviewButton).toHaveCSS('color', 'rgb(255, 255, 255)');
+  await expect(startPreviewButton).toHaveCSS('background-color', inkFill);
+  await expect(startPreviewButton).toHaveCSS('color', inkText);
   await startPreviewButton.click();
   const frame = page.getByTestId('work-preview-frame');
   // Same-origin proxying means the origin varies by environment; the
@@ -2481,10 +2489,8 @@ test('mirrors the translated Work workspace and resize controls in Arabic', asyn
   const newTaskButton = page.getByRole('button', {
     name: 'بدء مهمة جديدة',
   });
-  await expect(newTaskButton.locator('svg')).toHaveCSS(
-    'transform',
-    'matrix(-1, 0, 0, -1, 0, 0)'
-  );
+  // Tailwind v4 flips the arrow with the standalone rotate property.
+  await expect(newTaskButton.locator('svg')).toHaveCSS('rotate', '180deg');
 });
 
 test('formats and highlights workspace code in dark and light mode', async ({
@@ -2615,21 +2621,24 @@ test('formats and highlights workspace code in dark and light mode', async ({
   await expect(editor).toHaveValue(
     'export function Card() {\n  return <article>Calm</article>;\n}\n'
   );
-  const accent600 = await page.evaluate(
-    () =>
-      `rgb(${getComputedStyle(document.documentElement)
-        .getPropertyValue('--color-primary-600')
-        .trim()
-        .split(/\s+/)
-        .join(', ')})`
+  // Primary actions use the neutral inverse treatment, not the accent.
+  const [inkFill, inkText] = await page.evaluate(() =>
+    ['--color-ink', '--color-ink-inverse'].map(
+      name =>
+        `rgb(${getComputedStyle(document.documentElement)
+          .getPropertyValue(name)
+          .trim()
+          .split(/\s+/)
+          .join(', ')})`
+    )
   );
   await expect(page.getByTestId('work-save-file-button')).toHaveCSS(
     'background-color',
-    accent600
+    inkFill
   );
   await expect(page.getByTestId('work-save-file-button')).toHaveCSS(
     'color',
-    'rgb(255, 255, 255)'
+    inkText
   );
   await editor.press('Control+s');
   await expect
@@ -2777,9 +2786,16 @@ test('keeps the current workspace draft editable when saving fails', async ({
   await saveButton.click();
   expect((await failedSaveResponsePromise).status()).toBe(500);
 
+  // The toast interrupts; the banner keeps the failure visible without
+  // reading it a second time.
   await expect(
-    page.getByRole('status').filter({ hasText: 'Current save failed.' })
+    page.getByRole('alert').filter({ hasText: 'Current save failed.' })
   ).toBeVisible();
+  await expect(page.getByTestId('work-error-banner')).toContainText(
+    'Current save failed.'
+  );
+  await page.waitForTimeout(300);
+  await expect(page.getByTestId('live-announcer-assertive')).toHaveText('');
   await expect(editor).toHaveValue('export const value = 2;');
   await expect(editor).toBeEnabled();
   await expect(saveButton).toBeEnabled();
@@ -2929,6 +2945,16 @@ test('preserves edits typed while the same workspace file is saving', async ({
   mock.releaseWorkFileUpdates();
   await expect(saveButton).toBeEnabled();
   await expect(editor).toHaveValue('export const value = 3;');
+
+  const savedNotice = page
+    .getByRole('status')
+    .filter({ hasText: 'File saved.' });
+  await expect(savedNotice).toBeVisible();
+  await savedNotice
+    .locator('..')
+    .getByRole('button', { name: 'Close', exact: true })
+    .click();
+  await expect(savedNotice).toHaveCount(0);
 
   await saveButton.click();
   await expect.poll(() => mock.workFileUpdateRequests.length).toBe(2);
@@ -3510,11 +3536,34 @@ test('manages local workspace Git without exposing remote credentials', async ({
 
   await page.getByRole('checkbox', { name: 'Select src/app.ts' }).check();
   await page.getByTestId('work-git-stage-button').click();
+  const stagedToast = page
+    .getByRole('status')
+    .filter({ hasText: 'Changes staged.' });
+  await expect(stagedToast).toBeVisible();
+  const dismissStaged = stagedToast
+    .locator('..')
+    .getByRole('button', { name: 'Close', exact: true });
+  await dismissStaged.focus();
+  await page.keyboard.press('Shift+Tab');
+  await expect(dismissStaged).not.toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(dismissStaged).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(stagedToast).toHaveCount(0);
   await expect(page.getByTestId('work-git-commit-button')).toBeDisabled();
   await page.getByTestId('work-git-commit-input').fill('Save app changes');
   await expect(page.getByTestId('work-git-commit-button')).toBeEnabled();
   await page.getByTestId('work-git-commit-button').click();
   await expect(page.getByText('Save app changes')).toBeVisible();
+  const committedToast = page
+    .getByRole('status')
+    .filter({ hasText: 'Commit created.' });
+  await expect(committedToast).toBeVisible();
+  await committedToast
+    .locator('..')
+    .getByRole('button', { name: 'Close', exact: true })
+    .click();
+  await expect(committedToast).toHaveCount(0);
 
   await page.getByTestId('work-git-branch-input').fill('feature/local-ui');
   await page.getByTestId('work-git-create-branch-button').click();

@@ -38,14 +38,22 @@
     "custom": "Sérsniðið",
     "remove": "Fjarlægja",
     "home": "Heim",
-    "more": "Meira"
+    "more": "Meira",
+    "provider": "Veitandi",
+    "agent": "Fulltrúi",
+    "reasoning": "Rökstuðningur",
+    "skipToContent": "Fara í efni"
   },
   "brand": {
     "name": "Alcore",
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "backendConnectionFailed": "Ekki tókst að tengjast bakendaþjónustunni"
+    "backendConnectionFailed": "Ekki tókst að tengjast bakendaþjónustunni",
+    "ollamaUnavailable": "Ollama-þjónustan er ekki tiltæk. Enn er hægt að nota líkön úr viðbótum.",
+    "connecting": "Tengist bakenda… ({{attempt}}/{{total}})",
+    "startingUp": "Ræsi…",
+    "backendUnreachableHint": "Gakktu úr skugga um að bakendinn sé í gangi og reyndu aftur."
   },
   "auth": {
     "login": {
@@ -206,7 +214,9 @@
       "removed": "Aðgangslykill fjarlægður.",
       "removeFailed": "Ekki tókst að fjarlægja aðgangslykilinn.",
       "signInButton": "Skrá inn með aðgangslykli",
-      "signInFailed": "Innskráning með aðgangslykli mistókst."
+      "signInFailed": "Innskráning með aðgangslykli mistókst.",
+      "removeConfirmTitle": "Fjarlægja þennan aðgangslykil?",
+      "removeConfirmDescription": "„{{name}}“ virkar ekki lengur til innskráningar. Þú getur skráð hann aftur síðar."
     },
     "alcore": {
       "title": "This server uses Alcore Auth for sign-in.",
@@ -272,6 +282,12 @@
       "tryAgain": "Try again",
       "restart": "Restart sign-in",
       "support": "Need help? Contact your server admin or see"
+    },
+    "password": {
+      "show": "Sýna lykilorð",
+      "hide": "Fela lykilorð",
+      "showConfirmation": "Sýna staðfestingu lykilorðs",
+      "hideConfirmation": "Fela staðfestingu lykilorðs"
     }
   },
   "setup": {
@@ -324,7 +340,8 @@
       "envNote": "Þessi lykill er einnig vistaður í backend/.env skránni sem ENCRYPTION_KEY",
       "acknowledgment": "Ég hef vistað dulritunarlyklinn minn á öruggum stað og skil að ef ég týni honum gætu gögn glatast.",
       "confirmRequired": "Staðfestu að þú hafir vistað dulritunarlyklinn",
-      "continue": "Halda áfram í Alcore"
+      "continue": "Halda áfram í Alcore",
+      "loadFailed": "Ekki tókst að hlaða dulkóðunarlyklinum. Reyndu aftur til að halda áfram."
     },
     "connectModels": {
       "title": "Tengdu líkönin þín",
@@ -418,7 +435,8 @@
       "toolsOn": "Tól virk — líkanið má kalla á samþykkt tól",
       "toolsOff": "Leyfa líkaninu að kalla á tól fyrir þessi skilaboð",
       "thinkingOn": "Hugsun virk ({{level}})",
-      "thinkingOff": "Hugsa fyrir svarið"
+      "thinkingOff": "Hugsa fyrir svarið",
+      "thinkingUpdateFailed": "Ekki tókst að uppfæra hugsunarstillinguna"
     },
     "session": {
       "new": "Nýtt spjall",
@@ -454,7 +472,8 @@
         "move": "Færa í möppu",
         "remove": "Fjarlægja úr möppu",
         "delete": "Eyða möppu",
-        "deleteConfirm": "Eyða þessari möppu? Spjöll innan hennar haldast."
+        "deleteConfirm": "Eyða þessari möppu? Spjöll innan hennar haldast.",
+        "rename": "Endurnefna möppu"
       },
       "shareChat": "Deila spjalli…"
     },
@@ -472,7 +491,8 @@
       "selectBeforePrivateChat": "Veldu tiltækt líkan áður en þú byrjar einkaspjall",
       "selectBeforeSending": "Veldu tiltækt líkan áður en þú sendir",
       "selectBeforeRegenerating": "Veldu tiltækt líkan áður en svarið er endurgert",
-      "connectDescription": "Engin líkön eru tengd ennþá. Veldu uppsprettu hér fyrir neðan — staðbundið keyrsluumhverfi, þinn eigin netþjón eða ský-API — og þú getur byrjað að spjalla innan við mínútu."
+      "connectDescription": "Engin líkön eru tengd ennþá. Veldu uppsprettu hér fyrir neðan — staðbundið keyrsluumhverfi, þinn eigin netþjón eða ský-API — og þú getur byrjað að spjalla innan við mínútu.",
+      "pullCommand": "ollama pull llama3.2:3b"
     },
     "footer": {
       "disclaimer": "Gervigreind getur gert mistök - staðfestu mikilvægar upplýsingar",
@@ -486,7 +506,13 @@
       "browse": "flettu",
       "unsupportedFileType": "Skráargerð er ekki studd: {{name}}",
       "maxImagesAllowed": "Að hámarki {{count}} myndir eru leyfðar",
-      "imageTooLarge": "Myndin {{name}} er of stór (hámark 10 MB)"
+      "imageTooLarge": "Myndin {{name}} er of stór (hámark 10 MB)",
+      "readFailed": "Ekki tókst að lesa {{name}}",
+      "uploadAlt": "Upphleðsla {{number}}",
+      "removeImage": "Fjarlægja mynd {{number}}",
+      "addMore": "Bæta við fleiri myndum ({{count}}/{{max}})",
+      "uploading": "Hleð upp",
+      "removeDocument": "Fjarlægja {{name}}"
     },
     "structuredOutput": {
       "title": "Svarssnið",
@@ -537,7 +563,8 @@
       "compactionOff": "Slökkt fyrir þetta spjall"
     },
     "message": {
-      "sources": "Heimildir"
+      "sources": "Heimildir",
+      "copyFailed": "Ekki tókst að afrita á klippispjaldið"
     },
     "toasts": {
       "chatCreated": "Nýtt spjall búið til",
@@ -581,7 +608,8 @@
       "generationRateLimitedWeekly": "Weekly budget spent — new chats pause until Monday 00:00 UTC. Try again later or upgrade your plan.",
       "generationRateLimitedMonthly": "Monthly budget spent — new chats pause until the 1st of next month (UTC). Try again later or upgrade your plan.",
       "generationFailedSupport": "The reply couldn't be finished — retry, and if it keeps happening report it from Settings > About > GitHub issues.",
-      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access."
+      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access.",
+      "archiveFailed": "Ekki tókst að setja þetta spjall í geymslu"
     },
     "documents": {
       "title": "Skjöl í samhengi"
@@ -614,7 +642,25 @@
     "delegate": {
       "action": "Run as Work task"
     },
-    "sharedReadOnly": "Deilt af {{owner}} — aðeins til skoðunar"
+    "sharedReadOnly": "Deilt af {{owner}} — aðeins til skoðunar",
+    "branch": {
+      "variants": "{{count}} afbrigði",
+      "variants_plural": "{{count}} afbrigði",
+      "selectVariant": "Velja afbrigði {{number}}",
+      "generating": "býr til...",
+      "select": "velja"
+    },
+    "sources": {
+      "fullContextFailed": "Ekki tókst að uppfæra stillingu fyrir heil skjöl",
+      "usedByRetrieval": "Notað í svörum",
+      "triggerLabel": "Heimildir ({{count}})"
+    },
+    "announce": {
+      "replyFinished": "{{name}} svaraði: {{text}}",
+      "replyFinishedNoText": "{{name}} lauk við að svara.",
+      "codeBlock": "kóðablokk",
+      "generationStopped": "Myndun stöðvuð"
+    }
   },
   "sidebar": {
     "navigation": {
@@ -636,10 +682,12 @@
       "prompts": "Leiðbeiningar",
       "skills": "Færni",
       "tools": "Tól",
-      "channels": "Rásir"
+      "channels": "Rásir",
+      "strands": "Strands"
     },
     "toggleSize": "Skipta um stærð hliðarspjalds",
-    "expandSidebar": "Stækka hliðarspjald"
+    "expandSidebar": "Stækka hliðarspjald",
+    "ariaLabel": "Hliðarstika"
   },
   "user": {
     "menu": {
@@ -696,7 +744,8 @@
       "sessions": "Setur",
       "apiKeys": "API lyklar",
       "notifications": "Tilkynningar",
-      "apiPlatform": "API Platform"
+      "apiPlatform": "API Platform",
+      "ollamaDisabled": "Stjórnandi hefur slökkt á Ollama"
     },
     "appearance": {
       "title": "Útlit",
@@ -921,7 +970,8 @@
       "modelPrice": "Price / 1M",
       "modelStatus": "Status",
       "modelFree": "Free",
-      "modelDeprecated": "Deprecated"
+      "modelDeprecated": "Deprecated",
+      "dismissError": "Loka villu"
     },
     "generation": {
       "title": "Myndunarstillingar",
@@ -1024,7 +1074,8 @@
         "deleteFailed": "Ekki tókst að eyða safninu",
         "assignFailed": "Ekki tókst að færa skjalið",
         "share": "Deila safni",
-        "shared": "deilt"
+        "shared": "deilt",
+        "assignTo": "Safn fyrir {{name}}"
       },
       "library": {
         "title": "Hlaðin skjöl",
@@ -1166,7 +1217,8 @@
         "title": "Spjall í geymslu",
         "empty": "Ekkert spjall í geymslu",
         "unarchive": "Taka úr geymslu"
-      }
+      },
+      "clearAllConfirm": "Ertu viss um að þú viljir eyða allri spjallsögu? Ekki er hægt að afturkalla þetta."
     },
     "about": {
       "title": "Um",
@@ -1178,43 +1230,36 @@
       "features": {
         "privacy": {
           "title": "Einkaleynd fyrst",
-          "description": "Gögnin þín eru geymd á tækinu þínu"
+          "description": "Self-hosted workspace — your data stays under your control"
         },
         "openSource": {
           "title": "Opinn hugbúnaður",
-          "description": "Ókeypis og opinn hugbúnaður"
+          "description": "Open-source software maintained by the Alcore team"
         },
         "localInference": {
           "title": "Staðbundin ályktun",
-          "description": "Keyrðu gervigreindarlíkön staðbundið með Ollama"
+          "description": "Use local Ollama models or connect to your Alcore provider"
         }
       },
-      "openSourceBy": "Opinn hugbúnaður frá {{company}}",
+      "openSourceBy": "Built by {{company}}",
       "links": {
         "title": "Tenglar",
-        "github": "GitHub",
-        "githubDescription": "Skoðaðu frumkóða og leggðu til",
         "website": "Vefsíða",
-        "websiteDescription": "Heimsæktu vefsíðuna okkar",
+        "websiteDescription": "Visit the Alcore website",
         "documentation": "Documentation",
         "reportIssue": "Tilkynna vandamál",
         "reportIssueDescription": "Villutilkynningar og eiginleikabeiðnir",
-        "documentationDescription": "Guides, tutorials and API reference",
-        "forgejo": "Forgejo Mirror",
-        "forgejoDescription": "Self-hosted Forgejo repository",
-        "sponsor": "Styrkja",
-        "sponsorDescription": "Hjálpaðu til við að fjármagna verkefnið",
-        "star": "Stjarna á GitHub",
-        "starDescription": "Stjarna hjálpar öðrum að finna verkefnið"
+        "documentationDescription": "Guides and documentation for Alcore"
       },
       "version": "Útgáfa {{version}}",
       "updates": {
-        "checking": "Leita að uppfærslum…",
-        "upToDate": "Þú ert með nýjustu útgáfuna",
-        "updateAvailable": "Útgáfa {{version}} er í boði",
-        "ahead": "Á undan nýjustu útgáfunni ({{version}})",
-        "checkFailed": "Ekki tókst að athuga uppfærslur",
         "viewChangelog": "Skoða breytingaskrá"
+      },
+      "ollama": {
+        "title": "Ollama staða",
+        "version": "Útgáfa",
+        "healthy": "Heilbrigt",
+        "unhealthy": "Óheilbrigt"
       }
     },
     "groups": {
@@ -1280,7 +1325,11 @@
       "unknownDevice": "Óþekkt tæki",
       "createdAt": "Innskráning",
       "lastSeenAt": "Síðast virk",
-      "expiresAt": "Rennur út"
+      "expiresAt": "Rennur út",
+      "signOutConfirmTitle": "Skrá þessa setu út?",
+      "signOutConfirmDescription": "{{device}} verður skráð út strax og þarf að skrá sig inn aftur.",
+      "signOutOthersConfirmTitle": "Skrá aðrar setur út?",
+      "signOutOthersConfirmDescription": "{{count}} aðrar setur verða skráðar út strax. Þessi seta helst innskráð."
     },
     "apiKeys": {
       "title": "API lyklar",
@@ -1314,7 +1363,9 @@
       "createdAt": "Búinn til",
       "lastUsedAt": "Síðast notaður",
       "expiresAt": "Rennur út",
-      "neverExpires": "Aldrei"
+      "neverExpires": "Aldrei",
+      "revokeConfirmTitle": "Afturkalla „{{name}}“?",
+      "revokeConfirmDescription": "Allt sem notar þennan API lykil hættir strax að virka. Ekki er hægt að afturkalla þetta."
     },
     "notifications": {
       "title": "Tilkynningar",
@@ -1484,7 +1535,20 @@
   "models": {
     "title": "Líkön",
     "noModels": "Engin líkön uppsett",
-    "noModelsFound": "Engin líkön fundust"
+    "noModelsFound": "Engin líkön fundust",
+    "subtitle": "Sæktu, stjórnaðu og fylgstu með Ollama líkönunum þínum",
+    "installed": "Uppsett líkön",
+    "available": "Tiltæk líkön",
+    "pull": "Sækja líkan",
+    "pulling": "Sækir...",
+    "delete": "Eyða líkani",
+    "deleting": "Eyðir...",
+    "size": "Stærð",
+    "modified": "Breytt",
+    "family": "Fjölskylda",
+    "parameters": "Færibreytur",
+    "quantization": "Magngreining",
+    "pullFirst": "Sæktu líkan til að byrja"
   },
   "personas": {
     "title": "Persónur",
@@ -1516,7 +1580,8 @@
     "model": "Líkan",
     "size": "Stærð",
     "quality": "Gæði",
-    "created": "Búin til"
+    "created": "Búin til",
+    "lightboxLabel": "Forskoðun myndar"
   },
   "errors": {
     "generic": "Villa kom upp",
@@ -1565,7 +1630,13 @@
   },
   "modelManager": {
     "sections": {
-      "catalog": "Líkanaskrá"
+      "catalog": "Líkanaskrá",
+      "pull": "Sækja nýtt líkan",
+      "library": "Skoða safn",
+      "huggingface": "HuggingFace Hub",
+      "running": "Líkön í gangi",
+      "local": "Staðbundin líkön",
+      "advanced": "Ítarlegar aðgerðir"
     },
     "catalog": {
       "searchPlaceholder": "Leita að líkönum eftir nafni eða veitu...",
@@ -1588,12 +1659,159 @@
       "hide": "Fela fyrir notendum",
       "show": "Sýna notendum",
       "star": "Stjörnumerkja {{name}}",
-      "unstar": "Fjarlægja stjörnu af {{name}}"
+      "unstar": "Fjarlægja stjörnu af {{name}}",
+      "providerOllama": "Ollama",
+      "filterLabel": "Sía líkön",
+      "displayName": "Birtingarheiti fyrir {{name}}"
     },
     "huggingface": {
       "checkingGguf": "Leita að GGUF skrám...",
       "noGgufAvailable": "Engar GGUF skrár tiltækar fyrir beina Ollama niðurhal",
-      "ggufFilesCount": "GGUF skrár ({{count}}) - Sækja beint í Ollama"
+      "ggufFilesCount": "GGUF skrár ({{count}}) - Sækja beint í Ollama",
+      "browseAll": "Skoða allt á HuggingFace",
+      "noModelsFound": "Engin líkön fundust",
+      "noResults": "Engin líkön fundust. Prófaðu að breyta leit eða síum.",
+      "browseAllLink": "Skoða allt",
+      "search": "Leita í HuggingFace líkönum...",
+      "by": "eftir",
+      "gated": "Takmarkaður aðgangur",
+      "viewOnHF": "Skoða á HuggingFace",
+      "sortDownloads": "Niðurhal",
+      "sortLikes": "Líkar við",
+      "sortRecent": "Nýlegt",
+      "taskTextGeneration": "Textagerð",
+      "taskTextToSpeech": "Texti í tal",
+      "taskTextToImage": "Texti í mynd",
+      "taskSpeechRecognition": "Talgreining",
+      "tasks": {
+        "textGen": "Textagerð",
+        "tts": "Texti í tal",
+        "image": "Texti í mynd",
+        "stt": "Talgreining"
+      },
+      "sort": {
+        "downloads": "Mest niðurhlaðið",
+        "likes": "Mest vinsælt",
+        "recent": "Nýlega uppfært"
+      }
+    },
+    "title": "Líkön",
+    "loading": "Hleður líkönum...",
+    "systemStatus": {
+      "online": "Ollama á netinu",
+      "offline": "Ollama ekki á netinu",
+      "models": "líkan",
+      "models_plural": "líkön",
+      "running": "í gangi",
+      "vram": "VRAM"
+    },
+    "pull": {
+      "placeholder": "Sláðu inn nafn líkans (t.d. llama3.2:3b, deepseek-r1:14b)",
+      "button": "Sækja",
+      "cancel": "Hætta við",
+      "popular": "Vinsæl líkön:",
+      "browseAll": "Skoða öll líkön á ollama.com",
+      "success": "Líkan {{name}} sótt",
+      "cancelled": "Hætt var við að sækja líkan",
+      "failed": "Ekki tókst að sækja líkan",
+      "enterName": "Sláðu inn nafn líkans",
+      "restricted": "Uppsetning líkana er takmörkuð við stjórnendur á þessu tilviki."
+    },
+    "progress": {
+      "starting": "Frumstillir...",
+      "pulling": "Sækir líkan...",
+      "pullingLayer": "sækir",
+      "verifying": "Sannreynir heilleika...",
+      "verifyingDigest": "staðfestir sha256 digest",
+      "writing": "Skrifar skrá...",
+      "cleaning": "Hreinsar upp..."
+    },
+    "library": {
+      "available": "tiltæk",
+      "search": "Leita að líkönum...",
+      "noResults": "Engin líkön fundust sem passa við leitarskilyrði",
+      "installed": "Uppsett",
+      "more": "+{{count}} fleiri",
+      "refresh": "Endurhlaða safni"
+    },
+    "local": {
+      "noModels": "Engin líkön uppsett ennþá",
+      "pullToStart": "Sæktu líkan hér að ofan til að byrja",
+      "installed": "uppsett",
+      "running": "Í gangi",
+      "info": "Upplýsingar",
+      "copy": "Afrita",
+      "delete": "Eyða",
+      "deleteConfirm": "Ertu viss um að þú viljir eyða líkani \"{{name}}\"?",
+      "deleteSuccess": "Líkani {{name}} eytt",
+      "deleteFailed": "Ekki tókst að eyða líkani"
+    },
+    "advanced": {
+      "createModel": "Búa til líkan",
+      "fromModelfile": "Úr Modelfile",
+      "copyModel": "Afrita líkan",
+      "duplicateExisting": "Tvítaka núverandi",
+      "testEmbeddings": "Prófa innfellingar",
+      "generateVectors": "Búa til vigra",
+      "healthCheck": "Heilbrigðisskoðun",
+      "testConnection": "Prófa tengingu",
+      "healthy": "Ollama er heilbrigt!"
+    },
+    "modals": {
+      "details": {
+        "title": "Upplýsingar um líkan",
+        "info": "Líkansupplýsingar",
+        "family": "Fjölskylda",
+        "parameters": "Færibreytur",
+        "quantization": "Magngreining",
+        "format": "Snið",
+        "systemPrompt": "Kerfisfyrirmæli",
+        "template": "Sniðmát",
+        "license": "Leyfi",
+        "modelfile": "Modelfile",
+        "noDetails": "Engar upplýsingar tiltækar"
+      },
+      "copy": {
+        "title": "Afrita líkan",
+        "source": "Upprunalíkan",
+        "selectModel": "Veldu líkan...",
+        "newName": "Nýtt nafn líkans",
+        "placeholder": "t.d. mitt-sérsniðna-líkan",
+        "copying": "Afritar...",
+        "button": "Afrita líkan",
+        "success": "Líkan afritað sem {{name}}",
+        "failed": "Ekki tókst að afrita líkan",
+        "enterBoth": "Sláðu inn bæði upprunanafn og áfangastað"
+      },
+      "create": {
+        "title": "Búa til sérsniðið líkan",
+        "name": "Nafn líkans",
+        "namePlaceholder": "t.d. minn-aðstoðarmaður",
+        "modelfile": "Modelfile",
+        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM Þú ert hjálpsamur aðstoðarmaður.",
+        "see": "Sjá",
+        "docs": "Modelfile skjölun",
+        "docsLink": "fyrir setningafræðiviðmið",
+        "creating": "Býr til...",
+        "button": "Búa til líkan",
+        "success": "Líkan {{name}} búið til",
+        "failed": "Ekki tókst að búa til líkan",
+        "enterBoth": "Sláðu inn nafn líkans og Modelfile innihald"
+      },
+      "embeddings": {
+        "title": "Prófa innfellingar",
+        "model": "Innfellingalíkan",
+        "selectModel": "Veldu líkan...",
+        "recommended": "Mælt með: nomic-embed-text, mxbai-embed-large",
+        "input": "Inntakstexti",
+        "placeholder": "Sláðu inn texta til að búa til innfellingar fyrir...",
+        "generating": "Býr til...",
+        "button": "Búa til innfellingar",
+        "result": "Niðurstaða ({{count}} víddir)",
+        "success": "Búin til {{count}}-vídd innfellingavigur",
+        "failed": "Ekki tókst að búa til innfellingar",
+        "enterBoth": "Veldu líkan og sláðu inn texta"
+      }
     }
   },
   "personaManager": {
@@ -1615,7 +1833,10 @@
     "deleteConfirm": "Ertu viss um að þú viljir eyða \"{{name}}\"?",
     "deleteSuccess": "Persónu \"{{name}}\" eytt",
     "downloadSuccess": "Persóna \"{{name}}\" sótt",
-    "failed": "Ekki tókst að {{action}} persónu"
+    "failed": "Ekki tókst að {{action}} persónu",
+    "loadFailed": "Ekki tókst að hlaða persónunum þínum.",
+    "deleteFailed": "Mistókst að eyða persónu",
+    "downloadFailed": "Mistókst að sækja persónu"
   },
   "personaForm": {
     "title": {
@@ -1747,7 +1968,8 @@
       "promptHint": "Leiðbeining sem hvert nýtt spjall með þessari persónu byrjar á.",
       "noPrompt": "Engin leiðbeining",
       "version": "Útgáfa tenginga {{version}}"
-    }
+    },
+    "sections": "Hlutar persónu"
   },
   "personaCard": {
     "enhanced": "Aukin",
@@ -1764,7 +1986,16 @@
     "backupSuccess": "Öryggisafrit persónu sótt",
     "dnaSuccess": "DNA persónu flutt út",
     "failed": "Ekki tókst að {{action}}",
-    "shareTooltip": "Deila þessari persónu"
+    "shareTooltip": "Deila þessari persónu",
+    "wipeFailed": "Mistókst að hreinsa minningar",
+    "backupFailed": "Mistókst að afrita persónu til öryggis",
+    "exportDnaFailed": "Mistókst að flytja út DNA persónu",
+    "favorite": "Uppáhald",
+    "memoryStatus": {
+      "active": "Virk",
+      "wiped": "Hreinsuð",
+      "backed_up": "Afrituð"
+    }
   },
   "userManager": {
     "title": "Notendastjórnun",
@@ -1793,7 +2024,10 @@
     "noUsersMatching": "Engir notendur passa við leitina",
     "columns": {
       "role": "Hlutverk",
-      "created": "Stofnað"
+      "created": "Stofnað",
+      "user": "Notandi",
+      "email": "Netfang",
+      "actions": "Aðgerðir"
     },
     "roles": {
       "admin": "Stjórnandi",
@@ -1832,7 +2066,10 @@
       "createSuccess": "Notandi stofnaður",
       "updateSuccess": "Notandi uppfærður",
       "createFailed": "Ekki tókst að stofna notanda",
-      "updateFailed": "Ekki tókst að uppfæra notanda"
+      "updateFailed": "Ekki tókst að uppfæra notanda",
+      "usernamePlaceholder": "Sláðu inn notandanafn",
+      "emailPlaceholder": "Sláðu inn netfang (valfrjálst)",
+      "passwordPlaceholder": "Sláðu inn lykilorð"
     },
     "workAccess": {
       "title": "Work-aðgangur",
@@ -1925,7 +2162,28 @@
       "memberOf": "Hópar",
       "featuresLabel": "Aðgangur að eiginleikum",
       "grantsLabel": "Heimildir",
-      "grantVia": "í gegnum"
+      "grantVia": "í gegnum",
+      "deleteConfirmTitle": "Eyða hópnum „{{name}}“?",
+      "deleteConfirmDescription": "Meðlimir missa aðgang sem þeir höfðu aðeins í gegnum þennan hóp. Aðgangarnir sjálfir eru ekki fjarlægðir.",
+      "statuses": {
+        "active": "Virkur",
+        "pending": "Bíður samþykkis"
+      },
+      "features": {
+        "work": "Vinna",
+        "model-download": "Niðurhal líkana",
+        "web-search": "Vefleit",
+        "strands": "Strands-vél",
+        "tools": "Tól",
+        "stt": "Tal í texta",
+        "tts": "Texti í tal",
+        "voice-mode": "Raddstilling",
+        "voice-cloning": "Raddafritun"
+      },
+      "grantViaKinds": {
+        "user": "bein úthlutun",
+        "group": "hópur"
+      }
     },
     "audit": {
       "title": "Öryggisatvikaskrá",
@@ -2012,13 +2270,60 @@
       "save": "Vista",
       "saving": "Vistar…",
       "saved": "Tölvupóststillingar vistaðar.",
-      "saveFailed": "Ekki tókst að vista tölvupóststillingarnar."
+      "saveFailed": "Ekki tókst að vista tölvupóststillingarnar.",
+      "security": {
+        "starttls": "STARTTLS (gátt 587)",
+        "tls": "TLS (gátt 465)",
+        "none": "Ekkert (aðeins fyrir traust net)"
+      },
+      "templateTitle": "Útlit tölvupósts",
+      "templateHint": "Veldu ljóst eða dökkt sniðmát fyrir fréttayfirlit og tilkynningapósta.",
+      "themeLabel": "Sniðmát tölvupósts",
+      "themeLight": "Ljóst",
+      "themeDark": "Dökkt",
+      "previewTitle": "Forskoðun sniðmáts",
+      "previewLoading": "Hleð forskoðun…",
+      "previewFailed": "Ekki tókst að hlaða forskoðun tölvupóstsins.",
+      "previewHeading": "Fréttayfirlitið þitt",
+      "previewIntro": "Forskoðun á daglega fréttapóstinum þínum.",
+      "previewMarkdown": "## Helstu fréttir dagsins\n\n- Nýtt úr tækni og rannsóknum\n- Fréttir frá völdum miðlum\n\n**Samantekt:** Daglegu fréttirnar þínar eru tilbúnar til lestrar.",
+      "previewLinkLabel": "Opna niðurstöðuna"
+    },
+    "modelAccess": {
+      "title": "Niðurhal líkana",
+      "description": "Leyfa öllum virkum notendum að sækja líkön frá Ollama og Hugging Face-vafranum. Stjórnendur geta alltaf sótt líkön.",
+      "saved": "Aðgangur að niðurhali líkana uppfærður",
+      "saveFailed": "Ekki tókst að uppfæra aðgang að niðurhali líkana"
+    },
+    "ollamaProvider": {
+      "title": "Ollama-veitandi",
+      "description": "Þegar slökkt er á þessu hættir forritið alveg að athuga með Ollama — engar heilsuathuganir, engar viðvaranir. Endapunkturinn getur bent á hvaða Ollama-samhæfa gátt sem er.",
+      "saved": "Stillingar Ollama-veitanda vistaðar",
+      "saveFailed": "Ekki tókst að vista stillingar Ollama-veitanda",
+      "baseUrlLabel": "Endapunktur-URL fyrir Ollama"
+    },
+    "strandsAccess": {
+      "title": "Strands-vél",
+      "description": "Veldu hverjir mega nota innbyggða Strands-umboðsmanninn. Hann getur lesið og breytt skrám á einkavinnusvæði hverrar lotu, en getur ekki keyrt skeljarskipanir.",
+      "saved": "Aðgangur að Strands uppfærður",
+      "saveFailed": "Ekki tókst að uppfæra aðgang að Strands",
+      "lockedByEnv": "Fest með umhverfisbreytunni LIBRE_STRANDS_ACCESS.",
+      "modes": {
+        "disabled": "Slökkt",
+        "admins": "Stjórnendur",
+        "all-users": "Allir notendur"
+      }
+    },
+    "agentCliAccess": {
+      "title": "Líkön CLI-agenta",
+      "description": "Stjórnendur geta notað uppsett Pi, OpenCode, Codex og Claude Code sem spjalllíkön. Þau keyra á hýsivélinni utan Work-sandkassa.",
+      "lockedByEnv": "Fest með umhverfisbreytunni AGENT_CLI_MODELS_ENABLED."
     }
   },
   "usageAnalytics": {
     "eyebrow": "Stjórnun",
     "title": "Notkun veitu",
-    "description": "Fylgstu með útbundnum API köllum og líkananotkun yfir virkar viðbætur á þessu tilviki.",
+    "description": "Fylgstu með líkanabeiðnum og notkun þjónustuveitenda og umboðsaðila á þessu tilviki.",
     "days": "{{count}} dagar",
     "refresh": "Uppfæra notkun",
     "loadFailed": "Ekki tókst að hlaða notkun veitu.",
@@ -2065,7 +2370,7 @@
       "notCharted": "Veldu til að hlaða þessu líkani í grafið"
     },
     "providers": {
-      "title": "Umferð virkra viðbóta",
+      "title": "Umferð þjónustuveitenda og umboðsaðila",
       "description": "Fjöldi beiðna, áreiðanleiki og svartími eftir þjónustuveitanda.",
       "share": "{{percent}}% kalla",
       "failures": "{{count}} mistókust eða var hætt við",
@@ -2083,7 +2388,7 @@
     },
     "empty": {
       "title": "Engar beiningar til þjónustu enn",
-      "description": "Beiningar birtast hér eftir að virk viðbót sér um spjall, vinnu, ígræðslu, mynd, tal, hljóð eða myndbandabeiningar."
+      "description": "Beiðnir birtast hér eftir að þjónustuveitandi eða umboðsaðili afgreiðir spjall, Work, innfellingar, myndir, tal, hljóð eða myndskeið."
     },
     "privacyNote": "Notkun er mæld á netþjóninum við jaðar útleiðarviðbótar. Alcore geymir þjónustu, líkan, tímasetningu, stöðu og skráða teljara—aldrei kvaðningu, svör, endapunkta, skilríki eða villumeldingar þjónustu. Heildarfjöldi táknanna inniheldur aðeins beiningar þar sem þjónustan skilaði notkunarmetögögnum.",
     "heatmap": {
@@ -2095,6 +2400,14 @@
       "less": "Minna",
       "more": "Meira",
       "yearTotal": "{{formatted}} köll síðastliðið ár"
+    },
+    "agents": {
+      "title": "Fulltrúar",
+      "description": "Köll í CLI-umboðsmenn og Strands-vélina.",
+      "noCalls": "Engin skráð köll á þessu tímabili",
+      "unreported": "Tákn ekki tilkynnt",
+      "topModels": "Mest notuðu líkön",
+      "legacy": "Þessi þjónn veitir ekki fulla sundurliðun umboðsaðila. Tiltækar færslur umboðsaðila birtast hér að neðan."
     }
   },
   "systemPage": {
@@ -2309,7 +2622,11 @@
       "harmful": "Skaðlegt",
       "formatting": "Snið"
     },
-    "feedbackComment": "Bæta við athugasemd…"
+    "feedbackComment": "Bæta við athugasemd…",
+    "user": "Notandi",
+    "feedbackFailed": "Ekki tókst að vista endurgjöfina þína",
+    "openImage": "Opna mynd {{number}}",
+    "uploadedImageAlt": "Upphlaðin mynd {{number}}"
   },
   "imageGallery": {
     "title": "Myndasafn",
@@ -2321,7 +2638,8 @@
     "deleteSuccess": "Mynd eytt",
     "deleteFailed": "Ekki tókst að eyða mynd",
     "loadMore": "Hlaða fleiri ({{current}} af {{total}})",
-    "loadFailed": "Ekki tókst að hlaða myndasafni"
+    "loadFailed": "Ekki tókst að hlaða myndasafni",
+    "downloadFailed": "Ekki tókst að sækja mynd"
   },
   "imageGeneration": {
     "title": "Búa til mynd",
@@ -2397,7 +2715,10 @@
       "image": "Myndir",
       "video": "Myndbönd",
       "audio": "Hljóð"
-    }
+    },
+    "deleteConfirmTitle": "Eyða þessu atriði?",
+    "deleteConfirmDescription": "Miðlinum sem var búinn til verður eytt varanlega.",
+    "previewFailed": "Forskoðun ekki tiltæk"
   },
   "errorBoundary": {
     "title": "Eitthvað fór úrskeiðis",
@@ -2475,7 +2796,8 @@
     "previousVersion": "Fyrri útgáfa",
     "nextVersion": "Næsta útgáfa",
     "print": "Print",
-    "exportCsv": "Export CSV"
+    "exportCsv": "Export CSV",
+    "resizePanel": "Breyta stærð spjalds"
   },
   "personaImportExport": {
     "title": "Flytja inn og út persónur",
@@ -2513,7 +2835,10 @@
     "generation": "Myndun:",
     "modelLoad": "Hleðsla líkans:",
     "totalTime": "Heildartími:",
-    "generatedAt": "Myndað kl.:"
+    "generatedAt": "Myndað kl.:",
+    "notAvailable": "Á ekki við",
+    "tokenCount": "{{tokens}} tóka",
+    "tokensPerSecond": "{{value}} t/s"
   },
   "userMenu": {
     "loggedOut": "Útskráning tókst",
@@ -2572,7 +2897,9 @@
       "httpWarning": "HTTP dulkóðar ekki skilríki eða umferð. Notaðu það aðeins á traustu neti.",
       "invalidBaseUrl": "Grunn-URL geta ekki innihaldið fyrirspurnarstreng eða brot.",
       "invalidApiPath": "Verður að byrja á / og mega ekki innihalda URL, fyrirspurn, brot eða .. hluta",
-      "tooLong": "Gildið er of langt"
+      "tooLong": "Gildið er of langt",
+      "resetConfirmTitle": "Endurstilla á sjálfgefið?",
+      "resetConfirmDescription": "Þetta hreinsar öll vistuð gildi fyrir {{name}}, þar á meðal API lykla og önnur auðkenni. Ekki er hægt að afturkalla þetta."
     }
   },
   "huggingface": {
@@ -2592,7 +2919,10 @@
   },
   "demoMode": {
     "title": "Kynningarhamur",
-    "github": "GitHub"
+    "github": "GitHub",
+    "defaultMessage": "Þetta er kynningarútgáfa, aðeins til sýnis. Ollama-bakendinn er ekki tengdur.",
+    "viewOnGithub": "Skoða á GitHub",
+    "dismiss": "Loka"
   },
   "libreClaw": {
     "title": "Fulltrúar",
@@ -2755,8 +3085,8 @@
       "status": "Staða: {{status}}"
     },
     "landing": {
-      "title": "Hefja nýtt vinnuverkefni",
-      "description": "Gefðu staðbundnu líkani eða líkani frá stilltum þjónustuaðila varanlegt, einangrað vinnusvæði. Það getur skoðað skrár, keyrt verkfæri og haldið áfram þar sem frá var horfið þegar þú kemur aftur.",
+      "title": "Hvað viltu vinna að?",
+      "description": "Lýstu verkefni. Líkanið þitt fær eigið vinnusvæði.",
       "isolated": "Einangrað",
       "isolatedBody": "Hvert verkefni fær eigin gám og skrár.",
       "durable": "Varanlegt",
@@ -2785,7 +3115,11 @@
         "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
         "attachTooMany": "Only {{max}} files can be attached at once.",
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
-      }
+      },
+      "engine": "Vél",
+      "libreModels": "Libre WebUI-líkön",
+      "strandsDisabled": "Strands-vélin er ekki í boði fyrir aðganginn þinn.",
+      "modelLabel": "Líkan"
     },
     "conversation": {
       "ready": "Vinnusvæði tilbúið",
@@ -2825,8 +3159,18 @@
         "checksPending": "Prófanir í bið",
         "stallNudges": "Ábendingar um stöðnun",
         "ambiguityNudges": "Ábendingar um endurfestingu",
-        "stoppedBy": "Stöðvað af"
-      }
+        "stoppedBy": "Stöðvað af",
+        "reasons": {
+          "round": "lotutakmark",
+          "toolCall": "takmark á tólakalli",
+          "approvalTimeout": "tímamörk samþykkis",
+          "computerStall": "tölvan festist"
+        }
+      },
+      "skillTraceSavedWorked": "Skráð: virkaði",
+      "skillTraceSavedFailed": "Skráð: mistókst",
+      "connectionClosed": "Lifandi tengingu Vinnu var lokað.",
+      "reconnectingBackground": "Lifandi uppfærslur tengjast aftur í bakgrunni."
     },
     "runtime": {
       "unavailable": "Keyrsluumhverfi ekki tiltækt",
@@ -2834,7 +3178,7 @@
       "readyOllama": "Docker tilbúið",
       "readyPlugin": "Docker + viðbót tilbúin",
       "readyHybrid": "Docker + líkön tilbúin",
-      "reason": "Docker og tiltækur Ollama- eða viðbótarþjónustuaðili fyrir líkan eru nauðsynleg."
+      "reason": "Work-keyrsluumhverfi og tiltækur líkanaveitandi eru nauðsynleg."
     },
     "workspace": {
       "label": "Yfirlit vinnusvæðis",
@@ -2869,7 +3213,11 @@
       "changes": "Breytingar",
       "changesSince": "Það sem breyttist frá síðustu umferð",
       "diffLabel": "Breytingar frá síðustu umferð: {{path}}",
-      "diffFolded": "{{count}} óbreyttar línur"
+      "diffFolded": "{{count}} óbreyttar línur",
+      "diffAdded": "Bætt við",
+      "diffRemoved": "Fjarlægt",
+      "unsavedChanges": "óvistaðar breytingar",
+      "editingLocked": "Hægt er að breyta þegar umferðinni lýkur."
     },
     "activity": {
       "empty": "Skipanir, skráaraðgerðir og niðurstöður verkfæra birtast hér.",
@@ -2880,7 +3228,9 @@
         "toolCall": "Verkfærakall",
         "toolResult": "Niðurstaða verkfæris",
         "error": "Villa"
-      }
+      },
+      "arguments": "Færibreytur tóls",
+      "output": "Úttak tóls"
     },
     "preview": {
       "command": "Valfrjáls ræsingarskipun",
@@ -2909,7 +3259,8 @@
       "saveFailed": "Ekki tókst að vista þessa skrá.",
       "saved": "Skrá vistuð.",
       "previewFailed": "Ekki tókst að hefja forskoðun.",
-      "previewStopFailed": "Ekki tókst að stöðva forskoðun."
+      "previewStopFailed": "Ekki tókst að stöðva forskoðun.",
+      "sendFailed": "Ekki tókst að senda skilaboðin."
     },
     "terminal": {
       "connecting": "Opna skel í sandkassanum…",
@@ -2961,7 +3312,18 @@
       "noFilterMatches": "Engar breyttar skrár passa við þessa síu.",
       "allChanges": "Allar breytingar",
       "diffTruncated": "Þessi diff er styttur.",
-      "binaryFile": "Tvíundarskrá, enginn textadiff."
+      "binaryFile": "Tvíundarskrá, enginn textadiff.",
+      "statusLabels": {
+        "modified": "Breytt",
+        "added": "Bætt við",
+        "deleted": "Eytt",
+        "renamed": "Endurnefnt",
+        "copied": "Afritað",
+        "typeChanged": "Tegund breytt",
+        "untracked": "Ekki rakið"
+      },
+      "stagedState": "í undirbúningi",
+      "aheadBehind": "{{ahead}} á undan, {{behind}} á eftir"
     },
     "hostWorkspace": {
       "hint": "Skildu eftir autt fyrir einangrað vinnusvæði, eða beindu verkinu á möppu á þessari vél.",
@@ -2988,7 +3350,8 @@
       "unmute": "Kveikja á hljóði",
       "mute": "Þagga",
       "finished": "Þetta verkefni er lokið. Opnaðu það aftur til að fá skjáinn til baka.",
-      "reopenOpen": "Opna verkefni aftur og opna skjáinn"
+      "reopenOpen": "Opna verkefni aftur og opna skjáinn",
+      "teachSaveFailed": "Ekki tókst að vista þessa sýnikennslu."
     },
     "computerSetup": {
       "title": "Work Computer",
@@ -3004,7 +3367,7 @@
       "label": "Ráða sem fulltrúa (valfrjálst)",
       "none": "Engin persóna (einskiptisverk)",
       "hint": "Þetta verk verður nefndur fulltrúi: það heldur persónunni, er fest í hliðarstikunni og birtir eina stöðulínu eftir hverja keyrslu.",
-      "description": "Veldu persónu til að breyta þessu verki í varanlegan fulltrúa með eigin auðkenni."
+      "description": "Veldu persónu til að halda þessu verkefni sem nafngreindum fulltrúa."
     },
     "agent": {
       "openScreen": "Opna fulla skjásýn",
@@ -3025,7 +3388,11 @@
       "approvalsToggleFailed": "Ekki tókst að uppfæra samþykki.",
       "approvalRuleLine": "Alltaf leyft",
       "approvalRuleDelete": "Fjarlægja reglu",
-      "approvalRuleDeleteFailed": "Ekki tókst að fjarlægja regluna."
+      "approvalRuleDeleteFailed": "Ekki tókst að fjarlægja regluna.",
+      "routinesLoadFailed": "Ekki tókst að hlaða venjum.",
+      "skillsLoadFailed": "Ekki tókst að hlaða kenndri færni.",
+      "approvalsLoadFailed": "Ekki tókst að hlaða samþykktarstillingum.",
+      "routinePaused": "Í bið"
     },
     "approval": {
       "title": "Samþykkis er þörf",
@@ -3033,7 +3400,16 @@
       "allowOnce": "Leyfa einu sinni",
       "allowAlways": "Leyfa alltaf",
       "deny": "Hafna",
-      "failed": "Ekki tókst að senda ákvörðunina."
+      "failed": "Ekki tókst að senda ákvörðunina.",
+      "details": "Upplýsingar um aðgerð",
+      "fields": {
+        "command": "Skipun",
+        "path": "Slóð",
+        "from": "Frá",
+        "to": "Til",
+        "actions": "Aðgerðir",
+        "recursive": "Endurkvæmt"
+      }
     },
     "idleStopHint": "Stöðvast eftir {{minutes}} mínútur án virkni.",
     "runs": {
@@ -3045,7 +3421,8 @@
         "needsInput": "Þarf inntak",
         "failed": "Mistókst",
         "cancelled": "Hætt við"
-      }
+      },
+      "loadFailed": "Ekki tókst að hlaða keyrslusögu."
     },
     "recovery": {
       "pending": "Work er að staðfesta {{pending}} sandkassahreinsanir áður en það tekur við nýjum aðgerðum.",
@@ -3057,6 +3434,17 @@
       "retrySucceeded": "Hreinsaði {{cleared}} af {{attempted}} hreinsunum í bið.",
       "retryPending": "Er enn að reyna {{attempted}} hreinsanir í bið.",
       "retryFailed": "Ekki tókst að reyna aftur hreinsanir í bið."
+    },
+    "computer": {
+      "setupFailed": "Ekki tókst að setja upp Work Computer."
+    },
+    "announce": {
+      "completed": "{{title}}: lokið.",
+      "needsInput": "{{title}} þarfnast inntaks þíns eða samþykkis.",
+      "failed": "{{title}}: mistókst.",
+      "cancelled": "{{title}}: stöðvað.",
+      "approvalNeeded": "{{title}} þarfnast samþykkis þíns til að keyra {{tool}}.",
+      "untitledTask": "Þetta verkefni"
     }
   },
   "personaBackground": {
@@ -3088,7 +3476,21 @@
     "reselectProvider": "veldu veitanda aftur til að festa þetta líkan",
     "unavailable": "ófáanlegt",
     "unavailableSelections": "Ófáanlegar valkostir",
-    "agentModels": "Fulltrúar"
+    "agentModels": "Fulltrúar",
+    "searchOllama": "Search Ollama library...",
+    "searchHuggingFace": "Search HuggingFace...",
+    "searchModels": "Leita í líkönum...",
+    "ollamaModels": "Ollama Models",
+    "installed": "Installed",
+    "use": "Use",
+    "pull": "Pull",
+    "pullRestricted": "Uppsetning líkana er takmörkuð við stjórnendur á þessu tilviki.",
+    "adminOnlyPull": "Aðeins stjórnendur",
+    "showAll": "Sýna allt ({{total}})",
+    "sources": "Uppruni líkana",
+    "defaultModel": "Sjálfgefið líkan",
+    "contextSize": "{{size}} samhengi",
+    "via": "í gegnum {{provider}}"
   },
   "whatsNew": {
     "title": "Nýjungar",
@@ -3145,7 +3547,16 @@
     "unpin": "Losa minnispunkt",
     "pinned": "Fest",
     "export": "Sækja sem Markdown",
-    "sharedWithYou": "Deilt með þér"
+    "sharedWithYou": "Deilt með þér",
+    "titleLabel": "Titill glósu",
+    "loadFailed": "Ekki tókst að hlaða þessu. Reyndu aftur.",
+    "restoreConfirmTitle": "Endurheimta þessa útgáfu?",
+    "restoreConfirmDescription": "Texta glósunnar verður skipt út fyrir þessa eldri útgáfu.",
+    "deleteAttachmentConfirmTitle": "Eyða {{name}}?",
+    "deleteAttachmentConfirmDescription": "Viðhenginu verður eytt varanlega úr þessari glósu.",
+    "attachmentDeleteFailed": "Ekki tókst að eyða viðhenginu",
+    "revokeFailed": "Ekki tókst að afturkalla aðgang",
+    "sharePermissionLabel": "Heimild"
   },
   "calendar": {
     "title": "Dagatal",
@@ -3190,7 +3601,22 @@
     "importFailed": "Ekki tókst að flytja skrána inn",
     "importResult": "{{total}} viðburðir fluttir inn",
     "importIcs": "Flytja inn",
-    "exportIcs": "Flytja út"
+    "exportIcs": "Flytja út",
+    "chipStatus": {
+      "automation": "Tímasett sjálfvirkni",
+      "runSucceeded": "Keyrsla sjálfvirkninnar tókst",
+      "runFailed": "Keyrsla sjálfvirkninnar mistókst"
+    },
+    "newEventOn": "Nýr viðburður {{date}}",
+    "showDay": "Sýna alla viðburði {{date}}",
+    "deleteEventConfirmTitle": "Eyða „{{title}}“?",
+    "deleteEventConfirmDescription": "Þessum viðburði verður eytt varanlega.",
+    "deleteRecurringEventConfirmDescription": "Þessum endurtekna viðburði og öllum tilvikum hans verður eytt varanlega.",
+    "shareCalendarNamed": "Deila dagatalinu {{name}}",
+    "deleteCalendarNamed": "Eyða dagatalinu {{name}}",
+    "deleteCalendarConfirmTitle": "Eyða dagatalinu „{{name}}“?",
+    "deleteCalendarConfirmDescription": "Dagatalinu og viðburðunum í því verður eytt varanlega.",
+    "calendarDeleteFailed": "Ekki tókst að eyða dagatalinu"
   },
   "automations": {
     "title": "Sjálfvirkni",
@@ -3317,13 +3743,17 @@
         "work-approval": "fulltrúi bíður eftir samþykki þínu",
         "system": "kerfistilkynning berst"
       }
-    }
+    },
+    "deleteConfirmTitle": "Eyða „{{name}}“?",
+    "deleteConfirmDescription": "Sjálfvirkninni og tímaáætlun hennar verður eytt varanlega. Fyrri keyrslur haldast í keyrslusögunni."
   },
   "home": {
     "active": "virkt",
     "continue": "Halda áfram",
     "start": "Byrja",
-    "explore": "Kanna"
+    "explore": "Kanna",
+    "greeting": "{{greeting}}.",
+    "greetingWithName": "{{greeting}}, {{name}}."
   },
   "palette": {
     "empty": "Engar samsvaranir.",
@@ -3336,7 +3766,14 @@
     "work": "Vinna",
     "messages": "Skilaboð",
     "notes": "Minnispunktar",
-    "documents": "Skjöl"
+    "documents": "Skjöl",
+    "searching": "Leita…",
+    "searchFailed": "Leit á vinnusvæðinu mistókst. Aðeins samsvarandi spjall og aðgerðir eru sýnd.",
+    "results": "Niðurstöður",
+    "escKey": "esc",
+    "hintNavigate": "Fletta",
+    "hintOpen": "Opna",
+    "hintClose": "Loka"
   },
   "tabs": {
     "actions": "Flipaaðgerðir",
@@ -3540,7 +3977,8 @@
       "button": "Úr möppu",
       "missingSkillMd": "Mappan þarf SKILL.md-skrá",
       "done": "Færni flutt inn með {{count}} meðfylgjandi skrám"
-    }
+    },
+    "toggleLabel": "Virkja færnina {{name}}"
   },
   "toolsPage": {
     "title": "Tól",
@@ -3701,7 +4139,14 @@
     "added": "Deilt með {{name}}",
     "failed": "Deiling mistókst",
     "userNotFound": "Enginn notandi með þetta nafn",
-    "groupNotFound": "Enginn hópur með þetta heiti"
+    "groupNotFound": "Enginn hópur með þetta heiti",
+    "principalKind": "Deila með notanda eða hópi",
+    "principalName": "Notandanafn eða heiti hóps",
+    "permission": "Heimild",
+    "sharing": "Deiling",
+    "loading": "Hleð deilingum",
+    "loadFailed": "Ekki tókst að hlaða deilingum",
+    "revokeFailed": "Ekki tókst að afturkalla aðgang"
   },
   "channels": {
     "title": "Rásir",
@@ -3760,13 +4205,44 @@
     "toolCalls": {
       "summary": "Tól notuð ({{total}})",
       "deniedHint": "Tólum sem breyta einhverju er hafnað í rásum. Keyrðu þau úr spjalli."
-    }
+    },
+    "confirmEdit": "Vista breytingu",
+    "cancelEdit": "Hætta við breytingu",
+    "reactWith": "Bregðast við með {{emoji}}",
+    "deleteMessageConfirmTitle": "Eyða þessum skilaboðum?",
+    "deleteMessageConfirmDescription": "Skilaboðin verða fjarlægð fyrir alla á þessari rás.",
+    "unreadCount": "{{total}} ólesin",
+    "send": "Senda skilaboð",
+    "invite": "Bjóða meðlimi",
+    "closeThread": "Loka þræði",
+    "removeAttachment": "Fjarlægja viðhengi",
+    "loadFailed": "Ekki tókst að hlaða þessu. Reyndu aftur.",
+    "editFailed": "Ekki tókst að breyta skilaboðunum",
+    "deleteMessageFailed": "Ekki tókst að eyða skilaboðunum",
+    "pinFailed": "Ekki tókst að breyta festingunni",
+    "reactFailed": "Ekki tókst að vista viðbrögðin",
+    "downloadFailed": "Ekki tókst að sækja skrána",
+    "removeMemberConfirm": "Fjarlægja {{name}} af þessari rás?",
+    "removeMemberConfirmDescription": "Viðkomandi missir aðgang að rásinni og skilaboðum hennar.",
+    "removeMemberNamed": "Fjarlægja {{name}} af rásinni",
+    "removeMemberFailed": "Ekki tókst að fjarlægja meðliminn",
+    "leaveConfirm": "Yfirgefa {{name}}?",
+    "leaveConfirmDescription": "Þér verður að bjóða aftur til að ganga aftur í lokaða rás.",
+    "leaveFailed": "Ekki tókst að yfirgefa rásina",
+    "joinFailed": "Ekki tókst að ganga í rásina",
+    "deleteConfirm": "Eyða {{name}}?",
+    "deleteConfirmDescription": "Rásinni og öllum skilaboðum hennar verður eytt varanlega fyrir alla meðlimi.",
+    "deleteFailed": "Ekki tókst að eyða rásinni",
+    "saveFailed": "Ekki tókst að vista rásina"
   },
   "notifications": {
     "title": "Tilkynningar",
     "empty": "Þú ert með allt á hreinu.",
     "markAllRead": "Merkja allt sem lesið",
-    "markRead": "Merkja sem lesið"
+    "markRead": "Merkja sem lesið",
+    "titleWithUnread": "Tilkynningar ({{unread}} ólesnar)",
+    "unread": "Ólesið",
+    "loadFailed": "Ekki tókst að hlaða tilkynningum."
   },
   "voiceMode": {
     "title": "Raddhamur",
@@ -3901,7 +4377,12 @@
       "failed": "Mistókst",
       "cancelled": "Hætt við"
     },
-    "noFeedback": "Engar athugasemdir enn — gefðu svörum einkunn til að byggja gagnasafnið."
+    "noFeedback": "Engar athugasemdir enn — gefðu svörum einkunn til að byggja gagnasafnið.",
+    "deleteSetConfirmTitle": "Eyða „{{name}}“?",
+    "deleteSetConfirmDescription": "Matssafninu og kvaðningum þess verður eytt varanlega.",
+    "deleteSetFailed": "Ekki tókst að eyða matssafninu",
+    "runError": "Villa: {{detail}}",
+    "cancelFailed": "Ekki tókst að hætta við keyrsluna"
   },
   "passwordStrength": {
     "levels": {
@@ -3915,6 +4396,14 @@
       "hasCase": "Há- og lágstafir",
       "hasNumber": "Að minnsta kosti ein tala",
       "tooLong": "Mest 72 bæti"
+    },
+    "requirements": "Notaðu að minnsta kosti 12 stafi, ekki fleiri en 72 UTF-8 bæti, með há- og lágstöfum og tölustaf.",
+    "errors": {
+      "minLength": "Lykilorð verður að vera að minnsta kosti 12 stafir.",
+      "tooLong": "Lykilorð má ekki vera meira en 72 UTF-8 bæti.",
+      "uppercase": "Lykilorð verður að innihalda hástaf.",
+      "lowercase": "Lykilorð verður að innihalda lágstaf.",
+      "number": "Lykilorð verður að innihalda tölustaf."
     }
   },
   "connectModels": {
@@ -3933,7 +4422,8 @@
       "enable": "Virkja veitanda",
       "enabling": "Virkjar…",
       "enabled": "{{name}} tengt — líkön þess eru nú tiltæk",
-      "enableFailed": "Ekki tókst að virkja veitandann"
+      "enableFailed": "Ekki tókst að virkja veitandann",
+      "urlLabel": "Vefslóð þjóns"
     },
     "cloud": {
       "title": "Ský-API",
@@ -3942,7 +4432,70 @@
       "connect": "Tengja",
       "connecting": "Tengist…",
       "connected": "{{name}} tengt — líkön þess eru nú tiltæk",
-      "saveFailed": "Ekki tókst að vista API lykilinn"
+      "saveFailed": "Ekki tókst að vista API lykilinn",
+      "keyLabel": "API lykill {{name}}"
+    },
+    "ollama": {
+      "status": {
+        "checking": "Athugar tiltækileika…",
+        "healthy": "Keyrir og tilbúið fyrir staðbundin líkön",
+        "offline": "Fannst ekki á þessari tölvu",
+        "disabled": "Óvirkt — engar athuganir keyra"
+      },
+      "recheck": "Athuga aftur",
+      "enable": "Virkja",
+      "disable": "Hætta að athuga Ollama",
+      "enabledToast": "Ollama-veitandi virkjaður",
+      "disabledToast": "Athuganir á Ollama óvirkjaðar — þú getur virkjað þær aftur í Stillingum",
+      "settingsFailed": "Ekki tókst að uppfæra Ollama-stillingarnar",
+      "offlineHint": "Settu upp Ollama af ollama.com og það greinist sjálfkrafa — eða notaðu einn af valkostunum hér fyrir neðan í staðinn. Ef þú ætlar ekki að nota Ollama geturðu slökkt á athugunum þess.",
+      "healthyHint": "Ollama er tengt. Sæktu líkan af Líkön-síðunni og þú getur byrjað að spjalla."
     }
+  },
+  "modelDownload": {
+    "success": "Líkan {{name}} sótt",
+    "failed": "Ekki tókst að sækja líkanið: {{error}}",
+    "startFailed": "Ekki tókst að hefja niðurhal",
+    "cancelled": "Hætt við niðurhal"
+  },
+  "strands": {
+    "title": "Strands",
+    "subtitle": "Innbyggð umboðsvél sem keyrir á Libre WebUI-líkönunum þínum.",
+    "subtitleVersion": "Innbyggð umboðsvél, harness {{version}}.",
+    "newSession": "Ný lota",
+    "sessions": "Lotur",
+    "noSessions": "Engar lotur enn. Búðu til eina til að byrja.",
+    "empty": "Biddu umboðsmanninn að lesa eða breyta skrám á vinnusvæði sínu.",
+    "placeholder": "Biddu vélina um að gera eitthvað…",
+    "model": "Líkan",
+    "defaultModel": "Sjálfgefið líkan",
+    "send": "Senda",
+    "stop": "Stöðva",
+    "reasoning": "Rökstuðningur",
+    "tool": {
+      "running": "Í gangi",
+      "done": "Búið",
+      "failed": "Mistókst"
+    },
+    "cancelled": "Hætt við",
+    "turnLimit": "Stöðvað við hámark umferða.",
+    "messageCount": "Skilaboð: {{count}}",
+    "deleteSession": "Eyða lotu",
+    "deleteConfirm": "Eyða „{{title}}“ og ferli hennar?",
+    "loadFailed": "Ekki tókst að hlaða Strands.",
+    "createFailed": "Ekki tókst að búa til lotu.",
+    "deleteFailed": "Ekki tókst að eyða lotunni.",
+    "saveFailed": "Ekki tókst að vista lotuna.",
+    "turnFailed": "Vélin gat ekki klárað umferðina"
+  },
+  "notFound": {
+    "title": "Síða fannst ekki",
+    "description": "Þessi síða er ekki til eða hefur verið flutt."
+  },
+  "themeToggle": {
+    "switchToLight": "Skipta yfir í ljósan ham",
+    "switchToDark": "Skipta yfir í dökkan ham",
+    "switchToAmoled": "Skipta yfir í alsvartan ham",
+    "switchToCelestial": "Skipta yfir í himneskan ham"
   }
 }

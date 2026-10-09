@@ -38,14 +38,22 @@
     "custom": "Власний",
     "remove": "Видалити",
     "home": "Головна",
-    "more": "Більше"
+    "more": "Більше",
+    "provider": "Провайдер",
+    "agent": "Агент",
+    "reasoning": "Міркування",
+    "skipToContent": "Перейти до вмісту"
   },
   "brand": {
     "name": "Alcore",
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "backendConnectionFailed": "Не вдалося підключитися до серверної служби"
+    "backendConnectionFailed": "Не вдалося підключитися до серверної служби",
+    "ollamaUnavailable": "Служба Ollama недоступна. Моделі плагінів усе ще можна використовувати.",
+    "connecting": "Підключення до бекенда… ({{attempt}}/{{total}})",
+    "startingUp": "Запуск…",
+    "backendUnreachableHint": "Переконайтеся, що бекенд запущено, і спробуйте ще раз."
   },
   "auth": {
     "login": {
@@ -206,7 +214,9 @@
       "removed": "Ключ доступу видалено.",
       "removeFailed": "Не вдалося видалити ключ доступу.",
       "signInButton": "Увійти з ключем доступу",
-      "signInFailed": "Вхід із ключем доступу не вдався."
+      "signInFailed": "Вхід із ключем доступу не вдався.",
+      "removeConfirmTitle": "Видалити цей ключ доступу?",
+      "removeConfirmDescription": "«{{name}}» більше не працюватиме для входу. Пізніше його можна зареєструвати знову."
     },
     "alcore": {
       "title": "This server uses Alcore Auth for sign-in.",
@@ -272,6 +282,12 @@
       "tryAgain": "Try again",
       "restart": "Restart sign-in",
       "support": "Need help? Contact your server admin or see"
+    },
+    "password": {
+      "show": "Показати пароль",
+      "hide": "Сховати пароль",
+      "showConfirmation": "Показати підтвердження пароля",
+      "hideConfirmation": "Сховати підтвердження пароля"
     }
   },
   "setup": {
@@ -324,7 +340,8 @@
       "envNote": "Цей ключ також збережено у файлі backend/.env як ENCRYPTION_KEY",
       "acknowledgment": "Я зберіг ключ шифрування в надійному місці та розумію, що його втрата може призвести до втрати даних.",
       "confirmRequired": "Підтвердіть, що ви зберегли ключ шифрування",
-      "continue": "Продовжити до Alcore"
+      "continue": "Продовжити до Alcore",
+      "loadFailed": "Не вдалося завантажити ключ шифрування. Повторіть спробу, щоб продовжити."
     },
     "connectModels": {
       "title": "Підключіть свої моделі",
@@ -418,7 +435,8 @@
       "toolsOn": "Інструменти увімкнено — модель може викликати схвалені інструменти",
       "toolsOff": "Дозволити моделі викликати інструменти в цьому повідомленні",
       "thinkingOn": "Міркування увімкнено ({{level}})",
-      "thinkingOff": "Міркувати перед відповіддю"
+      "thinkingOff": "Міркувати перед відповіддю",
+      "thinkingUpdateFailed": "Не вдалося оновити налаштування міркування"
     },
     "session": {
       "new": "Новий чат",
@@ -454,7 +472,8 @@
         "move": "Перемістити до папки",
         "remove": "Прибрати з папки",
         "delete": "Видалити папку",
-        "deleteConfirm": "Видалити цю папку? Чати всередині збережуться."
+        "deleteConfirm": "Видалити цю папку? Чати всередині збережуться.",
+        "rename": "Перейменувати папку"
       },
       "shareChat": "Поділитися чатом…"
     },
@@ -472,7 +491,8 @@
       "selectBeforePrivateChat": "Виберіть доступну модель перед початком приватного чату",
       "selectBeforeSending": "Виберіть доступну модель перед надсиланням",
       "selectBeforeRegenerating": "Виберіть доступну модель перед повторним генеруванням",
-      "connectDescription": "Ще жодної моделі не підключено. Оберіть джерело нижче — локальне середовище виконання, власний сервер або хмарний API — і ви почнете спілкування менш ніж за хвилину."
+      "connectDescription": "Ще жодної моделі не підключено. Оберіть джерело нижче — локальне середовище виконання, власний сервер або хмарний API — і ви почнете спілкування менш ніж за хвилину.",
+      "pullCommand": "ollama pull llama3.2:3b"
     },
     "footer": {
       "disclaimer": "LLM може помилятися - перевіряйте важливу інформацію",
@@ -486,7 +506,13 @@
       "browse": "оберіть",
       "unsupportedFileType": "Тип файлу не підтримується: {{name}}",
       "maxImagesAllowed": "Дозволено не більше {{count}} зображень",
-      "imageTooLarge": "Зображення {{name}} завелике (не більше 10 МБ)"
+      "imageTooLarge": "Зображення {{name}} завелике (не більше 10 МБ)",
+      "readFailed": "Не вдалося прочитати {{name}}",
+      "uploadAlt": "Завантаження {{number}}",
+      "removeImage": "Видалити зображення {{number}}",
+      "addMore": "Додати ще зображення ({{count}}/{{max}})",
+      "uploading": "Завантаження",
+      "removeDocument": "Видалити {{name}}"
     },
     "structuredOutput": {
       "title": "Формат відповіді",
@@ -537,7 +563,8 @@
       "compactionOff": "Вимкнено для цього чату"
     },
     "message": {
-      "sources": "Джерела"
+      "sources": "Джерела",
+      "copyFailed": "Не вдалося скопіювати в буфер обміну"
     },
     "toasts": {
       "chatCreated": "Новий чат створено",
@@ -581,7 +608,8 @@
       "generationRateLimitedWeekly": "Weekly budget spent — new chats pause until Monday 00:00 UTC. Try again later or upgrade your plan.",
       "generationRateLimitedMonthly": "Monthly budget spent — new chats pause until the 1st of next month (UTC). Try again later or upgrade your plan.",
       "generationFailedSupport": "The reply couldn't be finished — retry, and if it keeps happening report it from Settings > About > GitHub issues.",
-      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access."
+      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access.",
+      "archiveFailed": "Не вдалося архівувати цей чат"
     },
     "documents": {
       "title": "Документи в контексті"
@@ -614,7 +642,25 @@
     "delegate": {
       "action": "Run as Work task"
     },
-    "sharedReadOnly": "Поділився {{owner}} — лише перегляд"
+    "sharedReadOnly": "Поділився {{owner}} — лише перегляд",
+    "branch": {
+      "variants": "{{count}} варіант",
+      "variants_plural": "Варіантів: {{count}}",
+      "selectVariant": "Вибрати варіант {{number}}",
+      "generating": "генерація...",
+      "select": "вибрати"
+    },
+    "sources": {
+      "fullContextFailed": "Не вдалося оновити налаштування повного документа",
+      "usedByRetrieval": "Використовується у відповідях",
+      "triggerLabel": "Джерела ({{count}})"
+    },
+    "announce": {
+      "replyFinished": "Відповідь від {{name}}: {{text}}",
+      "replyFinishedNoText": "Відповідь від {{name}} готова.",
+      "codeBlock": "блок коду",
+      "generationStopped": "Генерацію зупинено"
+    }
   },
   "sidebar": {
     "navigation": {
@@ -636,10 +682,12 @@
       "prompts": "Промпти",
       "skills": "Навички",
       "tools": "Інструменти",
-      "channels": "Канали"
+      "channels": "Канали",
+      "strands": "Strands"
     },
     "toggleSize": "Змінити розмір бічної панелі",
-    "expandSidebar": "Розгорнути бічну панель"
+    "expandSidebar": "Розгорнути бічну панель",
+    "ariaLabel": "Бічна панель"
   },
   "user": {
     "menu": {
@@ -696,7 +744,8 @@
       "sessions": "Сеанси",
       "apiKeys": "API-ключі",
       "notifications": "Сповіщення",
-      "apiPlatform": "API Platform"
+      "apiPlatform": "API Platform",
+      "ollamaDisabled": "Ollama вимкнено адміністратором"
     },
     "appearance": {
       "title": "Зовнішній вигляд",
@@ -921,7 +970,8 @@
       "modelPrice": "Price / 1M",
       "modelStatus": "Status",
       "modelFree": "Free",
-      "modelDeprecated": "Deprecated"
+      "modelDeprecated": "Deprecated",
+      "dismissError": "Сховати помилку"
     },
     "generation": {
       "title": "Параметри генерації",
@@ -1024,7 +1074,8 @@
         "deleteFailed": "Не вдалося видалити колекцію",
         "assignFailed": "Не вдалося перемістити документ",
         "share": "Поділитися колекцією",
-        "shared": "спільна"
+        "shared": "спільна",
+        "assignTo": "Колекція для {{name}}"
       },
       "library": {
         "title": "Завантажені документи",
@@ -1166,7 +1217,8 @@
         "title": "Архівовані чати",
         "empty": "Немає архівованих чатів",
         "unarchive": "Відновити"
-      }
+      },
+      "clearAllConfirm": "Ви впевнені, що хочете видалити всю історію чатів? Цю дію не можна скасувати."
     },
     "about": {
       "title": "Про програму",
@@ -1178,43 +1230,36 @@
       "features": {
         "privacy": {
           "title": "Приватність перш за все",
-          "description": "Ваші дані залишаються на вашому пристрої"
+          "description": "Self-hosted workspace — your data stays under your control"
         },
         "openSource": {
           "title": "Відкритий код",
-          "description": "Безкоштовне програмне забезпечення з відкритим кодом"
+          "description": "Open-source software maintained by the Alcore team"
         },
         "localInference": {
           "title": "Локальний інференс",
-          "description": "Запускайте AI-моделі локально з Ollama"
+          "description": "Use local Ollama models or connect to your Alcore provider"
         }
       },
-      "openSourceBy": "Відкритий код від {{company}}",
+      "openSourceBy": "Built by {{company}}",
       "links": {
         "title": "Посилання",
-        "github": "GitHub",
-        "githubDescription": "Переглянути вихідний код та зробити внесок",
         "website": "Веб-сайт",
-        "websiteDescription": "Відвідайте наш веб-сайт",
+        "websiteDescription": "Visit the Alcore website",
         "documentation": "Документація",
         "reportIssue": "Повідомити про проблему",
         "reportIssueDescription": "Звіти про помилки та запити функцій",
-        "documentationDescription": "Посібники, навчальні матеріали та довідник API",
-        "forgejo": "Дзеркало Forgejo",
-        "forgejoDescription": "Самостійно розміщений репозиторій Forgejo",
-        "sponsor": "Підтримати",
-        "sponsorDescription": "Допоможіть фінансувати проєкт",
-        "star": "Зірка на GitHub",
-        "starDescription": "Зірка допомагає іншим знайти проєкт"
+        "documentationDescription": "Guides and documentation for Alcore"
       },
       "version": "Версія {{version}}",
       "updates": {
-        "checking": "Перевірка оновлень…",
-        "upToDate": "У вас остання версія",
-        "updateAvailable": "Доступна версія {{version}}",
-        "ahead": "Ви випереджаєте останній реліз ({{version}})",
-        "checkFailed": "Не вдалося перевірити оновлення",
         "viewChangelog": "Переглянути список змін"
+      },
+      "ollama": {
+        "title": "Статус Ollama",
+        "version": "Версія",
+        "healthy": "Працює",
+        "unhealthy": "Не працює"
       }
     },
     "groups": {
@@ -1280,7 +1325,11 @@
       "unknownDevice": "Невідомий пристрій",
       "createdAt": "Вхід виконано",
       "lastSeenAt": "Остання активність",
-      "expiresAt": "Закінчується"
+      "expiresAt": "Закінчується",
+      "signOutConfirmTitle": "Завершити цей сеанс?",
+      "signOutConfirmDescription": "{{device}} буде негайно відключено, потрібно буде увійти знову.",
+      "signOutOthersConfirmTitle": "Завершити інші сеанси?",
+      "signOutOthersConfirmDescription": "Інші сеанси ({{count}}) буде негайно завершено. Цей сеанс залишиться активним."
     },
     "apiKeys": {
       "title": "API-ключі",
@@ -1314,7 +1363,9 @@
       "createdAt": "Створено",
       "lastUsedAt": "Останнє використання",
       "expiresAt": "Закінчується",
-      "neverExpires": "Безстроково"
+      "neverExpires": "Безстроково",
+      "revokeConfirmTitle": "Відкликати «{{name}}»?",
+      "revokeConfirmDescription": "Усе, що використовує цей API-ключ, негайно перестане працювати. Цю дію не можна скасувати."
     },
     "notifications": {
       "title": "Сповіщення",
@@ -1484,7 +1535,20 @@
   "models": {
     "title": "Моделі",
     "noModels": "Моделі не встановлено",
-    "noModelsFound": "Моделей не знайдено"
+    "noModelsFound": "Моделей не знайдено",
+    "subtitle": "Завантажуйте, керуйте та моніторте ваші моделі Ollama",
+    "installed": "Встановлені моделі",
+    "available": "Доступні моделі",
+    "pull": "Завантажити модель",
+    "pulling": "Завантаження...",
+    "delete": "Видалити модель",
+    "deleting": "Видалення...",
+    "size": "Розмір",
+    "modified": "Змінено",
+    "family": "Сімейство",
+    "parameters": "Параметри",
+    "quantization": "Квантизація",
+    "pullFirst": "Завантажте модель, щоб почати"
   },
   "personas": {
     "title": "Персони",
@@ -1516,7 +1580,8 @@
     "model": "Модель",
     "size": "Розмір",
     "quality": "Якість",
-    "created": "Створено"
+    "created": "Створено",
+    "lightboxLabel": "Перегляд зображення"
   },
   "errors": {
     "generic": "Сталася помилка",
@@ -1565,7 +1630,13 @@
   },
   "modelManager": {
     "sections": {
-      "catalog": "Каталог моделей"
+      "catalog": "Каталог моделей",
+      "pull": "Завантажити нову модель",
+      "library": "Переглянути бібліотеку",
+      "huggingface": "HuggingFace Hub",
+      "running": "Запущені моделі",
+      "local": "Локальні моделі",
+      "advanced": "Розширені дії"
     },
     "catalog": {
       "searchPlaceholder": "Шукати моделі за назвою або провайдером...",
@@ -1588,12 +1659,159 @@
       "hide": "Приховати від користувачів",
       "show": "Показати користувачам",
       "star": "Позначити {{name}} зіркою",
-      "unstar": "Зняти зірку з {{name}}"
+      "unstar": "Зняти зірку з {{name}}",
+      "providerOllama": "Ollama",
+      "filterLabel": "Фільтр моделей",
+      "displayName": "Відображуване ім'я для {{name}}"
     },
     "huggingface": {
       "checkingGguf": "Пошук GGUF-файлів...",
       "noGgufAvailable": "Немає GGUF-файлів для прямого завантаження в Ollama",
-      "ggufFilesCount": "GGUF-файли ({{count}}) - Завантажити напряму в Ollama"
+      "ggufFilesCount": "GGUF-файли ({{count}}) - Завантажити напряму в Ollama",
+      "browseAll": "Переглянути все на HuggingFace",
+      "noModelsFound": "Моделей не знайдено",
+      "noResults": "Моделей не знайдено. Спробуйте змінити пошук або фільтри.",
+      "browseAllLink": "Переглянути все",
+      "search": "Пошук моделей HuggingFace...",
+      "by": "від",
+      "gated": "Обмежений доступ",
+      "viewOnHF": "Переглянути на HuggingFace",
+      "sortDownloads": "Завантаження",
+      "sortLikes": "Вподобання",
+      "sortRecent": "Нещодавні",
+      "taskTextGeneration": "Генерація тексту",
+      "taskTextToSpeech": "Текст у мовлення",
+      "taskTextToImage": "Текст у зображення",
+      "taskSpeechRecognition": "Розпізнавання мовлення",
+      "tasks": {
+        "textGen": "Генерація тексту",
+        "tts": "Текст у мовлення",
+        "image": "Текст у зображення",
+        "stt": "Розпізнавання мовлення"
+      },
+      "sort": {
+        "downloads": "Найбільш завантажувані",
+        "likes": "Найпопулярніші",
+        "recent": "Нещодавно оновлені"
+      }
+    },
+    "title": "Моделі",
+    "loading": "Завантаження моделей...",
+    "systemStatus": {
+      "online": "Ollama онлайн",
+      "offline": "Ollama офлайн",
+      "models": "модель",
+      "models_plural": "моделей",
+      "running": "працює",
+      "vram": "VRAM"
+    },
+    "pull": {
+      "placeholder": "Введіть назву моделі (напр., llama3.2:3b, deepseek-r1:14b)",
+      "button": "Завантажити",
+      "cancel": "Скасувати",
+      "popular": "Популярні моделі:",
+      "browseAll": "Переглянути всі моделі на ollama.com",
+      "success": "Модель {{name}} успішно завантажено",
+      "cancelled": "Завантаження моделі скасовано",
+      "failed": "Не вдалося завантажити модель",
+      "enterName": "Введіть назву моделі",
+      "restricted": "Встановлення моделей у цьому екземплярі доступне лише адміністраторам."
+    },
+    "progress": {
+      "starting": "Ініціалізація...",
+      "pulling": "Завантаження моделі...",
+      "pullingLayer": "завантаження",
+      "verifying": "Перевірка цілісності...",
+      "verifyingDigest": "перевірка sha256 дайджесту",
+      "writing": "Запис маніфесту...",
+      "cleaning": "Очищення..."
+    },
+    "library": {
+      "available": "доступно",
+      "search": "Пошук моделей...",
+      "noResults": "Моделі, що відповідають критеріям, не знайдено",
+      "installed": "Встановлено",
+      "more": "+{{count}} ще",
+      "refresh": "Оновити бібліотеку"
+    },
+    "local": {
+      "noModels": "Моделі ще не встановлено",
+      "pullToStart": "Завантажте модель вище, щоб почати",
+      "installed": "встановлено",
+      "running": "Працює",
+      "info": "Інфо",
+      "copy": "Копіювати",
+      "delete": "Видалити",
+      "deleteConfirm": "Ви впевнені, що хочете видалити модель \"{{name}}\"?",
+      "deleteSuccess": "Модель {{name}} успішно видалено",
+      "deleteFailed": "Не вдалося видалити модель"
+    },
+    "advanced": {
+      "createModel": "Створити модель",
+      "fromModelfile": "З Modelfile",
+      "copyModel": "Копіювати модель",
+      "duplicateExisting": "Дублювати існуючу",
+      "testEmbeddings": "Тестувати ембединги",
+      "generateVectors": "Генерувати вектори",
+      "healthCheck": "Перевірка справності",
+      "testConnection": "Тест підключення",
+      "healthy": "Ollama справний!"
+    },
+    "modals": {
+      "details": {
+        "title": "Деталі моделі",
+        "info": "Інформація про модель",
+        "family": "Сімейство",
+        "parameters": "Параметри",
+        "quantization": "Квантизація",
+        "format": "Формат",
+        "systemPrompt": "Системний промпт",
+        "template": "Шаблон",
+        "license": "Ліцензія",
+        "modelfile": "Modelfile",
+        "noDetails": "Деталі недоступні"
+      },
+      "copy": {
+        "title": "Копіювати модель",
+        "source": "Вихідна модель",
+        "selectModel": "Виберіть модель...",
+        "newName": "Нова назва моделі",
+        "placeholder": "напр., my-custom-model",
+        "copying": "Копіювання...",
+        "button": "Копіювати модель",
+        "success": "Модель скопійовано як {{name}}",
+        "failed": "Не вдалося скопіювати модель",
+        "enterBoth": "Введіть назву вихідної та цільової моделі"
+      },
+      "create": {
+        "title": "Створити власну модель",
+        "name": "Назва моделі",
+        "namePlaceholder": "напр., my-assistant",
+        "modelfile": "Modelfile",
+        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM You are a helpful assistant.",
+        "see": "Див.",
+        "docs": "Документація Modelfile",
+        "docsLink": "для довідки з синтаксису",
+        "creating": "Створення...",
+        "button": "Створити модель",
+        "success": "Модель {{name}} успішно створено",
+        "failed": "Не вдалося створити модель",
+        "enterBoth": "Введіть назву моделі та вміст Modelfile"
+      },
+      "embeddings": {
+        "title": "Тестувати ембединги",
+        "model": "Модель ембедингів",
+        "selectModel": "Виберіть модель...",
+        "recommended": "Рекомендовано: nomic-embed-text, mxbai-embed-large",
+        "input": "Вхідний текст",
+        "placeholder": "Введіть текст для генерації ембедингів...",
+        "generating": "Генерація...",
+        "button": "Згенерувати ембединги",
+        "result": "Результат ({{count}} вимірів)",
+        "success": "Згенеровано {{count}}-вимірний вектор ембедингу",
+        "failed": "Не вдалося згенерувати ембединги",
+        "enterBoth": "Виберіть модель та введіть текст"
+      }
     }
   },
   "personaManager": {
@@ -1615,7 +1833,10 @@
     "deleteConfirm": "Ви впевнені, що хочете видалити \"{{name}}\"?",
     "deleteSuccess": "Персону \"{{name}}\" успішно видалено",
     "downloadSuccess": "Персону \"{{name}}\" успішно завантажено",
-    "failed": "Не вдалося {{action}} персону"
+    "failed": "Не вдалося {{action}} персону",
+    "loadFailed": "Не вдалося завантажити ваші персони.",
+    "deleteFailed": "Не вдалося видалити персону",
+    "downloadFailed": "Не вдалося завантажити персону"
   },
   "personaForm": {
     "title": {
@@ -1747,7 +1968,8 @@
       "promptHint": "Промпт, з якого починається кожен новий чат із цією персоною.",
       "noPrompt": "Без промпта",
       "version": "Ревізія прив'язок {{version}}"
-    }
+    },
+    "sections": "Розділи персони"
   },
   "personaCard": {
     "enhanced": "Покращена",
@@ -1764,7 +1986,16 @@
     "backupSuccess": "Бекап персони успішно завантажено",
     "dnaSuccess": "ДНК персони успішно експортовано",
     "failed": "Не вдалося {{action}}",
-    "shareTooltip": "Поділитися цією персоною"
+    "shareTooltip": "Поділитися цією персоною",
+    "wipeFailed": "Не вдалося стерти спогади",
+    "backupFailed": "Не вдалося створити резервну копію персони",
+    "exportDnaFailed": "Не вдалося експортувати ДНК персони",
+    "favorite": "Обране",
+    "memoryStatus": {
+      "active": "Активна",
+      "wiped": "Стерті",
+      "backed_up": "У резервній копії"
+    }
   },
   "userManager": {
     "title": "Керування користувачами",
@@ -1793,7 +2024,10 @@
     "noUsersMatching": "Користувачів, що відповідають пошуку, не знайдено",
     "columns": {
       "role": "Роль",
-      "created": "Створено"
+      "created": "Створено",
+      "user": "Користувач",
+      "email": "Електронна пошта",
+      "actions": "Дії"
     },
     "roles": {
       "admin": "Адміністратор",
@@ -1832,7 +2066,10 @@
       "createSuccess": "Користувача успішно створено",
       "updateSuccess": "Користувача успішно оновлено",
       "createFailed": "Не вдалося створити користувача",
-      "updateFailed": "Не вдалося оновити користувача"
+      "updateFailed": "Не вдалося оновити користувача",
+      "usernamePlaceholder": "Введіть ім'я користувача",
+      "emailPlaceholder": "Введіть пошту (необов'язково)",
+      "passwordPlaceholder": "Введіть пароль"
     },
     "workAccess": {
       "title": "Доступ до Work",
@@ -1925,7 +2162,28 @@
       "memberOf": "Групи",
       "featuresLabel": "Доступ до функцій",
       "grantsLabel": "Надані дозволи",
-      "grantVia": "через"
+      "grantVia": "через",
+      "deleteConfirmTitle": "Видалити групу «{{name}}»?",
+      "deleteConfirmDescription": "Учасники втратять доступ, який мали лише через цю групу. Самі облікові записи не видаляються.",
+      "statuses": {
+        "active": "Активна",
+        "pending": "Очікує схвалення"
+      },
+      "features": {
+        "work": "Робота",
+        "model-download": "Завантаження моделей",
+        "web-search": "Вебпошук",
+        "strands": "Рушій Strands",
+        "tools": "Інструменти",
+        "stt": "Мовлення в текст",
+        "tts": "Текст у мовлення",
+        "voice-mode": "Голосовий режим",
+        "voice-cloning": "Клонування голосу"
+      },
+      "grantViaKinds": {
+        "user": "прямий доступ",
+        "group": "група"
+      }
     },
     "audit": {
       "title": "Журнал аудиту безпеки",
@@ -2012,13 +2270,60 @@
       "save": "Зберегти",
       "saving": "Збереження…",
       "saved": "Налаштування електронної пошти збережено.",
-      "saveFailed": "Не вдалося зберегти налаштування електронної пошти."
+      "saveFailed": "Не вдалося зберегти налаштування електронної пошти.",
+      "security": {
+        "starttls": "STARTTLS (порт 587)",
+        "tls": "TLS (порт 465)",
+        "none": "Немає (лише довірена мережа)"
+      },
+      "templateTitle": "Вигляд електронних листів",
+      "templateHint": "Виберіть світлий або темний шаблон для оглядів новин і листів зі сповіщеннями.",
+      "themeLabel": "Шаблон електронного листа",
+      "themeLight": "Світлий",
+      "themeDark": "Темний",
+      "previewTitle": "Попередній перегляд шаблону",
+      "previewLoading": "Завантаження попереднього перегляду…",
+      "previewFailed": "Не вдалося завантажити попередній перегляд листа.",
+      "previewHeading": "Ваш огляд новин",
+      "previewIntro": "Попередній перегляд щоденного листа з новинами.",
+      "previewMarkdown": "## Головне сьогодні\n\n- Новини технологій і досліджень\n- Новини з вибраних вами джерел\n\n**Підсумок:** Ваші щоденні новини готові до читання.",
+      "previewLinkLabel": "Відкрити результат"
+    },
+    "modelAccess": {
+      "title": "Завантаження моделей",
+      "description": "Дозволити всім активним користувачам завантажувати моделі з Ollama та браузера Hugging Face. Адміністратори завжди можуть завантажувати моделі.",
+      "saved": "Доступ до завантаження моделей оновлено",
+      "saveFailed": "Не вдалося оновити доступ до завантаження моделей"
+    },
+    "ollamaProvider": {
+      "title": "Провайдер Ollama",
+      "description": "Коли вимкнено, застосунок повністю припиняє перевірку Ollama — без перевірок стану, без попереджень. Кінцева точка може вказувати на будь-який сумісний з Ollama шлюз.",
+      "saved": "Налаштування провайдера Ollama збережено",
+      "saveFailed": "Не вдалося зберегти налаштування провайдера Ollama",
+      "baseUrlLabel": "URL кінцевої точки Ollama"
+    },
+    "strandsAccess": {
+      "title": "Рушій Strands",
+      "description": "Виберіть, хто може користуватися вбудованим агентом Strands. Він може читати й змінювати файли в приватній робочій області кожного сеансу, але не може виконувати команди оболонки.",
+      "saved": "Доступ до Strands оновлено",
+      "saveFailed": "Не вдалося оновити доступ до Strands",
+      "lockedByEnv": "Задано змінною середовища LIBRE_STRANDS_ACCESS.",
+      "modes": {
+        "disabled": "Вимк.",
+        "admins": "Адміністратори",
+        "all-users": "Усі користувачі"
+      }
+    },
+    "agentCliAccess": {
+      "title": "Моделі агентів CLI",
+      "description": "Адміністратори можуть використовувати встановлені Pi, OpenCode, Codex і Claude Code як моделі чату. Вони працюють на хості поза ізольованими середовищами Work.",
+      "lockedByEnv": "Закріплено змінною середовища AGENT_CLI_MODELS_ENABLED."
     }
   },
   "usageAnalytics": {
     "eyebrow": "Адміністрування",
     "title": "Використання провайдерів",
-    "description": "Відстежуйте вихідні API-виклики та споживання моделей у ввімкнених плагінах цього екземпляра.",
+    "description": "Відстежуйте запити до моделей і використання провайдерів та агентів цього екземпляра.",
     "days": "{{count}} днів",
     "refresh": "Оновити статистику",
     "loadFailed": "Не вдалося завантажити статистику використання провайдерів.",
@@ -2065,7 +2370,7 @@
       "notCharted": "Виберіть, щоб завантажити цю модель на графік"
     },
     "providers": {
-      "title": "Трафік увімкнених плагінів",
+      "title": "Трафік провайдерів і агентів",
       "description": "Кількість запитів, надійність і час відповіді за провайдерами.",
       "share": "{{percent}}% викликів",
       "failures": "Невдалих або скасованих: {{count}}",
@@ -2083,7 +2388,7 @@
     },
     "empty": {
       "title": "Викликів провайдерів ще немає",
-      "description": "Виклики з'являться тут після того, як увімкнений плагін обробить запити чату, Work, вбудовування, зображення, мовлення, звуку або відео."
+      "description": "Запити з’являться тут після того, як провайдер або агент обробить чат, Work, ембеддинги, зображення, мовлення, звук або відео."
     },
     "privacyNote": "Використання вимірюється на сервері на межі вихідного плагіна. Alcore зберігає провайдера, модель, час, статус і звітовані лічильники — ніколи промпти, відповіді, кінцеві точки, облікові дані або тіла помилок провайдера. Підсумки токенів включають лише виклики, у яких провайдер повернув метадані використання.",
     "heatmap": {
@@ -2095,6 +2400,14 @@
       "less": "Менше",
       "more": "Більше",
       "yearTotal": "{{formatted}} викликів за останній рік"
+    },
+    "agents": {
+      "title": "Агенти",
+      "description": "Виклики CLI-агентів і рушія Strands.",
+      "noCalls": "У цьому періоді немає зареєстрованих викликів",
+      "unreported": "Токени не повідомлено",
+      "topModels": "Найуживаніші моделі",
+      "legacy": "Цей сервер не надає повного розподілу за агентами. Доступні записи агентів показано нижче."
     }
   },
   "systemPage": {
@@ -2309,7 +2622,11 @@
       "harmful": "Шкідлива",
       "formatting": "Форматування"
     },
-    "feedbackComment": "Додати коментар…"
+    "feedbackComment": "Додати коментар…",
+    "user": "Користувач",
+    "feedbackFailed": "Не вдалося зберегти ваш відгук",
+    "openImage": "Відкрити зображення {{number}}",
+    "uploadedImageAlt": "Завантажене зображення {{number}}"
   },
   "imageGallery": {
     "title": "Галерея зображень",
@@ -2321,7 +2638,8 @@
     "deleteSuccess": "Зображення видалено",
     "deleteFailed": "Не вдалося видалити зображення",
     "loadMore": "Завантажити ще ({{current}} з {{total}})",
-    "loadFailed": "Не вдалося завантажити галерею"
+    "loadFailed": "Не вдалося завантажити галерею",
+    "downloadFailed": "Не вдалося завантажити зображення"
   },
   "imageGeneration": {
     "title": "Згенерувати зображення",
@@ -2397,7 +2715,10 @@
       "image": "Зображення",
       "video": "Відео",
       "audio": "Аудіо"
-    }
+    },
+    "deleteConfirmTitle": "Видалити цей елемент?",
+    "deleteConfirmDescription": "Згенероване медіа буде остаточно видалено.",
+    "previewFailed": "Попередній перегляд недоступний"
   },
   "errorBoundary": {
     "title": "Щось пішло не так",
@@ -2475,7 +2796,8 @@
     "previousVersion": "Попередня версія",
     "nextVersion": "Наступна версія",
     "print": "Print",
-    "exportCsv": "Export CSV"
+    "exportCsv": "Export CSV",
+    "resizePanel": "Змінити розмір панелі"
   },
   "personaImportExport": {
     "title": "Імпорт та експорт персон",
@@ -2513,7 +2835,10 @@
     "generation": "Генерація:",
     "modelLoad": "Завантаження моделі:",
     "totalTime": "Загальний час:",
-    "generatedAt": "Згенеровано о:"
+    "generatedAt": "Згенеровано о:",
+    "notAvailable": "Н/Д",
+    "tokenCount": "Токенів: {{tokens}}",
+    "tokensPerSecond": "{{value}} т/с"
   },
   "userMenu": {
     "loggedOut": "Вихід виконано успішно",
@@ -2572,7 +2897,9 @@
       "httpWarning": "HTTP не шифрує облікові дані чи трафік. Використовуйте його лише в надійній мережі.",
       "invalidBaseUrl": "Базові URL не можуть містити рядок запиту або фрагмент.",
       "invalidApiPath": "Має починатися з / і не містити URL, запит, фрагмент або сегмент ..",
-      "tooLong": "Значення задовге"
+      "tooLong": "Значення задовге",
+      "resetConfirmTitle": "Скинути до значень за замовчуванням?",
+      "resetConfirmDescription": "Усі збережені значення для {{name}} буде видалено, зокрема API-ключі та інші облікові дані. Цю дію не можна скасувати."
     }
   },
   "huggingface": {
@@ -2592,7 +2919,10 @@
   },
   "demoMode": {
     "title": "Демо-режим",
-    "github": "GitHub"
+    "github": "GitHub",
+    "defaultMessage": "Це демонстраційна версія, призначена лише для презентації. Бекенд Ollama не підключено.",
+    "viewOnGithub": "Переглянути на GitHub",
+    "dismiss": "Закрити"
   },
   "libreClaw": {
     "title": "Агенти",
@@ -2755,8 +3085,8 @@
       "status": "Стан: {{status}}"
     },
     "landing": {
-      "title": "Почати нове робоче завдання",
-      "description": "Надайте локальній моделі або моделі налаштованого провайдера постійний ізольований робочий простір. Вона зможе переглядати файли, запускати інструменти й продовжити з місця зупинки, коли ви повернетеся.",
+      "title": "Над чим ви хочете попрацювати?",
+      "description": "Опишіть завдання. Ваша модель отримає власний робочий простір.",
       "isolated": "Ізоляція",
       "isolatedBody": "Кожне завдання отримує власний контейнер і власні файли.",
       "durable": "Збереження",
@@ -2785,7 +3115,11 @@
         "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
         "attachTooMany": "Only {{max}} files can be attached at once.",
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
-      }
+      },
+      "engine": "Рушій",
+      "libreModels": "Моделі Libre WebUI",
+      "strandsDisabled": "Рушій Strands недоступний для вашого облікового запису.",
+      "modelLabel": "Модель"
     },
     "conversation": {
       "ready": "Робочий простір готовий",
@@ -2825,8 +3159,18 @@
         "checksPending": "Перевірок в очікуванні",
         "stallNudges": "Сигнали про застій",
         "ambiguityNudges": "Сигнали переналаштування",
-        "stoppedBy": "Зупинено через"
-      }
+        "stoppedBy": "Зупинено через",
+        "reasons": {
+          "round": "ліміт раундів",
+          "toolCall": "ліміт викликів інструментів",
+          "approvalTimeout": "тайм-аут схвалення",
+          "computerStall": "комп'ютер завис"
+        }
+      },
+      "skillTraceSavedWorked": "Позначено: спрацювало",
+      "skillTraceSavedFailed": "Позначено: не спрацювало",
+      "connectionClosed": "Live-з'єднання Роботи закрито.",
+      "reconnectingBackground": "Live-оновлення перепідключаються у фоновому режимі."
     },
     "runtime": {
       "unavailable": "Середовище виконання недоступне",
@@ -2834,7 +3178,7 @@
       "readyOllama": "Docker готовий",
       "readyPlugin": "Docker і плагін готові",
       "readyHybrid": "Docker і моделі готові",
-      "reason": "Потрібні Docker і доступний провайдер моделі Ollama або плагіна."
+      "reason": "Потрібні середовище виконання Work і доступний провайдер моделей."
     },
     "workspace": {
       "label": "Режими робочого простору",
@@ -2869,7 +3213,11 @@
       "changes": "Зміни",
       "changesSince": "Що змінилося з останнього ходу",
       "diffLabel": "Зміни з останнього ходу: {{path}}",
-      "diffFolded": "{{count}} рядків без змін"
+      "diffFolded": "{{count}} рядків без змін",
+      "diffAdded": "Додано",
+      "diffRemoved": "Видалено",
+      "unsavedChanges": "незбережені зміни",
+      "editingLocked": "Редагування розблокується після завершення ходу."
     },
     "activity": {
       "empty": "Тут з’являться команди, операції з файлами та результати інструментів.",
@@ -2880,7 +3228,9 @@
         "toolCall": "Виклик інструмента",
         "toolResult": "Результат інструмента",
         "error": "Помилка"
-      }
+      },
+      "arguments": "Аргументи інструмента",
+      "output": "Вивід інструмента"
     },
     "preview": {
       "command": "Необов’язкова команда запуску",
@@ -2909,7 +3259,8 @@
       "saveFailed": "Не вдалося зберегти цей файл.",
       "saved": "Файл збережено.",
       "previewFailed": "Не вдалося запустити попередній перегляд.",
-      "previewStopFailed": "Не вдалося зупинити попередній перегляд."
+      "previewStopFailed": "Не вдалося зупинити попередній перегляд.",
+      "sendFailed": "Не вдалося надіслати повідомлення."
     },
     "terminal": {
       "connecting": "Відкривається оболонка в пісочниці…",
@@ -2961,7 +3312,18 @@
       "noFilterMatches": "Немає змінених файлів, що відповідають цьому фільтру.",
       "allChanges": "Усі зміни",
       "diffTruncated": "Цей diff обрізано.",
-      "binaryFile": "Двійковий файл, текстовий diff недоступний."
+      "binaryFile": "Двійковий файл, текстовий diff недоступний.",
+      "statusLabels": {
+        "modified": "Змінено",
+        "added": "Додано",
+        "deleted": "Видалено",
+        "renamed": "Перейменовано",
+        "copied": "Скопійовано",
+        "typeChanged": "Змінено тип",
+        "untracked": "Не відстежується"
+      },
+      "stagedState": "в індексі",
+      "aheadBehind": "Попереду: {{ahead}}, позаду: {{behind}}"
     },
     "hostWorkspace": {
       "hint": "Залиште порожнім для ізольованого простору або вкажіть завданню теку на цій машині.",
@@ -2988,7 +3350,8 @@
       "unmute": "Увімкнути звук",
       "mute": "Вимкнути звук",
       "finished": "Це завдання завершено. Відкрийте його знову, щоб повернути екран.",
-      "reopenOpen": "Відкрити завдання знову й відкрити екран"
+      "reopenOpen": "Відкрити завдання знову й відкрити екран",
+      "teachSaveFailed": "Не вдалося зберегти цю демонстрацію."
     },
     "computerSetup": {
       "title": "Work Computer",
@@ -3004,7 +3367,7 @@
       "label": "Найняти як агента (необов'язково)",
       "none": "Без персони (разове завдання)",
       "hint": "Це завдання стає іменованим агентом: воно зберігає персону, залишається закріпленим на бічній панелі та після кожного запуску повідомляє однорядковий статус.",
-      "description": "Виберіть персону, щоб перетворити це завдання на постійного агента з власною ідентичністю."
+      "description": "Виберіть персону, щоб зберегти це завдання як іменованого агента."
     },
     "agent": {
       "openScreen": "Відкрити повноекранний перегляд",
@@ -3025,7 +3388,11 @@
       "approvalsToggleFailed": "Не вдалося оновити схвалення.",
       "approvalRuleLine": "Завжди дозволено",
       "approvalRuleDelete": "Видалити правило",
-      "approvalRuleDeleteFailed": "Не вдалося видалити правило."
+      "approvalRuleDeleteFailed": "Не вдалося видалити правило.",
+      "routinesLoadFailed": "Не вдалося завантажити рутини.",
+      "skillsLoadFailed": "Не вдалося завантажити навчені навички.",
+      "approvalsLoadFailed": "Не вдалося завантажити налаштування схвалення.",
+      "routinePaused": "На паузі"
     },
     "approval": {
       "title": "Потрібне схвалення",
@@ -3033,7 +3400,16 @@
       "allowOnce": "Дозволити один раз",
       "allowAlways": "Дозволяти завжди",
       "deny": "Відхилити",
-      "failed": "Не вдалося надіслати рішення."
+      "failed": "Не вдалося надіслати рішення.",
+      "details": "Відомості про дію",
+      "fields": {
+        "command": "Команда",
+        "path": "Шлях",
+        "from": "Звідки",
+        "to": "Куди",
+        "actions": "Дії",
+        "recursive": "Рекурсивно"
+      }
     },
     "idleStopHint": "Зупиняється після {{minutes}} хв. без активності.",
     "runs": {
@@ -3045,7 +3421,8 @@
         "needsInput": "Потрібні дані",
         "failed": "Помилка",
         "cancelled": "Скасовано"
-      }
+      },
+      "loadFailed": "Не вдалося завантажити історію запусків."
     },
     "recovery": {
       "pending": "Work підтверджує {{pending}} очищень пісочниць, перш ніж прийняти нові операції.",
@@ -3057,6 +3434,17 @@
       "retrySucceeded": "Завершено {{cleared}} з {{attempted}} очікуваних очищень.",
       "retryPending": "Досі повторюємо {{attempted}} очікуваних очищень.",
       "retryFailed": "Не вдалося повторити очікувані очищення."
+    },
+    "computer": {
+      "setupFailed": "Не вдалося налаштувати комп'ютер Роботи."
+    },
+    "announce": {
+      "completed": "{{title}}: завершено.",
+      "needsInput": "{{title}} потребує вашого введення або підтвердження.",
+      "failed": "{{title}}: помилка.",
+      "cancelled": "{{title}}: зупинено.",
+      "approvalNeeded": "{{title}} потребує вашого підтвердження для запуску {{tool}}.",
+      "untitledTask": "Це завдання"
     }
   },
   "personaBackground": {
@@ -3088,7 +3476,21 @@
     "reselectProvider": "повторно виберіть провайдера, щоб закріпити модель",
     "unavailable": "недоступно",
     "unavailableSelections": "Недоступні варіанти",
-    "agentModels": "Агенти"
+    "agentModels": "Агенти",
+    "searchOllama": "Пошук у бібліотеці Ollama...",
+    "searchHuggingFace": "Пошук на HuggingFace...",
+    "searchModels": "Пошук моделей...",
+    "ollamaModels": "Моделі Ollama",
+    "installed": "Встановлено",
+    "use": "Використати",
+    "pull": "Завантажити",
+    "pullRestricted": "Встановлення моделей у цьому екземплярі доступне лише адміністраторам.",
+    "adminOnlyPull": "Лише адміністратори",
+    "showAll": "Показати всі ({{total}})",
+    "sources": "Джерела моделей",
+    "defaultModel": "Модель за замовчуванням",
+    "contextSize": "контекст {{size}}",
+    "via": "через {{provider}}"
   },
   "whatsNew": {
     "title": "Що нового",
@@ -3145,7 +3547,16 @@
     "unpin": "Відкріпити нотатку",
     "pinned": "Закріплено",
     "export": "Завантажити як Markdown",
-    "sharedWithYou": "Доступна вам"
+    "sharedWithYou": "Доступна вам",
+    "titleLabel": "Назва нотатки",
+    "loadFailed": "Не вдалося завантажити. Спробуйте ще раз.",
+    "restoreConfirmTitle": "Відновити цю версію?",
+    "restoreConfirmDescription": "Текст нотатки буде замінено цією ранішою версією.",
+    "deleteAttachmentConfirmTitle": "Видалити {{name}}?",
+    "deleteAttachmentConfirmDescription": "Вкладення буде остаточно видалено з цієї нотатки.",
+    "attachmentDeleteFailed": "Не вдалося видалити вкладення",
+    "revokeFailed": "Не вдалося відкликати доступ",
+    "sharePermissionLabel": "Дозвіл"
   },
   "calendar": {
     "title": "Календар",
@@ -3190,7 +3601,22 @@
     "importFailed": "Не вдалося імпортувати файл",
     "importResult": "Імпортовано подій: {{total}}",
     "importIcs": "Імпорт",
-    "exportIcs": "Експорт"
+    "exportIcs": "Експорт",
+    "chipStatus": {
+      "automation": "Запланована автоматизація",
+      "runSucceeded": "Автоматизацію виконано успішно",
+      "runFailed": "Помилка виконання автоматизації"
+    },
+    "newEventOn": "Нова подія на {{date}}",
+    "showDay": "Показати всі події на {{date}}",
+    "deleteEventConfirmTitle": "Видалити «{{title}}»?",
+    "deleteEventConfirmDescription": "Цю подію буде остаточно видалено.",
+    "deleteRecurringEventConfirmDescription": "Цю повторювану подію та всі її повторення буде остаточно видалено.",
+    "shareCalendarNamed": "Поділитися календарем {{name}}",
+    "deleteCalendarNamed": "Видалити календар {{name}}",
+    "deleteCalendarConfirmTitle": "Видалити календар «{{name}}»?",
+    "deleteCalendarConfirmDescription": "Календар і всі його події буде остаточно видалено.",
+    "calendarDeleteFailed": "Не вдалося видалити календар"
   },
   "automations": {
     "title": "Автоматизації",
@@ -3317,13 +3743,17 @@
         "work-approval": "агент очікує на ваше схвалення",
         "system": "надходить системне сповіщення"
       }
-    }
+    },
+    "deleteConfirmTitle": "Видалити «{{name}}»?",
+    "deleteConfirmDescription": "Автоматизацію та її розклад буде остаточно видалено. Попередні запуски залишаться в історії запусків."
   },
   "home": {
     "active": "активно",
     "continue": "Продовжити",
     "start": "Почати",
-    "explore": "Огляд"
+    "explore": "Огляд",
+    "greeting": "{{greeting}}.",
+    "greetingWithName": "{{greeting}}, {{name}}."
   },
   "palette": {
     "empty": "Збігів немає.",
@@ -3336,7 +3766,14 @@
     "work": "Робота",
     "messages": "Повідомлення",
     "notes": "Нотатки",
-    "documents": "Документи"
+    "documents": "Документи",
+    "searching": "Пошук…",
+    "searchFailed": "Пошук у робочому просторі не вдався. Показано лише відповідні чати та дії.",
+    "results": "Результати",
+    "escKey": "esc",
+    "hintNavigate": "Навігація",
+    "hintOpen": "Відкрити",
+    "hintClose": "Закрити"
   },
   "tabs": {
     "actions": "Дії вкладки",
@@ -3540,7 +3977,8 @@
       "button": "З папки",
       "missingSkillMd": "У папці має бути файл SKILL.md",
       "done": "Навичку імпортовано з {{count}} доданими файлами"
-    }
+    },
+    "toggleLabel": "Увімкнути навичку {{name}}"
   },
   "toolsPage": {
     "title": "Інструменти",
@@ -3701,7 +4139,14 @@
     "added": "Доступ надано {{name}}",
     "failed": "Не вдалося поділитися",
     "userNotFound": "Користувача з таким іменем не знайдено",
-    "groupNotFound": "Групу з такою назвою не знайдено"
+    "groupNotFound": "Групу з такою назвою не знайдено",
+    "principalKind": "Поділитися з користувачем або групою",
+    "principalName": "Ім'я користувача або назва групи",
+    "permission": "Дозвіл",
+    "sharing": "Спільний доступ",
+    "loading": "Завантаження списку доступу",
+    "loadFailed": "Не вдалося завантажити список доступу",
+    "revokeFailed": "Не вдалося відкликати доступ"
   },
   "channels": {
     "title": "Канали",
@@ -3760,13 +4205,44 @@
     "toolCalls": {
       "summary": "Використано інструментів ({{total}})",
       "deniedHint": "Інструменти, що змінюють дані, відхиляються в каналах. Запускайте їх із чату."
-    }
+    },
+    "confirmEdit": "Зберегти зміни",
+    "cancelEdit": "Скасувати редагування",
+    "reactWith": "Відреагувати: {{emoji}}",
+    "deleteMessageConfirmTitle": "Видалити це повідомлення?",
+    "deleteMessageConfirmDescription": "Повідомлення буде видалено для всіх у цьому каналі.",
+    "unreadCount": "Непрочитаних: {{total}}",
+    "send": "Надіслати повідомлення",
+    "invite": "Запросити учасника",
+    "closeThread": "Закрити гілку",
+    "removeAttachment": "Видалити вкладення",
+    "loadFailed": "Не вдалося завантажити. Спробуйте ще раз.",
+    "editFailed": "Не вдалося змінити повідомлення",
+    "deleteMessageFailed": "Не вдалося видалити повідомлення",
+    "pinFailed": "Не вдалося змінити закріплення",
+    "reactFailed": "Не вдалося зберегти реакцію",
+    "downloadFailed": "Не вдалося завантажити файл",
+    "removeMemberConfirm": "Видалити {{name}} із цього каналу?",
+    "removeMemberConfirmDescription": "Учасник втратить доступ до каналу та його повідомлень.",
+    "removeMemberNamed": "Видалити {{name}} з каналу",
+    "removeMemberFailed": "Не вдалося видалити учасника",
+    "leaveConfirm": "Залишити «{{name}}»?",
+    "leaveConfirmDescription": "Щоб повернутися до приватного каналу, вас потрібно буде запросити знову.",
+    "leaveFailed": "Не вдалося залишити канал",
+    "joinFailed": "Не вдалося приєднатися до каналу",
+    "deleteConfirm": "Видалити «{{name}}»?",
+    "deleteConfirmDescription": "Канал і всі його повідомлення буде остаточно видалено для всіх учасників.",
+    "deleteFailed": "Не вдалося видалити канал",
+    "saveFailed": "Не вдалося зберегти канал"
   },
   "notifications": {
     "title": "Сповіщення",
     "empty": "Нових сповіщень немає.",
     "markAllRead": "Позначити все прочитаним",
-    "markRead": "Позначити прочитаним"
+    "markRead": "Позначити прочитаним",
+    "titleWithUnread": "Сповіщення (непрочитаних: {{unread}})",
+    "unread": "Непрочитані",
+    "loadFailed": "Не вдалося завантажити сповіщення."
   },
   "voiceMode": {
     "title": "Голосовий режим",
@@ -3901,7 +4377,12 @@
       "failed": "Невдача",
       "cancelled": "Скасовано"
     },
-    "noFeedback": "Відгуків ще немає — оцінюйте відповіді, щоб зібрати набір даних."
+    "noFeedback": "Відгуків ще немає — оцінюйте відповіді, щоб зібрати набір даних.",
+    "deleteSetConfirmTitle": "Видалити «{{name}}»?",
+    "deleteSetConfirmDescription": "Набір оцінювання та його промпти буде остаточно видалено.",
+    "deleteSetFailed": "Не вдалося видалити набір оцінювання",
+    "runError": "Помилка: {{detail}}",
+    "cancelFailed": "Не вдалося скасувати запуск"
   },
   "passwordStrength": {
     "levels": {
@@ -3915,6 +4396,14 @@
       "hasCase": "Великі та малі літери",
       "hasNumber": "Принаймні одна цифра",
       "tooLong": "Не більше 72 байтів"
+    },
+    "requirements": "Щонайменше 12 символів і не більше 72 байтів UTF-8, з великою та малою літерами й цифрою.",
+    "errors": {
+      "minLength": "Пароль має містити щонайменше 12 символів.",
+      "tooLong": "Пароль не має перевищувати 72 байти UTF-8.",
+      "uppercase": "Пароль має містити велику літеру.",
+      "lowercase": "Пароль має містити малу літеру.",
+      "number": "Пароль має містити цифру."
     }
   },
   "connectModels": {
@@ -3933,7 +4422,8 @@
       "enable": "Увімкнути провайдера",
       "enabling": "Увімкнення…",
       "enabled": "{{name}} підключено — його моделі тепер доступні",
-      "enableFailed": "Не вдалося увімкнути провайдера"
+      "enableFailed": "Не вдалося увімкнути провайдера",
+      "urlLabel": "URL сервера"
     },
     "cloud": {
       "title": "Хмарний API",
@@ -3942,7 +4432,70 @@
       "connect": "Підключити",
       "connecting": "Підключення…",
       "connected": "{{name}} підключено — його моделі тепер доступні",
-      "saveFailed": "Не вдалося зберегти API-ключ"
+      "saveFailed": "Не вдалося зберегти API-ключ",
+      "keyLabel": "API-ключ {{name}}"
+    },
+    "ollama": {
+      "status": {
+        "checking": "Перевірка доступності…",
+        "healthy": "Працює і готовий до локальних моделей",
+        "offline": "Не виявлено на цьому пристрої",
+        "disabled": "Вимкнено — перевірки не виконуватимуться"
+      },
+      "recheck": "Перевірити знову",
+      "enable": "Увімкнути",
+      "disable": "Припинити перевірку Ollama",
+      "enabledToast": "Провайдера Ollama увімкнено",
+      "disabledToast": "Перевірки Ollama вимкнено — ви можете знову увімкнути їх у Налаштуваннях",
+      "settingsFailed": "Не вдалося оновити налаштування Ollama",
+      "offlineHint": "Встановіть Ollama з ollama.com, і його буде виявлено автоматично — або скористайтеся одним із варіантів нижче. Якщо ви не плануєте використовувати Ollama, можете вимкнути його перевірки.",
+      "healthyHint": "Ollama підключено. Завантажте модель у розділі «Моделі» — і можна починати спілкування."
     }
+  },
+  "modelDownload": {
+    "success": "Модель {{name}} завантажено",
+    "failed": "Не вдалося завантажити: {{error}}",
+    "startFailed": "Не вдалося розпочати завантаження",
+    "cancelled": "Завантаження скасовано"
+  },
+  "strands": {
+    "title": "Strands",
+    "subtitle": "Вбудований рушій агентів на ваших моделях Libre WebUI.",
+    "subtitleVersion": "Вбудований рушій агентів, harness {{version}}.",
+    "newSession": "Новий сеанс",
+    "sessions": "Сеанси",
+    "noSessions": "Сеансів ще немає. Створіть один, щоб почати.",
+    "empty": "Попросіть агента прочитати або змінити файли в його робочій області.",
+    "placeholder": "Попросіть рушій щось зробити…",
+    "model": "Модель",
+    "defaultModel": "Модель за замовчуванням",
+    "send": "Надіслати",
+    "stop": "Зупинити",
+    "reasoning": "Міркування",
+    "tool": {
+      "running": "Виконується",
+      "done": "Готово",
+      "failed": "Не вдалося"
+    },
+    "cancelled": "Скасовано",
+    "turnLimit": "Зупинено на ліміті ходів.",
+    "messageCount": "Повідомлення: {{count}}",
+    "deleteSession": "Видалити сеанс",
+    "deleteConfirm": "Видалити «{{title}}» разом з історією?",
+    "loadFailed": "Не вдалося завантажити Strands.",
+    "createFailed": "Не вдалося створити сеанс.",
+    "deleteFailed": "Не вдалося видалити сеанс.",
+    "saveFailed": "Не вдалося зберегти сеанс.",
+    "turnFailed": "Рушій не зміг завершити хід"
+  },
+  "notFound": {
+    "title": "Сторінку не знайдено",
+    "description": "Ця сторінка не існує або була переміщена."
+  },
+  "themeToggle": {
+    "switchToLight": "Перейти на світлу тему",
+    "switchToDark": "Перейти на темну тему",
+    "switchToAmoled": "Перейти на суто чорну тему",
+    "switchToCelestial": "Перейти на небесну тему"
   }
 }

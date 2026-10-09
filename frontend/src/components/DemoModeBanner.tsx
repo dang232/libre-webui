@@ -28,12 +28,13 @@ interface DemoModeBannerProps {
 }
 
 export const DemoModeBanner: React.FC<DemoModeBannerProps> = ({
-  message = 'This is a demo version for presentation purposes only. The Ollama backend is not connected.',
+  message: messageProp,
   onDismiss,
   className,
 }) => {
   const [isDismissed, setIsDismissed] = useState(false);
   const { t } = useTranslation();
+  const message = messageProp ?? t('demoMode.defaultMessage');
 
   const handleDismiss = () => {
     setIsDismissed(true);
@@ -53,35 +54,39 @@ export const DemoModeBanner: React.FC<DemoModeBannerProps> = ({
     >
       <div className='flex items-center justify-between max-w-6xl mx-auto gap-3'>
         <div className='flex items-center gap-2.5 min-w-0'>
-          <div className='flex-shrink-0'>
+          <div className='shrink-0'>
             <Info className='h-4 w-4 text-white/65 dark:text-gray-950/60' />
           </div>
-          <div className='flex min-w-0 items-baseline gap-2'>
+          <div className='flex min-w-0 flex-col sm:flex-row sm:items-baseline sm:gap-2'>
             <p className='shrink-0 text-xs font-semibold tracking-wide'>
               {t('demoMode.title')}
             </p>
-            <p className='hidden truncate text-xs text-white/60 dark:text-gray-950/60 sm:block'>
+            <p
+              title={message}
+              className='line-clamp-2 text-xs text-white/70 dark:text-gray-950/70 sm:truncate'
+            >
               {message}
             </p>
           </div>
         </div>
 
-        <div className='flex items-center gap-2 ml-4'>
+        <div className='flex items-center gap-2 ms-4'>
           {/* Link to GitHub or documentation */}
           <Button
             variant='ghost'
             size='sm'
-            className='h-8 px-2 text-white/70 hover:bg-white/10 hover:text-white dark:text-gray-950/70 dark:hover:bg-black/[0.06] dark:hover:text-gray-950'
+            className='h-8 px-2 text-white/70 hover:bg-white/10 hover:text-white dark:text-gray-950/70 dark:hover:bg-black/6 dark:hover:text-gray-950'
             onClick={() =>
               window.open(
                 'https://github.com/libre-webui/libre-webui',
-                '_blank'
+                '_blank',
+                'noopener,noreferrer'
               )
             }
-            title='View on GitHub'
+            title={t('demoMode.viewOnGithub')}
           >
             <ExternalLink className='h-4 w-4' />
-            <span className='ml-1 hidden sm:inline'>
+            <span className='sr-only sm:not-sr-only sm:ms-1'>
               {t('demoMode.github')}
             </span>
           </Button>
@@ -91,8 +96,9 @@ export const DemoModeBanner: React.FC<DemoModeBannerProps> = ({
             variant='ghost'
             size='sm'
             onClick={handleDismiss}
-            className='h-8 w-8 p-0 text-white/70 hover:bg-white/10 hover:text-white dark:text-gray-950/70 dark:hover:bg-black/[0.06] dark:hover:text-gray-950'
-            title='Dismiss'
+            className='h-8 w-8 p-0 text-white/70 hover:bg-white/10 hover:text-white dark:text-gray-950/70 dark:hover:bg-black/6 dark:hover:text-gray-950'
+            title={t('demoMode.dismiss')}
+            aria-label={t('demoMode.dismiss')}
           >
             <X className='h-4 w-4' />
           </Button>

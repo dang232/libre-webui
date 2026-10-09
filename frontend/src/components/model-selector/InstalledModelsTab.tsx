@@ -15,51 +15,89 @@
  * limitations under the License.
  */
 
-import type { ReactNode } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, Cpu, ImageIcon, Plus } from 'lucide-react';
+import { Check, ChevronRight, Cpu, ImageIcon, Plus } from 'lucide-react';
 import type { ChatModel } from '@/types';
 import { cn } from '@/utils';
 import type { ModelGroup } from './types';
 
 interface InstalledModelsTabProps {
-  filteredGroups: ModelGroup[];
+  groups: ModelGroup[];
   selectedModel: string;
   showImageGen: boolean;
   getModelValue: (model: ChatModel) => string;
   getModelIcon: (model: ChatModel) => ReactNode;
-  getModelLabel: (model: ChatModel) => string;
-  getModelSubLabel: (model: ChatModel) => string | null;
+  getModelLabel: (model: ChatModel, group: ModelGroup) => string;
+  getModelTag: (model: ChatModel, group: ModelGroup) => string | null;
+  getModelSubLabel: (model: ChatModel, group: ModelGroup) => string | null;
   onModelSelect: (modelName: string) => void;
+  onShowAll: (groupKey: string) => void;
   onOpenGallery: () => void;
+  /** Arrow Up on the first row hands focus back to the search field. */
+  onExitTop: () => void;
+}
+
+const ROW_SELECTOR =
+  '[data-testid="model-selector-option"], [data-testid="model-selector-show-all"]';
+
+/** Up and Down walk the rows, so the list works without a pointer. */
+function moveRowFocus(
+  event: KeyboardEvent<HTMLDivElement>,
+  onExitTop: () => void
+) {
+  if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+  const rows = Array.from(
+    event.currentTarget.querySelectorAll<HTMLButtonElement>(ROW_SELECTOR)
+  );
+  const index = rows.indexOf(document.activeElement as HTMLButtonElement);
+  if (index === -1) return;
+  event.preventDefault();
+  const next = index + (event.key === 'ArrowDown' ? 1 : -1);
+  if (next < 0) {
+    onExitTop();
+    return;
+  }
+  rows[Math.min(next, rows.length - 1)]?.focus();
 }
 
 export function InstalledModelsTab({
-  filteredGroups,
+  groups,
   selectedModel,
   showImageGen,
   getModelValue,
   getModelIcon,
   getModelLabel,
+  getModelTag,
   getModelSubLabel,
   onModelSelect,
+  onShowAll,
   onOpenGallery,
+  onExitTop,
 }: InstalledModelsTabProps) {
   const { t } = useTranslation();
 
   return (
-    <div className='scroll-region min-h-0 flex-1 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-dark-400'>
-      {filteredGroups.length > 0 ? (
-        filteredGroups.map(group => (
-          <div key={group.type}>
-            <div className='px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-dark-300 border-b border-gray-200 dark:border-dark-400 sticky top-0'>
-              <div className='flex items-center gap-2'>
+    <div
+      className='scroll-region min-h-0 flex-1 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-dark-400'
+      onKeyDown={event => moveRowFocus(event, onExitTop)}
+    >
+      {groups.length > 0 ? (
+        groups.map(group => (
+          <div key={group.key} data-testid='model-selector-group'>
+            {group.showHeader && (
+              <div className='sticky top-0 z-1 flex items-center gap-2 border-b border-gray-200 bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-500 dark:border-dark-400 dark:bg-dark-300 dark:text-gray-400'>
                 {group.icon}
-                {group.label} ({group.models.length})
+                <span className='min-w-0 truncate'>{group.label}</span>
+                <span className='font-normal tabular-nums text-gray-400 dark:text-dark-500'>
+                  {group.total}
+                </span>
               </div>
-            </div>
+            )}
             {group.models.map(model => {
               const modelValue = getModelValue(model);
+              const subLabel = getModelSubLabel(model, group);
+              const tag = getModelTag(model, group);
               return (
                 <button
                   type='button'
@@ -67,12 +105,13 @@ export function InstalledModelsTab({
                   data-testid='model-selector-option'
                   data-model-value={modelValue}
                   aria-pressed={selectedModel === modelValue}
+                  title={model.isPersona ? undefined : model.name}
                   onClick={() => onModelSelect(modelValue)}
                   className={cn(
-                    'block w-full cursor-pointer border-b border-gray-100 px-3 py-3 text-start last:border-b-0 dark:border-dark-200',
+                    'block w-full cursor-pointer border-b border-gray-100 px-3 py-2 text-start last:border-b-0 dark:border-dark-200',
                     'hover:bg-gray-50 dark:hover:bg-dark-200',
                     'bg-white dark:bg-dark-100 transition-colors',
-                    'focus-visible:relative focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-500/50',
+                    'focus-visible:relative focus-visible:z-10 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-500/50',
                     selectedModel === modelValue &&
                       'bg-primary-50 dark:bg-primary-900/30'
                   )}
@@ -80,28 +119,55 @@ export function InstalledModelsTab({
                   <div className='flex items-center gap-3'>
                     {getModelIcon(model)}
                     <div className='flex-1 min-w-0'>
-                      <div
-                        dir={model.isPersona ? 'auto' : 'ltr'}
-                        className='text-sm font-medium text-gray-900 dark:text-gray-100 truncate'
-                      >
-                        {getModelLabel(model)}
+                      <div className='flex min-w-0 items-center gap-1.5'>
+                        <span
+                          dir={model.isPersona ? 'auto' : 'ltr'}
+                          className='min-w-0 truncate text-sm font-medium text-gray-900 dark:text-gray-100'
+                        >
+                          {getModelLabel(model, group)}
+                        </span>
+                        {tag && (
+                          <span
+                            dir='ltr'
+                            className='shrink-0 rounded-sm border border-black/8 px-1 py-px font-mono text-[10px] leading-4 text-gray-500 dark:border-white/10 dark:text-dark-600'
+                          >
+                            {tag}
+                          </span>
+                        )}
                       </div>
-                      {getModelSubLabel(model) && (
+                      {subLabel && (
                         <div
                           dir='auto'
                           className='text-xs text-gray-500 dark:text-gray-400 truncate'
                         >
-                          {getModelSubLabel(model)}
+                          {subLabel}
                         </div>
                       )}
                     </div>
                     {selectedModel === modelValue && (
-                      <Check className='h-4 w-4 text-primary-600 dark:text-primary-400 flex-shrink-0' />
+                      <Check className='h-4 w-4 text-primary-600 dark:text-primary-400 shrink-0' />
                     )}
                   </div>
                 </button>
               );
             })}
+            {group.hidden > 0 && (
+              <button
+                type='button'
+                data-testid='model-selector-show-all'
+                onClick={() => onShowAll(group.key)}
+                className={cn(
+                  'flex w-full items-center justify-between gap-2 border-b border-gray-100 bg-white px-3 py-2 text-start text-xs font-medium text-primary-600 dark:border-dark-200 dark:bg-dark-100 dark:text-primary-400',
+                  'hover:bg-gray-50 dark:hover:bg-dark-200',
+                  'focus-visible:relative focus-visible:z-10 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-500/50'
+                )}
+              >
+                <span className='truncate'>
+                  {t('modelSelector.showAll', { total: group.total })}
+                </span>
+                <ChevronRight className='h-3.5 w-3.5 shrink-0 rtl:rotate-180' />
+              </button>
+            )}
           </div>
         ))
       ) : (

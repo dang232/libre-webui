@@ -31,6 +31,7 @@ import {
   EyeOff,
   Key,
   Loader2,
+  SearchX,
   Puzzle,
   RefreshCw,
   Search,
@@ -41,7 +42,8 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { PluginVariablesEditor } from '@/components/PluginManager';
-import { Button } from '@/components/ui';
+import { Button, EmptyState, LoadingState } from '@/components/ui';
+import { SettingsTabHeader } from './SettingsTabHeader';
 import { useAuthStore } from '@/store/authStore';
 import type { Plugin } from '@/types';
 import {
@@ -147,29 +149,29 @@ export function SettingsPluginsTab({
   return (
     <div className='space-y-6'>
       <div>
-        <div className='mb-4'>
-          <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
-            {t('settings.plugins.providerConnections', {
-              defaultValue: 'Provider connections',
-            })}
-          </h3>
-          <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>
-            {t('settings.plugins.providerConnectionsDescription', {
-              defaultValue:
-                'Connect, configure, and inspect model providers through plugins.',
-            })}
-          </p>
-        </div>
+        <SettingsTabHeader
+          title={t('settings.plugins.providerConnections', {
+            defaultValue: 'Provider connections',
+          })}
+          description={t('settings.plugins.providerConnectionsDescription', {
+            defaultValue:
+              'Connect, configure, and inspect model providers through plugins.',
+          })}
+        />
 
         {error && (
-          <div className='p-4 bg-primary-50/80 dark:bg-primary-950/25 border border-primary-200 dark:border-primary-800/50 rounded-lg mb-4'>
-            <div className='flex items-center justify-between'>
-              <p className='text-primary-800 dark:text-primary-200'>{error}</p>
+          <div
+            role='alert'
+            className='p-4 bg-error-50 dark:bg-error-900/20 border border-error-200 dark:border-error-800/60 rounded-lg mb-4'
+          >
+            <div className='flex items-center justify-between gap-3'>
+              <p className='text-error-800 dark:text-error-200'>{error}</p>
               <Button
                 variant='ghost'
                 size='sm'
                 onClick={onClearError}
-                className='text-primary-700 hover:text-primary-900 dark:text-primary-300 dark:hover:text-primary-100'
+                aria-label={t('settings.plugins.dismissError')}
+                className='text-error-800 hover:text-error-900 dark:text-error-200 dark:hover:text-error-100'
               >
                 <X className='h-4 w-4' />
               </Button>
@@ -183,7 +185,7 @@ export function SettingsPluginsTab({
               <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>
                 {t('settings.plugins.addNew')}
               </h4>
-              <div className='flex items-center space-x-2'>
+              <div className='flex items-center gap-2'>
                 <Button
                   variant='outline'
                   size='sm'
@@ -206,11 +208,12 @@ export function SettingsPluginsTab({
 
             {showUploadForm && (
               <div className='bg-gray-50 dark:bg-dark-50 rounded-lg p-4 border border-gray-200 dark:border-dark-300 mb-4'>
-                <div className='flex items-center space-x-4'>
+                <div className='flex items-center gap-4'>
                   <input
                     ref={fileInputRef}
                     type='file'
                     accept='.json,.zip'
+                    aria-label={t('settings.plugins.upload')}
                     onChange={onFileUpload}
                     className='flex-1 p-2 border border-gray-300 dark:border-dark-300 rounded-md bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-800 file:me-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-gray-100 file:text-gray-700 dark:file:bg-dark-200 dark:file:text-dark-700 hover:file:bg-gray-200 dark:hover:file:bg-dark-300'
                     disabled={uploading}
@@ -239,10 +242,11 @@ export function SettingsPluginsTab({
                     value={jsonInput}
                     onChange={event => onJsonInputChange(event.target.value)}
                     placeholder={t('settings.plugins.jsonPlaceholder')}
-                    className='w-full h-32 p-3 border border-gray-300 dark:border-dark-300 rounded-md bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-800 placeholder:text-gray-400 dark:placeholder:text-dark-500 font-mono text-sm'
+                    aria-label={t('settings.plugins.addJson')}
+                    className='w-full h-32 p-3 border border-gray-300 dark:border-dark-300 rounded-md bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-800 placeholder:text-ink-muted font-mono text-sm'
                     disabled={loading}
                   />
-                  <div className='flex items-center justify-end space-x-2'>
+                  <div className='flex items-center justify-end gap-2'>
                     <Button
                       variant='outline'
                       size='sm'
@@ -271,7 +275,7 @@ export function SettingsPluginsTab({
           data-testid='provider-workspace'
           className='overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-dark-300 dark:bg-dark-100'
         >
-          <div className='grid min-h-[30rem] grid-cols-1 lg:grid-cols-[minmax(15rem,0.8fr)_minmax(0,1.6fr)]'>
+          <div className='grid min-h-120 grid-cols-1 lg:grid-cols-[minmax(15rem,0.8fr)_minmax(0,1.6fr)]'>
             <section
               data-testid='provider-list'
               aria-label={t('settings.plugins.providers', {
@@ -298,7 +302,7 @@ export function SettingsPluginsTab({
                 <div className='relative'>
                   <Search
                     aria-hidden='true'
-                    className='absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400'
+                    className='absolute inset-s-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400'
                   />
                   <input
                     id={searchInputId}
@@ -308,35 +312,34 @@ export function SettingsPluginsTab({
                     placeholder={t('settings.plugins.searchProviders', {
                       defaultValue: 'Search providers',
                     })}
-                    className='w-full rounded-lg border border-gray-300 bg-white py-2 pe-3 ps-9 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-dark-300 dark:bg-dark-50 dark:text-gray-100'
+                    className='w-full rounded-lg border border-gray-300 bg-white py-2 pe-3 ps-9 text-sm text-gray-900 placeholder:text-ink-muted focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/30 dark:border-dark-300 dark:bg-dark-50 dark:text-gray-100'
                   />
                 </div>
               </div>
 
               {/* Stacked: cap the list. Side by side: fill the column so no
                   dead space collects under it when the detail pane is tall. */}
-              <div className='max-h-[32rem] space-y-2 overflow-y-auto p-3 lg:min-h-0 lg:max-h-none lg:flex-1'>
+              <div className='max-h-128 space-y-2 overflow-y-auto p-3 lg:min-h-0 lg:max-h-none lg:flex-1'>
                 {loading && plugins.length === 0 ? (
-                  <div className='p-6 text-center text-sm text-gray-500 dark:text-gray-400'>
-                    <Loader2 className='mx-auto mb-2 h-5 w-5 animate-spin' />
-                    {t('settings.plugins.loading')}
-                  </div>
+                  <LoadingState
+                    size='sm'
+                    label={t('settings.plugins.loading')}
+                  />
                 ) : plugins.length === 0 ? (
-                  <div className='p-6 text-center'>
-                    <Puzzle className='mx-auto mb-3 h-9 w-9 text-gray-400' />
-                    <p className='text-sm text-gray-500 dark:text-gray-400'>
-                      {t('settings.plugins.noPlugins')}
-                    </p>
-                    <p className='mt-1 text-xs text-gray-400 dark:text-gray-500'>
-                      {t('settings.plugins.noPluginsDescription')}
-                    </p>
-                  </div>
+                  <EmptyState
+                    icon={Puzzle}
+                    size='sm'
+                    title={t('settings.plugins.noPlugins')}
+                    description={t('settings.plugins.noPluginsDescription')}
+                  />
                 ) : filteredPlugins.length === 0 ? (
-                  <p className='p-6 text-center text-sm text-gray-500 dark:text-gray-400'>
-                    {t('settings.plugins.noProvidersFound', {
+                  <EmptyState
+                    icon={SearchX}
+                    size='sm'
+                    title={t('settings.plugins.noProvidersFound', {
                       defaultValue: 'No providers match your search.',
                     })}
-                  </p>
+                  />
                 ) : (
                   filteredPlugins.map(plugin => {
                     const selected = effectiveSelectedPluginId === plugin.id;
@@ -425,7 +428,7 @@ export function SettingsPluginsTab({
                   onDeleteApiKey={() => onDeleteApiKey(selectedPlugin.id)}
                 />
               ) : (
-                <div className='flex min-h-[24rem] items-center justify-center text-center'>
+                <div className='flex min-h-96 items-center justify-center text-center'>
                   <div>
                     <Puzzle className='mx-auto mb-3 h-10 w-10 text-gray-400' />
                     <p className='text-sm font-medium text-gray-700 dark:text-gray-300'>
@@ -583,6 +586,10 @@ function ProviderDetail({
                   onClick={onExport}
                   disabled={loading}
                   title={t('settings.plugins.exportPlugin', 'Export plugin')}
+                  aria-label={t(
+                    'settings.plugins.exportPlugin',
+                    'Export plugin'
+                  )}
                   className='px-2'
                 >
                   <Download className='h-4 w-4' />
@@ -592,8 +599,12 @@ function ProviderDetail({
                   size='sm'
                   onClick={onDelete}
                   disabled={loading}
-                  className='px-2 text-red-600 hover:bg-red-50 hover:text-red-700'
+                  className='px-2 text-error-700 hover:bg-error-500/10 hover:text-error-800 dark:text-error-400 dark:hover:text-error-300'
                   title={t('settings.plugins.deletePlugin', 'Delete plugin')}
+                  aria-label={t(
+                    'settings.plugins.deletePlugin',
+                    'Delete plugin'
+                  )}
                 >
                   <Trash2 className='h-4 w-4' />
                 </Button>
@@ -887,7 +898,7 @@ function ApiKeyPanel({
         {plugin.auth?.key_env && (
           <span className='block mt-1'>
             {t('settings.plugins.apiKeyEnvAlternative')}{' '}
-            <code className='bg-gray-200 dark:bg-dark-200 px-1 rounded'>
+            <code className='bg-gray-200 dark:bg-dark-200 px-1 rounded-sm'>
               {plugin.auth.key_env}
             </code>{' '}
             {t('settings.plugins.environmentVariable')}.
@@ -904,11 +915,10 @@ function ApiKeyPanel({
             </span>
           </div>
           <Button
-            variant='outline'
+            variant='danger'
             size='sm'
             onClick={onDeleteApiKey}
             disabled={savingApiKey}
-            className='text-red-600 border-red-300 hover:bg-red-50'
           >
             {savingApiKey ? (
               <Loader2 className='h-4 w-4 animate-spin' />
@@ -930,7 +940,7 @@ function ApiKeyPanel({
               onChange={event => onApiKeyChange(event.target.value)}
               placeholder={t('settings.plugins.apiKeyPlaceholder')}
               disabled={savingApiKey}
-              className='w-full p-2 pe-10 border border-gray-300 dark:border-dark-300 rounded-md bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-800 placeholder:text-gray-400 dark:placeholder:text-dark-500'
+              className='w-full p-2 pe-10 border border-gray-300 dark:border-dark-300 rounded-md bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-800 placeholder:text-ink-muted'
             />
             <button
               type='button'
@@ -942,7 +952,7 @@ function ApiKeyPanel({
                   : t('settings.plugins.showApiKey')
               }
               disabled={savingApiKey}
-              className='absolute end-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50'
+              className='absolute inset-e-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50'
             >
               {showApiKey ? (
                 <EyeOff className='h-4 w-4' />

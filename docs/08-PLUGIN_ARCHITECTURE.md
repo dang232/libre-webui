@@ -31,6 +31,23 @@ Alcore ships one bundled provider definition: **Alcore**
 image, speech, transcription, audio, and video capabilities the Alcore
 platform exposes.
 
+Libre WebUI includes provider definitions for common services:
+
+- OpenAI and OpenAI-compatible APIs
+- Anthropic
+- Google Gemini
+- Groq
+- Kimi Code by Moonshot AI
+- Mistral
+- DeepSeek
+- Amazon Bedrock
+- OpenRouter
+- Hugging Face
+- GitHub Models
+- MLX LM for local Apple Silicon inference
+- ComfyUI
+- ElevenLabs
+
 Provider catalogs change frequently. The UI should be treated as the source of truth for live model discovery when a plugin supports it.
 
 ## Ownership and Authorization
@@ -85,6 +102,17 @@ Environment example:
 
 ```env
 ALCORE_API_KEY=...
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GROQ_API_KEY=gsk_...
+GEMINI_API_KEY=...
+MISTRAL_API_KEY=...
+DEEPSEEK_API_KEY=...
+AWS_BEARER_TOKEN_BEDROCK=...
+OPENROUTER_API_KEY=sk-or-...
+KIMI_API_KEY=...
+GITHUB_API_KEY=github_pat_...
+ELEVENLABS_API_KEY=...
 ```
 
 For shared deployments, user-level credentials are usually better because each user controls their own provider billing and limits. Environment keys are useful for single-user installs, demos, or managed deployments.
@@ -104,11 +132,16 @@ This rule applies to discovery, Chat, Work, availability checks, and capability
 catalogs. It prevents a custom endpoint or a pre-upgrade custom manifest from
 receiving an operator-managed secret.
 
-User-stored credentials are bound to the effective definition source, complete
+User-stored credentials are bound to the effective definition source,
 definition hash, authentication contract, capability endpoints and selectors,
-and effective routing values at the moment the user saves them. A route or
-definition change makes the old credential unavailable until the user reviews
-the new destination and saves the credential again. Legacy credentials without
+and effective routing values at the moment the user saves them. The definition
+hash leaves out the model catalog (`model_map`, `model_context`, and
+`model_reasoning`, top-level and per capability), so adding a model keeps saved
+keys. The catalog stays bound when a `{model}` placeholder could choose the
+destination host. A route or other definition change makes the old credential
+unavailable until the user reviews the new destination and saves the
+credential again. Keys saved under the earlier whole-definition binding stay
+valid for the same definition and are rebound on first use. Legacy credentials without
 a binding are accepted only on an exact anchored bundled route; their first
 successful use writes the binding before returning the decrypted key.
 

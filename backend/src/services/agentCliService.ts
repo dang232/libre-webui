@@ -21,10 +21,16 @@ import os from 'os';
 import path from 'path';
 import { ChatMessage } from '../types/index.js';
 import { PluginStreamChunk } from '../utils/pluginStreaming.js';
+import { userHasStrandsAccess } from './strandsAccessService.js';
 import { userModel } from '../models/userModel.js';
 import { createLogger } from '../utils/logger.js';
-import { getAgentsEnabled } from './agentAccessService.js';
+import { getAgentCliModelsEnabled } from './agentAccessService.js';
 import pluginUsageService from './pluginUsageService.js';
+import {
+  agentCliTokenUsage,
+  captureAgentCliUsage,
+  type AgentCliUsageState,
+} from './agentCliUsage.js';
 import {
   ChatGenerationCancelledError,
   throwIfChatGenerationCancelled,
@@ -57,6 +63,15 @@ export interface AgentCliDefinition {
    * depends on local user configuration that may be broken or absent.
    */
   requiresModel?: boolean;
+  /**
+   * Runs inside this server rather than as a child process.
+   *
+   * The embedded Strands engine is a library, not an executable, so it has
+   * no binary to resolve on PATH and no stdout to parse. Its turns arrive as
+   * engine events instead, so availability is decided by the account's
+   * Strands access rather than by a filesystem lookup.
+   */
+  inProcess?: boolean;
 }
 
 export interface AgentCliModel {
@@ -88,9 +103,20 @@ export const AGENT_CLI_DEFINITIONS: AgentCliDefinition[] = [
     ],
     modelOptions: [
       { id: 'sonnet', label: 'Sonnet' },
+      { id: 'claude-sonnet-5-5', label: 'Sonnet 5.5' },
       { id: 'opus', label: 'Opus' },
+      { id: 'claude-opus-5-5', label: 'Opus 5.5' },
       { id: 'haiku', label: 'Haiku' },
     ],
+  },
+  {
+    id: 'strands',
+    name: 'Strands',
+    // No binary: this agent runs in-process through the Strands engine.
+    command: 'strands',
+    parser: 'pi',
+    inProcess: true,
+    buildArgs: () => [],
   },
   {
     id: 'codex',
@@ -107,6 +133,9 @@ export const AGENT_CLI_DEFINITIONS: AgentCliDefinition[] = [
     // The ChatGPT sign-in family from learn.chatgpt.com/docs/models.
     modelOptions: [
       { id: 'gpt-6-astra', label: 'GPT-6 Astra' },
+      { id: 'gpt-6.1-sol', label: 'GPT-6.1 Sol' },
+      { id: 'gpt-6-sol', label: 'GPT-6 Sol' },
+      { id: 'gpt-6-luna', label: 'GPT-6 Luna' },
       { id: 'gpt-5.6-sol', label: 'GPT-5.6 Sol' },
       { id: 'gpt-5.6-terra', label: 'GPT-5.6 Terra' },
       { id: 'gpt-5.6-luna', label: 'GPT-5.6 Luna' },
@@ -160,7 +189,7 @@ const MAX_OUTPUT_CHARS = 2_000_000;
 const MAX_STDERR_CHARS = 8_000;
 const MAX_CONTEXT_MESSAGES = 30;
 
-const agentsEnabled = (): Promise<boolean> => getAgentsEnabled();
+const agentsEnabled = (): Promise<boolean> => getAgentCliModelsEnabled();
 
 function resolveBinary(command: string): string | null {
   const pathValue = process.env.PATH || '';
@@ -298,6 +327,7 @@ export interface ParserState {
   itemErrors: string[];
   /** Per-part emitted text length for parsers that stream snapshots. */
   partTextLengths: Record<string, number>;
+  usage?: AgentCliUsageState;
 }
 
 export function parseClaudeLine(
@@ -306,6 +336,7 @@ export function parseClaudeLine(
   state: ParserState
 ): void {
   const event = JSON.parse(line) as Record<string, unknown>;
+  captureAgentCliUsage('claude', event, state);
   if (event.type === 'system' && event.subtype === 'init') {
     if (typeof event.session_id === 'string') {
       state.agentSessionId = event.session_id;
@@ -352,6 +383,7 @@ export function parseCodexLine(
   state: ParserState
 ): void {
   const event = JSON.parse(line) as Record<string, unknown>;
+  captureAgentCliUsage('codex', event, state);
   if (event.type === 'thread.started' && typeof event.thread_id === 'string') {
     state.agentSessionId = event.thread_id;
     return;
@@ -375,6 +407,11 @@ export function parseCodexLine(
     const error = event.error as { message?: string } | undefined;
     throw new Error(`Codex failed: ${error?.message || 'turn failed'}`);
   }
+  if (event.type === 'error') {
+    throw new Error(
+      `Codex failed: ${typeof event.message === 'string' ? event.message : 'agent error'}`
+    );
+  }
 }
 
 export function parseOpencodeLine(
@@ -383,6 +420,7 @@ export function parseOpencodeLine(
   state: ParserState
 ): void {
   const event = JSON.parse(line) as Record<string, unknown>;
+  captureAgentCliUsage('opencode', event, state);
   if (typeof event.sessionID === 'string' && !state.agentSessionId) {
     state.agentSessionId = event.sessionID;
   }
@@ -424,6 +462,7 @@ export function parsePiLine(
   state: ParserState
 ): void {
   const event = JSON.parse(line) as Record<string, unknown>;
+  captureAgentCliUsage('pi', event, state);
   if (event.type === 'session' && typeof event.id === 'string') {
     state.agentSessionId = event.id;
     return;
@@ -463,10 +502,52 @@ export function parsePiLine(
 }
 
 export class AgentCliService {
-  async listAgentModels(): Promise<AgentCliModel[]> {
-    if (!(await agentsEnabled())) return [];
+  async listAgentModels(userId?: string): Promise<AgentCliModel[]> {
+    // Installed CLIs need the server opt-in and, for an account, admin; the
+    // embedded Strands engine is listed on its own access mode. A call with
+    // no account is internal and sees only the server opt-in.
+    const cliAllowed =
+      (await agentsEnabled()) &&
+      (userId === undefined || (await this.isAdminUser(userId)));
     const models: AgentCliModel[] = [];
     for (const definition of AGENT_CLI_DEFINITIONS) {
+      if (!definition.inProcess && !cliAllowed) continue;
+      // An in-process agent exists when its engine is enabled, not when a
+      // binary is on PATH, so availability is asked of the engine itself.
+      if (definition.inProcess) {
+        try {
+          if (!(await this.inProcessAgentAvailable(definition.id, userId)))
+            continue;
+        } catch (error) {
+          // An optional embedded engine must never hide installed CLI agents.
+          logger.warn(`Embedded agent ${definition.id} is unavailable`, error);
+          continue;
+        }
+        models.push({
+          id: definition.id,
+          name: definition.name,
+          command: definition.command,
+          binaryPath: '',
+          agentId: definition.id,
+        });
+        if (definition.id === 'strands' && userId) {
+          try {
+            const { listStrandsModels } = await import('../strands/catalog.js');
+            for (const model of await listStrandsModels(userId)) {
+              models.push({
+                id: `strands:${model.id}`,
+                name: `${definition.name} · ${model.name} (${model.providerName})`,
+                command: definition.command,
+                binaryPath: '',
+                agentId: definition.id,
+              });
+            }
+          } catch (error) {
+            logger.warn('Strands model discovery is unavailable', error);
+          }
+        }
+        continue;
+      }
       const binaryPath = resolveBinary(definition.command);
       if (!binaryPath) continue;
 
@@ -505,12 +586,107 @@ export class AgentCliService {
     return models;
   }
 
+  /**
+   * Whether an in-process agent can serve a turn for this account right now.
+   * Strands follows its own access mode, read live on every call.
+   * @param agentId - the in-process agent to check.
+   * @param userId - the requesting account.
+   * @returns true when the agent is available.
+   */
+  async inProcessAgentAvailable(
+    agentId: string,
+    userId?: string
+  ): Promise<boolean> {
+    if (agentId !== 'strands' || !userId) return false;
+    const user = await userModel.getUserById(userId);
+    if (!user) return false;
+    return userHasStrandsAccess(user);
+  }
+
   async isAdminUser(userId: string): Promise<boolean> {
     const user = await userModel.getUserById(userId);
     return user?.role === 'admin';
   }
 
-  async assertAgentAccess(userId: string): Promise<AgentCliDefinition[]> {
+  /**
+   * Serve one turn from an in-process agent, in the pipeline's chunk shape.
+   *
+   * The engine is not a process, so there is no prompt to pipe and no stdout
+   * to parse: the turn arrives as engine events, and this maps them onto the
+   * same chunk vocabulary the CLI parsers produce. Tool calls the engine makes
+   * are not surfaced as chunks because the engine executes them itself; a
+   * turn therefore reads as the assistant's text.
+   *
+   * @param definition - the in-process agent definition.
+   * @param messages - conversation so far, oldest first.
+   * @param userId - the requesting account.
+   * @param options - model override and cancellation.
+   */
+  private async *executeInProcessAgentStreamRequest(
+    definition: AgentCliDefinition,
+    messages: readonly ChatMessage[],
+    userId: string,
+    options: { cwd?: string; model?: string; signal?: AbortSignal }
+  ): AsyncGenerator<PluginStreamChunk, void, unknown> {
+    if (!(await this.inProcessAgentAvailable(definition.id, userId))) {
+      throw new Error(`${definition.name} is not enabled for this account.`);
+    }
+    throwIfChatGenerationCancelled(options.signal);
+    const signal = AbortSignal.any([
+      ...(options.signal ? [options.signal] : []),
+      AbortSignal.timeout(AGENT_TIMEOUT_MS),
+    ]);
+    const { getStrandsEngine } = await import('../strands/runtime.js');
+    const engine = await getStrandsEngine();
+    let outputCharacters = 0;
+    try {
+      for await (const event of engine.chatTurn(userId, messages, {
+        model: options.model ?? definition.id,
+        signal,
+      })) {
+        throwIfChatGenerationCancelled(signal);
+        if (event.type === 'text' || event.type === 'reasoning') {
+          outputCharacters += event.text.length;
+          if (outputCharacters > MAX_OUTPUT_CHARS) {
+            throw new Error('Embedded agent output exceeded the limit.');
+          }
+          yield {
+            type: event.type === 'reasoning' ? 'reasoning' : 'content',
+            content: event.text,
+          };
+        } else if (event.type === 'error') {
+          throw new Error(event.message);
+        } else if (event.type === 'done') {
+          if (event.usage) {
+            yield {
+              type: 'usage',
+              usage: {
+                promptTokens: event.usage.inputTokens,
+                completionTokens: event.usage.outputTokens,
+                totalTokens: event.usage.inputTokens + event.usage.outputTokens,
+              },
+            };
+          }
+          yield { type: 'done', doneReason: event.stopReason };
+        }
+      }
+    } catch (error) {
+      if (options.signal?.aborted) throw new ChatGenerationCancelledError();
+      throw error;
+    }
+  }
+
+  async assertAgentAccess(
+    userId: string,
+    agentId?: string
+  ): Promise<AgentCliDefinition[]> {
+    if (agentId === 'strands') {
+      // Strands is governed by its own access mode, not the CLI opt-in.
+      if (!(await this.inProcessAgentAvailable(agentId, userId))) {
+        throw new Error('Strands is not enabled for this account.');
+      }
+      return AGENT_CLI_DEFINITIONS;
+    }
     if (!(await agentsEnabled())) {
       throw new Error('Agent CLI models are disabled on this server.');
     }
@@ -527,12 +703,21 @@ export class AgentCliService {
     options: { cwd?: string; model?: string; signal?: AbortSignal } = {}
   ): AsyncGenerator<PluginStreamChunk, void, unknown> {
     throwIfChatGenerationCancelled(options.signal);
-    await this.assertAgentAccess(userId);
+    await this.assertAgentAccess(userId, agentId);
     const definition = AGENT_CLI_DEFINITIONS.find(
       candidate => candidate.id === agentId
     );
     if (!definition) {
       throw new Error(`Unknown agent CLI "${agentId}".`);
+    }
+    if (definition.inProcess) {
+      yield* this.executeInProcessAgentStreamRequest(
+        definition,
+        messages,
+        userId,
+        options
+      );
+      return;
     }
     const binaryPath = resolveBinary(definition.command);
     if (!binaryPath) {
@@ -594,6 +779,7 @@ export class AgentCliService {
         model: options.model || definition.id,
         status,
         durationMs: Date.now() - startedAt,
+        tokens: agentCliTokenUsage(state.usage),
       });
     };
 
@@ -621,6 +807,8 @@ export class AgentCliService {
       settled = true;
       cleanup();
       recordUsage('success');
+      const usage = agentCliTokenUsage(state.usage);
+      if (usage) queue.push({ type: 'usage', usage });
       const metadata: Record<string, unknown> = { agentCli: definition.id };
       if (state.agentSessionId) {
         metadata.agentSessionId = state.agentSessionId;
@@ -635,7 +823,7 @@ export class AgentCliService {
           ? options.signal.reason
           : new ChatGenerationCancelledError();
       fail(reason, 'cancelled');
-      if (!child.killed) {
+      if (child.exitCode === null && child.signalCode === null) {
         child.kill('SIGTERM');
         forceKillTimer = setTimeout(() => child.kill('SIGKILL'), 1_000);
         forceKillTimer.unref?.();
@@ -658,6 +846,7 @@ export class AgentCliService {
     };
 
     child.stdout.on('data', (data: Buffer) => {
+      if (settled) return;
       totalChars += data.length;
       if (totalChars > MAX_OUTPUT_CHARS) {
         fail(new Error('Agent CLI output exceeded the size limit.'));
@@ -685,10 +874,18 @@ export class AgentCliService {
       );
     });
 
-    child.on('close', code => {
-      if (stdoutBuffer) handleLine(stdoutBuffer);
+    child.on('close', (code, signal) => {
+      if (stdoutBuffer && !settled) handleLine(stdoutBuffer);
       if (settled) {
         if (forceKillTimer) clearTimeout(forceKillTimer);
+        return;
+      }
+      if (code !== 0) {
+        fail(
+          new Error(
+            `${definition.name} exited unsuccessfully (${signal || code}).`
+          )
+        );
         return;
       }
       if (state.emittedContent) {
@@ -708,7 +905,13 @@ export class AgentCliService {
       child.stdin.end();
     }
 
-    yield* queue.drain();
+    try {
+      yield* queue.drain();
+    } finally {
+      // Iterator return/throw is also cancellation, even if no external
+      // AbortSignal fired. Stop the process and finalize its one usage row.
+      if (!settled) cancel();
+    }
   }
 }
 

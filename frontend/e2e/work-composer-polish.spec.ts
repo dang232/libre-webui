@@ -49,10 +49,177 @@ async function assertContained(control: Locator, container: Locator) {
   );
 }
 
-async function useLanguage(page: Page, language: string) {
+async function setPageLanguage(page: Page, language: string) {
   await page.addInitScript(locale => {
     localStorage.setItem('i18nextLng', locale);
   }, language);
+}
+
+async function openConfiguredLanding(
+  page: Page,
+  mode: 'light' | 'dark',
+  language = 'en'
+) {
+  await mockLibreWebUiApi(page, {
+    models: [model],
+    preferences: {
+      defaultModel: modelName,
+      defaultProviderType: 'ollama',
+      theme: {
+        mode,
+        adaptToAccent: false,
+        accent: 'blue',
+        customAccent: '#2563eb',
+      },
+    },
+    personas: [
+      {
+        id: 'researcher',
+        name: 'Research assistant',
+        model: modelName,
+        parameters: {},
+        user_id: 'user-1',
+        created_at: createdAt,
+        updated_at: createdAt,
+      },
+    ],
+    sttModels: [{ model: 'whisper', plugin: 'local-speech' }],
+    workCapabilities: {
+      available: true,
+      runtime: 'docker',
+      runtimeAvailable: true,
+      ollamaAvailable: true,
+      image: 'work-test',
+      strands: { enabled: true },
+      hostWorkspaces: { enabled: true, roots: ['/projects'] },
+    },
+  });
+  await page.route('**/api/work/policies', route =>
+    route.fulfill({
+      json: {
+        success: true,
+        data: [
+          { id: 'local-policy', name: 'Local workspace', guiEnabled: true },
+        ],
+      },
+    })
+  );
+  await setPageLanguage(page, language);
+  await page.goto('/work');
+  await expect(page.getByTestId('work-engine-select')).toBeEnabled();
+}
+
+for (const mode of ['light', 'dark'] as const) {
+  test(`desktop landing aligns labeled engine and model controls with a visible Run action in ${mode}`, async ({
+    page,
+  }, testInfo) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await openConfiguredLanding(page, mode);
+    const landing = page.getByTestId('work-landing');
+    await expect(
+      landing.getByRole('heading', { name: 'What would you like to work on?' })
+    ).toBeVisible();
+    const input = page.getByTestId('work-composer-input');
+    await input.fill(
+      'Build a dashboard that compares this month’s project results.'
+    );
+    const engine = page.getByTestId('work-engine-select');
+    const localModel = page.getByTestId('work-model-selector-trigger');
+    await expect(engine).toHaveAccessibleName('Engine');
+    await expect(
+      page
+        .getByTestId('work-composer-toolbar')
+        .getByText('Model', { exact: true })
+    ).toBeVisible();
+    const engineBox = (await engine.boundingBox())!;
+    const localBox = (await localModel.boundingBox())!;
+    expect(engineBox.y + engineBox.height).toBeCloseTo(
+      localBox.y + localBox.height,
+      0
+    );
+    await engine.selectOption('strands');
+    const strandsModel = page.getByTestId('work-model-selector-trigger');
+    await expect(strandsModel).toBeVisible();
+    const send = page.getByTestId('work-submit-button');
+    await expect(send.getByText('Run', { exact: true })).toBeVisible();
+    await expect(send).toBeEnabled();
+    const surface = page.getByTestId('work-composer-surface');
+    const controls = [engine, strandsModel, send];
+    for (const control of controls) {
+      await assertContained(control, surface);
+      expect((await control.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    }
+    const boxes = await Promise.all(
+      controls.map(control => control.boundingBox())
+    );
+    const bottom = boxes[0]!.y + boxes[0]!.height;
+    for (const box of boxes.slice(1))
+      expect(box!.y + box!.height).toBeCloseTo(bottom, 0);
+    expect((await input.boundingBox())!.height).toBeGreaterThanOrEqual(100);
+    await landing.screenshot({
+      path: testInfo.outputPath(`work-landing-desktop-${mode}.png`),
+    });
+  });
+}
+
+for (const variant of [
+  { mode: 'light' as const, language: 'en' },
+  { mode: 'dark' as const, language: 'ar' },
+]) {
+  test(`Strands landing controls stack at 320px and preserve drafts in ${variant.language}`, async ({
+    page,
+  }, testInfo) => {
+    await page.setViewportSize({ width: 320, height: 844 });
+    await openConfiguredLanding(page, variant.mode, variant.language);
+    await page.getByTestId('sidebar-toggle-size').click();
+    const input = page.getByTestId('work-composer-input');
+    const draft = 'Build a local research dashboard without losing this draft.';
+    await input.fill(draft);
+    const engine = page.getByTestId('work-engine-select');
+    await engine.selectOption('strands');
+    const strandsModel = page.getByTestId('work-model-selector-trigger-mobile');
+    await expect(strandsModel).toBeVisible();
+    await expect(input).toHaveValue(draft);
+    await engine.selectOption('libre');
+    await expect(input).toHaveValue(draft);
+    await engine.selectOption('strands');
+    await expect(engine).toHaveValue('strands');
+    await expect(input).toHaveValue(draft);
+    await page.getByTestId('work-host-path').fill('/projects/research');
+    const surface = page.getByTestId('work-composer-surface');
+    const send = page.getByTestId('work-submit-button');
+    await expect(send).toBeEnabled();
+    for (const control of [engine, strandsModel, send]) {
+      await control.scrollIntoViewIfNeeded();
+      await expect(control).toBeInViewport({ ratio: 1 });
+      await assertContained(control, surface);
+      expect((await control.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    }
+    const engineBox = (await engine.boundingBox())!;
+    const modelBox = (await strandsModel.boundingBox())!;
+    expect(engineBox.y + engineBox.height).toBeLessThan(modelBox.y);
+    await expect(page.locator('html')).toHaveAttribute(
+      'dir',
+      variant.language === 'ar' ? 'rtl' : 'ltr'
+    );
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            document.documentElement.scrollWidth -
+            document.documentElement.clientWidth
+        )
+      )
+      .toBeLessThanOrEqual(1);
+    // Capture the whole narrow flow after proving controls remain reachable
+    // in the shorter viewport; the scroll container clips element screenshots.
+    await page.setViewportSize({ width: 320, height: 1400 });
+    const landing = page.getByTestId('work-landing');
+    await landing.evaluate(element => element.parentElement?.scrollTo(0, 0));
+    await landing.screenshot({
+      path: testInfo.outputPath(`work-landing-mobile-${variant.language}.png`),
+    });
+  });
 }
 
 for (const mode of ['light', 'dark'] as const) {
@@ -118,7 +285,7 @@ for (const mode of ['light', 'dark'] as const) {
           }),
         })
       );
-      await useLanguage(page, language);
+      await setPageLanguage(page, language);
       await page.goto('/work');
       await page.getByTestId('sidebar-toggle-size').click();
 
@@ -219,7 +386,7 @@ for (const mode of ['light', 'dark'] as const) {
           },
         ],
       });
-      await useLanguage(page, language);
+      await setPageLanguage(page, language);
       await page.goto('/work/narrow-work');
       const resizer = page.getByTestId('work-split-resizer');
       await resizer.press('Home');
@@ -256,3 +423,27 @@ for (const mode of ['light', 'dark'] as const) {
     });
   }
 }
+
+test('the landing composer sends the picked reasoning level with a new task', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await openConfiguredLanding(page, 'dark');
+  let body: Record<string, unknown> | undefined;
+  await page.route('**/api/work/tasks', route => {
+    if (route.request().method() !== 'POST') return route.fallback();
+    body = route.request().postDataJSON();
+    return route.fulfill({
+      status: 400,
+      json: { success: false, error: 'stop here' },
+    });
+  });
+  const control = page.getByTestId('work-thinking-selector');
+  await expect(control).toBeVisible();
+  await control.getByRole('button').click();
+  await expect(control.getByRole('menu')).toBeVisible();
+  await control.getByRole('menuitemradio', { name: 'High' }).click();
+  await page.getByTestId('work-composer-input').fill('Plan the migration.');
+  await page.getByTestId('work-submit-button').click();
+  await expect.poll(() => body?.think).toBe('high');
+});

@@ -27,7 +27,7 @@ import { TurnstileWidget } from '@/components/TurnstileWidget';
 import { AlcoreAuthNotice } from '@/components/AlcoreAuthNotice';
 import { cn } from '@/utils';
 import { createLogger } from '@/utils/logger';
-import { getPasswordPolicyError } from '@/utils/passwordPolicy';
+import { getPasswordPolicyErrorKey } from '@/utils/passwordPolicy';
 import { PasswordStrengthMeter } from '@/components/PasswordStrengthMeter';
 
 const logger = createLogger('components:signup-form');
@@ -38,6 +38,11 @@ const OTP_CODE_LENGTH = 6;
 const OTP_RESEND_FALLBACK_SECONDS = 30;
 
 type SignupApiResponse = Awaited<ReturnType<typeof authApi.signup>>;
+
+interface FormError {
+  message: string;
+  field: 'username' | 'password' | 'confirmPassword' | null;
+}
 
 interface SignupFormProps {
   onSignup?: () => void;
@@ -69,6 +74,9 @@ export const SignupForm: React.FC<SignupFormProps> = ({
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState('');
+  // Toasts vanish; the inline alert keeps the failure readable and tied to
+  // the field that caused it.
+  const [formError, setFormError] = useState<FormError | null>(null);
   const navigate = useNavigate();
   const { login, systemInfo } = useAuthStore();
   const turnstileSiteKey = systemInfo?.turnstile?.siteKey;
@@ -137,27 +145,38 @@ export const SignupForm: React.FC<SignupFormProps> = ({
     [completeLoginPair, t]
   );
 
+  const showError = (message: string, field: FormError['field'] = null) => {
+    setFormError({ message, field });
+    toast.error(message);
+  };
+  const clearFieldError = (field: FormError['field']) =>
+    setFormError(current => (current?.field === field ? null : current));
+  const fieldErrorProps = (field: FormError['field']) =>
+    formError?.field === field
+      ? { 'aria-invalid': true as const, 'aria-describedby': 'signup-error' }
+      : {};
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setFormError(null);
     if (!username.trim() || !password.trim()) {
-      toast.error(t('auth.signup.usernameRequired'));
+      showError(
+        t('auth.signup.usernameRequired'),
+        !username.trim() ? 'username' : 'password'
+      );
       return;
     }
-
     if (password !== confirmPassword) {
-      toast.error(t('auth.signup.passwordMismatch'));
+      showError(t('auth.signup.passwordMismatch'), 'confirmPassword');
       return;
     }
-
-    const passwordError = getPasswordPolicyError(password);
-    if (passwordError) {
-      toast.error(passwordError);
+    const passwordErrorKey = getPasswordPolicyErrorKey(password);
+    if (passwordErrorKey) {
+      showError(t(passwordErrorKey), 'password');
       return;
     }
-
     if (isTurnstileEnabled && !turnstileToken) {
-      toast.error(t('auth.signup.tryAgain'));
+      showError(t('auth.signup.tryAgain'));
       return;
     }
 
@@ -174,7 +193,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
       applySignupResponse(response, email);
     } catch (error) {
       logger.error('Signup error:', error);
-      toast.error(t('auth.signup.tryAgain'));
+      showError(t('auth.signup.tryAgain'));
     } finally {
       setTurnstileToken('');
       setIsLoading(false);
@@ -501,10 +520,17 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           <input
             id='username'
             type='text'
+            autoComplete='username'
+            autoCapitalize='none'
+            spellCheck={false}
+            {...fieldErrorProps('username')}
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={e => {
+              setUsername(e.target.value);
+              clearFieldError('username');
+            }}
             onKeyDown={handleKeyDown}
-            className='h-11 w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink shadow-subtle outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-line-strong focus:ring-2 focus:ring-primary-500/35 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
+            className='h-11 w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink shadow-subtle outline-hidden transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
             placeholder={t('auth.signup.usernamePlaceholder')}
             required
             disabled={isLoading}
@@ -522,10 +548,11 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           <input
             id='email'
             type='email'
+            autoComplete='email'
             value={email}
             onChange={e => setEmail(e.target.value)}
             onKeyDown={handleKeyDown}
-            className='h-11 w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink shadow-subtle outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-line-strong focus:ring-2 focus:ring-primary-500/35 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
+            className='h-11 w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink shadow-subtle outline-hidden transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
             placeholder={t('auth.signup.emailPlaceholder')}
             disabled={isLoading}
           />
@@ -542,10 +569,15 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             <input
               id='password'
               type={showPassword ? 'text' : 'password'}
+              autoComplete='new-password'
+              {...fieldErrorProps('password')}
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={e => {
+                setPassword(e.target.value);
+                clearFieldError('password');
+              }}
               onKeyDown={handleKeyDown}
-              className='h-11 w-full rounded-xl border border-line bg-surface px-3 pe-11 text-sm text-ink shadow-subtle outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-line-strong focus:ring-2 focus:ring-primary-500/35 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
+              className='h-11 w-full rounded-xl border border-line bg-surface px-3 pe-11 text-sm text-ink shadow-subtle outline-hidden transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
               placeholder={t('auth.signup.passwordPlaceholder')}
               required
               disabled={isLoading}
@@ -553,11 +585,12 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             <button
               type='button'
               onClick={() => setShowPassword(!showPassword)}
-              className='absolute inset-y-0 end-0 flex items-center pe-3 text-ink-muted transition-colors hover:text-ink disabled:cursor-not-allowed disabled:opacity-50'
+              className='absolute inset-y-0 inset-e-0 flex items-center pe-3 text-ink-muted transition-colors hover:text-ink disabled:cursor-not-allowed disabled:opacity-50'
               disabled={isLoading}
               aria-label={
-                showPassword ? 'Hide characters' : 'Reveal characters'
+                showPassword ? t('auth.password.hide') : t('auth.password.show')
               }
+              aria-pressed={showPassword}
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -576,10 +609,15 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             <input
               id='confirmPassword'
               type={showConfirmPassword ? 'text' : 'password'}
+              autoComplete='new-password'
+              {...fieldErrorProps('confirmPassword')}
               value={confirmPassword}
-              onChange={e => setConfirmPassword(e.target.value)}
+              onChange={e => {
+                setConfirmPassword(e.target.value);
+                clearFieldError('confirmPassword');
+              }}
               onKeyDown={handleKeyDown}
-              className='h-11 w-full rounded-xl border border-line bg-surface px-3 pe-11 text-sm text-ink shadow-subtle outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-line-strong focus:ring-2 focus:ring-primary-500/35 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
+              className='h-11 w-full rounded-xl border border-line bg-surface px-3 pe-11 text-sm text-ink shadow-subtle outline-hidden transition-[border-color,box-shadow,background-color] placeholder:text-ink-muted focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
               placeholder={t('auth.signup.confirmPasswordPlaceholder')}
               required
               disabled={isLoading}
@@ -587,13 +625,14 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             <button
               type='button'
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className='absolute inset-y-0 end-0 flex items-center pe-3 text-ink-muted transition-colors hover:text-ink disabled:cursor-not-allowed disabled:opacity-50'
+              className='absolute inset-y-0 inset-e-0 flex items-center pe-3 text-ink-muted transition-colors hover:text-ink disabled:cursor-not-allowed disabled:opacity-50'
               disabled={isLoading}
               aria-label={
                 showConfirmPassword
-                  ? 'Hide confirmation'
-                  : 'Reveal confirmation'
+                  ? t('auth.password.hideConfirmation')
+                  : t('auth.password.showConfirmation')
               }
+              aria-pressed={showConfirmPassword}
             >
               {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -613,7 +652,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
         <button
           type='submit'
           disabled={submitDisabled}
-          className='flex h-11 w-full items-center justify-center rounded-xl border border-transparent bg-ink px-4 text-sm font-medium text-ink-inverse shadow-subtle transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none'
+          className='flex h-11 w-full items-center justify-center rounded-xl border border-transparent bg-ink px-4 text-sm font-medium text-ink-inverse shadow-subtle transition-opacity hover:opacity-90 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none'
         >
           {isLoading ? (
             <div className='flex items-center'>
@@ -627,8 +666,16 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             </div>
           )}
         </button>
+        {formError && (
+          <p
+            id='signup-error'
+            role='alert'
+            className='rounded-xl border border-error-700/30 bg-error-500/10 px-3 py-2 text-sm text-error-700 dark:text-error-400'
+          >
+            {formError.message}
+          </p>
+        )}
       </form>
-
       {/* GitHub OAuth Button */}
       <GitHubAuthButton />
 
@@ -636,6 +683,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
         <p className='text-sm text-ink-muted'>
           {t('auth.signup.hasAccount')}{' '}
           <button
+            type='button'
             onClick={onBackToLogin}
             className='font-medium text-primary-600 transition-colors hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300'
           >

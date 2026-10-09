@@ -111,6 +111,7 @@ const streamingService = remotePlugin =>
     post: async () => {
       throw new Error('Streaming should use fetch');
     },
+    strandsAccess: async () => true,
   });
 
 test('auth-free local plugins are available without a fake API key', async () => {
@@ -590,4 +591,202 @@ test('Work screenshots reach every provider payload as image parts', () => {
     image_url: dataUrl,
   });
 
+});
+
+test('Strands Work selections retain the exact underlying provider and require access', async () => {
+  let strandsAllowed = true;
+  const seen = [];
+  const service = new WorkModelProviderService({
+    ollama: {
+      isHealthy: async () => true,
+      showModel: async model => {
+        seen.push(['inspect', model]);
+        return { capabilities: ['tools'] };
+      },
+      generateChatResponse: async request => {
+        seen.push(['generate', request.model]);
+        return {
+          model: request.model,
+          message: { role: 'assistant', content: 'fixture' },
+          done: true,
+        };
+      },
+    },
+    plugins: {
+      getActivePlugins: () => [],
+      getPlugin: () => null,
+      getApiKey: () => null,
+      getPluginVariables: () => ({}),
+    },
+    post: async () => {
+      throw new Error('Unexpected remote request');
+    },
+    strandsAccess: async () => strandsAllowed,
+  });
+  try {
+    strandsAllowed = false;
+    await assert.rejects(
+      service.assertModelSupportsTools(
+        'strands:fixture-model',
+        { providerType: 'ollama' },
+        'user'
+      ),
+      error => error.code === 'WORK_STRANDS_DISABLED'
+    );
+    strandsAllowed = true;
+    await service.assertModelSupportsTools(
+      'strands:fixture-model',
+      { providerType: 'ollama' },
+      'user'
+    );
+    await service.generateChatStreamResponse(
+      {
+        model: 'strands:fixture-model',
+        messages: [],
+        tools: [tool],
+        stream: true,
+      },
+      { providerType: 'ollama' },
+      'user',
+      {}
+    );
+    assert.deepEqual(seen, [
+      ['inspect', 'fixture-model'],
+      ['generate', 'fixture-model'],
+    ]);
+    for (const model of ['strands:', 'dsh:', 'strands:strands:fixture-model']) {
+      await assert.rejects(
+        service.assertModelSupportsTools(
+          model,
+          { providerType: 'ollama' },
+          'user'
+        ),
+        error => error.code === 'WORK_MODEL_TOOLS_UNSUPPORTED'
+      );
+    }
+  } finally {
+    strandsAllowed = true;
+  }
+});
+
+test('Strands Work streams through the exact plugin using its unwrapped model id', async () => {
+  const remotePlugin = { ...plugin('openai'), active: true };
+  const service = streamingService(remotePlugin);
+  const originalFetch = globalThis.fetch;
+  const payloads = [];
+  globalThis.fetch = async (_url, init) => {
+    payloads.push(JSON.parse(init.body));
+    return new Response(
+      'data: {"choices":[{"delta":{"content":"sandbox reply"},"finish_reason":"stop"}]}\n\ndata: [DONE]\n\n',
+      { headers: { 'content-type': 'text/event-stream' } }
+    );
+  };
+  try {
+    const selection = { providerType: 'plugin', providerId: remotePlugin.id };
+    await service.assertModelSupportsTools(
+      'strands:test-model',
+      selection,
+      'test-user'
+    );
+    assert.equal(
+      await service.getRoutingFingerprint(
+        'strands:test-model',
+        selection,
+        'test-user'
+      ),
+      await service.getRoutingFingerprint('test-model', selection, 'test-user')
+    );
+    const result = await service.generateChatStreamResponse(
+      {
+        model: 'strands:test-model',
+        messages: messages.slice(0, 2),
+        tools: [tool],
+        stream: true,
+      },
+      selection,
+      'test-user',
+      {}
+    );
+    assert.equal(result.message.content, 'sandbox reply');
+    assert.equal(payloads.length, 1);
+    assert.equal(payloads[0].model, 'test-model');
+    assert.deepEqual(payloads[0].tools, [tool]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('Work payloads carry the run reasoning level per provider', () => {
+  const request = (model, think) => ({
+    model,
+    messages: messages.slice(0, 2),
+    tools: [tool],
+    stream: false,
+    ...(think === undefined ? {} : { options: { think } }),
+  });
+
+  const openai = buildPluginWorkPayload(
+    plugin('openai'),
+    request('test-model', 'high')
+  ).payload;
+  assert.equal(openai.reasoning_effort, 'high');
+  const openaiDefault = buildPluginWorkPayload(
+    plugin('openai'),
+    request('test-model')
+  ).payload;
+  assert.equal('reasoning_effort' in openaiDefault, false);
+
+  const deepseek = buildPluginWorkPayload(
+    plugin('deepseek'),
+    request('test-model', false)
+  ).payload;
+  assert.deepEqual(deepseek.thinking, { type: 'disabled' });
+  assert.equal('reasoning_effort' in deepseek, false);
+
+  const responses = buildPluginWorkPayload(
+    plugin('openai'),
+    request('test-model', 'low'),
+    {},
+    'responses'
+  ).payload;
+  assert.deepEqual(responses.reasoning, { effort: 'low', summary: 'auto' });
+
+  const anthropic = buildPluginWorkPayload(
+    plugin('anthropic'),
+    request('claude-opus-4-1', 'medium')
+  ).payload;
+  assert.deepEqual(anthropic.thinking, {
+    type: 'enabled',
+    budget_tokens: 8192,
+  });
+  assert.equal(anthropic.max_tokens, 4096 + 8192);
+  const anthropicDefault = buildPluginWorkPayload(
+    plugin('anthropic'),
+    request('claude-opus-4-1')
+  ).payload;
+  assert.equal(anthropicDefault.max_tokens, 4096);
+  assert.equal('thinking' in anthropicDefault, false);
+
+  const adaptive = buildPluginWorkPayload(
+    plugin('anthropic'),
+    request('claude-sonnet-5-5', 'high')
+  ).payload;
+  assert.deepEqual(adaptive.thinking, { type: 'adaptive' });
+  assert.deepEqual(adaptive.output_config, { effort: 'high' });
+
+  const gemini = buildPluginWorkPayload(
+    plugin('gemini'),
+    request('gemini-2.5-pro', 'low')
+  ).payload;
+  assert.deepEqual(gemini.generationConfig.thinkingConfig, {
+    thinkingBudget: 2048,
+    includeThoughts: true,
+  });
+  assert.equal(gemini.generationConfig.maxOutputTokens, 4096 + 2048);
+  const geminiOff = buildPluginWorkPayload(
+    plugin('gemini'),
+    request('gemini-2.5-pro', false)
+  ).payload;
+  assert.equal(geminiOff.generationConfig.maxOutputTokens, 4096);
+  assert.equal('thinkingConfig' in geminiOff.generationConfig, false);
 });

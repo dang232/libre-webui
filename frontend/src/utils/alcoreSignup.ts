@@ -27,7 +27,7 @@
  * `alcoreDirectProductCode`, `authApi.alcoreExchange`, redirect handoff).
  */
 
-import { getPasswordPolicyError } from '@/utils/passwordPolicy';
+import { getPasswordPolicyErrorKey } from '@/utils/passwordPolicy';
 
 export interface AlcoreSignupInput {
   email: string;
@@ -41,7 +41,7 @@ export type AlcoreSignupValidationCode =
 export interface AlcoreSignupValidation {
   ok: boolean;
   code?: AlcoreSignupValidationCode;
-  /** Policy detail (English, same source as the local signup form). */
+  /** Policy detail as an i18n key (same source as the local signup form). */
   detail?: string;
   /** Trimmed email, present only when validation passes. */
   email?: string;
@@ -59,7 +59,7 @@ export function validateAlcoreSignup(
   if (input.password !== input.confirmPassword) {
     return { ok: false, code: 'passwordMismatch' };
   }
-  const policyError = getPasswordPolicyError(input.password);
+  const policyError = getPasswordPolicyErrorKey(input.password);
   if (policyError) {
     return { ok: false, code: 'passwordPolicy', detail: policyError };
   }

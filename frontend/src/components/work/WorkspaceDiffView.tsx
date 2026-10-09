@@ -31,11 +31,12 @@ interface WorkspaceDiffViewProps {
 }
 
 function DiffLineRow({ line }: { line: WorkDiffLine }) {
+  const { t } = useTranslation();
   return (
     <tr
       className={cn(
-        line.type === 'added' && 'bg-[rgb(76,212,117)]/[0.12] text-ink',
-        line.type === 'removed' && 'bg-[rgb(255,61,129)]/[0.10] text-ink-muted',
+        line.type === 'added' && 'bg-[rgb(76,212,117)]/12 text-ink',
+        line.type === 'removed' && 'bg-[rgb(255,61,129)]/10 text-ink-muted',
         line.type === 'context' && 'text-ink-muted'
       )}
     >
@@ -56,6 +57,13 @@ function DiffLineRow({ line }: { line: WorkDiffLine }) {
         >
           {line.type === 'added' ? '+' : line.type === 'removed' ? '−' : ''}
         </span>
+        {line.type !== 'context' && (
+          <span className='sr-only'>
+            {line.type === 'added'
+              ? t('work.files.diffAdded')
+              : t('work.files.diffRemoved')}{' '}
+          </span>
+        )}
         {line.text || '\u200b'}
       </td>
     </tr>
@@ -167,6 +175,7 @@ export function WorkspaceDiffView({
     <div
       dir='ltr'
       role='region'
+      tabIndex={0}
       aria-label={ariaLabel}
       data-testid='work-file-diff'
       className='min-h-0 flex-1 overflow-auto bg-surface font-mono text-[12px] leading-5'

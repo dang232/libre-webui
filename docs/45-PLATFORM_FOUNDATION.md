@@ -91,9 +91,11 @@ active key plus the matching `legacy` entry.
 
 ### Run the bundled team profile
 
-The team profile and CI pull the pinned MinIO server and client images from
-`cgr.dev/chainguard`. Hosts that restrict registry access must permit
-`cgr.dev`.
+MinIO no longer publishes container images. The team profile and CI pull
+Chainguard's MinIO server and client builds from `cgr.dev/chainguard`, pinned
+by digest. Hosts that restrict registry access must permit `cgr.dev`. The
+server runs as root, as the earlier official image did, so volumes created
+before the switch stay writable.
 
 Start from the shipped fail-closed template. Keep the completed environment
 file outside the repository and restrict it to its operator:
@@ -157,6 +159,15 @@ Do not expose the Compose-owned PostgreSQL, Redis, or MinIO services directly.
 For managed dependencies, use the Helm team profile and retain verified TLS;
 the Compose file disables PostgreSQL TLS only on its private project network.
 Readiness remains failed until an external worker is present.
+
+The embedded Strands engine keeps its page sessions as files under
+`<DATA_DIR>/strands/`, not in the application database. Its Work driver creates
+no local durable store: Work's existing SQL task/run/message/approval records
+and durable jobs remain authoritative, including recovery on an external
+worker. An engine choice is stored with the selected model as
+`strands:<model>` (runs saved with the older `dsh:<model>` prefix open as
+Strands runs); it retains the existing provider identity and runtime
+authorization.
 
 ## Persistence and migration boundary
 

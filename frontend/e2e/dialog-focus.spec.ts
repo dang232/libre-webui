@@ -72,6 +72,29 @@ test('a nested form preserves its requested autofocus', async ({ page }) => {
   await expect(page.getByTestId('prompt-slug')).toBeFocused();
 });
 
+test('dialogs respect controls that preserve focus on pointer activation', async ({
+  page,
+}) => {
+  const settings = await openSettingsTab(page, 'prompts');
+  const search = settings.getByRole('searchbox', { name: 'Search' });
+  const opener = settings.getByTestId('prompt-new');
+  for (const eventType of ['pointerdown', 'mousedown']) {
+    await search.focus();
+    // Editor toolbars can cancel pointer focus to retain their selection.
+    await opener.evaluate((element, type) => {
+      element.addEventListener(type, event => event.preventDefault(), {
+        once: true,
+      });
+    }, eventType);
+    await opener.click();
+    const dialog = page.getByTestId('prompt-modal');
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+    await expect(search).toBeFocused();
+  }
+});
+
 test('nested dialogs wrap keyboard focus and skip disabled controls', async ({
   page,
 }) => {
@@ -140,18 +163,27 @@ test('the command palette keeps focus above Settings and restores its opener', a
   const input = palette.getByTestId('command-palette-input');
   await expect(palette).toHaveAttribute('aria-modal', 'true');
   await expect(input).toBeFocused();
+  await expect(input).toHaveAttribute('role', 'combobox');
 
-  const firstAction = palette.getByRole('button').first();
-  const lastAction = palette.getByRole('button').last();
-  await page.keyboard.press('Tab');
-  await expect(firstAction).toBeFocused();
-  await input.focus();
-  await page.keyboard.press('Shift+Tab');
-  await expect(lastAction).toBeFocused();
+  const firstOption = palette.getByRole('option').first();
+  await expect(firstOption).toHaveAttribute('aria-selected', 'true');
+  await expect(input).toHaveAttribute(
+    'aria-activedescendant',
+    (await firstOption.getAttribute('id')) ?? ''
+  );
+  await page.keyboard.press('ArrowDown');
+  await expect(palette.getByRole('option').nth(1)).toHaveAttribute(
+    'aria-selected',
+    'true'
+  );
+
+  // Results are reached with the arrow keys, so the input is the only tab
+  // stop and the trap must keep Tab and Shift+Tab inside the palette.
   await page.keyboard.press('Tab');
   await expect(input).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(input).toBeFocused();
 
-  await firstAction.focus();
   await page.keyboard.press('Escape');
   await expect(palette).toHaveCount(0);
   await expect(settings).toBeVisible();

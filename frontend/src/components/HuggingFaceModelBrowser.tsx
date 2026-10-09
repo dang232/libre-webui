@@ -18,7 +18,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { huggingfaceHubApi, HuggingFaceModel, GgufFileInfo } from '@/utils/api';
+import {
+  huggingfaceHubApi,
+  ollamaApi,
+  HuggingFaceModel,
+  GgufFileInfo,
+} from '@/utils/api';
 import { Button } from '@/components/ui/Button';
 import {
   Search,
@@ -33,7 +38,9 @@ import {
   Loader,
   ChevronDown,
 } from '@/components/icons';
+import toast from 'react-hot-toast';
 import { cn } from '@/utils';
+import { useAuthStore } from '@/store/authStore';
 import { createLogger } from '@/utils/logger';
 
 const logger = createLogger('components:hugging-face-model-browser');
@@ -69,6 +76,9 @@ export const HuggingFaceModelBrowser: React.FC<
   HuggingFaceModelBrowserProps
 > = ({ isOpen, onClose, onSelectModel, selectedModels = [] }) => {
   const { t } = useTranslation();
+  const { user, systemInfo } = useAuthStore();
+  const canInstallModels =
+    user?.role === 'admin' || systemInfo?.requiresAuth === false;
   const [searchQuery, setSearchQuery] = useState('');
   const [task, setTask] = useState<TaskOption>('text-generation');
   const [sort, setSort] = useState<SortOption>('downloads');
@@ -80,6 +90,12 @@ export const HuggingFaceModelBrowser: React.FC<
     {}
   );
   const [loadingGguf, setLoadingGguf] = useState<string | null>(null);
+  const [pullingModel, setPullingModel] = useState<string | null>(null);
+  const [pullProgress, setPullProgress] = useState<{
+    status: string;
+    percent?: number;
+  } | null>(null);
+  const [cancelPull, setCancelPull] = useState<(() => void) | null>(null);
 
   // Debounced search
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -164,6 +180,57 @@ export const HuggingFaceModelBrowser: React.FC<
     [expandedModel, ggufFiles, loadGgufFiles]
   );
 
+  // Pull a GGUF model from HuggingFace via Ollama
+  const handlePullGguf = useCallback(
+    (ollamaCommand: string, filename: string) => {
+      if (!canInstallModels) {
+        toast.error(t('modelSelector.pullRestricted'));
+        return;
+      }
+      if (pullingModel) return;
+
+      setPullingModel(ollamaCommand);
+      setPullProgress({ status: 'starting' });
+
+      try {
+        const cancelFn = ollamaApi.pullModelStream(
+          ollamaCommand,
+          progress => {
+            setPullProgress(progress);
+          },
+          () => {
+            setPullProgress(null);
+            setPullingModel(null);
+            setCancelPull(null);
+            toast.success(t('modelDownload.success', { name: filename }));
+          },
+          error => {
+            setPullProgress(null);
+            setPullingModel(null);
+            setCancelPull(null);
+            toast.error(t('modelDownload.failed', { error }));
+          }
+        );
+        setCancelPull(() => cancelFn);
+      } catch (_error) {
+        setPullProgress(null);
+        setPullingModel(null);
+        toast.error(t('modelDownload.startFailed'));
+      }
+    },
+    [canInstallModels, pullingModel, t]
+  );
+
+  // Cancel in-progress pull
+  const handleCancelPull = useCallback(() => {
+    if (cancelPull) {
+      cancelPull();
+      setCancelPull(null);
+      setPullingModel(null);
+      setPullProgress(null);
+    }
+  }, [cancelPull]);
+
   if (!isOpen) return null;
 
   return (
@@ -202,7 +269,7 @@ export const HuggingFaceModelBrowser: React.FC<
               placeholder={t('huggingface.searchPlaceholder')}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className='w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-dark-50 border border-gray-200 dark:border-dark-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-gray-900 dark:text-dark-800 placeholder-gray-500 dark:placeholder-dark-500'
+              className='w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-dark-50 border border-gray-200 dark:border-dark-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-hidden text-gray-900 dark:text-dark-800 placeholder-gray-500 dark:placeholder-dark-500'
             />
           </div>
 
@@ -231,7 +298,7 @@ export const HuggingFaceModelBrowser: React.FC<
                 <select
                   value={task}
                   onChange={e => setTask(e.target.value as TaskOption)}
-                  className='w-full px-3 py-2 bg-gray-100 dark:bg-dark-50 border border-gray-200 dark:border-dark-300 rounded-lg text-sm text-gray-900 dark:text-dark-800 focus:ring-2 focus:ring-blue-500 outline-none'
+                  className='w-full px-3 py-2 bg-gray-100 dark:bg-dark-50 border border-gray-200 dark:border-dark-300 rounded-lg text-sm text-gray-900 dark:text-dark-800 focus:ring-2 focus:ring-blue-500 outline-hidden'
                 >
                   {TASK_OPTIONS.map(option => (
                     <option key={option.value} value={option.value}>
@@ -249,7 +316,7 @@ export const HuggingFaceModelBrowser: React.FC<
                 <select
                   value={sort}
                   onChange={e => setSort(e.target.value as SortOption)}
-                  className='w-full px-3 py-2 bg-gray-100 dark:bg-dark-50 border border-gray-200 dark:border-dark-300 rounded-lg text-sm text-gray-900 dark:text-dark-800 focus:ring-2 focus:ring-blue-500 outline-none'
+                  className='w-full px-3 py-2 bg-gray-100 dark:bg-dark-50 border border-gray-200 dark:border-dark-300 rounded-lg text-sm text-gray-900 dark:text-dark-800 focus:ring-2 focus:ring-blue-500 outline-hidden'
                 >
                   {SORT_OPTIONS.map(option => (
                     <option key={option.value} value={option.value}>
@@ -309,7 +376,7 @@ export const HuggingFaceModelBrowser: React.FC<
                               {model.id}
                             </h3>
                             {model.gated && (
-                              <span className='rounded bg-yellow-500/20 px-1.5 py-0.5 text-xs text-ink dark:bg-yellow-900/30'>
+                              <span className='rounded-sm bg-yellow-500/20 px-1.5 py-0.5 text-xs text-ink dark:bg-yellow-900/30'>
                                 {t('huggingface.gated')}
                               </span>
                             )}
@@ -327,7 +394,7 @@ export const HuggingFaceModelBrowser: React.FC<
                               {formatNumber(model.likes)}
                             </span>
                             {model.pipeline_tag && (
-                              <span className='px-2 py-0.5 bg-gray-100 dark:bg-dark-200 rounded text-xs'>
+                              <span className='px-2 py-0.5 bg-gray-100 dark:bg-dark-200 rounded-sm text-xs'>
                                 {model.pipeline_tag}
                               </span>
                             )}
@@ -406,6 +473,9 @@ export const HuggingFaceModelBrowser: React.FC<
                               })}
                             </div>
                             {modelGgufFiles.map(file => {
+                              const isPullingThis =
+                                pullingModel === file.ollamaCommand;
+
                               return (
                                 <div
                                   key={file.filename}
@@ -418,12 +488,55 @@ export const HuggingFaceModelBrowser: React.FC<
                                     <div className='flex items-center gap-2 mt-1 text-xs text-gray-500 dark:text-gray-400'>
                                       <span>{file.sizeFormatted}</span>
                                       {file.quantization && (
-                                        <span className='px-1.5 py-0.5 rounded bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400'>
+                                        <span className='px-1.5 py-0.5 rounded-sm bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400'>
                                           {file.quantization}
                                         </span>
                                       )}
                                     </div>
                                   </div>
+                                  {isPullingThis ? (
+                                    <div className='flex items-center gap-2'>
+                                      <div className='text-xs text-gray-500 w-12 text-right'>
+                                        {pullProgress?.percent !== undefined
+                                          ? `${pullProgress.percent}%`
+                                          : '...'}
+                                      </div>
+                                      <button
+                                        onClick={e => {
+                                          e.stopPropagation();
+                                          handleCancelPull();
+                                        }}
+                                        className='p-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
+                                      >
+                                        <X className='w-4 h-4' />
+                                      </button>
+                                    </div>
+                                  ) : canInstallModels ? (
+                                    <button
+                                      onClick={e => {
+                                        e.stopPropagation();
+                                        handlePullGguf(
+                                          file.ollamaCommand,
+                                          file.filename
+                                        );
+                                      }}
+                                      disabled={!!pullingModel}
+                                      className={cn(
+                                        'px-3 py-1.5 rounded-lg text-xs font-medium',
+                                        'bg-blue-100 dark:bg-blue-900/30',
+                                        'text-blue-700 dark:text-blue-400',
+                                        'hover:bg-blue-200 dark:hover:bg-blue-900/50',
+                                        'disabled:opacity-50 disabled:cursor-not-allowed'
+                                      )}
+                                    >
+                                      <Download className='w-3 h-3 inline mr-1' />
+                                      {t('models.pull', 'Pull')}
+                                    </button>
+                                  ) : (
+                                    <span className='rounded-sm bg-amber-500/20 px-2 py-1 text-[11px] font-medium text-ink dark:bg-amber-900/30'>
+                                      {t('modelSelector.adminOnlyPull')}
+                                    </span>
+                                  )}
                                 </div>
                               );
                             })}

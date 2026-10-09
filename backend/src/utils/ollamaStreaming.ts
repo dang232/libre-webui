@@ -1,0 +1,201 @@
+/*
+ * Libre WebUI
+ * Copyright (C) 2025 Kroonen AI, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import type {
+  GenerationStatistics,
+  OllamaChatRequest,
+  OllamaChatResponse,
+} from '../types/index.js';
+import { extractStatistics } from './generationUtils.js';
+import { ThinkingPhaseTimer } from './thinkingPhaseTimer.js';
+import {
+  sendAssistantChunk,
+  sendError,
+  type WebSocketLike,
+} from './websocketMessages.js';
+import {
+  ChatGenerationCancelledError,
+  isChatGenerationCancelled,
+} from './chatCancellation.js';
+
+export interface OllamaChatStreamGenerator {
+  generateChatStreamResponse(
+    request: OllamaChatRequest,
+    onChunk: (chunk: OllamaChatResponse) => void,
+    onError: (error: Error) => void,
+    onComplete: () => void,
+    signal?: AbortSignal,
+    usage?: { userId?: string }
+  ): Promise<void>;
+}
+
+export interface StreamOllamaChatResponseOptions {
+  ws: WebSocketLike;
+  request: OllamaChatRequest;
+  streamSource: OllamaChatStreamGenerator;
+  messageId?: string;
+  /** Attributes the metered usage of this call to a user. */
+  userId?: string;
+  signal?: AbortSignal;
+}
+
+export interface StreamOllamaChatResponseResult {
+  content: string;
+  thinking?: string;
+  statistics?: GenerationStatistics;
+  completed: boolean;
+  error?: Error;
+}
+
+export async function streamOllamaChatResponse({
+  ws,
+  request,
+  streamSource,
+  messageId,
+  userId,
+  signal,
+}: StreamOllamaChatResponseOptions): Promise<StreamOllamaChatResponseResult> {
+  return new Promise(resolve => {
+    let content = '';
+    let thinking = '';
+    let statistics: GenerationStatistics | undefined;
+    let resolved = false;
+    let terminalResult:
+      Omit<StreamOllamaChatResponseResult, 'content'> | undefined;
+    let providerErrorReported = false;
+    const thinkingTimer = new ThinkingPhaseTimer();
+
+    const finish = (
+      result: Omit<StreamOllamaChatResponseResult, 'content'>
+    ) => {
+      if (resolved) {
+        return;
+      }
+
+      resolved = true;
+      signal?.removeEventListener('abort', handleAbort);
+      resolve({
+        content,
+        ...(thinking ? { thinking } : {}),
+        statistics,
+        ...result,
+      });
+    };
+
+    const handleChunk = (chunk: OllamaChatResponse) => {
+      if (resolved || terminalResult || signal?.aborted) {
+        return;
+      }
+
+      const contentDelta = chunk.message?.content || '';
+      const thinkingDelta = chunk.message?.thinking || '';
+
+      if (thinkingDelta) {
+        thinking += thinkingDelta;
+        thinkingTimer.observeReasoning();
+      }
+
+      if (contentDelta) {
+        content += contentDelta;
+        thinkingTimer.observeAnswer();
+        thinkingTimer.observe(content);
+      }
+
+      if (contentDelta || thinkingDelta) {
+        sendAssistantChunk(ws, {
+          content: contentDelta,
+          total: content,
+          ...(thinkingDelta ? { thinking: thinkingDelta } : {}),
+          ...(thinking ? { thinkingTotal: thinking } : {}),
+          done: chunk.done,
+          messageId,
+        });
+      }
+
+      if (chunk.done) {
+        statistics = extractStatistics(chunk);
+        const thinkingDurationMs = thinkingTimer.durationMs;
+        if (thinkingDurationMs !== undefined) {
+          statistics = {
+            ...statistics,
+            thinking_duration_ms: thinkingDurationMs,
+          };
+        }
+        terminalResult = { completed: true };
+      }
+    };
+
+    const handleError = (error: Error) => {
+      if (resolved || terminalResult) {
+        return;
+      }
+
+      if (!isChatGenerationCancelled(error, signal) && !providerErrorReported) {
+        providerErrorReported = true;
+        sendError(ws, { error: error.message });
+      }
+      terminalResult = { completed: false, error };
+    };
+
+    const handleAbort = () => {
+      const error =
+        signal?.reason instanceof Error
+          ? signal.reason
+          : new ChatGenerationCancelledError();
+      // Keep the wrapper pending until the provider transport promise settles.
+      // The caller releases its generation/provider slots after this promise,
+      // so resolving at AbortSignal delivery would permit an overlapping retry
+      // while an abort-ignoring transport is still tearing down.
+      terminalResult = { completed: false, error };
+    };
+
+    signal?.addEventListener('abort', handleAbort, { once: true });
+    if (signal?.aborted) {
+      handleAbort();
+    }
+
+    void (async () => {
+      try {
+        await streamSource.generateChatStreamResponse(
+          request,
+          handleChunk,
+          handleError,
+          () => {
+            if (!terminalResult) terminalResult = { completed: true };
+          },
+          signal,
+          { userId }
+        );
+      } catch (error) {
+        handleError(error instanceof Error ? error : new Error(String(error)));
+      } finally {
+        finish(
+          terminalResult ||
+            (signal?.aborted
+              ? {
+                  completed: false,
+                  error:
+                    signal.reason instanceof Error
+                      ? signal.reason
+                      : new ChatGenerationCancelledError(),
+                }
+              : { completed: true })
+        );
+      }
+    })();
+  });
+}

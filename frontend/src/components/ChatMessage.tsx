@@ -30,7 +30,7 @@ import {
   ChatToolCall as ChatToolCallType,
 } from '@/types';
 import { ChatToolCallList } from '@/components/ChatToolCalls';
-import { MessageContent } from '@/components/ui';
+import { Button, MessageContent } from '@/components/ui';
 import { GenerationIndicator } from '@/components/ui/GenerationIndicator';
 import { GenerationStats } from '@/components/GenerationStats';
 import { ArtifactContainer } from '@/components/ArtifactContainer';
@@ -74,6 +74,7 @@ import {
 import { useAppStore } from '@/store/appStore';
 import { useAuthStore } from '@/store/authStore';
 import { useChatStore } from '@/store/chatStore';
+import { useDialogFocus } from '@/hooks/useDialogFocus';
 import { useThinkingSummary } from '@/hooks/useThinkingSummary';
 import { createLogger } from '@/utils/logger';
 import { evaluationsApi } from '@/utils/api/evaluationsApi';
@@ -121,6 +122,7 @@ interface ChatAvatarProps {
 /** Message avatars matching the Work conversation: the Libre mark for the
  * assistant (or the persona's avatar) and the account avatar for the user. */
 function ChatAvatar({ role, user, persona, modelAvatar }: ChatAvatarProps) {
+  const { t } = useTranslation();
   const [failedAvatar, setFailedAvatar] = useState<string | null>(null);
 
   if (role === 'assistant') {
@@ -148,7 +150,7 @@ function ChatAvatar({ role, user, persona, modelAvatar }: ChatAvatarProps) {
         role='img'
         aria-label='Alcore'
         data-testid='chat-assistant-avatar'
-        className='mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/[0.07] bg-white text-gray-900 shadow-sm dark:border-white/[0.09] dark:bg-dark-200 dark:text-dark-950'
+        className='mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/[0.07] bg-white text-gray-900 shadow-xs dark:border-white/9 dark:bg-dark-200 dark:text-dark-950'
       >
         {markImage ? (
           <img
@@ -168,7 +170,7 @@ function ChatAvatar({ role, user, persona, modelAvatar }: ChatAvatarProps) {
     );
   }
 
-  const label = user?.username || 'User';
+  const label = user?.username || t('chatMessage.user');
   const avatar = user?.avatar?.trim() || '';
   const hasAvatar = Boolean(avatar) && avatar !== failedAvatar;
 
@@ -180,7 +182,7 @@ function ChatAvatar({ role, user, persona, modelAvatar }: ChatAvatarProps) {
       className={cn(
         'mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full',
         hasAvatar
-          ? 'border border-black/[0.07] bg-white dark:border-white/[0.09] dark:bg-dark-200'
+          ? 'border border-black/[0.07] bg-white dark:border-white/9 dark:bg-dark-200'
           : 'bg-gray-950 text-white dark:bg-white dark:text-gray-950'
       )}
       title={label}
@@ -257,6 +259,11 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(message.content);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const lightboxRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(lightboxRef, {
+    enabled: lightboxImage !== null,
+    onClose: () => setLightboxImage(null),
+  });
   const [isSaving, setIsSaving] = useState(false);
   const [isSystemMessageExpanded, setIsSystemMessageExpanded] = useState(false);
   const [isThinkingExpanded, setIsThinkingExpanded] = useState(false);
@@ -281,6 +288,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
       logger.error('Failed to copy message:', err);
+      toast.error(t('chat.message.copyFailed'));
     }
   };
 
@@ -619,7 +627,9 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
     if (currentSessionIsPrivate) return;
     if (cleared) {
       setFeedbackDetailsFor(null);
-      void evaluationsApi.deleteFeedback(message.id).catch(() => undefined);
+      void evaluationsApi
+        .deleteFeedback(message.id)
+        .catch(() => toast.error(t('chatMessage.feedbackFailed')));
       return;
     }
     setFeedbackTags([]);
@@ -631,7 +641,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
         messageId: message.id,
         rating: value === 1 ? 1 : -1,
       })
-      .catch(() => undefined);
+      .catch(() => toast.error(t('chatMessage.feedbackFailed')));
   };
 
   const submitFeedbackDetails = () => {
@@ -644,7 +654,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
         tags: feedbackTags,
         ...(feedbackComment.trim() ? { comment: feedbackComment.trim() } : {}),
       })
-      .catch(() => undefined);
+      .catch(() => toast.error(t('chatMessage.feedbackFailed')));
     setFeedbackDetailsFor(null);
   };
 
@@ -723,14 +733,24 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                 {message.images.map((image, index) => (
                   <div
                     key={index}
-                    className='aspect-square overflow-hidden rounded-xl border border-black/[0.06] bg-gray-100 dark:border-white/[0.08] dark:bg-gray-800'
+                    className='aspect-square overflow-hidden rounded-xl border border-black/6 bg-gray-100 dark:border-white/8 dark:bg-gray-800'
                   >
-                    <img
-                      src={image}
-                      alt={`Uploaded image ${index + 1}`}
-                      className='w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity'
+                    <button
+                      type='button'
+                      className='block h-full w-full'
+                      aria-label={t('chatMessage.openImage', {
+                        number: index + 1,
+                      })}
                       onClick={() => setLightboxImage(image)}
-                    />
+                    >
+                      <img
+                        src={image}
+                        alt={t('chatMessage.uploadedImageAlt', {
+                          number: index + 1,
+                        })}
+                        className='w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity'
+                      />
+                    </button>
                   </div>
                 ))}
               </div>
@@ -738,8 +758,9 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
 
             {isUser ? (
               isEditing ? (
-                <div className='w-full min-w-[min(28rem,80vw)] rounded-2xl border border-black/[0.08] bg-white p-2 shadow-sm dark:border-white/[0.08] dark:bg-dark-100'>
+                <div className='w-full min-w-[min(28rem,80vw)] rounded-2xl border border-black/8 bg-white p-2 shadow-xs focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/30 dark:border-white/8 dark:bg-dark-100'>
                   <textarea
+                    aria-label={t('chatMessage.edit')}
                     dir='auto'
                     value={editedContent}
                     onChange={e => setEditedContent(e.target.value)}
@@ -757,27 +778,30 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                       }
                     }}
                     autoFocus
-                    className='min-h-[72px] w-full resize-y rounded-xl border-none bg-transparent p-2 text-[0.9375rem] leading-relaxed text-gray-900 focus:outline-none dark:text-dark-900'
+                    className='min-h-[72px] w-full resize-y rounded-xl border-none bg-transparent p-2 text-[0.9375rem] leading-relaxed text-gray-900 focus:outline-hidden dark:text-dark-900'
                   />
                   <div className='flex items-center justify-end gap-1.5 px-1 pb-1'>
-                    <button
+                    <Button
+                      type='button'
+                      variant='ghost'
+                      size='sm'
                       onClick={handleCancelEdit}
-                      className='rounded-lg px-2.5 py-1 text-xs text-gray-500 transition-colors hover:bg-gray-100 dark:text-dark-600 dark:hover:bg-dark-200'
                     >
                       {t('chatMessage.cancelEditing')}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      type='button'
+                      size='sm'
                       onClick={handleSaveUserEdit}
-                      className='rounded-lg bg-gray-900 px-2.5 py-1 text-xs text-white transition-colors hover:bg-gray-700 dark:bg-dark-300 dark:hover:bg-dark-400'
                     >
                       {t('chatMessage.saveAndSubmit')}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ) : (
                 <div
                   data-user-bubble=''
-                  className='rounded-2xl rounded-ee-md border border-black/[0.06] bg-gray-900 px-3.5 py-2 text-white shadow-sm dark:border-white/[0.07] dark:bg-dark-300'
+                  className='rounded-2xl rounded-ee-md border border-line bg-surface-subtle px-4 py-2.5 text-ink'
                 >
                   <p
                     dir='auto'
@@ -788,7 +812,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                 </div>
               )
             ) : isSystem ? (
-              <div className='relative z-0 rounded-2xl border border-black/[0.06] bg-white/55 p-3 dark:border-white/[0.06] dark:bg-dark-200/45'>
+              <div className='relative z-0 rounded-2xl border border-black/6 bg-white/55 p-3 dark:border-white/6 dark:bg-dark-200/45'>
                 <div className='mb-2 flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-500 dark:text-dark-500'>
                   <div className='flex items-center gap-1'>
                     {isCompactionSummary ? (
@@ -807,6 +831,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                         disabled={restoringCompaction}
                         className='rounded-lg p-1.5 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-dark-300'
                         title={t('chatMessage.restoreCompacted')}
+                        aria-label={t('chatMessage.restoreCompacted')}
                       >
                         <Undo2 className='h-3 w-3 text-gray-600 dark:text-gray-400' />
                       </button>
@@ -817,6 +842,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                           disabled={isSaving}
                           className='rounded-lg p-1.5 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-dark-300'
                           title={t('chatMessage.saveChanges')}
+                          aria-label={t('chatMessage.saveChanges')}
                         >
                           <Save className='h-3 w-3 text-green-600 dark:text-green-400' />
                         </button>
@@ -825,6 +851,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                           disabled={isSaving}
                           className='rounded-lg p-1.5 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-dark-300'
                           title={t('chatMessage.cancelEditing')}
+                          aria-label={t('chatMessage.cancelEditing')}
                         >
                           <X className='h-3 w-3 text-red-600 dark:text-red-400' />
                         </button>
@@ -834,6 +861,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                         onClick={handleEditSystemMessage}
                         className='rounded-lg p-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-dark-300'
                         title={t('chatMessage.editSystemMessage')}
+                        aria-label={t('chatMessage.editSystemMessage')}
                       >
                         <Edit3 className='h-3 w-3 text-gray-600 dark:text-gray-400' />
                       </button>
@@ -842,10 +870,11 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                 </div>
                 {isEditing ? (
                   <textarea
+                    aria-label={t('chatMessage.editSystemMessage')}
                     dir='auto'
                     value={editedContent}
                     onChange={e => setEditedContent(e.target.value)}
-                    className='min-h-[100px] w-full resize-none rounded-xl border border-black/[0.08] bg-white p-3 text-sm text-gray-900 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-white/[0.08] dark:bg-dark-100 dark:text-dark-900 dark:focus:ring-primary-400'
+                    className='min-h-[100px] w-full resize-none rounded-xl border border-black/8 bg-white p-3 text-sm text-gray-900 focus:border-transparent focus:outline-hidden focus:ring-2 focus:ring-primary-500 dark:border-white/8 dark:bg-dark-100 dark:text-dark-900 dark:focus:ring-primary-400'
                     placeholder={t('chatMessage.systemMessagePlaceholder')}
                     disabled={isSaving}
                   />
@@ -861,10 +890,12 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                     </p>
                     {shouldShowExpandButton && (
                       <button
+                        type='button'
+                        aria-expanded={isSystemMessageExpanded}
                         onClick={() =>
                           setIsSystemMessageExpanded(!isSystemMessageExpanded)
                         }
-                        className='mt-2 flex items-center gap-1 text-xs text-gray-400 transition-colors hover:text-gray-900 dark:text-dark-500 dark:hover:text-dark-900'
+                        className='mt-2 flex items-center gap-1 text-xs text-ink-muted transition-colors hover:text-ink'
                       >
                         {isSystemMessageExpanded ? (
                           <>
@@ -893,7 +924,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                       aria-expanded={isThinkingExpanded}
                       aria-controls={thinkingPanelId}
                       onClick={() => setIsThinkingExpanded(!isThinkingExpanded)}
-                      className='flex min-h-11 max-w-full items-center gap-1.5 rounded-md py-2 text-start text-xs text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/30'
+                      className='flex min-h-11 max-w-full items-center gap-1.5 rounded-md py-2 text-start text-xs text-ink-muted transition-colors hover:text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500/30'
                     >
                       {thinkingStreaming ? (
                         <GenerationIndicator data-testid='thinking-generation-indicator' />
@@ -907,7 +938,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                         role='status'
                         aria-live={thinkingStreaming ? 'polite' : 'off'}
                         aria-atomic='true'
-                        className='min-w-0 [overflow-wrap:anywhere]'
+                        className='min-w-0 wrap-anywhere'
                       >
                         <span
                           key={thinkingSummary || 'thinking'}
@@ -1062,7 +1093,9 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                       'playing',
                     ].includes(autoPlayState)
                     ? 'sm:opacity-100'
-                    : 'sm:opacity-0',
+                    : // Hidden only where hover exists to reveal it; touch
+                      // tablets would otherwise never see the actions.
+                      '[@media(hover:hover)]:sm:opacity-0',
                   isUser ? 'mt-1 justify-end' : 'mt-1'
                 )}
               >
@@ -1098,12 +1131,19 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                     }}
                     className='flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-dark-200 dark:hover:text-dark-800'
                     title={t('chatMessage.edit')}
+                    aria-label={t('chatMessage.edit')}
                   >
                     <Edit3 className='h-3.5 w-3.5' />
                   </button>
                 )}
                 <button
+                  type='button'
                   onClick={handleCopyMessage}
+                  aria-label={
+                    isCopied
+                      ? t('chatMessage.copied')
+                      : t('chatMessage.copyMessage')
+                  }
                   className='flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-dark-200 dark:hover:text-dark-800'
                   title={
                     isCopied
@@ -1127,6 +1167,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                           'text-primary-600 dark:text-primary-400'
                       )}
                       title={t('chatMessage.goodResponse')}
+                      aria-label={t('chatMessage.goodResponse')}
                       aria-pressed={message.rating === 1}
                     >
                       <ThumbsUp
@@ -1142,6 +1183,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                           'text-red-500 dark:text-red-400'
                       )}
                       title={t('chatMessage.badResponse')}
+                      aria-label={t('chatMessage.badResponse')}
                       aria-pressed={message.rating === -1}
                     >
                       <ThumbsDown
@@ -1151,7 +1193,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                     </button>
                     {feedbackDetailsFor !== null && (
                       <div
-                        className='ml-1 flex flex-wrap items-center gap-1 rounded-lg border border-gray-200 bg-white px-2 py-1 dark:border-dark-300 dark:bg-dark-100'
+                        className='ms-1 flex flex-wrap items-center gap-1 rounded-lg border border-gray-200 bg-white px-2 py-1 dark:border-dark-300 dark:bg-dark-100'
                         data-testid='feedback-details'
                       >
                         {FEEDBACK_TAGS.map(tag => (
@@ -1182,21 +1224,23 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                             setFeedbackComment(event.target.value)
                           }
                           placeholder={t('chatMessage.feedbackComment')}
-                          className='w-32 rounded border border-gray-300 px-1.5 py-0.5 text-[10px] dark:border-dark-300 dark:bg-dark-50'
+                          aria-label={t('chatMessage.feedbackComment')}
+                          className='w-32 rounded-sm border border-gray-300 px-1.5 py-0.5 text-[10px] focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/30 dark:border-dark-300 dark:bg-dark-50'
                           maxLength={2000}
                         />
-                        <button
+                        <Button
                           type='button'
+                          size='sm'
                           onClick={submitFeedbackDetails}
-                          className='rounded bg-gray-900 px-2 py-0.5 text-[10px] text-white dark:bg-white dark:text-gray-900'
+                          className='h-6 px-2 text-[10px]'
                         >
                           {t('common.save')}
-                        </button>
+                        </Button>
                         <button
                           type='button'
                           onClick={() => setFeedbackDetailsFor(null)}
                           aria-label={t('common.close')}
-                          className='rounded p-0.5 text-gray-400 hover:text-gray-600'
+                          className='rounded-sm p-0.5 text-ink-muted hover:text-ink'
                         >
                           <X className='h-3 w-3' />
                         </button>
@@ -1209,6 +1253,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                     onClick={onRegenerate}
                     className='flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-dark-200 dark:hover:text-dark-800'
                     title={t('chatMessage.regenerateResponse')}
+                    aria-label={t('chatMessage.regenerateResponse')}
                   >
                     <RefreshCw className='h-3.5 w-3.5' />
                   </button>
@@ -1218,6 +1263,7 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
                     onClick={() => onFork(message.id)}
                     className='flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-dark-200 dark:hover:text-dark-800'
                     title={t('chat.fork.action')}
+                    aria-label={t('chat.fork.action')}
                     data-testid='fork-from-message'
                   >
                     <GitFork className='h-3.5 w-3.5' />
@@ -1244,14 +1290,18 @@ const ChatMessageBase: React.FC<ChatMessageProps> = ({
       {lightboxImage &&
         createPortal(
           <div
+            ref={lightboxRef}
             role='dialog'
             aria-modal='true'
             aria-label={t('chatMessage.fullSizeImage')}
-            className='fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 p-6 backdrop-blur-md'
+            tabIndex={-1}
+            className='fixed inset-0 z-9999 flex items-center justify-center bg-black/85 p-6 backdrop-blur-md'
             onClick={() => setLightboxImage(null)}
           >
             <button
-              className='absolute end-6 top-6 rounded-full border border-white/15 bg-white/10 p-3 text-white transition-colors hover:bg-white/20'
+              type='button'
+              aria-label={t('common.close')}
+              className='absolute inset-e-6 top-6 rounded-full border border-white/15 bg-white/10 p-3 text-white transition-colors hover:bg-white/20'
               onClick={e => {
                 e.stopPropagation();
                 setLightboxImage(null);

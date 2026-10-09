@@ -15,6 +15,325 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 📚 Documentation
 
+## [0.40.0] - 2026-10-03
+
+Libre WebUI now works better with a keyboard, a screen reader, and a touch
+screen, and saved provider keys survive model list updates. Administrators
+can pick a light or dark email template, and Codex adds GPT-6.1 Sol.
+
+### ✨ New Features
+
+- **Accessibility across the app**: Every control has a name for screen
+  readers, dialogs keep focus inside until they close, and menus work with
+  the arrow keys. Finished chat replies and Work runs are announced to screen
+  readers with a short plain-text preview, never token by token.
+- **Email template presets**: Administrators choose a **Light** or **Dark**
+  email template and preview it before saving. The preset applies to every
+  notification and test email on the instance, and the preview renders
+  sample content without contacting SMTP.
+- **GPT-6.1 Sol**: The Codex provider and the Codex agent CLI offer
+  **GPT-6.1 Sol** (`gpt-6.1-sol`), subject to the signed-in account's access.
+
+### 🔧 Improvements
+
+- **Clearer failures and safer deletes**: Lists and panels that fail to load
+  show an error with **Retry** instead of looking empty, and deleting or
+  revoking something asks for confirmation first.
+- **Touch screens**: Buttons, tabs, and menu items are at least 44px wherever
+  the main pointer is coarse, so tablets and touch laptops get finger-sized
+  targets in desktop layouts. Controls that appear on hover open with a tap.
+- **Consistent pages**: Notes, Calendar, Automations, Channels, and Strands
+  share one toolbar, library pages share their empty, loading, and error
+  states, and unknown addresses show a 404 page.
+- **Lighter design**: User messages use the subtle light bubble from
+  DESIGN.md, primary buttons use the neutral treatment, and the Chat, Work,
+  and Strands composers share one quiet focus style.
+- **Links in replies**: Links in chat replies use the accent color with an
+  underline, and off-page links open in a new tab so the chat stays open.
+- **Private page titles**: Browser tabs show "Libre WebUI" instead of chat
+  titles, so conversation names stay out of browser history and window
+  lists.
+- **Work previews in team mode**: The external worker expires previews owned
+  by application replicas, and a preview's hold alone no longer counts as
+  activity. The runtime slot is released on the next heartbeat, normally
+  within ten seconds.
+
+### 🐛 Bug Fixes
+
+- **Saved API keys**: Adding or removing models in a provider's manifest no
+  longer makes its saved API keys disappear. Keys saved earlier keep working
+  and are rebound the first time they are used; changing an endpoint or
+  routing still asks for the key again.
+- **Work sandboxes during runs**: The sandbox stays running between commands
+  and workspace helpers during an agent run, so Files and Git no longer see a
+  stopped container mid-run.
+- **Work terminal**: Switching between light and dark no longer restarts the
+  terminal session.
+- **Image attachments**: Selecting several images at once attaches all of
+  them instead of only the first.
+- **First message**: When a new chat cannot be created, the message you typed
+  stays in the composer.
+- **Folder rename**: The rename button on a chat folder is labeled for
+  folders instead of chats.
+
+### 🔒 Security
+
+- **Tailwind CSS 4**: Tailwind 3 depended on braces <=3.0.3
+  (GHSA-vfj7-8cjw-p6xm), which has no patched release. The frontend now
+  builds with Tailwind CSS 4 and keeps the same look.
+- **npm audit fixes**: DOMPurify moves to 3.4.16 and brace-expansion to
+  5.0.12.
+
+### 📚 Documentation
+
+- **Providers, Work, and email**: Provider Connections and Agent CLI Models
+  list GPT-6.1 Sol. Notifications covers the email template presets, and
+  Workspaces covers sandbox lifetime during runs and preview expiry in team
+  mode. Troubleshooting, Plugin Architecture, and Environment Variables
+  explain that model catalog changes keep saved keys.
+
+## [0.39.0] - 2026-09-29
+
+Amazon Bedrock joins the bundled providers with one API key and its full model
+catalog, Claude Sonnet 5.5 arrives with adaptive thinking, and the model
+selector is rebuilt around model sources. Work runs now take a reasoning
+level, just like Chat.
+
+### ✨ New Features
+
+- **Amazon Bedrock provider**: The bundled **Amazon Bedrock** provider takes
+  a short-term or long-term Bedrock API key, saved in its settings or set as
+  `AWS_BEARER_TOKEN_BEDROCK`. It needs no AWS SDK, access key pair, or IAM
+  signing. It lists every model the account can call in the chosen
+  **Region** and leaves out models the account cannot use yet. Claude models
+  run through Bedrock's Anthropic Messages API, so thinking, tools, and token
+  ceilings behave as they do with the Anthropic provider. Chat, Work, and
+  Strands can all use them, and usage shows up in analytics.
+- **Claude Sonnet 5.5**: Available through the Anthropic, Amazon Bedrock, and
+  OpenRouter providers, and as an explicit **Sonnet 5.5** choice for Claude
+  Code (Claude Code 2.1.284 or later). Sonnet 5.5 and Opus 5.5 think
+  adaptively: a named reasoning level becomes their effort setting, and
+  **off** on Sonnet 5.5 keeps up-front thinking off.
+- **Work reasoning level**: The Work composer has the same reasoning control
+  as Chat, beside the model picker, with **off**, **on**, **low**, **medium**,
+  and **high**. It starts from the level Chat would use for that model, and
+  each run keeps the level it asked for on either engine. The control is
+  hidden for models that cannot reason.
+
+### 🔧 Improvements
+
+- **Model selector by source**: Models are grouped by provider and agent
+  harness, with a row of source chips to scope the list and search that
+  ignores separators, so "gpt4o" finds "gpt-4o". Large groups show a short
+  preview with **Show all**. Ollama tabs are hidden when Ollama is off, and
+  embedding models no longer appear as chat choices.
+- **Readable model names**: Raw ids such as `~anthropic/claude-fable-latest`
+  read as "Claude Fable" by Anthropic, with a maker tile and the context
+  size. The arrow keys move through the rows.
+
+### 🐛 Bug Fixes
+
+- **Strands follow-up suggestions**: Suggested follow-ups after a Strands
+  reply are generated by the engine's own model instead of falling back to
+  Ollama.
+
+### 🔒 Security
+
+- **ip-address 10.7.2**: The pinned `ip-address` override moves to 10.7.2,
+  which fixes GHSA-2vr4-cq9g-pvrc and the related SSRF advisories.
+- **Dependency refresh**: The Dependabot batch from #222, including Vite
+  8.3.1, React Query 5.103.2, framer-motion 13.4.3, and KaTeX 0.18.9.
+
+### 📚 Documentation
+
+- **Providers and models**: Provider Connections and Environment Variables
+  cover Amazon Bedrock and `AWS_BEARER_TOKEN_BEDROCK`. Pro Tips and Agent CLI
+  Models cover Sonnet 5.5 and adaptive thinking, and Workspaces covers the
+  Work reasoning level.
+
+## [0.38.0] - 2026-09-26
+
+Strands, an embedded agent engine built on the open-source Strands Agents
+harness, replaces Libre Claw and the Cordis bridge. It runs on the models Libre
+WebUI already serves, in Chat, Work, and its own page, and stays off until an
+administrator turns it on.
+
+### ✨ New Features
+
+- **Strands engine**: An embedded agent engine built on the open-source
+  Strands Agents harness. It runs inside the backend on the models Libre WebUI
+  already serves (Ollama and active chat provider plugins), with no separate
+  provider setup. Use it from the new **Strands** page with persistent
+  sessions and a per-session model picker, from Chat as the **Strands** agent,
+  or in Work through the **Strands** engine option.
+- **Strands access**: Administrators choose who can use the engine under
+  **User Management → Access & policies → Strands engine** (off,
+  administrators, or all users). It is off by default, `LIBRE_STRANDS_ACCESS`
+  pins the mode, and the server enforces it on REST, WebSocket, and Work
+  requests.
+
+### 🔧 Improvements
+
+- **Contained agent tools**: On the Strands page the agent gets only `read`,
+  `write`, and `edit`, jailed to a private per-session workspace. It has no
+  shell, no web access, and no memory or skills from the host.
+- **Keyboard controls**: Focus stays inside the automation dialog, so a
+  background action can no longer replace an unsaved draft. Tabs, notes, and
+  clock controls are reachable from the keyboard in every browser engine, and
+  the clock panel stays usable in short windows.
+- **Closable status popups**: Short status messages now have a **Close**
+  button that works with a pointer or keyboard, so a popup can no longer sit on
+  top of Work actions.
+- **Wider release checks**: Every change now has to install cleanly on Linux,
+  macOS, and Windows with Node 22 and 24, pass critical flows in Chromium,
+  WebKit, and Firefox, and pass the real Work Computer check.
+
+### ⚠️ Breaking Changes
+
+- **Libre Claw removed**: The `/agents` page, `/api/libre-claw`, and the
+  `LIBRE_CLAW_*` variables are gone. Use the Strands page instead.
+- **Cordis bridge and DeepSeek Harness removed**: The Cordis Engine page,
+  `/api/cordis`, `cordis.config.yml`, `cordis.patch.yml`,
+  `LIBRE_CORDIS_ENABLED`, and the native DSH provider are gone, along with the
+  `@deepseek-ai/*` packages. Work runs saved with the DeepSeek Harness engine
+  open as Strands runs.
+
+### 🐛 Bug Fixes
+
+- **Team profile storage image**: MinIO stopped publishing container images,
+  and `quay.io/minio` now refuses anonymous pulls, so the team profile could not
+  start its object store. The team profile and CI now pull Chainguard's MinIO
+  server and client builds from `cgr.dev`, pinned by digest. The server keeps
+  running as root so existing MinIO volumes stay writable.
+
+### 🔒 Security
+
+- **Stricter CORS origins**: Hostnames that only begin with a local or private
+  address, such as `localhost.attacker.example`, are no longer treated as local
+  origins. Requests must carry one well-formed origin, and malformed values or
+  lists of origins are rejected even with `CORS_ORIGIN=*`. Configured origins
+  and literal LAN addresses keep working.
+
+### 📚 Documentation
+
+- Added the [Strands engine guide](docs/67-STRANDS_ENGINE.md) and removed the
+  Libre Claw and Cordis guides.
+- The environment variables guide explains exactly how `CORS_ORIGIN` entries
+  are matched, and the notifications guide covers closing status popups.
+
+## [0.37.2] - 2026-09-22
+
+GPT-6 Sol, GPT-6 Luna, and Claude Opus 5.5 are now selectable through existing
+sign-ins, without adding an API key.
+
+### 🔧 Improvements
+
+- **GPT-6 Sol and Luna**: Select either model through the Codex (ChatGPT)
+  provider or the Codex agent. Existing models remain available, subject to
+  the signed-in account's access.
+- **Claude Opus 5.5**: Choose Opus 5.5 explicitly in Claude Code while keeping
+  the configured default and the Sonnet, Opus, and Haiku aliases.
+
+### 📚 Documentation
+
+- **Sign-in model setup**: Updated the provider and agent guides with the new
+  model choices and the Claude Code 2.1.280 minimum for Opus 5.5.
+
+## [0.37.1] - 2026-09-21
+
+This patch strengthens DeepSeek Harness privacy controls, keeps default engine workspaces in LWUI's data directory, and fixes the React dependency tree used by clean installations.
+
+### 🔧 Improvements
+
+- **Dependency refresh.** Update React, React DOM, and both type packages to 19.3.0, alongside React Router 8.4.0, Framer Motion 13.4.0, TanStack Query 5.103.1, Lucide 1.47.0, and AWS SDK 3.1135.0.
+
+### 🐛 Bug Fixes
+
+- **Workspaces stay in app data.** Blank or absent DSH workspace settings now use LWUI's data directory instead of the launch directory. Runtime overrides keep their resolved paths, with explicit locations and Docker data mounts preserved.
+- **Reliable React installs.** Align root and frontend overrides and regenerate the lockfile to remove incompatible React types and missing React peers. Regression coverage rejects split installations and dependencies resolved outside the checkout.
+
+### 🔒 Security
+
+- **DSH uploaders blocked.** Explicitly disable the known DSH telemetry, session-log, and plugin-inventory uploaders. The embedded host rejects their activation before import, including nested configurations, direct adapter imports, and live plugin changes.
+
+### 📚 Documentation
+
+- **DSH privacy guide.** Add prominent warnings about upstream data-sharing defaults, the verified telemetry collector DNS, all three opt-outs, queued uploads, and remaining provider traffic. Explain the separate configuration required for an external DSH instance.
+- **Workspace configuration.** Document the packaged `~/.libre-webui/cordis-*` defaults, blank-path behavior, custom data directories, and corrected model-provider defaults.
+
+## [0.37.0] - 2026-09-19
+
+DeepSeek Harness joins Chat and Work, with a live engine console and access to
+the models already configured in a native DSH instance. Agent usage is easier
+to find, and Work starts with a clearer prompt, engine selector, and model picker.
+
+### ✨ New Features
+
+- **DeepSeek Harness in Chat and Work.** Administrators can enable the optional
+  Cordis Engine, select DSH in Chat's Agents group, or choose it as a Work
+  engine. Work keeps its existing containers, permissions, tool approvals,
+  conversation history, and recovery behavior while DSH runs the agent loop.
+- **Native DSH models.** Connect the providers already configured in DSH and
+  choose each model independently, including Flash and Pro. Install the
+  standalone provider plugin directly from its GitHub URL in DSH's Add plugin
+  dialog. The connection uses a private Unix socket on the same host and OS
+  account, and provider credentials stay in DSH.
+- **Cordis Engine console.** The administrator-only Engine page streams text,
+  reasoning, and tool activity, renders Markdown and highlighted code, and
+  supports saved conversations, Stop, and deletion. Each session retains its
+  model and Read only or Workspace write permission; individual tool requests
+  offer Allow once and Deny within the configured workspace.
+
+### 🔧 Improvements
+
+- **Agent usage in Provider Usage.** Claude Code, Codex, OpenCode, Pi, and DSH
+  have an explicit Agents section showing calls, reported tokens, outcomes,
+  and latency. Native DSH calls are recorded across Chat, Work, titles, and
+  thinking summaries, with existing tariffs and budget limits. Missing token
+  counts stay unreported, and calls through LWUI providers keep their existing
+  records without a second charge.
+- **A clearer Work start screen.** A shorter introduction leaves more room for
+  the task. Labeled Engine and Model controls sit beside dictation and a visible
+  Run button, wrap on narrow screens, and retain keyboard focus, touch targets,
+  and the draft when selections change.
+- **Independent Agent CLI access.** Installed Pi, OpenCode, Codex, and Claude
+  Code models have their own Agent CLI models switch. Libre Claw can remain
+  disabled without hiding those models from Chat's Agents category.
+
+### 🐛 Bug Fixes
+
+- **Exact model selection and labels.** DSH selections retain the chosen
+  provider and model across reloads and Chat-to-Work handoff. Settings identify
+  agents, plugins, personas, and Ollama correctly; disabling Ollama does not
+  relabel or hide other providers. Persona IDs no longer reach provider calls.
+- **Titles and thinking summaries with DSH.** Auxiliary text requests use the
+  selected underlying model directly, without launching an agent session or
+  offering tools. Native model validation no longer waits for unrelated
+  providers, and metadata lookups receive cancellation.
+- **Reliable sessions and usage counters.** Stopping and resuming an Engine
+  session preserves its history, and saved sessions can be deleted. An explicit
+  repair utility backs up supported malformed legacy logs before changing them.
+  CLI token reports survive streaming and durable transports, avoid duplicate
+  cache or cumulative counts, and retain failed or cancelled outcomes.
+
+### 🔒 Security
+
+- **Bounded email validation.** Application URL normalization and mailbox
+  validation no longer use backtracking regular expressions, resolving the
+  corresponding CodeQL findings from 0.36.0.
+- **Safe preview lease cleanup.** Work verifies that a stored usage-release
+  callback is callable before invoking it.
+
+### 📚 Documentation
+
+- **DSH setup and plugin guides.** New Cordis Bridge, Cordis Configuration, and
+  Cordis Plugin Authoring pages cover the engine, public plugin installation,
+  model routing, permissions, lifecycle, and troubleshooting.
+- **Updated operator references.** Work, Agent CLI models, Provider Usage,
+  environment variables, platform boundaries, and capability contracts describe
+  the new integration. The Work skill placeholder renders correctly in MDX,
+  and troubleshooting uses the correct `model.provider` setting.
+
 ## [0.36.0] - 2026-09-18
 
 Notifications reach your inbox by email, routines fire on events and carry

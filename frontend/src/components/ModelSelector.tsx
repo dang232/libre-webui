@@ -21,14 +21,18 @@ import React, {
   useEffect,
   useCallback,
   useImperativeHandle,
+  useMemo,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router';
 import {
   Bot,
   Brain,
   ChevronDown,
+  Cloud,
+  HardDrive,
   Search,
   Sparkles,
   Terminal,
@@ -37,15 +41,49 @@ import {
   Zap,
 } from 'lucide-react';
 import { cn } from '@/utils';
-import type { ChatModel, Persona } from '@/types';
+import type { ChatModel, OllamaModel, Persona } from '@/types';
 import { getPersonaAvatarSrc } from '@/utils/personaAvatar';
+import {
+  ollamaApi,
+  huggingfaceHubApi,
+  HuggingFaceModel,
+  GgufFileInfo,
+} from '@/utils/api';
+import { useAuthStore } from '@/store/authStore';
+import toast from 'react-hot-toast';
+import { createLogger } from '@/utils/logger';
+import { isAvailableOllamaModel } from '@/utils/chatModelSelection';
+import {
+  agentRowParts,
+  buildModelSources,
+  modelMatchesSearch,
+  previewSourceModels,
+  type ModelSource,
+} from '@/utils/modelSelectorGroups';
 import { modelVisibilityKey } from '@/utils/modelVisibility';
+import {
+  formatContextLength,
+  formatModelSize,
+  modelNameParts,
+  type ModelNameParts,
+} from '@/utils/modelNames';
 import { useChatStore } from '@/store/chatStore';
+import { ModelMark } from '@/components/model-selector/ModelMark';
+import { HuggingFaceModelsTab } from '@/components/model-selector/HuggingFaceModelsTab';
 import { InstalledModelsTab } from '@/components/model-selector/InstalledModelsTab';
+import {
+  ALL_SOURCES,
+  ModelSourceFilter,
+} from '@/components/model-selector/ModelSourceFilter';
+import { OllamaLibraryTab } from '@/components/model-selector/OllamaLibraryTab';
 import type {
+  LibraryModel,
   ModelGroup,
   ModelSelectorProps,
+  TabType,
 } from '@/components/model-selector/types';
+
+const logger = createLogger('components:model-selector');
 
 export const ModelSelector: React.FC<ModelSelectorProps> = ({
   models,
@@ -58,6 +96,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
   showImageGen = false,
   onModelsRefresh,
   getModelValue: getModelValueOverride,
+  getModelId,
   getModelLabel: getModelLabelOverride,
   getModelTitle,
   triggerRef,
@@ -68,70 +107,97 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState<TabType>('installed');
+  const [activeSource, setActiveSource] = useState<string>(ALL_SOURCES);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const internalTriggerRef = useRef<HTMLButtonElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const { user, systemInfo } = useAuthStore();
+  const canInstallModels =
+    user?.role === 'admin' || systemInfo?.requiresAuth === false;
+  // With Ollama off there is nothing to browse or pull, so its library and
+  // the Hugging Face GGUF tab go away and the list is the only view.
+  const ollamaEnabled = systemInfo?.ollamaEnabled !== false;
+  const tab: TabType = ollamaEnabled ? activeTab : 'installed';
 
-  const groupedModels: ModelGroup[] = [
-    {
-      type: 'legacy' as const,
-      label: t('modelSelector.providerNotRecorded', 'Provider not recorded'),
-      icon: <Brain className='h-4 w-4 text-gray-500 dark:text-dark-600' />,
-      models: models.filter(model => model.isLegacySelection),
-      color: 'gray',
-    },
-    {
-      type: 'unavailable' as const,
-      label: t('modelSelector.unavailableSelections', 'Unavailable selections'),
-      icon: <X className='h-4 w-4 text-gray-500 dark:text-dark-600' />,
-      models: models.filter(
-        model => model.isUnavailable && !model.isLegacySelection
-      ),
-      color: 'gray',
-    },
-    {
-      type: 'personas' as const,
-      label: t('modelSelector.personas'),
-      icon: <User className='h-4 w-4 text-gray-500 dark:text-dark-600' />,
-      models: models.filter(model => model.isPersona && !model.isUnavailable),
-      color: 'purple',
-    },
-    {
-      type: 'agents' as const,
-      label: t('modelSelector.agentModels', 'Agents'),
-      icon: <Terminal className='h-4 w-4 text-gray-500 dark:text-dark-600' />,
-      models: models.filter(model => model.isAgent && !model.isUnavailable),
-      color: 'green',
-    },
-    {
-      type: 'plugins' as const,
-      label: t('modelSelector.pluginModels'),
-      icon: <Zap className='h-4 w-4 text-gray-500 dark:text-dark-600' />,
-      models: models.filter(model => model.isPlugin && !model.isUnavailable),
-      color: 'green',
-    },
-  ].filter(group => group.models.length > 0);
+  const [libraryCategory, setLibraryCategory] = useState('all');
+  const [libraryDebouncedSearch, setLibraryDebouncedSearch] = useState('');
 
-  const filteredGroups = groupedModels
-    .map(group => ({
-      ...group,
-      models: group.models.filter(
-        model =>
-          model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (model.personaName &&
-            model.personaName
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase())) ||
-          (model.pluginName &&
-            model.pluginName.toLowerCase().includes(searchTerm.toLowerCase()))
-      ),
-    }))
-    .filter(group => group.models.length > 0);
+  const [hfTask, setHfTask] = useState('text-generation');
+  const [hfSort, setHfSort] = useState('downloads');
+  const [hfDebouncedSearch, setHfDebouncedSearch] = useState('');
+  const [expandedHfModel, setExpandedHfModel] = useState<string | null>(null);
+  const [hfGgufFiles, setHfGgufFiles] = useState<
+    Record<string, GgufFileInfo[]>
+  >({});
+  const [loadingGguf, setLoadingGguf] = useState<string | null>(null);
+
+  const [pullingModel, setPullingModel] = useState<string | null>(null);
+  const [pullProgress, setPullProgress] = useState<{
+    status: string;
+    percent?: number;
+  } | null>(null);
+  const [cancelPull, setCancelPull] = useState<(() => void) | null>(null);
+
+  const libraryCategories = [
+    'all',
+    'general',
+    'coding',
+    'reasoning',
+    'vision',
+    'embedding',
+    'cloud',
+  ];
+
+  const sources = useMemo(
+    () =>
+      buildModelSources(models, {
+        legacy: t('modelSelector.providerNotRecorded', 'Provider not recorded'),
+        unavailable: t(
+          'modelSelector.unavailableSelections',
+          'Unavailable selections'
+        ),
+        personas: t('modelSelector.personas'),
+        ollama: 'Ollama',
+        plugins: t('modelSelector.pluginModels'),
+        agents: t('modelSelector.agentModels', 'Agents'),
+      }),
+    [models, t]
+  );
+
+  const sourceIcon = (source: ModelSource) => {
+    const className = 'h-4 w-4 shrink-0 text-gray-500 dark:text-dark-600';
+    switch (source.kind) {
+      case 'legacy':
+        return <Brain className={className} />;
+      case 'unavailable':
+        return <X className={className} />;
+      case 'personas':
+        return <User className={className} />;
+      case 'agent':
+        return <Terminal className={className} />;
+      default:
+        return <ModelMark seed={source.label} />;
+    }
+  };
 
   const getModelValue = (model: ChatModel): string =>
     getModelValueOverride?.(model) ?? model.name;
+
+  /** Readable name, vendor, and tag for provider and Ollama models. */
+  const nameParts = (model: OllamaModel): ModelNameParts =>
+    modelNameParts(
+      getModelId?.(model) ?? model.name,
+      model.isPlugin ? { prettify: true } : {}
+    );
+
+  /** The name with its tag, for places that show a single line. */
+  const namePartsLabel = (model: OllamaModel): string => {
+    const parts = nameParts(model);
+    return parts.tag ? `${parts.name} ${parts.tag}` : parts.name;
+  };
 
   const modelMetadata = useChatStore(state => state.modelMetadata);
   const personasById = useChatStore(state => state.personas);
@@ -190,6 +256,143 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
     }
   }, []);
 
+  const {
+    data: libraryModels = [],
+    isLoading: loadingLibrary,
+    refetch: loadLibrary,
+  } = useQuery({
+    queryKey: [
+      'ollama-library-selector',
+      libraryDebouncedSearch,
+      libraryCategory === 'cloud' ? 'cloud' : 'all',
+    ],
+    queryFn: async (): Promise<LibraryModel[]> => {
+      const response = await ollamaApi.getLibraryModels({
+        search: libraryDebouncedSearch || undefined,
+        sort: 'popular',
+        category: libraryCategory === 'cloud' ? 'cloud' : undefined,
+      });
+      return response.success && response.data ? response.data : [];
+    },
+    enabled: isOpen && tab === 'ollama',
+  });
+
+  const {
+    data: hfModels = [],
+    isLoading: loadingHf,
+    refetch: loadHfModels,
+  } = useQuery({
+    queryKey: [
+      'hf-models-selector',
+      hfTask,
+      hfDebouncedSearch,
+      hfSort,
+    ] as const,
+    queryFn: async (): Promise<HuggingFaceModel[]> => {
+      const response = await huggingfaceHubApi.getModels({
+        task: hfTask,
+        search: hfDebouncedSearch || undefined,
+        sort: hfSort as 'downloads' | 'likes' | 'lastModified',
+        limit: 30,
+      });
+      return response.success && response.data ? response.data : [];
+    },
+    enabled: isOpen && tab === 'huggingface',
+  });
+
+  const filteredLibraryModels = libraryModels.filter(model => {
+    const matchesSearch =
+      !searchTerm ||
+      model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      model.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      libraryCategory === 'all' || model.category === libraryCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const loadGgufFiles = useCallback(async (modelId: string) => {
+    const [author, modelName] = modelId.split('/');
+    if (!author || !modelName) return;
+
+    setLoadingGguf(modelId);
+    try {
+      const response = await huggingfaceHubApi.getGgufFiles(author, modelName);
+      if (response.success && response.data) {
+        setHfGgufFiles(prev => ({ ...prev, [modelId]: response.data! }));
+      }
+    } catch (error) {
+      logger.error('Failed to load GGUF files:', error);
+    } finally {
+      setLoadingGguf(null);
+    }
+  }, []);
+
+  const handleToggleHfModel = useCallback(
+    (modelId: string) => {
+      if (expandedHfModel === modelId) {
+        setExpandedHfModel(null);
+      } else {
+        setExpandedHfModel(modelId);
+        if (!hfGgufFiles[modelId]) {
+          loadGgufFiles(modelId);
+        }
+      }
+    },
+    [expandedHfModel, hfGgufFiles, loadGgufFiles]
+  );
+
+  const handlePullHfGguf = useCallback(
+    (ollamaCommand: string, filename: string) => {
+      if (!canInstallModels) {
+        toast.error(t('modelSelector.pullRestricted'));
+        return;
+      }
+      if (pullingModel) return;
+
+      setPullingModel(ollamaCommand);
+      setPullProgress({ status: 'starting' });
+
+      try {
+        const cancelFn = ollamaApi.pullModelStream(
+          ollamaCommand,
+          progress => {
+            setPullProgress(progress);
+          },
+          () => {
+            setPullProgress(null);
+            setPullingModel(null);
+            setCancelPull(null);
+            toast.success(t('modelDownload.success', { name: filename }));
+            onModelsRefresh?.();
+          },
+          error => {
+            setPullProgress(null);
+            setPullingModel(null);
+            setCancelPull(null);
+            toast.error(t('modelDownload.failed', { error }));
+          }
+        );
+        setCancelPull(() => cancelFn);
+      } catch (_error) {
+        setPullProgress(null);
+        setPullingModel(null);
+        toast.error(t('modelDownload.startFailed'));
+      }
+    },
+    [canInstallModels, onModelsRefresh, pullingModel, t]
+  );
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (tab === 'huggingface') {
+        setHfDebouncedSearch(searchTerm);
+      } else if (tab === 'ollama') {
+        setLibraryDebouncedSearch(searchTerm);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm, tab]);
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -240,7 +443,36 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
     const selectedValue = selectedOption
       ? getModelValue(selectedOption)
       : modelValue;
+    const runtimeModelName = selectedOption?.name ?? modelValue;
     closeSelector();
+
+    if (!ollamaEnabled) {
+      onModelChange({
+        target: { value: selectedValue },
+      } as React.ChangeEvent<HTMLSelectElement>);
+      return;
+    }
+
+    try {
+      const runningModelsResponse = await ollamaApi.listRunningModels();
+      if (runningModelsResponse.success && runningModelsResponse.data) {
+        const runningModels = runningModelsResponse.data;
+        if (runningModels.length > 0) {
+          const currentlyLoaded =
+            selectedOption?.isPlugin !== true &&
+            runningModels.some(
+              m =>
+                m.name === runtimeModelName ||
+                runtimeModelName.startsWith('persona:')
+            );
+          if (!currentlyLoaded) {
+            await ollamaApi.unloadAllModels();
+          }
+        }
+      }
+    } catch (error) {
+      logger.warn('Failed to unload models before switch:', error);
+    }
 
     const syntheticEvent = {
       target: { value: selectedValue },
@@ -249,7 +481,67 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
     onModelChange(syntheticEvent);
   };
 
-  const getModelIcon = (model: ChatModel) => {
+  const handlePullModel = async (modelName: string) => {
+    if (!canInstallModels) {
+      toast.error(t('modelSelector.pullRestricted'));
+      return;
+    }
+    if (pullingModel) return;
+
+    setPullingModel(modelName);
+    setPullProgress({ status: 'starting' });
+
+    try {
+      const cancelFn = ollamaApi.pullModelStream(
+        modelName,
+        progress => {
+          setPullProgress(progress);
+        },
+        () => {
+          setPullProgress(null);
+          setPullingModel(null);
+          setCancelPull(null);
+          toast.success(t('modelDownload.success', { name: modelName }));
+          onModelsRefresh?.();
+        },
+        error => {
+          setPullProgress(null);
+          setPullingModel(null);
+          setCancelPull(null);
+          toast.error(t('modelDownload.failed', { error }));
+        }
+      );
+      setCancelPull(() => cancelFn);
+    } catch (_error) {
+      setPullProgress(null);
+      setPullingModel(null);
+      toast.error(t('modelDownload.startFailed'));
+    }
+  };
+
+  const handleCancelPull = () => {
+    if (cancelPull) {
+      cancelPull();
+      setCancelPull(null);
+      setPullingModel(null);
+      setPullProgress(null);
+      toast.success(t('modelDownload.cancelled'));
+    }
+  };
+
+  const isModelInstalled = (name: string) => {
+    return models.some(
+      model =>
+        isAvailableOllamaModel(model) &&
+        (model.name === name || model.name.startsWith(name + ':'))
+    );
+  };
+
+  const getModelIcon = (
+    model: OllamaModel,
+    size: 'sm' | 'md' = 'sm'
+  ): React.ReactNode => {
+    const box = size === 'md' ? 'h-6 w-6 rounded-md' : 'h-4 w-4 rounded-sm';
     // An administrator-set picture stands in for the generic provider icon.
     const picture = modelMetadata[modelVisibilityKey(model)]?.avatar;
     if (picture && !model.isPersona) {
@@ -257,7 +549,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
         <img
           src={picture}
           alt=''
-          className='h-4 w-4 shrink-0 rounded-full object-cover'
+          className={cn(box, 'shrink-0 rounded-full object-cover')}
         />
       );
     }
@@ -270,21 +562,38 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
           <img
             src={getPersonaAvatarSrc(persona, 64)}
             alt=''
-            className='h-4 w-4 shrink-0 rounded object-cover'
+            className={cn(box, 'shrink-0 object-cover')}
           />
         );
       }
     }
-    if (model.isLegacySelection) {
-      return <Brain className='h-4 w-4 text-gray-500 dark:text-dark-600' />;
+    if (model.isLegacySelection || model.isPersona || model.isAgent) {
+      const Icon = model.isLegacySelection
+        ? Brain
+        : model.isPersona
+          ? User
+          : Terminal;
+      const icon = (
+        <Icon className='h-4 w-4 shrink-0 text-gray-500 dark:text-dark-600' />
+      );
+      return size === 'md' ? (
+        <span
+          className={cn(
+            box,
+            'flex shrink-0 items-center justify-center bg-gray-100 dark:bg-dark-200'
+          )}
+        >
+          {icon}
+        </span>
+      ) : (
+        icon
+      );
     }
-    if (model.isPersona) {
-      return <User className='h-4 w-4 text-gray-500 dark:text-dark-600' />;
-    }
-    if (model.isPlugin) {
-      return <Zap className='h-4 w-4 text-gray-500 dark:text-dark-600' />;
-    }
-    return <Bot className='h-4 w-4 text-gray-500 dark:text-dark-600' />;
+    const parts = nameParts(model);
+    const seed = model.isPlugin
+      ? parts.vendor || model.pluginName || model.pluginId || parts.name
+      : parts.vendor || parts.name;
+    return <ModelMark seed={seed} size={size} />;
   };
 
   const getModelLabel = (model: ChatModel) => {
@@ -310,14 +619,10 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
         ? `${model.agentName || model.name} (${t('modelSelector.unavailable', 'unavailable')})`
         : model.agentName || model.name;
     }
-    if (model.isPlugin) {
-      return model.isUnavailable
-        ? `${model.name} (${t('modelSelector.unavailable', 'unavailable')})`
-        : model.name;
-    }
+    const label = namePartsLabel(model);
     return model.isUnavailable
-      ? `${model.name} (${t('modelSelector.unavailable', 'unavailable')})`
-      : model.name;
+      ? `${label} (${t('modelSelector.unavailable', 'unavailable')})`
+      : label;
   };
 
   const getModelSubLabel = (model: ChatModel) => {
@@ -330,20 +635,140 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
           );
     }
     if (model.isPersona) {
-      return `via ${model.model}`;
+      return t('modelSelector.via', { provider: model.model });
     }
     if (model.isPlugin) {
       return model.isUnavailable
-        ? `via ${model.pluginName || model.pluginId} · ${t(
-            'modelSelector.providerUnavailable',
-            'provider unavailable'
-          )}`
-        : `via ${model.pluginName}`;
+        ? `${t('modelSelector.via', {
+            provider: model.pluginName || model.pluginId,
+          })} · ${t('modelSelector.providerUnavailable', 'provider unavailable')}`
+        : t('modelSelector.via', { provider: model.pluginName });
     }
     if (model.isUnavailable) {
       return t('modelSelector.providerUnavailable', 'provider unavailable');
     }
     return null;
+  };
+
+  const isCatalogGroup = (group: ModelGroup) =>
+    group.kind === 'plugin' || group.kind === 'ollama';
+
+  /**
+   * The row form of a catalog name. A bare Ollama name keeps its spelling
+   * but moves the tag into a badge, and ":latest" says nothing.
+   */
+  const rowNameParts = (model: OllamaModel): ModelNameParts => {
+    const parts = nameParts(model);
+    if (model.isPlugin || parts.vendor || parts.tag) return parts;
+    const colon = parts.name.lastIndexOf(':');
+    if (colon <= 0) return parts;
+    const tag = parts.name.slice(colon + 1);
+    return {
+      name: parts.name.slice(0, colon),
+      ...(tag && tag !== 'latest' ? { tag } : {}),
+    };
+  };
+
+  const hasAdminLabel = (model: OllamaModel) =>
+    Boolean(modelMetadata[modelVisibilityKey(model)]?.label);
+
+  /**
+   * Inside a harness group the header already names the harness, so agent
+   * rows show just the model, with its provider underneath.
+   */
+  const getRowLabel = (model: OllamaModel, group: ModelGroup): string => {
+    if (getModelLabelOverride || hasAdminLabel(model)) {
+      return getModelLabel(model);
+    }
+    if (isCatalogGroup(group)) return rowNameParts(model).name;
+    if (group.kind !== 'agent') return getModelLabel(model);
+    return agentRowParts(model, group.label).title;
+  };
+
+  const getRowTag = (model: OllamaModel, group: ModelGroup): string | null => {
+    if (!isCatalogGroup(group) || getModelLabelOverride || hasAdminLabel(model))
+      return null;
+    return rowNameParts(model).tag ?? null;
+  };
+
+  /**
+   * The group header already names the provider, so catalog rows spend
+   * their second line on what tells models apart: maker, size, context.
+   */
+  const getRowSubLabel = (
+    model: OllamaModel,
+    group: ModelGroup
+  ): string | null => {
+    if (group.kind === 'agent') {
+      const parts = agentRowParts(model, group.label);
+      if (parts.isDefault) return t('modelSelector.defaultModel');
+      return parts.provider
+        ? t('modelSelector.via', { provider: parts.provider })
+        : null;
+    }
+    if (!isCatalogGroup(group)) return getModelSubLabel(model);
+    const parts = rowNameParts(model);
+    const details = model.details ?? {};
+    const cloud = /(^|[-:])cloud$/i.test(model.name);
+    const bits = [
+      parts.vendor,
+      model.isPlugin ? undefined : details.parameter_size,
+      model.isPlugin || details.quantization_level === parts.tag
+        ? undefined
+        : details.quantization_level,
+      model.contextLength
+        ? t('modelSelector.contextSize', {
+            size: formatContextLength(model.contextLength),
+            defaultValue: '{{size}} context',
+          })
+        : undefined,
+      model.isPlugin || cloud ? undefined : formatModelSize(model.size),
+    ].filter((bit): bit is string => Boolean(bit));
+    return bits.length > 0 ? bits.join(' · ') : null;
+  };
+
+  const isSelectedModel = (model: OllamaModel) =>
+    getModelValue(model) === selectedModel;
+  const matchingSources = sources.map(source => ({
+    source,
+    matches: source.models.filter(model =>
+      modelMatchesSearch(model, source, searchTerm, getModelLabel(model))
+    ),
+  }));
+  const showSourceFilter = sources.length > 1;
+  const currentSource =
+    showSourceFilter && sources.some(source => source.key === activeSource)
+      ? activeSource
+      : ALL_SOURCES;
+  const combinedView = currentSource === ALL_SOURCES;
+  const visibleGroups: ModelGroup[] = matchingSources
+    .filter(({ source }) => combinedView || source.key === currentSource)
+    .map(({ source, matches }) => {
+      const preview =
+        combinedView && showSourceFilter
+          ? previewSourceModels(matches, isSelectedModel)
+          : { visible: matches, hidden: 0 };
+      return {
+        key: source.key,
+        kind: source.kind,
+        label: source.label,
+        icon: sourceIcon(source),
+        models: preview.visible,
+        total: matches.length,
+        hidden: preview.hidden,
+        showHeader: combinedView,
+      };
+    })
+    .filter(group => group.models.length > 0);
+  const sourceChips = matchingSources.map(({ source, matches }) => ({
+    key: source.key,
+    label: source.label,
+    count: matches.length,
+  }));
+
+  const showAllInSource = (key: string) => {
+    setActiveSource(key);
+    searchInputRef.current?.focus();
   };
 
   const getCurrentModelDisplay = () => {
@@ -435,7 +860,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
             ? 'flex h-9 w-full min-w-0 items-center justify-between gap-2 px-2.5 text-start'
             : 'w-full flex items-center justify-between gap-2 px-3 py-2.5 text-start',
           'rounded-xl border border-line bg-surface-subtle text-sm text-ink hover:bg-hover-solid',
-          'transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500/40',
+          'transition-colors duration-150 focus:outline-hidden focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500',
           disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
         )}
         title={
@@ -458,7 +883,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
 
       {isOpen &&
         createPortal(
-          <div className='fixed inset-0 z-[999999] flex items-center justify-center p-3 sm:p-6'>
+          <div className='fixed inset-0 z-999999 flex items-center justify-center p-3 sm:p-6'>
             <div
               className='absolute inset-0 bg-gray-950/55 backdrop-blur-md'
               onClick={() => closeSelector()}
@@ -470,15 +895,15 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
               aria-modal='true'
               aria-label={t('modelSelector.selectModel')}
               className={cn(
-                'relative flex w-full max-w-xl flex-col overflow-hidden bg-white/[0.98] dark:bg-dark-25/[0.98]',
-                'h-[min(620px,88vh)] rounded-[1.5rem] border border-black/[0.08] dark:border-white/[0.09]',
+                'relative flex w-full max-w-xl flex-col overflow-hidden bg-white/98 dark:bg-dark-25/98',
+                'h-[min(620px,88vh)] rounded-3xl border border-black/8 dark:border-white/9',
                 'shadow-[0_30px_100px_rgba(0,0,0,0.28)] backdrop-blur-xl animate-scale-in'
               )}
               onClick={e => e.stopPropagation()}
             >
-              <div className='flex-shrink-0'>
+              <div className='shrink-0'>
                 <div className='flex items-center justify-between px-4 pb-2 pt-4 sm:px-5 sm:pt-5'>
-                  <h2 className='text-lg font-medium tracking-[-0.025em] text-gray-950 dark:text-dark-950 rtl:tracking-normal'>
+                  <h2 className='text-lg font-medium tracking-tight text-gray-950 dark:text-dark-950 rtl:tracking-normal'>
                     {t('modelSelector.selectModel')}
                   </h2>
                   <button
@@ -486,6 +911,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
                     onClick={() => closeSelector()}
                     className='flex h-9 w-9 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-950 dark:text-dark-500 dark:hover:bg-dark-200 dark:hover:text-dark-950'
                     title={t('common.close')}
+                    aria-label={t('common.close')}
                   >
                     <X className='h-4 w-4' />
                   </button>
@@ -493,34 +919,165 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
 
                 <div className='px-4 pb-3 sm:px-5'>
                   <div className='relative'>
-                    <Search className='absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400' />
+                    <Search className='absolute inset-s-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400' />
                     <input
                       ref={searchInputRef}
                       type='text'
-                      placeholder={t('modelSelector.searchInstalled')}
+                      placeholder={
+                        tab === 'installed'
+                          ? ollamaEnabled
+                            ? t('modelSelector.searchInstalled')
+                            : t('modelSelector.searchModels')
+                          : tab === 'ollama'
+                            ? t('modelSelector.searchOllama')
+                            : t('modelSelector.searchHuggingFace')
+                      }
                       value={searchTerm}
                       onChange={e => setSearchTerm(e.target.value)}
+                      onKeyDown={event => {
+                        if (tab !== 'installed') return;
+                        const first =
+                          dialogRef.current?.querySelector<HTMLButtonElement>(
+                            '[data-testid="model-selector-option"]'
+                          );
+                        if (event.key === 'ArrowDown' && first) {
+                          event.preventDefault();
+                          first.focus();
+                        } else if (
+                          event.key === 'Enter' &&
+                          searchTerm.trim() &&
+                          first
+                        ) {
+                          event.preventDefault();
+                          first.click();
+                        }
+                      }}
                       className={cn(
                         'w-full rounded-xl border border-black/[0.07] bg-gray-100/70 py-2.5 ps-10 pe-4 text-sm dark:border-white/[0.07] dark:bg-dark-200/70',
-                        'focus:outline-none focus:ring-2 focus:ring-primary-500/20',
+                        'focus:outline-hidden focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30',
                         'text-gray-900 dark:text-dark-900 placeholder:text-gray-400 dark:placeholder:text-dark-500'
                       )}
                     />
                   </div>
                 </div>
+
+                {ollamaEnabled && (
+                  <div className='mx-4 mb-3 flex rounded-xl bg-gray-100/70 p-1 dark:bg-dark-200/70 sm:mx-5'>
+                    <button
+                      onClick={() => {
+                        setActiveTab('installed');
+                      }}
+                      className={cn(
+                        'flex-1 rounded-lg px-2 py-2 text-xs font-medium transition-colors sm:px-4',
+                        tab === 'installed'
+                          ? 'bg-white text-gray-950 shadow-xs dark:bg-dark-300 dark:text-dark-950'
+                          : 'text-gray-500 hover:text-gray-800 dark:text-dark-500 dark:hover:text-dark-800'
+                      )}
+                      aria-pressed={tab === 'installed'}
+                    >
+                      <HardDrive className='h-4 w-4 inline me-1.5' />
+                      {t('modelSelector.installed')}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setActiveTab('ollama');
+                      }}
+                      className={cn(
+                        'flex-1 rounded-lg px-2 py-2 text-xs font-medium transition-colors sm:px-4',
+                        tab === 'ollama'
+                          ? 'bg-white text-gray-950 shadow-xs dark:bg-dark-300 dark:text-dark-950'
+                          : 'text-gray-500 hover:text-gray-800 dark:text-dark-500 dark:hover:text-dark-800'
+                      )}
+                      aria-pressed={tab === 'ollama'}
+                    >
+                      <Cloud className='h-4 w-4 inline me-1.5' />
+                      Ollama
+                    </button>
+                    <button
+                      onClick={() => {
+                        setActiveTab('huggingface');
+                      }}
+                      className={cn(
+                        'flex-1 rounded-lg px-2 py-2 text-xs font-medium transition-colors sm:px-4',
+                        tab === 'huggingface'
+                          ? 'bg-white text-gray-950 shadow-xs dark:bg-dark-300 dark:text-dark-950'
+                          : 'text-gray-500 hover:text-gray-800 dark:text-dark-500 dark:hover:text-dark-800'
+                      )}
+                      aria-pressed={tab === 'huggingface'}
+                    >
+                      <Zap className='h-4 w-4 inline me-1.5' />
+                      HuggingFace
+                    </button>
+                  </div>
+                )}
+
+                {tab === 'installed' && showSourceFilter && (
+                  <ModelSourceFilter
+                    sources={sourceChips}
+                    active={currentSource}
+                    onChange={setActiveSource}
+                  />
+                )}
               </div>
 
-              <InstalledModelsTab
-                filteredGroups={filteredGroups}
-                selectedModel={selectedModel}
-                showImageGen={showImageGen}
-                getModelValue={getModelValue}
-                getModelIcon={getModelIcon}
-                getModelLabel={getModelLabel}
-                getModelSubLabel={getModelSubLabel}
-                onModelSelect={handleModelSelect}
-                onOpenGallery={openGallery}
-              />
+              {tab === 'installed' && (
+                <InstalledModelsTab
+                  key={currentSource}
+                  groups={visibleGroups}
+                  selectedModel={selectedModel}
+                  showImageGen={showImageGen && combinedView}
+                  getModelValue={getModelValue}
+                  getModelIcon={model => getModelIcon(model, 'md')}
+                  getModelLabel={getRowLabel}
+                  getModelTag={getRowTag}
+                  getModelSubLabel={getRowSubLabel}
+                  onExitTop={() => searchInputRef.current?.focus()}
+                  onModelSelect={handleModelSelect}
+                  onShowAll={showAllInSource}
+                  onOpenGallery={openGallery}
+                />
+              )}
+              {tab === 'ollama' && (
+                <OllamaLibraryTab
+                  libraryCategories={libraryCategories}
+                  libraryCategory={libraryCategory}
+                  canInstallModels={canInstallModels}
+                  loadingLibrary={loadingLibrary}
+                  filteredLibraryModels={filteredLibraryModels}
+                  pullingModel={pullingModel}
+                  pullProgress={pullProgress}
+                  setLibraryCategory={setLibraryCategory}
+                  isModelInstalled={isModelInstalled}
+                  onModelSelect={handleModelSelect}
+                  onPullModel={handlePullModel}
+                  onCancelPull={handleCancelPull}
+                  onRefreshLibrary={() => {
+                    void loadLibrary();
+                  }}
+                />
+              )}
+              {tab === 'huggingface' && (
+                <HuggingFaceModelsTab
+                  hfTask={hfTask}
+                  hfSort={hfSort}
+                  canInstallModels={canInstallModels}
+                  loadingHf={loadingHf}
+                  hfModels={hfModels}
+                  expandedHfModel={expandedHfModel}
+                  hfGgufFiles={hfGgufFiles}
+                  loadingGguf={loadingGguf}
+                  pullingModel={pullingModel}
+                  pullProgress={pullProgress}
+                  setHfTask={setHfTask}
+                  setHfSort={setHfSort}
+                  onToggleHfModel={handleToggleHfModel}
+                  onPullHfGguf={handlePullHfGguf}
+                  onCancelPull={handleCancelPull}
+                  onRefreshHfModels={() => {
+                    void loadHfModels();
+                  }}
+                />
+              )}
             </div>
           </div>,
           document.body

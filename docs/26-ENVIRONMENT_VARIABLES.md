@@ -27,7 +27,7 @@ test-only canaries are intentionally omitted.
 | `NODE_ENV`                         | `development`                                            | Runtime mode                                                                                  |
 | `PORT`                             | `3001` in dev, `8080` in production                      | Backend HTTP port                                                                             |
 | `TRUST_PROXY`                      | unset (`0` in Helm)                                      | Exact trusted reverse-proxy hop count used to derive the client address                       |
-| `CORS_ORIGIN`                      | local dev origins                                        | Comma-separated allowed browser origins                                                       |
+| `CORS_ORIGIN`                      | local dev origins                                        | Comma-separated exact browser origins; `*` allows any valid origin                            |
 | `SERVE_FRONTEND`                   | unset                                                    | Serve built frontend from backend when `true`                                                 |
 | `DOCKER_ENV`                       | unset                                                    | Enables Docker-oriented behavior when `true`                                                  |
 | `DATA_DIR`                         | `backend/data`; `~/.libre-webui` in the packaged CLI     | Persistent data directory                                                                     |
@@ -46,6 +46,21 @@ test-only canaries are intentionally omitted.
 | `GALLERY_RETENTION_DAYS`           | unset (keep forever)                                     | Delete gallery media older than this many days via the scheduler sweep                        |
 | `RECOVERY_DRILL_INTERVAL_HOURS`    | unset (drills off)                                       | Run a verified recovery drill automatically every N hours (solo profile)                      |
 | `RECOVERY_DRILL_HISTORY`           | `60`                                                     | Retained recovery-drill history entries                                                       |
+
+`CORS_ORIGIN` entries match serialized browser origins: scheme, hostname, and
+optional port, without a path, credentials, query, or fragment. Requests must
+carry one canonical origin; malformed values and lists of origins are rejected
+even with `CORS_ORIGIN=*`. Clients that omit `Origin` remain allowed. The opaque
+origin `null` requires an explicit `null` entry or `*`.
+
+In Docker (`DOCKER_ENV=true`) and non-production modes, exact `localhost` and
+literal IPv4 addresses in `127.0.0.0/8`, `10.0.0.0/8`, `172.16.0.0/12`,
+`192.168.0.0/16`, and `100.64.0.0/10` are also accepted for HTTP(S) origins.
+Hostnames merely beginning with those strings, such as
+`localhost.attacker.example`, are not local addresses. IPv6 origins require an
+explicit entry or `*`; they are not automatically included in the network
+exception. Native production deployments use only the explicit origin list or
+wildcard. CORS does not replace the API's bearer-token authentication.
 
 Source launches anchor relative `DATA_DIR`, `PLUGINS_DIR`, and
 `PLATFORM_PREFLIGHT_TMP_DIR` values at the backend directory, independent of
@@ -336,12 +351,11 @@ the switch on, and each user still opts in per notification kind under
 | `SMTP_TLS_REJECT_UNAUTHORIZED` | `true`                     | Set to `false` only for a relay with a self-signed certificate                               |
 | `BASE_URL`                     | unset                      | Public URL of the instance, used for the links inside messages                               |
 
-## Libre Claw
+## Strands Engine
 
-| Variable                | Default                 | Purpose                         |
-| ----------------------- | ----------------------- | ------------------------------- |
-| `LIBRE_CLAW_BASE_URL`   | `http://127.0.0.1:8766` | Optional Libre Claw daemon URL  |
-| `LIBRE_CLAW_TIMEOUT_MS` | `30000`                 | Libre Claw HTTP request timeout |
+| Variable               | Default                    | Purpose                                                                                                         |
+| ---------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `LIBRE_STRANDS_ACCESS` | unset (admin setting, off) | Pin who can use the embedded Strands engine: `disabled`, `admins`, or `all-users`. Any other value locks it off |
 
 ## Work Runtime
 
@@ -384,7 +398,7 @@ selects Kubernetes when `work.enabled=true`.
 | `WORK_K8S_WORKSPACE_SIZE`             | `5Gi`                                                                                         | Per-task workspace PVC size (a real disk quota)                                                                                               |
 | `WORK_K8S_POD_READY_TIMEOUT_MS`       | `900000`                                                                                      | Wait for a sandbox Pod to reach Running (covers pulls)                                                                                        |
 | `WORK_K8S_POD_GONE_TIMEOUT_MS`        | `60000`                                                                                       | Wait for a deleted sandbox Pod to disappear                                                                                                   |
-| `AGENT_CLI_MODELS_ENABLED`            | unset (admin toggle, off)                                                                     | Pin the Agents feature on/off; unset leaves it to the admin toggle in User Management (disabled by default)                                   |
+| `AGENT_CLI_MODELS_ENABLED`            | unset (admin toggle, off)                                                                     | Pin direct Agent CLI models on/off; unset defers to the separate Agent CLI models toggle                                                      |
 | `TOOLS_ACCESS_MODE`                   | unset (admin toggle, admins-only)                                                             | Pin chat tools to `admins` or `all-users` and lock the admin toggle in User Management                                                        |
 | `STT_ACCESS_MODE`                     | unset (admin toggle, all-users)                                                               | Pin speech-to-text to `admins` or `all-users` and lock the admin toggle in User Management                                                    |
 | `TTS_ACCESS_MODE`                     | unset (admin toggle, all-users)                                                               | Pin text-to-speech to `admins` or `all-users` and lock the admin toggle in User Management                                                    |
@@ -506,9 +520,22 @@ ignores the interval.
 The bundled Alcore provider can use an environment key as a
 deployment-wide default:
 
-| Variable         | Provider |
-| ---------------- | -------- |
-| `ALCORE_API_KEY` | Alcore   |
+| Variable                   | Provider                                    |
+| -------------------------- | ------------------------------------------- |
+| `ALCORE_API_KEY`           | Alcore                                      |
+| `OPENAI_API_KEY`           | OpenAI and OpenAI TTS                       |
+| `ANTHROPIC_API_KEY`        | Anthropic                                   |
+| `GROQ_API_KEY`             | Groq                                        |
+| `GEMINI_API_KEY`           | Google Gemini                               |
+| `MISTRAL_API_KEY`          | Mistral                                     |
+| `DEEPSEEK_API_KEY`         | DeepSeek                                    |
+| `AWS_BEARER_TOKEN_BEDROCK` | Amazon Bedrock API key                      |
+| `OPENROUTER_API_KEY`       | OpenRouter                                  |
+| `KIMI_API_KEY`             | Kimi Code by Moonshot AI                    |
+| `GITHUB_API_KEY`           | GitHub Models                               |
+| `HUGGINGFACE_API_KEY`      | Hugging Face APIs where configured          |
+| `ELEVENLABS_API_KEY`       | ElevenLabs TTS                              |
+| `COMFYUI_API_KEY`          | ComfyUI deployments that require an API key |
 
 Users can also store provider credentials in the UI when per-user keys are
 preferred. Environment keys are used only with the routing and authentication
@@ -521,8 +548,8 @@ layouts where the legacy and bundled plugin directories share a path remain
 supported without treating a modified manifest as bundled.
 
 User-saved keys are bound to the effective provider definition, source,
-authentication contract, and routing values. Users must save a key again after
-an administrator changes that destination. Pre-upgrade unbound keys are
+authentication contract, and routing values. Model catalog updates keep them.
+Users must save a key again after an administrator changes that destination. Pre-upgrade unbound keys are
 accepted and bound on first use only for an exact shipped definition using its
 bundled route.
 

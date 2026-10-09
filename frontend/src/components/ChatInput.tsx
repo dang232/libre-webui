@@ -278,8 +278,20 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         setWebpageUrl(null);
       }
     };
+    // Escape closes the menu and hands focus back to the button that opened it.
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.defaultPrevented) return;
+      setAttachMenuOpen(false);
+      setWebpageUrl(null);
+      setKnowledgeMenuOpen(false);
+      attachMenuRef.current?.querySelector<HTMLElement>('button')?.focus();
+    };
     window.addEventListener('mousedown', handleClickOutside);
-    return () => window.removeEventListener('mousedown', handleClickOutside);
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      window.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('keydown', handleEscape);
+    };
   }, [attachMenuOpen]);
 
   const closeAttachMenu = () => {
@@ -359,6 +371,35 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     ]
   );
 
+  // Undo one optimistic settings field whose save did not reach the server.
+  // Applied to the latest settings so a later successful change survives.
+  const restoreSessionSetting = <
+    K extends keyof NonNullable<ChatSession['settings']>,
+  >(
+    sessionId: string,
+    key: K,
+    value: NonNullable<ChatSession['settings']>[K]
+  ) => {
+    const revert = (settings: ChatSession['settings']) => ({
+      ...settings,
+      [key]: value,
+    });
+    useChatStore.setState(state => ({
+      currentSession:
+        state.currentSession?.id === sessionId
+          ? {
+              ...state.currentSession,
+              settings: revert(state.currentSession.settings),
+            }
+          : state.currentSession,
+      sessions: state.sessions.map(session =>
+        session.id === sessionId
+          ? { ...session, settings: revert(session.settings) }
+          : session
+      ),
+    }));
+  };
+
   const applyThinking = async (think: ThinkingPreference | null) => {
     if (!currentSession) return;
 
@@ -392,6 +433,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       } as Partial<ChatSession>);
     } catch (error) {
       logger.error('Failed to update the thinking setting:', error);
+      restoreSessionSetting(
+        currentSession.id,
+        'generationOptions',
+        currentSession.settings?.generationOptions
+      );
+      toast.error(t('chat.input.thinkingUpdateFailed'));
     }
   };
 
@@ -426,6 +473,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       } as Partial<ChatSession>);
     } catch (error) {
       logger.error('Failed to update knowledge collections:', error);
+      restoreSessionSetting(
+        currentSession.id,
+        'knowledgeCollectionIds',
+        currentSession.settings?.knowledgeCollectionIds
+      );
       toast.error(t('chat.input.menu.attachFailed'));
     }
   };
@@ -701,6 +753,19 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   const hasAdvancedFeatures = images.length > 0 || format !== null;
+  const webSearchLabel = webSearchActive
+    ? t('chat.input.webSearchOn')
+    : t('chat.input.webSearchOff');
+  const micLabel =
+    transcribing || speechStarting
+      ? t('common.cancel')
+      : listening
+        ? t('chat.input.voiceStop')
+        : providerSttModel
+          ? t('chat.input.providerTranscriptionDisclosure', {
+              provider: providerSttModel.plugin,
+            })
+          : t('chat.input.voiceInput');
   return (
     <div className='pointer-events-none'>
       {/* Centered container matching chat messages width */}
@@ -710,7 +775,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       >
         {/* Advanced Features Panel */}
         {showAdvanced && (
-          <div className='mb-2 animate-slide-up rounded-2xl border border-black/[0.07] bg-surface/90 p-4 shadow-[0_12px_40px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/[0.08] dark:bg-dark-200/90'>
+          <div className='mb-2 animate-slide-up rounded-2xl border border-black/[0.07] bg-surface/90 p-4 shadow-[0_12px_40px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/8 dark:bg-dark-200/90'>
             <MediaUpload
               images={images}
               onImagesChange={setImages}
@@ -745,7 +810,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                   .map(entry => (
                     <span
                       key={entry.assistantMessageId}
-                      className='flex items-center gap-1.5 rounded-full border border-black/[0.07] bg-surface/70 px-2.5 py-1 text-[12px] text-gray-600 dark:border-white/[0.08] dark:bg-dark-200/70 dark:text-dark-700'
+                      className='flex items-center gap-1.5 rounded-full border border-black/[0.07] bg-surface/70 px-2.5 py-1 text-[12px] text-gray-600 dark:border-white/8 dark:bg-dark-200/70 dark:text-dark-700'
                       data-testid='pending-comparison'
                     >
                       <Loader2 className='h-3 w-3 animate-spin' />
@@ -761,7 +826,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                           className='rounded-full p-0.5 text-gray-400 hover:text-red-500'
                           aria-label={t('common.cancel')}
                         >
-                          <X className='h-3 w-3' />
+                          <X className='h-3 w-3' aria-hidden='true' />
                         </button>
                       )}
                     </span>
@@ -789,14 +854,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 }
                 onKeyDown={handleKeyDown}
                 placeholder={t('chat.input.placeholder')}
+                aria-label={t('chat.input.placeholder')}
                 disabled={disabled}
-                className='!m-0 block w-full min-h-9 max-h-[160px] resize-none !rounded-none !border-0 !bg-transparent !px-2 !pt-1.5 !pb-2 !shadow-none scrollbar-thin scrollbar-thumb-gray-300 placeholder:text-ink-subtle focus:!border-0 focus:!bg-transparent focus:!shadow-none focus:!ring-0 dark:scrollbar-thumb-dark-400 text-[0.9375rem] leading-relaxed touch-manipulation'
+                className='m-0! block w-full min-h-9 max-h-[160px] resize-none rounded-none! border-0! bg-transparent! px-2! pt-1.5! pb-2! shadow-none! scrollbar-thin scrollbar-thumb-gray-300 placeholder:text-ink-subtle focus:border-0! focus:bg-transparent! focus:shadow-none! focus:ring-0! dark:scrollbar-thumb-dark-400 text-[0.9375rem] leading-relaxed touch-manipulation'
                 rows={1}
               />
 
               <div className='flex items-center gap-1.5'>
                 {/* Attach menu - Integrated Left */}
-                <div ref={attachMenuRef} className='relative flex-shrink-0'>
+                <div ref={attachMenuRef} className='relative shrink-0'>
                   <Button
                     type='button'
                     variant='ghost'
@@ -810,7 +876,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                       setWebpageUrl(null);
                     }}
                     className={cn(
-                      'h-9 w-9 !p-0 rounded-full flex-shrink-0',
+                      'h-9 w-9 p-0! rounded-full shrink-0',
                       'bg-surface-subtle text-ink-muted hover:bg-hover-solid hover:text-ink dark:bg-surface-raised dark:hover:bg-surface-overlay',
                       'transition-colors duration-150 touch-manipulation',
                       hasAdvancedFeatures &&
@@ -819,13 +885,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                         'bg-hover-solid text-ink'
                     )}
                     title={t('chat.input.attachments')}
+                    aria-label={t('chat.input.attachments')}
+                    aria-expanded={showAdvanced || attachMenuOpen}
                   >
                     {uploadingDocument || attachingWebpage ? (
                       <Loader2 className='h-4 w-4 animate-spin' />
                     ) : hasAdvancedFeatures ? (
                       <div className='relative flex items-center justify-center'>
                         <Paperclip className='h-4 w-4' />
-                        <div className='absolute -top-0.5 -end-0.5 h-2 w-2 bg-primary-500 dark:bg-primary-400 rounded-full ring-2 ring-white dark:ring-dark-50' />
+                        <div className='absolute -top-0.5 -inset-e-0.5 h-2 w-2 bg-primary-500 dark:bg-primary-400 rounded-full ring-2 ring-white dark:ring-dark-50' />
                       </div>
                     ) : showAdvanced ? (
                       <Minus className='h-4 w-4' />
@@ -835,10 +903,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                   </Button>
 
                   {attachMenuOpen && (
-                    <div className='absolute bottom-full start-0 z-30 mb-2 w-64 rounded-2xl border border-black/[0.08] bg-surface/95 p-1.5 shadow-[0_16px_48px_rgba(15,23,42,0.16)] backdrop-blur-xl animate-scale-in dark:border-white/[0.09] dark:bg-dark-100/95'>
+                    <div className='absolute bottom-full inset-s-0 z-30 mb-2 w-64 rounded-2xl border border-black/8 bg-surface/95 p-1.5 shadow-[0_16px_48px_rgba(15,23,42,0.16)] backdrop-blur-xl animate-scale-in dark:border-white/9 dark:bg-dark-100/95'>
                       {knowledgeMenuOpen ? (
                         <div className='p-1'>
-                          <p className='mb-1 px-1.5 text-[11px] font-medium text-gray-500 dark:text-dark-600'>
+                          <p className='mb-1 px-1.5 text-[11px] font-medium text-ink-muted'>
                             {t('chat.input.menu.attachKnowledge')}
                           </p>
                           {collections.length === 0 ? (
@@ -887,10 +955,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                         </div>
                       ) : webpageUrl !== null ? (
                         <div className='p-1.5'>
-                          <label className='mb-1.5 block text-[11px] font-medium text-gray-500 dark:text-dark-600'>
+                          <label
+                            htmlFor='chat-attach-webpage-url'
+                            className='mb-1.5 block text-[11px] font-medium text-ink-muted'
+                          >
                             {t('chat.input.menu.attachWebpage')}
                           </label>
                           <input
+                            id='chat-attach-webpage-url'
                             type='url'
                             value={webpageUrl}
                             onChange={event =>
@@ -907,28 +979,26 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                             placeholder='https://…'
                             autoFocus
                             dir='ltr'
-                            className='w-full rounded-lg border border-black/[0.08] bg-white px-2.5 py-1.5 text-[13px] text-gray-900 placeholder:text-gray-400 focus:border-primary-500/40 focus:outline-none dark:border-white/[0.08] dark:bg-dark-50 dark:text-dark-900'
+                            className='w-full rounded-lg border border-black/8 bg-white px-2.5 py-1.5 text-[13px] text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/30 dark:border-white/8 dark:bg-dark-50 dark:text-dark-900'
                           />
                           <div className='mt-2 flex justify-end gap-1.5'>
-                            <button
+                            <Button
                               type='button'
+                              variant='ghost'
+                              size='sm'
                               onClick={() => setWebpageUrl(null)}
-                              className='rounded-lg px-2.5 py-1 text-xs text-gray-500 hover:bg-gray-100 dark:text-dark-600 dark:hover:bg-dark-200'
                             >
                               {t('common.cancel')}
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               type='button'
+                              size='sm'
                               onClick={() => void handleAttachWebpage()}
-                              disabled={!webpageUrl.trim() || attachingWebpage}
-                              className='rounded-lg bg-gray-900 px-2.5 py-1 text-xs text-white hover:bg-gray-700 disabled:opacity-50 dark:bg-dark-300 dark:hover:bg-dark-400'
+                              disabled={!webpageUrl.trim()}
+                              loading={attachingWebpage}
                             >
-                              {attachingWebpage ? (
-                                <Loader2 className='h-3.5 w-3.5 animate-spin' />
-                              ) : (
-                                t('chat.input.menu.attach')
-                              )}
-                            </button>
+                              {t('chat.input.menu.attach')}
+                            </Button>
                           </div>
                         </div>
                       ) : (
@@ -1061,17 +1131,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                       size='sm'
                       onClick={() => setWebSearchActive(active => !active)}
                       className={cn(
-                        'h-9 w-9 p-0 rounded-full flex-shrink-0 flex items-center justify-center',
+                        'h-9 w-9 p-0 rounded-full shrink-0 flex items-center justify-center',
                         'text-ink-muted hover:bg-interactive-hover hover:text-ink',
                         'transition-colors duration-150 touch-manipulation',
                         webSearchActive &&
                           'bg-primary-50 text-primary-600 dark:bg-primary-900/25 dark:text-primary-400'
                       )}
-                      title={
-                        webSearchActive
-                          ? t('chat.input.webSearchOn')
-                          : t('chat.input.webSearchOff')
-                      }
+                      title={webSearchLabel}
+                      aria-label={webSearchLabel}
                       aria-pressed={webSearchActive}
                     >
                       <Globe className='h-4 w-4' />
@@ -1120,7 +1187,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                             })
                           : t('chat.input.transcriptionSource')
                       }
-                      className='h-8 max-w-32 rounded-lg border border-black/[0.08] bg-transparent px-1.5 text-[11px] text-gray-500 outline-none focus:border-primary-500/40 dark:border-white/[0.09] dark:text-dark-600'
+                      className='h-8 max-w-32 rounded-lg border border-black/8 bg-transparent px-1.5 text-[11px] text-gray-500 outline-hidden focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 dark:border-white/9 dark:text-dark-600'
                     >
                       {dictation.sources.map(source =>
                         source.kind === 'browser' ? (
@@ -1142,33 +1209,21 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                       size='sm'
                       onClick={() => void dictation.toggle()}
                       className={cn(
-                        'h-9 w-9 p-0 rounded-full flex-shrink-0 flex items-center justify-center',
+                        'h-9 w-9 p-0 rounded-full shrink-0 flex items-center justify-center',
                         'text-ink-muted hover:bg-interactive-hover hover:text-ink',
                         'transition-colors duration-150 touch-manipulation',
                         (speechStarting || listening || transcribing) &&
                           'bg-red-50 text-red-500 animate-pulse dark:bg-red-900/20 dark:text-red-400'
                       )}
-                      title={
-                        transcribing
-                          ? t('common.cancel')
-                          : speechStarting
-                            ? t('common.cancel')
-                            : listening
-                              ? t('chat.input.voiceStop')
-                              : providerSttModel
-                                ? t(
-                                    'chat.input.providerTranscriptionDisclosure',
-                                    {
-                                      provider: providerSttModel.plugin,
-                                    }
-                                  )
-                                : t('chat.input.voiceInput')
-                      }
+                      title={micLabel}
+                      aria-label={micLabel}
                       aria-pressed={speechStarting || listening || transcribing}
                     >
                       {speechStarting ? (
                         <Loader2 className='h-4 w-4 animate-spin' />
-                      ) : transcribing ? (
+                      ) : transcribing || listening ? (
+                        // A stop glyph, so the state is not carried by the
+                        // red tint and pulse alone.
                         <Square className='h-4 w-4' />
                       ) : (
                         <Mic className='h-4 w-4' />
@@ -1187,7 +1242,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                         onOpenVoiceMode();
                       }}
                       className={cn(
-                        'h-9 w-9 p-0 rounded-full flex-shrink-0 flex items-center justify-center',
+                        'h-9 w-9 p-0 rounded-full shrink-0 flex items-center justify-center',
                         'text-ink-muted hover:bg-interactive-hover hover:text-ink',
                         'transition-colors duration-150 touch-manipulation'
                       )}
@@ -1232,13 +1287,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                       size='sm'
                       onClick={handleStopGeneration}
                       className={cn(
-                        'h-9 w-9 p-0 rounded-full flex-shrink-0 flex items-center justify-center',
+                        'h-9 w-9 p-0 rounded-full shrink-0 flex items-center justify-center',
                         'bg-red-50 dark:bg-red-900/20',
                         'text-red-500 dark:text-red-400',
                         'hover:bg-red-100 dark:hover:bg-red-900/30',
                         'transition-colors duration-150 touch-manipulation'
                       )}
                       title={t('chat.input.stopGeneration')}
+                      aria-label={t('chat.input.stopGeneration')}
                     >
                       <Square className='h-4 w-4' />
                     </Button>
@@ -1252,6 +1308,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                       }
                       className={composerSendButtonClass}
                       title={t('chat.input.sendMessage')}
+                      aria-label={t('chat.input.sendMessage')}
                     >
                       <ArrowUp className='h-4 w-4' />
                     </Button>

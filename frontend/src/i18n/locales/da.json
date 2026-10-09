@@ -38,14 +38,22 @@
     "custom": "Tilpasset",
     "remove": "Fjern",
     "home": "Hjem",
-    "more": "Mere"
+    "more": "Mere",
+    "provider": "Udbyder",
+    "agent": "Agent",
+    "reasoning": "Ræsonnement",
+    "skipToContent": "Gå til indhold"
   },
   "brand": {
     "name": "Alcore",
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "backendConnectionFailed": "Kunne ikke oprette forbindelse til backendtjenesten"
+    "backendConnectionFailed": "Kunne ikke oprette forbindelse til backendtjenesten",
+    "ollamaUnavailable": "Ollama-tjenesten er ikke tilgængelig. Pluginmodeller kan stadig bruges.",
+    "connecting": "Opretter forbindelse til backend… ({{attempt}}/{{total}})",
+    "startingUp": "Starter…",
+    "backendUnreachableHint": "Sørg for, at backend kører, og prøv igen."
   },
   "auth": {
     "login": {
@@ -206,7 +214,9 @@
       "removed": "Adgangsnøgle fjernet.",
       "removeFailed": "Adgangsnøglen kunne ikke fjernes.",
       "signInButton": "Log ind med en adgangsnøgle",
-      "signInFailed": "Login med adgangsnøgle mislykkedes."
+      "signInFailed": "Login med adgangsnøgle mislykkedes.",
+      "removeConfirmTitle": "Fjern denne adgangsnøgle?",
+      "removeConfirmDescription": "“{{name}}” kan ikke længere bruges til at logge ind. Du kan registrere den igen senere."
     },
     "alcore": {
       "title": "This server uses Alcore Auth for sign-in.",
@@ -272,6 +282,12 @@
       "tryAgain": "Try again",
       "restart": "Restart sign-in",
       "support": "Need help? Contact your server admin or see"
+    },
+    "password": {
+      "show": "Vis adgangskode",
+      "hide": "Skjul adgangskode",
+      "showConfirmation": "Vis bekræftelse af adgangskode",
+      "hideConfirmation": "Skjul bekræftelse af adgangskode"
     }
   },
   "setup": {
@@ -324,7 +340,8 @@
       "envNote": "Denne nøgle er også gemt i din backend/.env-fil som ENCRYPTION_KEY",
       "acknowledgment": "Jeg har gemt min krypteringsnøgle på et sikkert sted og forstår, at tab af den kan medføre datatab.",
       "confirmRequired": "Bekræft venligst, at du har gemt krypteringsnøglen",
-      "continue": "Fortsæt til Alcore"
+      "continue": "Fortsæt til Alcore",
+      "loadFailed": "Krypteringsnøglen kunne ikke indlæses. Prøv igen for at fortsætte."
     },
     "connectModels": {
       "title": "Forbind dine modeller",
@@ -418,7 +435,8 @@
       "toolsOn": "Værktøjer slået til — modellen kan kalde godkendte værktøjer",
       "toolsOff": "Lad modellen kalde værktøjer i denne besked",
       "thinkingOn": "Tænkning slået til ({{level}})",
-      "thinkingOff": "Tænk før svaret"
+      "thinkingOff": "Tænk før svaret",
+      "thinkingUpdateFailed": "Tænkeindstillingen kunne ikke opdateres"
     },
     "session": {
       "new": "Ny chat",
@@ -454,7 +472,8 @@
         "move": "Flyt til mappe",
         "remove": "Fjern fra mappe",
         "delete": "Slet mappe",
-        "deleteConfirm": "Slet denne mappe? Chats bevares."
+        "deleteConfirm": "Slet denne mappe? Chats bevares.",
+        "rename": "Omdøb mappe"
       },
       "shareChat": "Del chat…"
     },
@@ -472,7 +491,8 @@
       "selectBeforePrivateChat": "Vælg en tilgængelig model, før du starter en privat chat",
       "selectBeforeSending": "Vælg en tilgængelig model, før du sender",
       "selectBeforeRegenerating": "Vælg en tilgængelig model, før svaret genereres igen",
-      "connectDescription": "Der er endnu ikke forbundet nogen modeller. Vælg en kilde nedenfor — en lokal runtime, din egen server eller et cloud-API — og du chatter på under et minut."
+      "connectDescription": "Der er endnu ikke forbundet nogen modeller. Vælg en kilde nedenfor — en lokal runtime, din egen server eller et cloud-API — og du chatter på under et minut.",
+      "pullCommand": "ollama pull llama3.2:3b"
     },
     "footer": {
       "disclaimer": "LLM kan begå fejl - verificer vigtige oplysninger",
@@ -486,7 +506,13 @@
       "browse": "gennemse",
       "unsupportedFileType": "Filtypen understøttes ikke: {{name}}",
       "maxImagesAllowed": "Der må højst være {{count}} billeder",
-      "imageTooLarge": "Billedet {{name}} er for stort (maks. 10 MB)"
+      "imageTooLarge": "Billedet {{name}} er for stort (maks. 10 MB)",
+      "readFailed": "{{name}} kunne ikke læses",
+      "uploadAlt": "Upload {{number}}",
+      "removeImage": "Fjern billede {{number}}",
+      "addMore": "Tilføj flere billeder ({{count}}/{{max}})",
+      "uploading": "Uploader",
+      "removeDocument": "Fjern {{name}}"
     },
     "structuredOutput": {
       "title": "Svarformat",
@@ -537,7 +563,8 @@
       "compactionOff": "Slået fra for denne chat"
     },
     "message": {
-      "sources": "Kilder"
+      "sources": "Kilder",
+      "copyFailed": "Kunne ikke kopiere til udklipsholderen"
     },
     "toasts": {
       "chatCreated": "Ny chat oprettet",
@@ -581,7 +608,8 @@
       "generationRateLimitedWeekly": "Weekly budget spent — new chats pause until Monday 00:00 UTC. Try again later or upgrade your plan.",
       "generationRateLimitedMonthly": "Monthly budget spent — new chats pause until the 1st of next month (UTC). Try again later or upgrade your plan.",
       "generationFailedSupport": "The reply couldn't be finished — retry, and if it keeps happening report it from Settings > About > GitHub issues.",
-      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access."
+      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access.",
+      "archiveFailed": "Chatten kunne ikke arkiveres"
     },
     "documents": {
       "title": "Dokumenter i kontekst"
@@ -614,7 +642,25 @@
     "delegate": {
       "action": "Run as Work task"
     },
-    "sharedReadOnly": "Delt af {{owner}} — kun visning"
+    "sharedReadOnly": "Delt af {{owner}} — kun visning",
+    "branch": {
+      "variants": "{{count}} variant",
+      "variants_plural": "{{count}} varianter",
+      "selectVariant": "Vælg variant {{number}}",
+      "generating": "genererer...",
+      "select": "vælg"
+    },
+    "sources": {
+      "fullContextFailed": "Indstillingen for fuldt dokument kunne ikke opdateres",
+      "usedByRetrieval": "Bruges i svar",
+      "triggerLabel": "Kilder ({{count}})"
+    },
+    "announce": {
+      "replyFinished": "{{name}} svarede: {{text}}",
+      "replyFinishedNoText": "{{name}} er færdig med at svare.",
+      "codeBlock": "kodeblok",
+      "generationStopped": "Generering stoppet"
+    }
   },
   "sidebar": {
     "navigation": {
@@ -636,10 +682,12 @@
       "prompts": "Prompts",
       "skills": "Færdigheder",
       "tools": "Værktøjer",
-      "channels": "Kanaler"
+      "channels": "Kanaler",
+      "strands": "Strands"
     },
     "toggleSize": "Skift sidebjælkestørrelse",
-    "expandSidebar": "Udvid sidebjælke"
+    "expandSidebar": "Udvid sidebjælke",
+    "ariaLabel": "Sidepanel"
   },
   "user": {
     "menu": {
@@ -696,7 +744,8 @@
       "sessions": "Sessioner",
       "apiKeys": "API-nøgler",
       "notifications": "Notifikationer",
-      "apiPlatform": "API Platform"
+      "apiPlatform": "API Platform",
+      "ollamaDisabled": "Ollama er deaktiveret af en administrator"
     },
     "appearance": {
       "title": "Udseende",
@@ -921,7 +970,8 @@
       "modelPrice": "Price / 1M",
       "modelStatus": "Status",
       "modelFree": "Free",
-      "modelDeprecated": "Deprecated"
+      "modelDeprecated": "Deprecated",
+      "dismissError": "Skjul fejl"
     },
     "generation": {
       "title": "Genereringsindstillinger",
@@ -1024,7 +1074,8 @@
         "deleteFailed": "Samlingen kunne ikke slettes",
         "assignFailed": "Dokumentet kunne ikke flyttes",
         "share": "Del samling",
-        "shared": "delt"
+        "shared": "delt",
+        "assignTo": "Samling for {{name}}"
       },
       "library": {
         "title": "Uploadede dokumenter",
@@ -1166,7 +1217,8 @@
         "title": "Arkiverede chats",
         "empty": "Ingen arkiverede chats",
         "unarchive": "Gendan"
-      }
+      },
+      "clearAllConfirm": "Er du sikker på, at du vil slette al chathistorik? Dette kan ikke fortrydes."
     },
     "about": {
       "title": "Om",
@@ -1178,43 +1230,36 @@
       "features": {
         "privacy": {
           "title": "Privatliv først",
-          "description": "Dine data forbliver på din enhed"
+          "description": "Self-hosted workspace — your data stays under your control"
         },
         "openSource": {
           "title": "Open source",
-          "description": "Gratis og open source-software"
+          "description": "Open-source software maintained by the Alcore team"
         },
         "localInference": {
           "title": "Lokal inferens",
-          "description": "Kør AI-modeller lokalt med Ollama"
+          "description": "Use local Ollama models or connect to your Alcore provider"
         }
       },
-      "openSourceBy": "Open source af {{company}}",
+      "openSourceBy": "Built by {{company}}",
       "links": {
         "title": "Links",
-        "github": "GitHub",
-        "githubDescription": "Se kildekode og bidrag",
         "website": "Hjemmeside",
-        "websiteDescription": "Besøg vores hjemmeside",
+        "websiteDescription": "Visit the Alcore website",
         "documentation": "Dokumentation",
         "reportIssue": "Rapporter problemer",
         "reportIssueDescription": "Fejlrapporter og funktionsønsker",
-        "documentationDescription": "Vejledninger, tutorials og API-reference",
-        "forgejo": "Forgejo-spejl",
-        "forgejoDescription": "Selvhostet Forgejo-repository",
-        "sponsor": "Sponsor",
-        "sponsorDescription": "Vær med til at finansiere projektet",
-        "star": "Stjerne på GitHub",
-        "starDescription": "En stjerne hjælper andre med at finde projektet"
+        "documentationDescription": "Guides and documentation for Alcore"
       },
       "version": "Version {{version}}",
       "updates": {
-        "checking": "Søger efter opdateringer…",
-        "upToDate": "Du har den nyeste version",
-        "updateAvailable": "Version {{version}} er tilgængelig",
-        "ahead": "Foran den seneste udgivelse ({{version}})",
-        "checkFailed": "Kunne ikke søge efter opdateringer",
         "viewChangelog": "Se ændringslog"
+      },
+      "ollama": {
+        "title": "Ollama-status",
+        "version": "Version",
+        "healthy": "Sund",
+        "unhealthy": "Usund"
       }
     },
     "groups": {
@@ -1280,7 +1325,11 @@
       "unknownDevice": "Ukendt enhed",
       "createdAt": "Logget ind",
       "lastSeenAt": "Sidst aktiv",
-      "expiresAt": "Udløber"
+      "expiresAt": "Udløber",
+      "signOutConfirmTitle": "Log denne session ud?",
+      "signOutConfirmDescription": "{{device}} logges ud med det samme og skal logge ind igen.",
+      "signOutOthersConfirmTitle": "Log andre sessioner ud?",
+      "signOutOthersConfirmDescription": "{{count}} andre sessioner logges ud med det samme. Denne session forbliver logget ind."
     },
     "apiKeys": {
       "title": "API-nøgler",
@@ -1314,7 +1363,9 @@
       "createdAt": "Oprettet",
       "lastUsedAt": "Senest brugt",
       "expiresAt": "Udløber",
-      "neverExpires": "Aldrig"
+      "neverExpires": "Aldrig",
+      "revokeConfirmTitle": "Tilbagekald “{{name}}”?",
+      "revokeConfirmDescription": "Alt, der bruger denne API-nøgle, holder straks op med at virke. Dette kan ikke fortrydes."
     },
     "notifications": {
       "title": "Notifikationer",
@@ -1484,7 +1535,20 @@
   "models": {
     "title": "Modeller",
     "noModels": "Ingen modeller installeret",
-    "noModelsFound": "Ingen modeller fundet"
+    "noModelsFound": "Ingen modeller fundet",
+    "subtitle": "Hent, administrer og overvåg dine Ollama-modeller",
+    "installed": "Installerede modeller",
+    "available": "Tilgængelige modeller",
+    "pull": "Hent model",
+    "pulling": "Henter...",
+    "delete": "Slet model",
+    "deleting": "Sletter...",
+    "size": "Størrelse",
+    "modified": "Ændret",
+    "family": "Familie",
+    "parameters": "Parametre",
+    "quantization": "Kvantisering",
+    "pullFirst": "Hent en model for at komme i gang"
   },
   "personas": {
     "title": "Personaer",
@@ -1516,7 +1580,8 @@
     "model": "Model",
     "size": "Størrelse",
     "quality": "Kvalitet",
-    "created": "Oprettet"
+    "created": "Oprettet",
+    "lightboxLabel": "Billedvisning"
   },
   "errors": {
     "generic": "Der opstod en fejl",
@@ -1565,7 +1630,13 @@
   },
   "modelManager": {
     "sections": {
-      "catalog": "Modelkatalog"
+      "catalog": "Modelkatalog",
+      "pull": "Hent ny model",
+      "library": "Gennemse bibliotek",
+      "huggingface": "HuggingFace Hub",
+      "running": "Kørende modeller",
+      "local": "Lokale modeller",
+      "advanced": "Avancerede handlinger"
     },
     "catalog": {
       "searchPlaceholder": "Søg efter modeller på navn eller udbyder...",
@@ -1588,12 +1659,159 @@
       "hide": "Skjul for brugere",
       "show": "Vis for brugere",
       "star": "Markér {{name}} med stjerne",
-      "unstar": "Fjern stjerne fra {{name}}"
+      "unstar": "Fjern stjerne fra {{name}}",
+      "providerOllama": "Ollama",
+      "filterLabel": "Filtrér modeller",
+      "displayName": "Visningsnavn for {{name}}"
     },
     "huggingface": {
       "checkingGguf": "Søger efter GGUF-filer...",
       "noGgufAvailable": "Ingen GGUF-filer tilgængelige til direkte Ollama-hentning",
-      "ggufFilesCount": "GGUF-filer ({{count}}) - Hent direkte til Ollama"
+      "ggufFilesCount": "GGUF-filer ({{count}}) - Hent direkte til Ollama",
+      "browseAll": "Gennemse alle på HuggingFace",
+      "noModelsFound": "Ingen modeller fundet",
+      "noResults": "Ingen modeller fundet. Prøv at justere din søgning eller filtre.",
+      "browseAllLink": "Se alle",
+      "search": "Søg i HuggingFace-modeller...",
+      "by": "af",
+      "gated": "Begrænset adgang",
+      "viewOnHF": "Vis på HuggingFace",
+      "sortDownloads": "Downloads",
+      "sortLikes": "Likes",
+      "sortRecent": "Seneste",
+      "taskTextGeneration": "Tekstgenerering",
+      "taskTextToSpeech": "Tekst til tale",
+      "taskTextToImage": "Tekst til billede",
+      "taskSpeechRecognition": "Talegenkendelse",
+      "tasks": {
+        "textGen": "Tekstgenerering",
+        "tts": "Tekst til tale",
+        "image": "Tekst til billede",
+        "stt": "Talegenkendelse"
+      },
+      "sort": {
+        "downloads": "Flest downloads",
+        "likes": "Mest populære",
+        "recent": "Senest opdateret"
+      }
+    },
+    "title": "Modeller",
+    "loading": "Indlæser modeller...",
+    "systemStatus": {
+      "online": "Ollama online",
+      "offline": "Ollama offline",
+      "models": "model",
+      "models_plural": "modeller",
+      "running": "kører",
+      "vram": "VRAM"
+    },
+    "pull": {
+      "placeholder": "Indtast modelnavn (f.eks. llama3.2:3b, deepseek-r1:14b)",
+      "button": "Hent",
+      "cancel": "Annuller",
+      "popular": "Populære modeller:",
+      "browseAll": "Gennemse alle modeller på ollama.com",
+      "success": "Model {{name}} hentet",
+      "cancelled": "Modelhentning annulleret",
+      "failed": "Kunne ikke hente model",
+      "enterName": "Indtast venligst et modelnavn",
+      "restricted": "Modelinstallation er begrænset til administratorer på denne instans."
+    },
+    "progress": {
+      "starting": "Initialiserer...",
+      "pulling": "Downloader model...",
+      "pullingLayer": "downloader",
+      "verifying": "Verificerer integritet...",
+      "verifyingDigest": "verificerer sha256-digest",
+      "writing": "Skriver manifest...",
+      "cleaning": "Rydder op..."
+    },
+    "library": {
+      "available": "tilgængelig",
+      "search": "Søg modeller...",
+      "noResults": "Ingen modeller fundet, der matcher dine kriterier",
+      "installed": "Installeret",
+      "more": "+{{count}} mere",
+      "refresh": "Opdater bibliotek"
+    },
+    "local": {
+      "noModels": "Ingen modeller installeret endnu",
+      "pullToStart": "Hent en model ovenfor for at komme i gang",
+      "installed": "installeret",
+      "running": "Kører",
+      "info": "Info",
+      "copy": "Kopier",
+      "delete": "Slet",
+      "deleteConfirm": "Er du sikker på, at du vil slette modellen \"{{name}}\"?",
+      "deleteSuccess": "Model {{name}} slettet",
+      "deleteFailed": "Kunne ikke slette model"
+    },
+    "advanced": {
+      "createModel": "Opret model",
+      "fromModelfile": "Fra Modelfile",
+      "copyModel": "Kopier model",
+      "duplicateExisting": "Dupliker eksisterende",
+      "testEmbeddings": "Test embeddings",
+      "generateVectors": "Generer vektorer",
+      "healthCheck": "Sundhedstjek",
+      "testConnection": "Test forbindelse",
+      "healthy": "Ollama er sund!"
+    },
+    "modals": {
+      "details": {
+        "title": "Modeldetaljer",
+        "info": "Modelinformation",
+        "family": "Familie",
+        "parameters": "Parametre",
+        "quantization": "Kvantisering",
+        "format": "Format",
+        "systemPrompt": "System-prompt",
+        "template": "Skabelon",
+        "license": "Licens",
+        "modelfile": "Modelfile",
+        "noDetails": "Ingen detaljer tilgængelige"
+      },
+      "copy": {
+        "title": "Kopier model",
+        "source": "Kildemodel",
+        "selectModel": "Vælg en model...",
+        "newName": "Nyt modelnavn",
+        "placeholder": "f.eks. min-tilpassede-model",
+        "copying": "Kopierer...",
+        "button": "Kopier model",
+        "success": "Model kopieret til {{name}}",
+        "failed": "Kunne ikke kopiere model",
+        "enterBoth": "Indtast venligst både kilde- og destinationsnavn"
+      },
+      "create": {
+        "title": "Opret tilpasset model",
+        "name": "Modelnavn",
+        "namePlaceholder": "f.eks. min-assistent",
+        "modelfile": "Modelfile",
+        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM Du er en hjælpsom assistent.",
+        "see": "Se",
+        "docs": "Modelfile-dokumentation",
+        "docsLink": "for syntaksreference",
+        "creating": "Opretter...",
+        "button": "Opret model",
+        "success": "Model {{name}} oprettet",
+        "failed": "Kunne ikke oprette model",
+        "enterBoth": "Indtast venligst modelnavn og Modelfile-indhold"
+      },
+      "embeddings": {
+        "title": "Test embeddings",
+        "model": "Embedding-model",
+        "selectModel": "Vælg en model...",
+        "recommended": "Anbefalet: nomic-embed-text, mxbai-embed-large",
+        "input": "Inputtekst",
+        "placeholder": "Indtast tekst til at generere embeddings for...",
+        "generating": "Genererer...",
+        "button": "Generer embeddings",
+        "result": "Resultat ({{count}} dimensioner)",
+        "success": "Genererede {{count}}-dimensionel embedding-vektor",
+        "failed": "Kunne ikke generere embeddings",
+        "enterBoth": "Vælg venligst en model og indtast tekst"
+      }
     }
   },
   "personaManager": {
@@ -1615,7 +1833,10 @@
     "deleteConfirm": "Er du sikker på, at du vil slette \"{{name}}\"?",
     "deleteSuccess": "Persona \"{{name}}\" slettet",
     "downloadSuccess": "Persona \"{{name}}\" downloadet",
-    "failed": "Kunne ikke {{action}} persona"
+    "failed": "Kunne ikke {{action}} persona",
+    "loadFailed": "Dine personaer kunne ikke indlæses.",
+    "deleteFailed": "Personaen kunne ikke slettes",
+    "downloadFailed": "Personaen kunne ikke downloades"
   },
   "personaForm": {
     "title": {
@@ -1747,7 +1968,8 @@
       "promptHint": "En prompt, som hver ny chat med denne persona starter med.",
       "noPrompt": "Ingen prompt",
       "version": "Bindingsrevision {{version}}"
-    }
+    },
+    "sections": "Personasektioner"
   },
   "personaCard": {
     "enhanced": "Forbedret",
@@ -1764,7 +1986,16 @@
     "backupSuccess": "Persona-backup downloadet",
     "dnaSuccess": "Persona-DNA eksporteret",
     "failed": "Kunne ikke {{action}}",
-    "shareTooltip": "Del denne persona"
+    "shareTooltip": "Del denne persona",
+    "wipeFailed": "Minderne kunne ikke slettes",
+    "backupFailed": "Personaen kunne ikke sikkerhedskopieres",
+    "exportDnaFailed": "Personaens DNA kunne ikke eksporteres",
+    "favorite": "Favorit",
+    "memoryStatus": {
+      "active": "Aktiv",
+      "wiped": "Slettet",
+      "backed_up": "Sikkerhedskopieret"
+    }
   },
   "userManager": {
     "title": "Brugeradministration",
@@ -1793,7 +2024,10 @@
     "noUsersMatching": "Ingen brugere matcher din søgning",
     "columns": {
       "role": "Rolle",
-      "created": "Oprettet"
+      "created": "Oprettet",
+      "user": "Bruger",
+      "email": "E-mail",
+      "actions": "Handlinger"
     },
     "roles": {
       "admin": "Administrator",
@@ -1832,7 +2066,10 @@
       "createSuccess": "Bruger oprettet",
       "updateSuccess": "Bruger opdateret",
       "createFailed": "Kunne ikke oprette bruger",
-      "updateFailed": "Kunne ikke opdatere bruger"
+      "updateFailed": "Kunne ikke opdatere bruger",
+      "usernamePlaceholder": "Indtast brugernavn",
+      "emailPlaceholder": "Indtast e-mail (valgfri)",
+      "passwordPlaceholder": "Indtast adgangskode"
     },
     "workAccess": {
       "title": "Work-adgang",
@@ -1925,7 +2162,28 @@
       "memberOf": "Grupper",
       "featuresLabel": "Funktionsadgang",
       "grantsLabel": "Tildelinger",
-      "grantVia": "via"
+      "grantVia": "via",
+      "deleteConfirmTitle": "Slet gruppen “{{name}}”?",
+      "deleteConfirmDescription": "Medlemmer mister den adgang, de kun havde via denne gruppe. Selve kontoerne slettes ikke.",
+      "statuses": {
+        "active": "Aktiv",
+        "pending": "Afventer godkendelse"
+      },
+      "features": {
+        "work": "Arbejde",
+        "model-download": "Modeldownload",
+        "web-search": "Websøgning",
+        "strands": "Strands-motor",
+        "tools": "Værktøjer",
+        "stt": "Tale til tekst",
+        "tts": "Tekst til tale",
+        "voice-mode": "Stemmetilstand",
+        "voice-cloning": "Stemmekloning"
+      },
+      "grantViaKinds": {
+        "user": "direkte tildeling",
+        "group": "gruppe"
+      }
     },
     "audit": {
       "title": "Sikkerhedsauditlog",
@@ -2012,13 +2270,60 @@
       "save": "Gem",
       "saving": "Gemmer...",
       "saved": "E-mailindstillingerne er gemt.",
-      "saveFailed": "E-mailindstillingerne kunne ikke gemmes."
+      "saveFailed": "E-mailindstillingerne kunne ikke gemmes.",
+      "security": {
+        "starttls": "STARTTLS (port 587)",
+        "tls": "TLS (port 465)",
+        "none": "Ingen (kun betroet netværk)"
+      },
+      "templateTitle": "E-mailudseende",
+      "templateHint": "Vælg en lys eller mørk skabelon til nyhedsoversigter og e-mailnotifikationer.",
+      "themeLabel": "E-mail-skabelon",
+      "themeLight": "Lys",
+      "themeDark": "Mørk",
+      "previewTitle": "Forhåndsvisning af skabelon",
+      "previewLoading": "Indlæser forhåndsvisning…",
+      "previewFailed": "E-mailforhåndsvisningen kunne ikke indlæses.",
+      "previewHeading": "Din nyhedsoversigt",
+      "previewIntro": "En forhåndsvisning af din daglige nyhedsmail.",
+      "previewMarkdown": "## Dagens højdepunkter\n\n- Nyt om teknologi og forskning\n- Nyheder fra dine valgte kilder\n\n**Opsummering:** Dine daglige nyheder er klar til at blive læst.",
+      "previewLinkLabel": "Åbn resultatet"
+    },
+    "modelAccess": {
+      "title": "Modeldownloads",
+      "description": "Tillad alle aktive brugere at hente modeller fra Ollama og Hugging Face-browseren. Administratorer kan altid hente modeller.",
+      "saved": "Adgang til modeldownload opdateret",
+      "saveFailed": "Kunne ikke opdatere adgang til modeldownload"
+    },
+    "ollamaProvider": {
+      "title": "Ollama-udbyder",
+      "description": "Når det er slået fra, stopper appen helt med at tjekke for Ollama — ingen sundhedstjek, ingen advarsler. Endepunktet kan pege på enhver Ollama-kompatibel gateway.",
+      "saved": "Indstillinger for Ollama-udbyder gemt",
+      "saveFailed": "Kunne ikke gemme indstillingerne for Ollama-udbyderen",
+      "baseUrlLabel": "Ollama-endepunkts-URL"
+    },
+    "strandsAccess": {
+      "title": "Strands-motor",
+      "description": "Vælg, hvem der kan bruge den indbyggede Strands-agent. Den kan læse og redigere filer i hver sessions private arbejdsområde, men den kan ikke køre shell-kommandoer.",
+      "saved": "Strands-adgang opdateret",
+      "saveFailed": "Kunne ikke opdatere Strands-adgang",
+      "lockedByEnv": "Fastlåst af miljøvariablen LIBRE_STRANDS_ACCESS.",
+      "modes": {
+        "disabled": "Fra",
+        "admins": "Administratorer",
+        "all-users": "Alle brugere"
+      }
+    },
+    "agentCliAccess": {
+      "title": "CLI-agentmodeller",
+      "description": "Administratorer kan bruge installerede Pi, OpenCode, Codex og Claude Code som chatmodeller. De kører på værten uden for Work-sandkasser.",
+      "lockedByEnv": "Fastlåst af miljøvariablen AGENT_CLI_MODELS_ENABLED."
     }
   },
   "usageAnalytics": {
     "eyebrow": "Administration",
     "title": "Udbyderforbrug",
-    "description": "Følg udgående API-kald og modelforbrug på tværs af aktiverede plugins på denne instans.",
+    "description": "Følg modelanmodninger og forbrug på tværs af denne instans’ udbydere og agenter.",
     "days": "{{count}} dage",
     "refresh": "Opdater forbrug",
     "loadFailed": "Udbyderforbrug kunne ikke indlæses.",
@@ -2065,7 +2370,7 @@
       "notCharted": "Vælg for at indlæse denne model i diagrammet"
     },
     "providers": {
-      "title": "Aktiveret plugin-trafik",
+      "title": "Udbyder- og agenttrafik",
       "description": "Antal forespørgsler, pålidelighed og svartid efter udbyder.",
       "share": "{{percent}} % af kaldene",
       "failures": "{{count}} mislykkedes eller blev annulleret",
@@ -2083,7 +2388,7 @@
     },
     "empty": {
       "title": "Ingen udbyderkald endnu",
-      "description": "Kald vises her, når et aktiveret plugin håndterer anmodninger om chat, arbejde, embedding, billede, tale, lyd eller video."
+      "description": "Anmodninger vises her, når en udbyder eller agent behandler chat, Work, indlejringer, billeder, tale, lyd eller video."
     },
     "privacyNote": "Forbrug måles på serveren ved den udgående plugin-grænse. Alcore gemmer udbyder, model, timing, status og rapporterede tællere — aldrig prompts, svar, endepunkter, legitimationsoplysninger eller udbyderfejlmeddelelser. Token-totaler inkluderer kun kald, hvor udbyderen returnerede forbrugsmetadata.",
     "heatmap": {
@@ -2095,6 +2400,14 @@
       "less": "Mindre",
       "more": "Mere",
       "yearTotal": "{{formatted}} kald det seneste år"
+    },
+    "agents": {
+      "title": "Agenter",
+      "description": "Kald til CLI-agenter og Strands-motoren.",
+      "noCalls": "Ingen registrerede kald i denne periode",
+      "unreported": "Tokens ikke rapporteret",
+      "topModels": "Mest brugte modeller",
+      "legacy": "Denne server giver ikke en komplet agentoversigt. Tilgængelige agentposter vises nedenfor."
     }
   },
   "systemPage": {
@@ -2309,7 +2622,11 @@
       "harmful": "Skadelig",
       "formatting": "Formatering"
     },
-    "feedbackComment": "Tilføj en kommentar…"
+    "feedbackComment": "Tilføj en kommentar…",
+    "user": "Bruger",
+    "feedbackFailed": "Din feedback kunne ikke gemmes",
+    "openImage": "Åbn billede {{number}}",
+    "uploadedImageAlt": "Uploadet billede {{number}}"
   },
   "imageGallery": {
     "title": "Billedgalleri",
@@ -2321,7 +2638,8 @@
     "deleteSuccess": "Billede slettet",
     "deleteFailed": "Kunne ikke slette billede",
     "loadMore": "Indlæs mere ({{current}} af {{total}})",
-    "loadFailed": "Kunne ikke indlæse galleri"
+    "loadFailed": "Kunne ikke indlæse galleri",
+    "downloadFailed": "Kunne ikke downloade billede"
   },
   "imageGeneration": {
     "title": "Generer billede",
@@ -2397,7 +2715,10 @@
       "image": "Billeder",
       "video": "Videoer",
       "audio": "Lyd"
-    }
+    },
+    "deleteConfirmTitle": "Slet dette element?",
+    "deleteConfirmDescription": "De genererede medier slettes permanent.",
+    "previewFailed": "Visning er ikke tilgængelig"
   },
   "errorBoundary": {
     "title": "Noget gik galt",
@@ -2475,7 +2796,8 @@
     "previousVersion": "Forrige version",
     "nextVersion": "Næste version",
     "print": "Print",
-    "exportCsv": "Export CSV"
+    "exportCsv": "Export CSV",
+    "resizePanel": "Tilpas panelets størrelse"
   },
   "personaImportExport": {
     "title": "Import og eksport af personaer",
@@ -2513,7 +2835,10 @@
     "generation": "Generering:",
     "modelLoad": "Model indlæsning:",
     "totalTime": "Samlet tid:",
-    "generatedAt": "Genereret kl.:"
+    "generatedAt": "Genereret kl.:",
+    "notAvailable": "I/T",
+    "tokenCount": "{{tokens}} tokens",
+    "tokensPerSecond": "{{value}} t/s"
   },
   "userMenu": {
     "loggedOut": "Logget ud",
@@ -2572,7 +2897,9 @@
       "httpWarning": "HTTP krypterer ikke legitimationsoplysninger eller trafik. Brug det kun på et betroet netværk.",
       "invalidBaseUrl": "Basis-URL'er må ikke indeholde en forespørgselsstreng eller fragment.",
       "invalidApiPath": "Skal starte med / og må ikke indeholde URL, forespørgsel, fragment eller ..-segment",
-      "tooLong": "Værdien er for lang"
+      "tooLong": "Værdien er for lang",
+      "resetConfirmTitle": "Nulstil til standardværdier?",
+      "resetConfirmDescription": "Dette sletter alle gemte værdier for {{name}}, inklusive API-nøgler og andre legitimationsoplysninger. Dette kan ikke fortrydes."
     }
   },
   "huggingface": {
@@ -2592,7 +2919,10 @@
   },
   "demoMode": {
     "title": "Demotilstand",
-    "github": "GitHub"
+    "github": "GitHub",
+    "defaultMessage": "Dette er en demoversion kun til præsentationsformål. Ollama-backend er ikke tilsluttet.",
+    "viewOnGithub": "Se på GitHub",
+    "dismiss": "Skjul"
   },
   "libreClaw": {
     "title": "Agenter",
@@ -2755,8 +3085,8 @@
       "status": "Status: {{status}}"
     },
     "landing": {
-      "title": "Start en ny arbejdsopgave",
-      "description": "Giv en lokal model eller en model fra en konfigureret udbyder et permanent, isoleret arbejdsområde. Den kan undersøge filer, køre værktøjer og fortsætte, hvor den slap, når du vender tilbage.",
+      "title": "Hvad vil du gerne arbejde på?",
+      "description": "Beskriv en opgave. Din model får sit eget arbejdsområde.",
       "isolated": "Isoleret",
       "isolatedBody": "Hver opgave får sin egen container og sine egne filer.",
       "durable": "Permanent",
@@ -2785,7 +3115,11 @@
         "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
         "attachTooMany": "Only {{max}} files can be attached at once.",
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
-      }
+      },
+      "engine": "Motor",
+      "libreModels": "Libre WebUI-modeller",
+      "strandsDisabled": "Strands-motoren er ikke tilgængelig for din konto.",
+      "modelLabel": "Model"
     },
     "conversation": {
       "ready": "Arbejdsområdet er klar",
@@ -2825,8 +3159,18 @@
         "checksPending": "Afventende kontroller",
         "stallNudges": "Stilstandspåmindelser",
         "ambiguityNudges": "Genforankringspåmindelser",
-        "stoppedBy": "Stoppet af"
-      }
+        "stoppedBy": "Stoppet af",
+        "reasons": {
+          "round": "rundegrænse",
+          "toolCall": "grænse for værktøjskald",
+          "approvalTimeout": "godkendelsen fik timeout",
+          "computerStall": "computeren gik i stå"
+        }
+      },
+      "skillTraceSavedWorked": "Noteret: virkede",
+      "skillTraceSavedFailed": "Noteret: mislykkedes",
+      "connectionClosed": "Work-liveforbindelsen blev lukket.",
+      "reconnectingBackground": "Liveopdateringer genopretter forbindelsen i baggrunden."
     },
     "runtime": {
       "unavailable": "Kørselsmiljø ikke tilgængeligt",
@@ -2834,7 +3178,7 @@
       "readyOllama": "Docker klar",
       "readyPlugin": "Docker + plugin klar",
       "readyHybrid": "Docker + modeller klar",
-      "reason": "Docker og en tilgængelig modeludbyder via Ollama eller et plugin er påkrævet."
+      "reason": "Et Work-runtime og en tilgængelig modeludbyder er påkrævet."
     },
     "workspace": {
       "label": "Arbejdsområdevisninger",
@@ -2869,7 +3213,11 @@
       "changes": "Ændringer",
       "changesSince": "Hvad der er ændret siden sidste tur",
       "diffLabel": "Ændringer siden sidste tur: {{path}}",
-      "diffFolded": "{{count}} uændrede linjer"
+      "diffFolded": "{{count}} uændrede linjer",
+      "diffAdded": "Tilføjet",
+      "diffRemoved": "Fjernet",
+      "unsavedChanges": "ikke-gemte ændringer",
+      "editingLocked": "Redigering låses op, når turen er slut."
     },
     "activity": {
       "empty": "Kommandoer, filhandlinger og værktøjsresultater vises her.",
@@ -2880,7 +3228,9 @@
         "toolCall": "Værktøjskald",
         "toolResult": "Værktøjsresultat",
         "error": "Fejl"
-      }
+      },
+      "arguments": "Værktøjsargumenter",
+      "output": "Værktøjsoutput"
     },
     "preview": {
       "command": "Valgfri startkommando",
@@ -2909,7 +3259,8 @@
       "saveFailed": "Filen kunne ikke gemmes.",
       "saved": "Filen er gemt.",
       "previewFailed": "Forhåndsvisningen kunne ikke startes.",
-      "previewStopFailed": "Forhåndsvisningen kunne ikke stoppes."
+      "previewStopFailed": "Forhåndsvisningen kunne ikke stoppes.",
+      "sendFailed": "Beskeden kunne ikke sendes."
     },
     "terminal": {
       "connecting": "Åbner en shell i sandkassen…",
@@ -2961,7 +3312,18 @@
       "noFilterMatches": "Ingen ændrede filer matcher dette filter.",
       "allChanges": "Alle ændringer",
       "diffTruncated": "Denne diff er afkortet.",
-      "binaryFile": "Binær fil, ingen tekstdiff."
+      "binaryFile": "Binær fil, ingen tekstdiff.",
+      "statusLabels": {
+        "modified": "Ændret",
+        "added": "Tilføjet",
+        "deleted": "Slettet",
+        "renamed": "Omdøbt",
+        "copied": "Kopieret",
+        "typeChanged": "Type ændret",
+        "untracked": "Ikke sporet"
+      },
+      "stagedState": "klargjort",
+      "aheadBehind": "{{ahead}} foran, {{behind}} bagud"
     },
     "hostWorkspace": {
       "hint": "Lad stå tomt for et isoleret arbejdsområde, eller peg opgaven på en mappe på denne maskine.",
@@ -2988,7 +3350,8 @@
       "unmute": "Slå lyd til",
       "mute": "Slå lyd fra",
       "finished": "Denne opgave er afsluttet. Genåbn den for at få skærmen tilbage.",
-      "reopenOpen": "Genåbn opgave og åbn skærmen"
+      "reopenOpen": "Genåbn opgave og åbn skærmen",
+      "teachSaveFailed": "Denne demonstration kunne ikke gemmes."
     },
     "computerSetup": {
       "title": "Work Computer",
@@ -3004,7 +3367,7 @@
       "label": "Ansæt som agent (valgfrit)",
       "none": "Ingen persona (engangsopgave)",
       "hint": "Denne opgave bliver en navngiven agent: den beholder personaen, forbliver fastgjort i sidepanelet og rapporterer en statuslinje efter hver kørsel.",
-      "description": "Vælg en persona for at gøre denne opgave til en vedvarende agent med sin egen identitet."
+      "description": "Vælg en persona for at beholde denne opgave som en navngiven agent."
     },
     "agent": {
       "openScreen": "Åbn fuld skærmvisning",
@@ -3025,7 +3388,11 @@
       "approvalsToggleFailed": "Godkendelserne kunne ikke opdateres.",
       "approvalRuleLine": "Altid tilladt",
       "approvalRuleDelete": "Fjern regel",
-      "approvalRuleDeleteFailed": "Reglen kunne ikke fjernes."
+      "approvalRuleDeleteFailed": "Reglen kunne ikke fjernes.",
+      "routinesLoadFailed": "Rutinerne kunne ikke indlæses.",
+      "skillsLoadFailed": "De lærte færdigheder kunne ikke indlæses.",
+      "approvalsLoadFailed": "Godkendelsesindstillingerne kunne ikke indlæses.",
+      "routinePaused": "Sat på pause"
     },
     "runs": {
       "title": "Kørsler",
@@ -3036,7 +3403,8 @@
         "needsInput": "Kræver input",
         "failed": "Mislykket",
         "cancelled": "Annulleret"
-      }
+      },
+      "loadFailed": "Kørselshistorikken kunne ikke indlæses."
     },
     "approval": {
       "title": "Godkendelse påkrævet",
@@ -3044,7 +3412,16 @@
       "allowOnce": "Tillad én gang",
       "allowAlways": "Tillad altid",
       "deny": "Afvis",
-      "failed": "Beslutningen kunne ikke sendes."
+      "failed": "Beslutningen kunne ikke sendes.",
+      "details": "Handlingsdetaljer",
+      "fields": {
+        "command": "Kommando",
+        "path": "Sti",
+        "from": "Fra",
+        "to": "Til",
+        "actions": "Handlinger",
+        "recursive": "Rekursiv"
+      }
     },
     "idleStopHint": "Stopper efter {{minutes}} minutter uden aktivitet.",
     "recovery": {
@@ -3057,6 +3434,17 @@
       "retrySucceeded": "Ryddede {{cleared}} af {{attempted}} afventende oprydninger.",
       "retryPending": "Prøver stadig {{attempted}} afventende oprydninger igen.",
       "retryFailed": "Kunne ikke prøve de afventende oprydninger igen."
+    },
+    "computer": {
+      "setupFailed": "Work Computer kunne ikke konfigureres."
+    },
+    "announce": {
+      "completed": "{{title}} er færdig.",
+      "needsInput": "{{title}} har brug for dit input eller din godkendelse.",
+      "failed": "{{title}} mislykkedes.",
+      "cancelled": "{{title}} blev stoppet.",
+      "approvalNeeded": "{{title}} har brug for din godkendelse til at køre {{tool}}.",
+      "untitledTask": "Denne opgave"
     }
   },
   "personaBackground": {
@@ -3088,7 +3476,21 @@
     "reselectProvider": "genvælg en udbyder for at fastgøre denne model",
     "unavailable": "utilgængelig",
     "unavailableSelections": "Utilgængelige valg",
-    "agentModels": "Agenter"
+    "agentModels": "Agenter",
+    "searchOllama": "Søg i Ollama-biblioteket...",
+    "searchHuggingFace": "Søg på HuggingFace...",
+    "searchModels": "Søg i modeller...",
+    "ollamaModels": "Ollama-modeller",
+    "installed": "Installeret",
+    "use": "Brug",
+    "pull": "Download",
+    "pullRestricted": "Modelinstallation er begrænset til administratorer på denne instans.",
+    "adminOnlyPull": "Kun administratorer",
+    "showAll": "Vis alle ({{total}})",
+    "sources": "Modelkilder",
+    "defaultModel": "Standardmodel",
+    "contextSize": "{{size}} kontekst",
+    "via": "via {{provider}}"
   },
   "whatsNew": {
     "title": "Nyheder",
@@ -3145,7 +3547,16 @@
     "unpin": "Frigør note",
     "pinned": "Fastgjort",
     "export": "Download som Markdown",
-    "sharedWithYou": "Delt med dig"
+    "sharedWithYou": "Delt med dig",
+    "titleLabel": "Notens titel",
+    "loadFailed": "Kunne ikke indlæses. Prøv igen.",
+    "restoreConfirmTitle": "Gendan denne version?",
+    "restoreConfirmDescription": "Notens tekst erstattes med denne tidligere version.",
+    "deleteAttachmentConfirmTitle": "Slet {{name}}?",
+    "deleteAttachmentConfirmDescription": "Vedhæftningen slettes permanent fra denne note.",
+    "attachmentDeleteFailed": "Vedhæftningen kunne ikke slettes",
+    "revokeFailed": "Adgangen kunne ikke tilbagekaldes",
+    "sharePermissionLabel": "Tilladelse"
   },
   "calendar": {
     "title": "Kalender",
@@ -3190,7 +3601,22 @@
     "importFailed": "Filen kunne ikke importeres",
     "importResult": "{{total}} begivenheder importeret",
     "importIcs": "Importér",
-    "exportIcs": "Eksportér"
+    "exportIcs": "Eksportér",
+    "chipStatus": {
+      "automation": "Planlagt automatisering",
+      "runSucceeded": "Automatiseringen blev kørt",
+      "runFailed": "Automatiseringen fejlede"
+    },
+    "newEventOn": "Ny begivenhed den {{date}}",
+    "showDay": "Vis alle begivenheder den {{date}}",
+    "deleteEventConfirmTitle": "Slet “{{title}}”?",
+    "deleteEventConfirmDescription": "Denne begivenhed slettes permanent.",
+    "deleteRecurringEventConfirmDescription": "Denne tilbagevendende begivenhed og alle dens forekomster slettes permanent.",
+    "shareCalendarNamed": "Del kalenderen {{name}}",
+    "deleteCalendarNamed": "Slet kalenderen {{name}}",
+    "deleteCalendarConfirmTitle": "Slet kalenderen “{{name}}”?",
+    "deleteCalendarConfirmDescription": "Kalenderen og dens begivenheder slettes permanent.",
+    "calendarDeleteFailed": "Kalenderen kunne ikke slettes"
   },
   "automations": {
     "title": "Automatiseringer",
@@ -3317,13 +3743,17 @@
         "work-approval": "en agent venter på din godkendelse",
         "system": "der kommer en systembesked"
       }
-    }
+    },
+    "deleteConfirmTitle": "Slet “{{name}}”?",
+    "deleteConfirmDescription": "Automatiseringen og dens tidsplan slettes permanent. Tidligere kørsler bliver i kørselshistorikken."
   },
   "home": {
     "active": "aktiv",
     "continue": "Fortsæt",
     "start": "Start",
-    "explore": "Udforsk"
+    "explore": "Udforsk",
+    "greeting": "{{greeting}}.",
+    "greetingWithName": "{{greeting}}, {{name}}."
   },
   "palette": {
     "empty": "Ingen match.",
@@ -3336,7 +3766,14 @@
     "work": "Arbejde",
     "messages": "Beskeder",
     "notes": "Noter",
-    "documents": "Dokumenter"
+    "documents": "Dokumenter",
+    "searching": "Søger…",
+    "searchFailed": "Søgningen i arbejdsområdet mislykkedes. Viser kun matchende chats og handlinger.",
+    "results": "Resultater",
+    "escKey": "esc",
+    "hintNavigate": "Naviger",
+    "hintOpen": "Åbn",
+    "hintClose": "Luk"
   },
   "tabs": {
     "actions": "Fanehandlinger",
@@ -3540,7 +3977,8 @@
       "button": "Fra mappe",
       "missingSkillMd": "Mappen skal indeholde en SKILL.md-fil",
       "done": "Færdighed importeret med {{count}} medfølgende filer"
-    }
+    },
+    "toggleLabel": "Aktivér færdigheden {{name}}"
   },
   "toolsPage": {
     "title": "Værktøjer",
@@ -3701,7 +4139,14 @@
     "added": "Delt med {{name}}",
     "failed": "Deling mislykkedes",
     "userNotFound": "Ingen bruger med det navn",
-    "groupNotFound": "Ingen gruppe med det navn"
+    "groupNotFound": "Ingen gruppe med det navn",
+    "principalKind": "Del med en bruger eller gruppe",
+    "principalName": "Brugernavn eller gruppenavn",
+    "permission": "Tilladelse",
+    "sharing": "Deling",
+    "loading": "Indlæser delinger",
+    "loadFailed": "Delingerne kunne ikke indlæses",
+    "revokeFailed": "Adgangen kunne ikke tilbagekaldes"
   },
   "channels": {
     "title": "Kanaler",
@@ -3760,13 +4205,44 @@
     "toolCalls": {
       "summary": "Værktøjer brugt ({{total}})",
       "deniedHint": "Værktøjer, der ændrer ting, afvises i kanaler. Kør dem fra en chat."
-    }
+    },
+    "confirmEdit": "Gem redigering",
+    "cancelEdit": "Annuller redigering",
+    "reactWith": "Reagér med {{emoji}}",
+    "deleteMessageConfirmTitle": "Slet denne besked?",
+    "deleteMessageConfirmDescription": "Beskeden fjernes for alle i denne kanal.",
+    "unreadCount": "{{total}} ulæste",
+    "send": "Send besked",
+    "invite": "Inviter medlem",
+    "closeThread": "Luk tråd",
+    "removeAttachment": "Fjern vedhæftning",
+    "loadFailed": "Kunne ikke indlæses. Prøv igen.",
+    "editFailed": "Beskeden kunne ikke redigeres",
+    "deleteMessageFailed": "Beskeden kunne ikke slettes",
+    "pinFailed": "Fastgørelsen kunne ikke ændres",
+    "reactFailed": "Reaktionen kunne ikke gemmes",
+    "downloadFailed": "Filen kunne ikke downloades",
+    "removeMemberConfirm": "Fjern {{name}} fra denne kanal?",
+    "removeMemberConfirmDescription": "Personen mister adgangen til kanalen og dens beskeder.",
+    "removeMemberNamed": "Fjern {{name}} fra kanalen",
+    "removeMemberFailed": "Medlemmet kunne ikke fjernes",
+    "leaveConfirm": "Forlad {{name}}?",
+    "leaveConfirmDescription": "Du skal inviteres igen for at deltage i en privat kanal igen.",
+    "leaveFailed": "Du kunne ikke forlade kanalen",
+    "joinFailed": "Du kunne ikke deltage i kanalen",
+    "deleteConfirm": "Slet {{name}}?",
+    "deleteConfirmDescription": "Kanalen og alle dens beskeder slettes permanent for alle medlemmer.",
+    "deleteFailed": "Kanalen kunne ikke slettes",
+    "saveFailed": "Kanalen kunne ikke gemmes"
   },
   "notifications": {
     "title": "Notifikationer",
     "empty": "Du er ajour.",
     "markAllRead": "Markér alle som læst",
-    "markRead": "Markér som læst"
+    "markRead": "Markér som læst",
+    "titleWithUnread": "Notifikationer ({{unread}} ulæste)",
+    "unread": "Ulæst",
+    "loadFailed": "Notifikationerne kunne ikke indlæses."
   },
   "voiceMode": {
     "title": "Stemmetilstand",
@@ -3901,7 +4377,12 @@
       "failed": "Mislykket",
       "cancelled": "Annulleret"
     },
-    "noFeedback": "Ingen feedback endnu — bedøm svar for at bygge dit datasæt."
+    "noFeedback": "Ingen feedback endnu — bedøm svar for at bygge dit datasæt.",
+    "deleteSetConfirmTitle": "Slet “{{name}}”?",
+    "deleteSetConfirmDescription": "Evalueringssættet og dets prompts slettes permanent.",
+    "deleteSetFailed": "Evalueringssættet kunne ikke slettes",
+    "runError": "Fejl: {{detail}}",
+    "cancelFailed": "Kørslen kunne ikke annulleres"
   },
   "passwordStrength": {
     "levels": {
@@ -3915,6 +4396,14 @@
       "hasCase": "Store og små bogstaver",
       "hasNumber": "Mindst ét tal",
       "tooLong": "Højst 72 bytes"
+    },
+    "requirements": "Brug mindst 12 tegn og højst 72 UTF-8-bytes, med store og små bogstaver og et tal.",
+    "errors": {
+      "minLength": "Adgangskoden skal være mindst 12 tegn.",
+      "tooLong": "Adgangskoden må højst være 72 UTF-8-bytes.",
+      "uppercase": "Adgangskoden skal indeholde et stort bogstav.",
+      "lowercase": "Adgangskoden skal indeholde et lille bogstav.",
+      "number": "Adgangskoden skal indeholde et tal."
     }
   },
   "connectModels": {
@@ -3933,7 +4422,8 @@
       "enable": "Aktivér udbyder",
       "enabling": "Aktiverer…",
       "enabled": "{{name}} forbundet — dens modeller er nu tilgængelige",
-      "enableFailed": "Kunne ikke aktivere udbyderen"
+      "enableFailed": "Kunne ikke aktivere udbyderen",
+      "urlLabel": "Server-URL"
     },
     "cloud": {
       "title": "Cloud-API",
@@ -3942,7 +4432,70 @@
       "connect": "Forbind",
       "connecting": "Forbinder…",
       "connected": "{{name}} forbundet — dens modeller er nu tilgængelige",
-      "saveFailed": "Kunne ikke gemme API-nøglen"
+      "saveFailed": "Kunne ikke gemme API-nøglen",
+      "keyLabel": "API-nøgle til {{name}}"
+    },
+    "ollama": {
+      "status": {
+        "checking": "Tjekker tilgængelighed…",
+        "healthy": "Kører og klar til lokale modeller",
+        "offline": "Ikke registreret på denne maskine",
+        "disabled": "Deaktiveret — der udføres ingen tjek"
+      },
+      "recheck": "Tjek igen",
+      "enable": "Aktivér",
+      "disable": "Stop med at tjekke for Ollama",
+      "enabledToast": "Ollama-udbyder aktiveret",
+      "disabledToast": "Ollama-tjek deaktiveret — du kan genaktivere dem i Indstillinger",
+      "settingsFailed": "Kunne ikke opdatere Ollama-indstillingerne",
+      "offlineHint": "Installer Ollama fra ollama.com, så bliver den registreret automatisk — eller brug en af mulighederne nedenfor i stedet. Hvis du ikke planlægger at bruge Ollama, kan du slå dens tjek fra.",
+      "healthyHint": "Ollama er forbundet. Hent en model fra Modeller, så er du klar til at chatte."
     }
+  },
+  "modelDownload": {
+    "success": "Model {{name}} hentet",
+    "failed": "Kunne ikke hente modellen: {{error}}",
+    "startFailed": "Kunne ikke starte hentningen",
+    "cancelled": "Hentning annulleret"
+  },
+  "strands": {
+    "title": "Strands",
+    "subtitle": "Indbygget agentmotor, der kører på dine Libre WebUI-modeller.",
+    "subtitleVersion": "Indbygget agentmotor, harness {{version}}.",
+    "newSession": "Ny session",
+    "sessions": "Sessioner",
+    "noSessions": "Ingen sessioner endnu. Opret en for at begynde.",
+    "empty": "Bed agenten om at læse eller redigere filer i sit arbejdsområde.",
+    "placeholder": "Bed motoren om at gøre noget…",
+    "model": "Model",
+    "defaultModel": "Standardmodel",
+    "send": "Send",
+    "stop": "Stop",
+    "reasoning": "Ræsonnement",
+    "tool": {
+      "running": "Kører",
+      "done": "Færdig",
+      "failed": "Mislykkedes"
+    },
+    "cancelled": "Annulleret",
+    "turnLimit": "Stoppet ved grænsen for antal ture.",
+    "messageCount": "Beskeder: {{count}}",
+    "deleteSession": "Slet session",
+    "deleteConfirm": "Slet \"{{title}}\" og dens historik?",
+    "loadFailed": "Kunne ikke indlæse Strands.",
+    "createFailed": "Sessionen kunne ikke oprettes.",
+    "deleteFailed": "Sessionen kunne ikke slettes.",
+    "saveFailed": "Kunne ikke gemme sessionen.",
+    "turnFailed": "Motoren kunne ikke fuldføre turen"
+  },
+  "notFound": {
+    "title": "Siden blev ikke fundet",
+    "description": "Denne side findes ikke eller er muligvis flyttet."
+  },
+  "themeToggle": {
+    "switchToLight": "Skift til lys tilstand",
+    "switchToDark": "Skift til mørk tilstand",
+    "switchToAmoled": "Skift til rent sort tilstand",
+    "switchToCelestial": "Skift til himmelsk tilstand"
   }
 }

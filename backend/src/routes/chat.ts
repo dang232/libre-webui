@@ -1514,6 +1514,11 @@ router.post(
               content: chunk.content,
               done: false,
             });
+          } else if (chunk.type === 'usage') {
+            if (chunk.usage)
+              streamedUsage = { ...streamedUsage, ...chunk.usage };
+            if (chunk.timings)
+              streamedTimings = { ...streamedTimings, ...chunk.timings };
           } else if (chunk.type === 'done' && chunk.providerMetadata) {
             assistantProviderMetadata = chunk.providerMetadata;
           }
@@ -1521,6 +1526,16 @@ router.post(
 
         throwIfChatGenerationCancelled(signal);
 
+        const statistics = extractStatistics(
+          chatGenerationService.createStreamedChatResponse(
+            session.model,
+            fullResponse,
+            fullThinking || undefined,
+            assistantProviderMetadata,
+            streamedUsage,
+            streamedTimings
+          )
+        );
         if (fullResponse || fullThinking) {
           await chatService.addMessage(
             sessionId,
@@ -1529,6 +1544,7 @@ router.post(
               content: fullResponse,
               thinking: fullThinking || undefined,
               model: session.model,
+              statistics,
               providerMetadata: withSearchSources(assistantProviderMetadata),
             },
             userId,
@@ -1538,7 +1554,7 @@ router.post(
             }
           );
         }
-        await emitDurable({ type: 'done' });
+        await emitDurable({ type: 'done', statistics });
         res.end();
         return;
       }

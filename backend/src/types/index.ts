@@ -550,6 +550,11 @@ export interface OllamaBlobRequest {
   digest: string;
 }
 
+/** Upstream v0.40.0 Ollama-lane aliases (Alcore renamed the canonical types). */
+export type OllamaChatMessage = ProviderChatMessage;
+export type OllamaChatRequest = ProviderChatRequest;
+export type OllamaChatResponse = ProviderChatResponse;
+
 export interface ChatModel {
   name: string;
   size: number;
@@ -563,6 +568,8 @@ export interface ChatModel {
     quantization_level?: string;
   };
 }
+
+export type OllamaModel = ChatModel;
 
 export interface ProviderGenerateRequest {
   model: string;
@@ -595,6 +602,34 @@ export interface ProviderGenerateResponse {
 export interface OllamaShowRequest {
   model: string;
   verbose?: boolean;
+}
+
+export interface OllamaGenerateRequest {
+  model: string;
+  prompt: string;
+  stream?: boolean;
+  think?: boolean | 'low' | 'medium' | 'high';
+  options?: {
+    temperature?: number;
+    top_p?: number;
+    top_k?: number;
+    num_predict?: number;
+    stop?: string[];
+  };
+}
+
+export interface OllamaGenerateResponse {
+  model: string;
+  created_at: string;
+  response: string;
+  done: boolean;
+  context?: number[];
+  total_duration?: number;
+  load_duration?: number;
+  prompt_eval_count?: number;
+  prompt_eval_duration?: number;
+  eval_count?: number;
+  eval_duration?: number;
 }
 
 export interface OllamaCreateRequest {
@@ -631,6 +666,18 @@ export interface ProviderEmbeddingsRequest {
 }
 
 export interface ProviderEmbeddingsResponse {
+  embeddings: number[][];
+}
+
+export interface OllamaEmbeddingsRequest {
+  model: string;
+  input: string | string[];
+  truncate?: boolean;
+  options?: Record<string, unknown>;
+  keep_alive?: string;
+}
+
+export interface OllamaEmbeddingsResponse {
   embeddings: number[][];
 }
 

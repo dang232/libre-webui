@@ -38,14 +38,22 @@
     "custom": "Özel",
     "remove": "Kaldır",
     "home": "Ana sayfa",
-    "more": "Çok"
+    "more": "Çok",
+    "provider": "Sağlayıcı",
+    "agent": "Ajan",
+    "reasoning": "muhakeme",
+    "skipToContent": "İçeriğe geç"
   },
   "brand": {
     "name": "Alcore",
     "shortName": "Alcore"
   },
   "appInitialization": {
-    "backendConnectionFailed": "Backend hizmetine bağlanılamadı"
+    "backendConnectionFailed": "Backend hizmetine bağlanılamadı",
+    "ollamaUnavailable": "Ollama hizmeti kullanılamıyor. Eklenti modelleri kullanılmaya devam edilebilir.",
+    "connecting": "Arka uca bağlanılıyor… ({{attempt}}/{{total}})",
+    "startingUp": "Başlatılıyor…",
+    "backendUnreachableHint": "Arka ucun çalıştığından emin olun, ardından tekrar deneyin."
   },
   "auth": {
     "login": {
@@ -206,7 +214,9 @@
       "removed": "Geçiş anahtarı kaldırıldı.",
       "removeFailed": "Geçiş anahtarı kaldırılamadı.",
       "signInButton": "Geçiş anahtarıyla giriş yap",
-      "signInFailed": "Geçiş anahtarıyla giriş başarısız."
+      "signInFailed": "Geçiş anahtarıyla giriş başarısız.",
+      "removeConfirmTitle": "Bu geçiş anahtarı kaldırılsın mı?",
+      "removeConfirmDescription": "\"{{name}}\" artık oturum açmak için çalışmayacak. Daha sonra yeniden kaydedebilirsiniz."
     },
     "alcore": {
       "title": "This server uses Alcore Auth for sign-in.",
@@ -272,6 +282,12 @@
       "tryAgain": "Try again",
       "restart": "Restart sign-in",
       "support": "Need help? Contact your server admin or see"
+    },
+    "password": {
+      "show": "Şifreyi göster",
+      "hide": "Şifreyi gizle",
+      "showConfirmation": "Şifre onayını göster",
+      "hideConfirmation": "Şifre onayını gizle"
     }
   },
   "setup": {
@@ -324,7 +340,8 @@
       "envNote": "Bu anahtar ayrıca backend/.env dosyanızda ENCRYPTION_KEY olarak kaydedilmiştir",
       "acknowledgment": "Şifreleme anahtarımı güvenli bir yerde sakladım ve kaybetmenin veri kaybına yol açabileceğini anlıyorum.",
       "confirmRequired": "Lütfen şifreleme anahtarını kaydettiğinizi onaylayın",
-      "continue": "Alcore'ye Devam Et"
+      "continue": "Alcore'ye Devam Et",
+      "loadFailed": "Şifreleme anahtarı yüklenemedi. Devam etmek için tekrar deneyin."
     },
     "connectModels": {
       "title": "Modellerinizi bağlayın",
@@ -418,7 +435,8 @@
       "toolsOn": "Araçlar açık — model onaylanmış araçları çağırabilir",
       "toolsOff": "Bu mesajda modelin araç çağırmasına izin ver",
       "thinkingOn": "Düşünme açık ({{level}})",
-      "thinkingOff": "Yanıtlamadan önce düşün"
+      "thinkingOff": "Yanıtlamadan önce düşün",
+      "thinkingUpdateFailed": "Düşünme ayarı güncellenemedi"
     },
     "session": {
       "new": "Yeni Sohbet",
@@ -454,7 +472,8 @@
         "move": "Klasöre taşı",
         "remove": "Klasörden çıkar",
         "delete": "Klasörü sil",
-        "deleteConfirm": "Bu klasör silinsin mi? İçindeki sohbetler korunur."
+        "deleteConfirm": "Bu klasör silinsin mi? İçindeki sohbetler korunur.",
+        "rename": "Klasörü yeniden adlandır"
       },
       "shareChat": "Sohbeti paylaş…"
     },
@@ -472,7 +491,8 @@
       "selectBeforePrivateChat": "Gizli sohbeti başlatmadan önce kullanılabilir bir model seçin",
       "selectBeforeSending": "Göndermeden önce kullanılabilir bir model seçin",
       "selectBeforeRegenerating": "Yeniden oluşturmadan önce kullanılabilir bir model seçin",
-      "connectDescription": "Henüz bağlı bir model yok. Aşağıdan bir kaynak seçin — yerel bir çalışma zamanı, kendi sunucunuz ya da bir bulut API'si — ve bir dakikadan kısa sürede sohbete başlayın."
+      "connectDescription": "Henüz bağlı bir model yok. Aşağıdan bir kaynak seçin — yerel bir çalışma zamanı, kendi sunucunuz ya da bir bulut API'si — ve bir dakikadan kısa sürede sohbete başlayın.",
+      "pullCommand": "ollama pull llama3.2:3b"
     },
     "footer": {
       "disclaimer": "Yapay zeka hata yapabilir - önemli bilgileri doğrulayın",
@@ -486,7 +506,13 @@
       "browse": "göz atın",
       "unsupportedFileType": "Dosya türü desteklenmiyor: {{name}}",
       "maxImagesAllowed": "En fazla {{count}} görsele izin verilir",
-      "imageTooLarge": "{{name}} görseli çok büyük (en fazla 10 MB)"
+      "imageTooLarge": "{{name}} görseli çok büyük (en fazla 10 MB)",
+      "readFailed": "{{name}} okunamadı",
+      "uploadAlt": "Yükleme {{number}}",
+      "removeImage": "{{number}}. görseli kaldır",
+      "addMore": "Daha fazla görsel ekle ({{count}}/{{max}})",
+      "uploading": "Yükleniyor",
+      "removeDocument": "{{name}} öğesini kaldır"
     },
     "structuredOutput": {
       "title": "Yanıt Formatı",
@@ -537,7 +563,8 @@
       "compactionOff": "Bu sohbet için kapalı"
     },
     "message": {
-      "sources": "Kaynaklar"
+      "sources": "Kaynaklar",
+      "copyFailed": "Panoya kopyalanamadı"
     },
     "toasts": {
       "chatCreated": "Yeni sohbet oluşturuldu",
@@ -581,7 +608,8 @@
       "generationRateLimitedWeekly": "Weekly budget spent — new chats pause until Monday 00:00 UTC. Try again later or upgrade your plan.",
       "generationRateLimitedMonthly": "Monthly budget spent — new chats pause until the 1st of next month (UTC). Try again later or upgrade your plan.",
       "generationFailedSupport": "The reply couldn't be finished — retry, and if it keeps happening report it from Settings > About > GitHub issues.",
-      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access."
+      "generationAccountPending": "Your account is waiting for administrator approval — contact your administrator for access.",
+      "archiveFailed": "Bu sohbet arşivlenemedi"
     },
     "documents": {
       "title": "Bağlamdaki belgeler"
@@ -614,7 +642,25 @@
     "delegate": {
       "action": "Run as Work task"
     },
-    "sharedReadOnly": "{{owner}} paylaştı — yalnızca görüntüleme"
+    "sharedReadOnly": "{{owner}} paylaştı — yalnızca görüntüleme",
+    "branch": {
+      "variants": "{{count}} varyant",
+      "variants_plural": "{{count}} varyant",
+      "selectVariant": "{{number}}. varyantı seç",
+      "generating": "oluşturuluyor...",
+      "select": "seç"
+    },
+    "sources": {
+      "fullContextFailed": "Tam belge ayarı güncellenemedi",
+      "usedByRetrieval": "Yanıtlarda kullanıldı",
+      "triggerLabel": "Kaynaklar ({{count}})"
+    },
+    "announce": {
+      "replyFinished": "{{name}} yanıtladı: {{text}}",
+      "replyFinishedNoText": "{{name}} yanıtı tamamladı.",
+      "codeBlock": "kod bloğu",
+      "generationStopped": "Üretim durduruldu"
+    }
   },
   "sidebar": {
     "navigation": {
@@ -636,10 +682,12 @@
       "prompts": "İstemler",
       "skills": "Beceriler",
       "tools": "Araçlar",
-      "channels": "Kanallar"
+      "channels": "Kanallar",
+      "strands": "Strands"
     },
     "toggleSize": "Kenar çubuğu boyutunu değiştir",
-    "expandSidebar": "Kenar çubuğunu genişlet"
+    "expandSidebar": "Kenar çubuğunu genişlet",
+    "ariaLabel": "Kenar çubuğu"
   },
   "user": {
     "menu": {
@@ -696,7 +744,8 @@
       "sessions": "Oturumlar",
       "apiKeys": "API Anahtarları",
       "notifications": "Bildirimler",
-      "apiPlatform": "API Platform"
+      "apiPlatform": "API Platform",
+      "ollamaDisabled": "Ollama bir yönetici tarafından devre dışı bırakıldı"
     },
     "appearance": {
       "title": "Görünüm",
@@ -921,7 +970,8 @@
       "modelPrice": "Price / 1M",
       "modelStatus": "Status",
       "modelFree": "Free",
-      "modelDeprecated": "Deprecated"
+      "modelDeprecated": "Deprecated",
+      "dismissError": "Hatayı kapat"
     },
     "generation": {
       "title": "Üretim Seçenekleri",
@@ -1024,7 +1074,8 @@
         "deleteFailed": "Koleksiyon silinemedi",
         "assignFailed": "Belge taşınamadı",
         "share": "Koleksiyonu paylaş",
-        "shared": "paylaşılan"
+        "shared": "paylaşılan",
+        "assignTo": "{{name}} için koleksiyon"
       },
       "library": {
         "title": "Yüklenen belgeler",
@@ -1166,7 +1217,8 @@
         "title": "Arşivlenmiş sohbetler",
         "empty": "Arşivlenmiş sohbet yok",
         "unarchive": "Arşivden çıkar"
-      }
+      },
+      "clearAllConfirm": "Tüm sohbet geçmişini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
     },
     "about": {
       "title": "Hakkında",
@@ -1178,43 +1230,36 @@
       "features": {
         "privacy": {
           "title": "Gizlilik Öncelikli",
-          "description": "Verileriniz cihazınızda kalır"
+          "description": "Self-hosted workspace — your data stays under your control"
         },
         "openSource": {
           "title": "Açık Kaynak",
-          "description": "Özgür ve açık kaynaklı yazılım"
+          "description": "Open-source software maintained by the Alcore team"
         },
         "localInference": {
           "title": "Yerel Çıkarım",
-          "description": "Ollama ile yapay zeka modellerini yerel olarak çalıştırın"
+          "description": "Use local Ollama models or connect to your Alcore provider"
         }
       },
-      "openSourceBy": "{{company}} tarafından açık kaynak",
+      "openSourceBy": "Built by {{company}}",
       "links": {
         "title": "Bağlantılar",
-        "github": "GitHub",
-        "githubDescription": "Kaynak kodunu görüntüle ve katkıda bulun",
         "website": "Web Sitesi",
-        "websiteDescription": "Web sitemizi ziyaret edin",
+        "websiteDescription": "Visit the Alcore website",
         "documentation": "Dokümantasyon",
         "reportIssue": "Sorun Bildir",
         "reportIssueDescription": "Hata raporları ve özellik istekleri",
-        "documentationDescription": "Kılavuzlar, öğreticiler ve API referansı",
-        "forgejo": "Forgejo Aynası",
-        "forgejoDescription": "Kendi barındırılan Forgejo deposu",
-        "sponsor": "Destek ol",
-        "sponsorDescription": "Projenin finansmanına katkıda bulunun",
-        "star": "GitHub'da yıldız ver",
-        "starDescription": "Bir yıldız başkalarının projeyi keşfetmesine yardımcı olur"
+        "documentationDescription": "Guides and documentation for Alcore"
       },
       "version": "Sürüm {{version}}",
       "updates": {
-        "checking": "Güncellemeler denetleniyor…",
-        "upToDate": "En son sürümü kullanıyorsunuz",
-        "updateAvailable": "{{version}} sürümü mevcut",
-        "ahead": "En son sürümün ilerisindesiniz ({{version}})",
-        "checkFailed": "Güncellemeler denetlenemedi",
         "viewChangelog": "Değişiklik günlüğünü görüntüle"
+      },
+      "ollama": {
+        "title": "Ollama Durumu",
+        "version": "Sürüm",
+        "healthy": "Sağlıklı",
+        "unhealthy": "Sağlıksız"
       }
     },
     "groups": {
@@ -1280,7 +1325,11 @@
       "unknownDevice": "Bilinmeyen cihaz",
       "createdAt": "Giriş yapıldı",
       "lastSeenAt": "Son etkinlik",
-      "expiresAt": "Sona erme"
+      "expiresAt": "Sona erme",
+      "signOutConfirmTitle": "Bu oturum kapatılsın mı?",
+      "signOutConfirmDescription": "{{device}} hemen oturumdan çıkarılacak ve yeniden oturum açması gerekecek.",
+      "signOutOthersConfirmTitle": "Diğer oturumlar kapatılsın mı?",
+      "signOutOthersConfirmDescription": "Diğer {{count}} oturum hemen kapatılacak. Bu oturum açık kalır."
     },
     "apiKeys": {
       "title": "API anahtarları",
@@ -1314,7 +1363,9 @@
       "createdAt": "Oluşturulma",
       "lastUsedAt": "Son kullanım",
       "expiresAt": "Sona erme",
-      "neverExpires": "Asla"
+      "neverExpires": "Asla",
+      "revokeConfirmTitle": "\"{{name}}\" iptal edilsin mi?",
+      "revokeConfirmDescription": "Bu API anahtarını kullanan her şey hemen çalışmayı durdurur. Bu işlem geri alınamaz."
     },
     "notifications": {
       "title": "Bildirimler",
@@ -1484,7 +1535,20 @@
   "models": {
     "title": "Modeller",
     "noModels": "Yüklü model yok",
-    "noModelsFound": "Model bulunamadı"
+    "noModelsFound": "Model bulunamadı",
+    "subtitle": "Ollama modellerinizi çekin, yönetin ve izleyin",
+    "installed": "Yüklü Modeller",
+    "available": "Mevcut Modeller",
+    "pull": "Model Çek",
+    "pulling": "Çekiliyor...",
+    "delete": "Modeli Sil",
+    "deleting": "Siliniyor...",
+    "size": "Boyut",
+    "modified": "Değiştirilme",
+    "family": "Aile",
+    "parameters": "Parametreler",
+    "quantization": "Niceleme",
+    "pullFirst": "Başlamak için bir model çekin"
   },
   "personas": {
     "title": "Personalar",
@@ -1516,7 +1580,8 @@
     "model": "Model",
     "size": "Boyut",
     "quality": "Kalite",
-    "created": "Oluşturulma"
+    "created": "Oluşturulma",
+    "lightboxLabel": "Görsel önizlemesi"
   },
   "errors": {
     "generic": "Bir hata oluştu",
@@ -1565,7 +1630,13 @@
   },
   "modelManager": {
     "sections": {
-      "catalog": "Model Kataloğu"
+      "catalog": "Model Kataloğu",
+      "pull": "Yeni Model Çek",
+      "library": "Kütüphaneye Göz At",
+      "huggingface": "HuggingFace Hub",
+      "running": "Çalışan Modeller",
+      "local": "Yerel Modeller",
+      "advanced": "Gelişmiş İşlemler"
     },
     "catalog": {
       "searchPlaceholder": "Modelleri ada veya sağlayıcıya göre arayın...",
@@ -1588,12 +1659,159 @@
       "hide": "Kullanıcılardan gizle",
       "show": "Kullanıcılara göster",
       "star": "{{name}} modelini yıldızla",
-      "unstar": "{{name}} modelinin yıldızını kaldır"
+      "unstar": "{{name}} modelinin yıldızını kaldır",
+      "providerOllama": "Ollama",
+      "filterLabel": "Modelleri filtrele",
+      "displayName": "{{name}} için görünen ad"
     },
     "huggingface": {
       "checkingGguf": "GGUF dosyaları aranıyor...",
       "noGgufAvailable": "Doğrudan Ollama çekmesi için GGUF dosyası yok",
-      "ggufFilesCount": "GGUF Dosyaları ({{count}}) - Doğrudan Ollama'ya çek"
+      "ggufFilesCount": "GGUF Dosyaları ({{count}}) - Doğrudan Ollama'ya çek",
+      "browseAll": "HuggingFace'te tümünü görüntüle",
+      "noModelsFound": "Model bulunamadı",
+      "noResults": "Model bulunamadı. Aramanızı veya filtrelerinizi ayarlamayı deneyin.",
+      "browseAllLink": "Tümünü görüntüle",
+      "search": "HuggingFace modellerini ara...",
+      "by": "tarafından",
+      "gated": "Kısıtlı erişim",
+      "viewOnHF": "HuggingFace'te görüntüle",
+      "sortDownloads": "İndirmeler",
+      "sortLikes": "Beğeniler",
+      "sortRecent": "Son",
+      "taskTextGeneration": "Metin Oluşturma",
+      "taskTextToSpeech": "Metinden Konuşmaya",
+      "taskTextToImage": "Metinden Görüntüye",
+      "taskSpeechRecognition": "Konuşma Tanıma",
+      "tasks": {
+        "textGen": "Metin Oluşturma",
+        "tts": "Metinden Konuşmaya",
+        "image": "Metinden Görüntüye",
+        "stt": "Konuşma Tanıma"
+      },
+      "sort": {
+        "downloads": "En Çok İndirilen",
+        "likes": "En Beğenilen",
+        "recent": "Son Güncellenen"
+      }
+    },
+    "title": "Modeller",
+    "loading": "Modeller yükleniyor...",
+    "systemStatus": {
+      "online": "Ollama Çevrimiçi",
+      "offline": "Ollama Çevrimdışı",
+      "models": "model",
+      "models_plural": "model",
+      "running": "çalışıyor",
+      "vram": "VRAM"
+    },
+    "pull": {
+      "placeholder": "Model adını girin (ör., llama3.2:3b, deepseek-r1:14b)",
+      "button": "Çek",
+      "cancel": "İptal",
+      "popular": "Popüler modeller:",
+      "browseAll": "ollama.com'da tüm modellere göz atın",
+      "success": "{{name}} modeli başarıyla çekildi",
+      "cancelled": "Model çekme iptal edildi",
+      "failed": "Model çekilemedi",
+      "enterName": "Lütfen bir model adı girin",
+      "restricted": "Bu örnekte model kurulumu yalnızca yöneticilerle sınırlandırılmıştır."
+    },
+    "progress": {
+      "starting": "Başlatılıyor...",
+      "pulling": "Model indiriliyor...",
+      "pullingLayer": "indiriliyor",
+      "verifying": "Bütünlük doğrulanıyor...",
+      "verifyingDigest": "sha256 özeti doğrulanıyor",
+      "writing": "Manifest yazılıyor...",
+      "cleaning": "Temizleniyor..."
+    },
+    "library": {
+      "available": "mevcut",
+      "search": "Model ara...",
+      "noResults": "Kriterlerinize uyan model bulunamadı",
+      "installed": "Yüklü",
+      "more": "+{{count}} daha",
+      "refresh": "Kütüphaneyi Yenile"
+    },
+    "local": {
+      "noModels": "Henüz yüklü model yok",
+      "pullToStart": "Başlamak için yukarıdan bir model çekin",
+      "installed": "yüklü",
+      "running": "Çalışıyor",
+      "info": "Bilgi",
+      "copy": "Kopyala",
+      "delete": "Sil",
+      "deleteConfirm": "\"{{name}}\" modelini silmek istediğinizden emin misiniz?",
+      "deleteSuccess": "{{name}} modeli başarıyla silindi",
+      "deleteFailed": "Model silinemedi"
+    },
+    "advanced": {
+      "createModel": "Model Oluştur",
+      "fromModelfile": "Modelfile'dan",
+      "copyModel": "Modeli Kopyala",
+      "duplicateExisting": "Mevcut olanı çoğalt",
+      "testEmbeddings": "Gömmeleri Test Et",
+      "generateVectors": "Vektörler oluştur",
+      "healthCheck": "Sağlık Kontrolü",
+      "testConnection": "Bağlantıyı test et",
+      "healthy": "Ollama sağlıklı!"
+    },
+    "modals": {
+      "details": {
+        "title": "Model Detayları",
+        "info": "Model Bilgisi",
+        "family": "Aile",
+        "parameters": "Parametreler",
+        "quantization": "Niceleme",
+        "format": "Format",
+        "systemPrompt": "Sistem Mesajı",
+        "template": "Şablon",
+        "license": "Lisans",
+        "modelfile": "Modelfile",
+        "noDetails": "Detay mevcut değil"
+      },
+      "copy": {
+        "title": "Modeli Kopyala",
+        "source": "Kaynak Model",
+        "selectModel": "Bir model seçin...",
+        "newName": "Yeni Model Adı",
+        "placeholder": "ör., benim-özel-modelim",
+        "copying": "Kopyalanıyor...",
+        "button": "Modeli Kopyala",
+        "success": "Model {{name}} olarak kopyalandı",
+        "failed": "Model kopyalanamadı",
+        "enterBoth": "Lütfen hem kaynak hem de hedef adlarını girin"
+      },
+      "create": {
+        "title": "Özel Model Oluştur",
+        "name": "Model Adı",
+        "namePlaceholder": "ör., benim-asistanım",
+        "modelfile": "Modelfile",
+        "modelfilePlaceholder": "FROM llama3.2\nSYSTEM Yardımcı bir asistansınız.",
+        "see": "Bkz.",
+        "docs": "Modelfile belgeleri",
+        "docsLink": "söz dizimi referansı için",
+        "creating": "Oluşturuluyor...",
+        "button": "Model Oluştur",
+        "success": "{{name}} modeli başarıyla oluşturuldu",
+        "failed": "Model oluşturulamadı",
+        "enterBoth": "Lütfen model adını ve Modelfile içeriğini girin"
+      },
+      "embeddings": {
+        "title": "Gömmeleri Test Et",
+        "model": "Gömme Modeli",
+        "selectModel": "Bir model seçin...",
+        "recommended": "Önerilen: nomic-embed-text, mxbai-embed-large",
+        "input": "Giriş Metni",
+        "placeholder": "Gömme oluşturmak için metin girin...",
+        "generating": "Oluşturuluyor...",
+        "button": "Gömme Oluştur",
+        "result": "Sonuç ({{count}} boyut)",
+        "success": "{{count}} boyutlu gömme vektörü oluşturuldu",
+        "failed": "Gömme oluşturulamadı",
+        "enterBoth": "Lütfen bir model seçin ve metin girin"
+      }
     }
   },
   "personaManager": {
@@ -1615,7 +1833,10 @@
     "deleteConfirm": "\"{{name}}\" personasını silmek istediğinizden emin misiniz?",
     "deleteSuccess": "\"{{name}}\" personası başarıyla silindi",
     "downloadSuccess": "\"{{name}}\" personası başarıyla indirildi",
-    "failed": "Persona {{action}} işlemi başarısız"
+    "failed": "Persona {{action}} işlemi başarısız",
+    "loadFailed": "Personalarınız yüklenemedi.",
+    "deleteFailed": "Persona silinemedi",
+    "downloadFailed": "Persona indirilemedi"
   },
   "personaForm": {
     "title": {
@@ -1747,7 +1968,8 @@
       "promptHint": "Bu persona ile başlayan her yeni sohbeti hazırlayacak istem.",
       "noPrompt": "İstem yok",
       "version": "Bağlantı revizyonu {{version}}"
-    }
+    },
+    "sections": "Persona bölümleri"
   },
   "personaCard": {
     "enhanced": "Gelişmiş",
@@ -1764,7 +1986,16 @@
     "backupSuccess": "Persona yedeği başarıyla indirildi",
     "dnaSuccess": "Persona DNA'sı başarıyla dışa aktarıldı",
     "failed": "{{action}} işlemi başarısız",
-    "shareTooltip": "Bu personayı paylaş"
+    "shareTooltip": "Bu personayı paylaş",
+    "wipeFailed": "Anılar silinemedi",
+    "backupFailed": "Persona yedeklenemedi",
+    "exportDnaFailed": "Persona DNA'sı dışa aktarılamadı",
+    "favorite": "Favori",
+    "memoryStatus": {
+      "active": "Etkin",
+      "wiped": "Silindi",
+      "backed_up": "Yedeklendi"
+    }
   },
   "userManager": {
     "title": "Kullanıcı Yönetimi",
@@ -1793,7 +2024,10 @@
     "noUsersMatching": "Aramanıza uyan kullanıcı yok",
     "columns": {
       "role": "Rol",
-      "created": "Oluşturulma"
+      "created": "Oluşturulma",
+      "user": "Kullanıcı",
+      "email": "E-posta",
+      "actions": "İşlemler"
     },
     "roles": {
       "admin": "Yönetici",
@@ -1832,7 +2066,10 @@
       "createSuccess": "Kullanıcı başarıyla oluşturuldu",
       "updateSuccess": "Kullanıcı başarıyla güncellendi",
       "createFailed": "Kullanıcı oluşturulamadı",
-      "updateFailed": "Kullanıcı güncellenemedi"
+      "updateFailed": "Kullanıcı güncellenemedi",
+      "usernamePlaceholder": "Kullanıcı adını girin",
+      "emailPlaceholder": "E-posta girin (isteğe bağlı)",
+      "passwordPlaceholder": "Şifre girin"
     },
     "workAccess": {
       "title": "Work erişimi",
@@ -1925,7 +2162,28 @@
       "memberOf": "Gruplar",
       "featuresLabel": "Özellik erişimi",
       "grantsLabel": "Yetkiler",
-      "grantVia": "üzerinden"
+      "grantVia": "üzerinden",
+      "deleteConfirmTitle": "\"{{name}}\" grubu silinsin mi?",
+      "deleteConfirmDescription": "Üyeler yalnızca bu grup üzerinden sahip oldukları erişimi kaybeder. Hesapların kendisi silinmez.",
+      "statuses": {
+        "active": "Etkin",
+        "pending": "Onay bekliyor"
+      },
+      "features": {
+        "work": "Çalışma",
+        "model-download": "Model indirme",
+        "web-search": "Web araması",
+        "strands": "Strands motoru",
+        "tools": "Araçlar",
+        "stt": "Konuşmadan metne",
+        "tts": "Metinden konuşmaya",
+        "voice-mode": "Ses modu",
+        "voice-cloning": "Ses klonlama"
+      },
+      "grantViaKinds": {
+        "user": "doğrudan yetki",
+        "group": "grup"
+      }
     },
     "audit": {
       "title": "Güvenlik denetim günlüğü",
@@ -2012,13 +2270,60 @@
       "save": "Kaydet",
       "saving": "Kaydediliyor…",
       "saved": "E-posta ayarları kaydedildi.",
-      "saveFailed": "E-posta ayarları kaydedilemedi."
+      "saveFailed": "E-posta ayarları kaydedilemedi.",
+      "security": {
+        "starttls": "STARTTLS (bağlantı noktası 587)",
+        "tls": "TLS (bağlantı noktası 465)",
+        "none": "Yok (yalnızca güvenilir ağ)"
+      },
+      "templateTitle": "E-posta görünümü",
+      "templateHint": "Haber özetleri ve bildirim e-postaları için açık veya koyu bir şablon seçin.",
+      "themeLabel": "E-posta şablonu",
+      "themeLight": "Açık",
+      "themeDark": "Koyu",
+      "previewTitle": "Şablon önizlemesi",
+      "previewLoading": "Önizleme yükleniyor…",
+      "previewFailed": "E-posta önizlemesi yüklenemedi.",
+      "previewHeading": "Haber özetiniz",
+      "previewIntro": "Günlük haber e-postanızın önizlemesi.",
+      "previewMarkdown": "## Bugünün öne çıkanları\n\n- Teknoloji ve araştırma güncellemeleri\n- Seçtiğiniz kaynaklardan haberler\n\n**Özet:** Günlük haberleriniz okumaya hazır.",
+      "previewLinkLabel": "Sonucu aç"
+    },
+    "modelAccess": {
+      "title": "Model indirmeleri",
+      "description": "Tüm etkin kullanıcıların Ollama ve Hugging Face tarayıcısından model çekmesine izin verin. Yöneticiler her zaman model indirebilir.",
+      "saved": "Model indirme erişimi güncellendi",
+      "saveFailed": "Model indirme erişimi güncellenemedi"
+    },
+    "ollamaProvider": {
+      "title": "Ollama sağlayıcısı",
+      "description": "Kapalıyken uygulama Ollama'yı tamamen denetlemeyi durdurur — sağlık kontrolü, uyarı yok. Uç nokta, Ollama uyumlu herhangi bir ağ geçidini gösterebilir.",
+      "saved": "Ollama sağlayıcı ayarları kaydedildi",
+      "saveFailed": "Ollama sağlayıcı ayarları kaydedilemedi",
+      "baseUrlLabel": "Ollama uç nokta URL'si"
+    },
+    "strandsAccess": {
+      "title": "Strands motoru",
+      "description": "Yerleşik Strands ajanını kimlerin kullanabileceğini seçin. Her oturumun özel çalışma alanındaki dosyaları okuyup düzenleyebilir, ancak kabuk komutları çalıştıramaz.",
+      "saved": "Strands erişimi güncellendi",
+      "saveFailed": "Strands erişimi güncellenemedi",
+      "lockedByEnv": "LIBRE_STRANDS_ACCESS ortam değişkeniyle sabitlendi.",
+      "modes": {
+        "disabled": "Kapalı",
+        "admins": "Yöneticiler",
+        "all-users": "Tüm kullanıcılar"
+      }
+    },
+    "agentCliAccess": {
+      "title": "CLI ajan modelleri",
+      "description": "Yöneticiler kurulu Pi, OpenCode, Codex ve Claude Code araçlarını sohbet modelleri olarak kullanabilir. Bunlar Work korumalı alanlarının dışında, ana makinede çalışır.",
+      "lockedByEnv": "AGENT_CLI_MODELS_ENABLED ortam değişkeniyle sabitlendi."
     }
   },
   "usageAnalytics": {
     "eyebrow": "Yönetim",
     "title": "Sağlayıcı Kullanımı",
-    "description": "Bu örnekteki etkin eklentiler genelinde giden API çağrılarını ve model tüketimini takip edin.",
+    "description": "Bu örnekteki sağlayıcıların ve ajanların model isteklerini ve kullanımını izleyin.",
     "days": "{{count}} gün",
     "refresh": "Kullanımı yenile",
     "loadFailed": "Sağlayıcı kullanımı yüklenemedi.",
@@ -2065,7 +2370,7 @@
       "notCharted": "Bu modeli grafiğe yüklemek için seçin"
     },
     "providers": {
-      "title": "Etkin eklenti trafiği",
+      "title": "Sağlayıcı ve ajan trafiği",
       "description": "Sağlayıcıya göre istek hacmi, güvenilirlik ve yanıt süresi.",
       "share": "Çağrıların %{{percent}} kadarı",
       "failures": "{{count}} başarısız veya iptal edilmiş",
@@ -2083,7 +2388,7 @@
     },
     "empty": {
       "title": "Henüz sağlayıcı çağrısı yok",
-      "description": "Etkin bir eklenti sohbet, Work, gömme, görüntü, konuşma, ses veya video isteklerini işledikten sonra çağrılar burada görünecektir."
+      "description": "Bir sağlayıcı veya ajan sohbet, Work, gömme, görüntü, konuşma, ses veya video isteklerini işledikten sonra istekler burada görünür."
     },
     "privacyNote": "Kullanım, sunucuda giden eklenti sınırında ölçülür. Alcore; sağlayıcı, model, zamanlama, durum ve bildirilen sayaçları saklar—asla istemleri, yanıtları, uç noktaları, kimlik bilgilerini veya sağlayıcı hata gövdelerini saklamaz. Token toplamları yalnızca sağlayıcının kullanım meta verilerini döndürdüğü çağrıları içerir.",
     "heatmap": {
@@ -2095,6 +2400,14 @@
       "less": "Az",
       "more": "Çok",
       "yearTotal": "Son bir yılda {{formatted}} çağrı"
+    },
+    "agents": {
+      "title": "Ajanlar",
+      "description": "CLI ajanlarına ve Strands motoruna yapılan çağrılar.",
+      "noCalls": "Bu dönemde kayıtlı çağrı yok",
+      "unreported": "Token bildirilmedi",
+      "topModels": "En çok kullanılan modeller",
+      "legacy": "Bu sunucu tam bir ajan dökümü sağlamıyor. Mevcut ajan kayıtları aşağıda gösteriliyor."
     }
   },
   "systemPage": {
@@ -2309,7 +2622,11 @@
       "harmful": "Zararlı",
       "formatting": "Biçimlendirme"
     },
-    "feedbackComment": "Yorum ekle…"
+    "feedbackComment": "Yorum ekle…",
+    "user": "Kullanıcı",
+    "feedbackFailed": "Geri bildiriminiz kaydedilemedi",
+    "openImage": "{{number}}. görseli aç",
+    "uploadedImageAlt": "Yüklenen görsel {{number}}"
   },
   "imageGallery": {
     "title": "Görsel Galerisi",
@@ -2321,7 +2638,8 @@
     "deleteSuccess": "Görsel silindi",
     "deleteFailed": "Görsel silinemedi",
     "loadMore": "Daha Fazla Yükle ({{current}}/{{total}})",
-    "loadFailed": "Galeri yüklenemedi"
+    "loadFailed": "Galeri yüklenemedi",
+    "downloadFailed": "Görsel indirilemedi"
   },
   "imageGeneration": {
     "title": "Görsel Oluştur",
@@ -2397,7 +2715,10 @@
       "image": "Görüntüler",
       "video": "Videolar",
       "audio": "Ses"
-    }
+    },
+    "deleteConfirmTitle": "Bu öğe silinsin mi?",
+    "deleteConfirmDescription": "Oluşturulan medya kalıcı olarak silinecek.",
+    "previewFailed": "Önizleme kullanılamıyor"
   },
   "errorBoundary": {
     "title": "Bir şeyler yanlış gitti",
@@ -2475,7 +2796,8 @@
     "previousVersion": "Önceki sürüm",
     "nextVersion": "Sonraki sürüm",
     "print": "Print",
-    "exportCsv": "Export CSV"
+    "exportCsv": "Export CSV",
+    "resizePanel": "Paneli yeniden boyutlandır"
   },
   "personaImportExport": {
     "title": "Personaları İçe ve Dışa Aktar",
@@ -2513,7 +2835,10 @@
     "generation": "Üretim:",
     "modelLoad": "Model yükleme:",
     "totalTime": "Toplam süre:",
-    "generatedAt": "Oluşturulma zamanı:"
+    "generatedAt": "Oluşturulma zamanı:",
+    "notAvailable": "Yok",
+    "tokenCount": "{{tokens}} token",
+    "tokensPerSecond": "{{value}} t/sn"
   },
   "userMenu": {
     "loggedOut": "Başarıyla çıkış yapıldı",
@@ -2572,7 +2897,9 @@
       "httpWarning": "HTTP, kimlik bilgilerini veya trafiği şifrelemez. Yalnızca güvenilir bir ağda kullanın.",
       "invalidBaseUrl": "Temel URL'ler bir sorgu dizesi veya parça içeremez.",
       "invalidApiPath": "/ ile başlamalı ve URL, sorgu, parça veya .. segmenti içermemelidir",
-      "tooLong": "Değer çok uzun"
+      "tooLong": "Değer çok uzun",
+      "resetConfirmTitle": "Varsayılanlara sıfırlansın mı?",
+      "resetConfirmDescription": "Bu işlem, API anahtarları ve diğer kimlik bilgileri dahil {{name}} için saklanan tüm değerleri siler. Bu işlem geri alınamaz."
     }
   },
   "huggingface": {
@@ -2592,7 +2919,10 @@
   },
   "demoMode": {
     "title": "Demo modu",
-    "github": "GitHub"
+    "github": "GitHub",
+    "defaultMessage": "Bu, yalnızca sunum amaçlı bir demo sürümüdür. Ollama arka ucu bağlı değil.",
+    "viewOnGithub": "GitHub'da görüntüle",
+    "dismiss": "Kapat"
   },
   "libreClaw": {
     "title": "Ajanlar",
@@ -2755,8 +3085,8 @@
       "status": "Durum: {{status}}"
     },
     "landing": {
-      "title": "Yeni çalışma görevi başlat",
-      "description": "Yerel bir modele veya yapılandırılmış bir sağlayıcının modeline kalıcı ve yalıtılmış bir çalışma alanı verin. Model dosyaları inceleyebilir, araçları çalıştırabilir ve geri döndüğünüzde kaldığı yerden devam edebilir.",
+      "title": "Ne üzerinde çalışmak istersiniz?",
+      "description": "Bir görev tanımlayın. Modeliniz kendi çalışma alanına sahip olur.",
       "isolated": "Yalıtılmış",
       "isolatedBody": "Her görevin kendine ait kapsayıcısı ve dosyaları vardır.",
       "durable": "Kalıcı",
@@ -2785,7 +3115,11 @@
         "attachUnreadable": "\"{{name}}\" could not be attached (empty or binary).",
         "attachTooMany": "Only {{max}} files can be attached at once.",
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
-      }
+      },
+      "engine": "Motor",
+      "libreModels": "Libre WebUI modelleri",
+      "strandsDisabled": "Strands motoru hesabınız için kullanılamıyor.",
+      "modelLabel": "Model"
     },
     "conversation": {
       "ready": "Çalışma alanı hazır",
@@ -2825,8 +3159,18 @@
         "checksPending": "Bekleyen kontroller",
         "stallNudges": "Takılma uyarıları",
         "ambiguityNudges": "Yeniden hizalama uyarıları",
-        "stoppedBy": "Durduran"
-      }
+        "stoppedBy": "Durduran",
+        "reasons": {
+          "round": "tur sınırı",
+          "toolCall": "araç çağrısı sınırı",
+          "approvalTimeout": "onay zaman aşımı",
+          "computerStall": "bilgisayar takıldı"
+        }
+      },
+      "skillTraceSavedWorked": "Not edildi: işe yaradı",
+      "skillTraceSavedFailed": "Not edildi: başarısız oldu",
+      "connectionClosed": "Canlı Çalışma bağlantısı kapandı.",
+      "reconnectingBackground": "Canlı güncellemeler arka planda yeniden bağlanıyor."
     },
     "runtime": {
       "unavailable": "Çalışma ortamı kullanılamıyor",
@@ -2834,7 +3178,7 @@
       "readyOllama": "Docker hazır",
       "readyPlugin": "Docker + eklenti hazır",
       "readyHybrid": "Docker + modeller hazır",
-      "reason": "Docker ve kullanılabilir bir Ollama ya da eklenti model sağlayıcısı gereklidir."
+      "reason": "Bir Work çalışma ortamı ve kullanılabilir model sağlayıcısı gereklidir."
     },
     "workspace": {
       "label": "Çalışma alanı görünümleri",
@@ -2869,7 +3213,11 @@
       "changes": "Değişiklikler",
       "changesSince": "Son turdan bu yana nelerin değiştiği",
       "diffLabel": "Son turdan bu yana değişiklikler: {{path}}",
-      "diffFolded": "{{count}} değişmemiş satır"
+      "diffFolded": "{{count}} değişmemiş satır",
+      "diffAdded": "Eklendi",
+      "diffRemoved": "Kaldırıldı",
+      "unsavedChanges": "kaydedilmemiş değişiklikler",
+      "editingLocked": "Düzenleme, tur bittiğinde açılır."
     },
     "activity": {
       "empty": "Komutlar, dosya işlemleri ve araç sonuçları burada görünür.",
@@ -2880,7 +3228,9 @@
         "toolCall": "Araç çağrısı",
         "toolResult": "Araç sonucu",
         "error": "Hata"
-      }
+      },
+      "arguments": "Araç bağımsız değişkenleri",
+      "output": "Araç çıktısı"
     },
     "preview": {
       "command": "İsteğe bağlı başlatma komutu",
@@ -2909,7 +3259,8 @@
       "saveFailed": "Bu dosya kaydedilemedi.",
       "saved": "Dosya kaydedildi.",
       "previewFailed": "Önizleme başlatılamadı.",
-      "previewStopFailed": "Önizleme durdurulamadı."
+      "previewStopFailed": "Önizleme durdurulamadı.",
+      "sendFailed": "Mesaj gönderilemedi."
     },
     "terminal": {
       "connecting": "Yalıtılmış ortamda kabuk açılıyor…",
@@ -2961,7 +3312,18 @@
       "noFilterMatches": "Bu filtreyle eşleşen değişen dosya yok.",
       "allChanges": "Tüm değişiklikler",
       "diffTruncated": "Bu diff kısaltıldı.",
-      "binaryFile": "İkili dosya, metin diffi yok."
+      "binaryFile": "İkili dosya, metin diffi yok.",
+      "statusLabels": {
+        "modified": "Değiştirildi",
+        "added": "Eklendi",
+        "deleted": "Silindi",
+        "renamed": "Yeniden adlandırıldı",
+        "copied": "Kopyalandı",
+        "typeChanged": "Tür değişti",
+        "untracked": "İzlenmiyor"
+      },
+      "stagedState": "hazırlandı",
+      "aheadBehind": "{{ahead}} ileride, {{behind}} geride"
     },
     "hostWorkspace": {
       "hint": "İzole çalışma alanı için boş bırakın veya görevi bu makinedeki bir klasöre yönlendirin.",
@@ -2988,7 +3350,8 @@
       "unmute": "Sesi aç",
       "mute": "Sessize al",
       "finished": "Bu görev tamamlandı. Ekranını geri getirmek için yeniden açın.",
-      "reopenOpen": "Görevi yeniden aç ve ekranı aç"
+      "reopenOpen": "Görevi yeniden aç ve ekranı aç",
+      "teachSaveFailed": "Bu gösterim kaydedilemedi."
     },
     "computerSetup": {
       "title": "Work Computer",
@@ -3004,7 +3367,7 @@
       "label": "Ajan olarak işe al (isteğe bağlı)",
       "none": "Persona yok (tek seferlik görev)",
       "hint": "Bu görev adlandırılmış bir ajana dönüşür: personayı korur, kenar çubuğunda sabit kalır ve her çalıştırmadan sonra tek satırlık durum bildirir.",
-      "description": "Bu görevi kendi kimliğine sahip kalıcı bir ajana dönüştürmek için bir persona seçin."
+      "description": "Bu görevi adlandırılmış bir ajan olarak tutmak için bir persona seçin."
     },
     "agent": {
       "openScreen": "Tam ekran görünümünü aç",
@@ -3025,7 +3388,11 @@
       "approvalsToggleFailed": "Onaylar güncellenemedi.",
       "approvalRuleLine": "Her zaman izinli",
       "approvalRuleDelete": "Kuralı kaldır",
-      "approvalRuleDeleteFailed": "Kural kaldırılamadı."
+      "approvalRuleDeleteFailed": "Kural kaldırılamadı.",
+      "routinesLoadFailed": "Rutinler yüklenemedi.",
+      "skillsLoadFailed": "Öğretilen beceriler yüklenemedi.",
+      "approvalsLoadFailed": "Onay ayarları yüklenemedi.",
+      "routinePaused": "Duraklatıldı"
     },
     "approval": {
       "title": "Onay gerekiyor",
@@ -3033,7 +3400,16 @@
       "allowOnce": "Bir kez izin ver",
       "allowAlways": "Her zaman izin ver",
       "deny": "Reddet",
-      "failed": "Karar gönderilemedi."
+      "failed": "Karar gönderilemedi.",
+      "details": "Eylem ayrıntıları",
+      "fields": {
+        "command": "Komut",
+        "path": "Yol",
+        "from": "Kaynak",
+        "to": "Hedef",
+        "actions": "Eylemler",
+        "recursive": "Özyinelemeli"
+      }
     },
     "idleStopHint": "{{minutes}} dakika etkinlik olmazsa durur.",
     "runs": {
@@ -3045,7 +3421,8 @@
         "needsInput": "Girdi gerekiyor",
         "failed": "Başarısız oldu",
         "cancelled": "İptal edildi"
-      }
+      },
+      "loadFailed": "Çalıştırma geçmişi yüklenemedi."
     },
     "recovery": {
       "pending": "Work, yeni işlemleri kabul etmeden önce {{pending}} korumalı alan temizliğini onaylıyor.",
@@ -3057,6 +3434,17 @@
       "retrySucceeded": "{{attempted}} bekleyen temizlikten {{cleared}} tanesi tamamlandı.",
       "retryPending": "{{attempted}} bekleyen temizlik hâlâ yeniden deneniyor.",
       "retryFailed": "Bekleyen temizlikler yeniden denenemedi."
+    },
+    "computer": {
+      "setupFailed": "Çalışma Bilgisayarı kurulamadı."
+    },
+    "announce": {
+      "completed": "{{title}} tamamlandı.",
+      "needsInput": "{{title}} için girdiniz veya onayınız gerekiyor.",
+      "failed": "{{title}} başarısız oldu.",
+      "cancelled": "{{title}} durduruldu.",
+      "approvalNeeded": "{{tool}} çalıştırmak için {{title}} onayınızı bekliyor.",
+      "untitledTask": "Bu görev"
     }
   },
   "personaBackground": {
@@ -3088,7 +3476,21 @@
     "reselectProvider": "bu modeli sabitlemek için sağlayıcıyı yeniden seçin",
     "unavailable": "kullanılamıyor",
     "unavailableSelections": "Kullanılamayan seçimler",
-    "agentModels": "Ajanlar"
+    "agentModels": "Ajanlar",
+    "searchOllama": "Ollama kütüphanesinde ara...",
+    "searchHuggingFace": "HuggingFace'ta ara...",
+    "searchModels": "Modellerde ara...",
+    "ollamaModels": "Ollama Modelleri",
+    "installed": "Yüklü",
+    "use": "Kullan",
+    "pull": "İndir",
+    "pullRestricted": "Bu örnekte model kurulumu yalnızca yöneticilerle sınırlandırılmıştır.",
+    "adminOnlyPull": "Yalnızca yöneticiler",
+    "showAll": "Tümünü göster ({{total}})",
+    "sources": "Model kaynakları",
+    "defaultModel": "Varsayılan model",
+    "contextSize": "{{size}} bağlam",
+    "via": "{{provider}} üzerinden"
   },
   "whatsNew": {
     "title": "Yenilikler",
@@ -3145,7 +3547,16 @@
     "unpin": "Sabitlemeyi kaldır",
     "pinned": "Sabitlendi",
     "export": "Markdown olarak indir",
-    "sharedWithYou": "Sizinle paylaşıldı"
+    "sharedWithYou": "Sizinle paylaşıldı",
+    "titleLabel": "Not başlığı",
+    "loadFailed": "Yüklenemedi. Tekrar deneyin.",
+    "restoreConfirmTitle": "Bu sürüm geri yüklensin mi?",
+    "restoreConfirmDescription": "Notun metni bu önceki sürümle değiştirilecek.",
+    "deleteAttachmentConfirmTitle": "{{name}} silinsin mi?",
+    "deleteAttachmentConfirmDescription": "Ek, bu nottan kalıcı olarak silinecek.",
+    "attachmentDeleteFailed": "Ek silinemedi",
+    "revokeFailed": "Erişim iptal edilemedi",
+    "sharePermissionLabel": "İzin"
   },
   "calendar": {
     "title": "Takvim",
@@ -3190,7 +3601,22 @@
     "importFailed": "Dosya içe aktarılamadı",
     "importResult": "{{total}} etkinlik içe aktarıldı",
     "importIcs": "İçe aktar",
-    "exportIcs": "Dışa aktar"
+    "exportIcs": "Dışa aktar",
+    "chipStatus": {
+      "automation": "Zamanlanmış otomasyon",
+      "runSucceeded": "Otomasyon çalıştırması başarılı oldu",
+      "runFailed": "Otomasyon çalıştırması başarısız oldu"
+    },
+    "newEventOn": "{{date}} için yeni etkinlik",
+    "showDay": "{{date}} tarihindeki tüm etkinlikleri göster",
+    "deleteEventConfirmTitle": "\"{{title}}\" silinsin mi?",
+    "deleteEventConfirmDescription": "Bu etkinlik kalıcı olarak silinecek.",
+    "deleteRecurringEventConfirmDescription": "Bu yinelenen etkinlik ve tüm tekrarları kalıcı olarak silinecek.",
+    "shareCalendarNamed": "{{name}} takvimini paylaş",
+    "deleteCalendarNamed": "{{name}} takvimini sil",
+    "deleteCalendarConfirmTitle": "\"{{name}}\" takvimi silinsin mi?",
+    "deleteCalendarConfirmDescription": "Takvim ve içindeki etkinlikler kalıcı olarak silinecek.",
+    "calendarDeleteFailed": "Takvim silinemedi"
   },
   "automations": {
     "title": "Otomasyonlar",
@@ -3317,13 +3743,17 @@
         "work-approval": "bir ajan onayınızı beklediğinde",
         "system": "bir sistem bildirimi geldiğinde"
       }
-    }
+    },
+    "deleteConfirmTitle": "\"{{name}}\" silinsin mi?",
+    "deleteConfirmDescription": "Otomasyon ve zamanlaması kalıcı olarak silinecek. Geçmiş çalıştırmalar çalıştırma geçmişinde kalır."
   },
   "home": {
     "active": "etkin",
     "continue": "Devam et",
     "start": "Başla",
-    "explore": "Keşfet"
+    "explore": "Keşfet",
+    "greeting": "{{greeting}}.",
+    "greetingWithName": "{{greeting}}, {{name}}."
   },
   "palette": {
     "empty": "Eşleşme yok.",
@@ -3336,7 +3766,14 @@
     "work": "Çalışma",
     "messages": "Mesajlar",
     "notes": "Notlar",
-    "documents": "Belgeler"
+    "documents": "Belgeler",
+    "searching": "Aranıyor…",
+    "searchFailed": "Çalışma alanı araması başarısız oldu. Yalnızca eşleşen sohbetler ve eylemler gösteriliyor.",
+    "results": "Sonuçlar",
+    "escKey": "esc",
+    "hintNavigate": "Gezin",
+    "hintOpen": "Aç",
+    "hintClose": "Kapat"
   },
   "tabs": {
     "actions": "Sekme eylemleri",
@@ -3540,7 +3977,8 @@
       "button": "Klasörden",
       "missingSkillMd": "Klasörde bir SKILL.md dosyası olmalı",
       "done": "Beceri {{count}} paketlenmiş dosyayla içe aktarıldı"
-    }
+    },
+    "toggleLabel": "{{name}} becerisini etkinleştir"
   },
   "toolsPage": {
     "title": "Araçlar",
@@ -3701,7 +4139,14 @@
     "added": "{{name}} ile paylaşıldı",
     "failed": "Paylaşım başarısız",
     "userNotFound": "Bu adda bir kullanıcı yok",
-    "groupNotFound": "Bu adda bir grup yok"
+    "groupNotFound": "Bu adda bir grup yok",
+    "principalKind": "Bir kullanıcı veya grupla paylaş",
+    "principalName": "Kullanıcı adı veya grup adı",
+    "permission": "İzin",
+    "sharing": "Paylaşım",
+    "loading": "Paylaşımlar yükleniyor",
+    "loadFailed": "Paylaşımlar yüklenemedi",
+    "revokeFailed": "Erişim iptal edilemedi"
   },
   "channels": {
     "title": "Kanallar",
@@ -3760,13 +4205,44 @@
     "toolCalls": {
       "summary": "Kullanılan araçlar ({{total}})",
       "deniedHint": "Değişiklik yapan araçlar kanallarda reddedilir. Bunları bir sohbetten çalıştırın."
-    }
+    },
+    "confirmEdit": "Düzenlemeyi kaydet",
+    "cancelEdit": "Düzenlemeyi iptal et",
+    "reactWith": "{{emoji}} ile tepki ver",
+    "deleteMessageConfirmTitle": "Bu mesaj silinsin mi?",
+    "deleteMessageConfirmDescription": "Mesaj, bu kanaldaki herkes için kaldırılacak.",
+    "unreadCount": "{{total}} okunmamış",
+    "send": "Mesaj gönder",
+    "invite": "Üye davet et",
+    "closeThread": "Konuyu kapat",
+    "removeAttachment": "Eki kaldır",
+    "loadFailed": "Yüklenemedi. Tekrar deneyin.",
+    "editFailed": "Mesaj düzenlenemedi",
+    "deleteMessageFailed": "Mesaj silinemedi",
+    "pinFailed": "Sabitleme değiştirilemedi",
+    "reactFailed": "Tepki kaydedilemedi",
+    "downloadFailed": "Dosya indirilemedi",
+    "removeMemberConfirm": "{{name}} bu kanaldan çıkarılsın mı?",
+    "removeMemberConfirmDescription": "Kanala ve mesajlarına erişimini kaybedecek.",
+    "removeMemberNamed": "{{name}} kanaldan çıkar",
+    "removeMemberFailed": "Üye çıkarılamadı",
+    "leaveConfirm": "{{name}} kanalından ayrılınsın mı?",
+    "leaveConfirmDescription": "Özel bir kanala yeniden katılmak için tekrar davet edilmeniz gerekir.",
+    "leaveFailed": "Kanaldan ayrılamadınız",
+    "joinFailed": "Kanala katılınamadı",
+    "deleteConfirm": "{{name}} silinsin mi?",
+    "deleteConfirmDescription": "Kanal ve tüm mesajları her üye için kalıcı olarak silinecek.",
+    "deleteFailed": "Kanal silinemedi",
+    "saveFailed": "Kanal kaydedilemedi"
   },
   "notifications": {
     "title": "Bildirimler",
     "empty": "Her şey okundu.",
     "markAllRead": "Tümünü okundu işaretle",
-    "markRead": "Okundu işaretle"
+    "markRead": "Okundu işaretle",
+    "titleWithUnread": "Bildirimler ({{unread}} okunmamış)",
+    "unread": "Okunmamış",
+    "loadFailed": "Bildirimler yüklenemedi."
   },
   "voiceMode": {
     "title": "Ses modu",
@@ -3901,7 +4377,12 @@
       "failed": "Başarısız",
       "cancelled": "İptal edildi"
     },
-    "noFeedback": "Henüz geri bildirim yok — veri kümenizi oluşturmak için yanıtları puanlayın."
+    "noFeedback": "Henüz geri bildirim yok — veri kümenizi oluşturmak için yanıtları puanlayın.",
+    "deleteSetConfirmTitle": "\"{{name}}\" silinsin mi?",
+    "deleteSetConfirmDescription": "Değerlendirme seti ve istemleri kalıcı olarak silinecek.",
+    "deleteSetFailed": "Değerlendirme seti silinemedi",
+    "runError": "Hata: {{detail}}",
+    "cancelFailed": "Çalıştırma iptal edilemedi"
   },
   "passwordStrength": {
     "levels": {
@@ -3915,6 +4396,14 @@
       "hasCase": "Büyük ve küçük harf",
       "hasNumber": "En az bir rakam",
       "tooLong": "En fazla 72 bayt"
+    },
+    "requirements": "En az 12 karakter, en fazla 72 UTF-8 bayt kullanın; büyük harf, küçük harf ve bir rakam içermelidir.",
+    "errors": {
+      "minLength": "Şifre en az 12 karakter olmalıdır.",
+      "tooLong": "Şifre en fazla 72 UTF-8 bayt olmalıdır.",
+      "uppercase": "Şifre bir büyük harf içermelidir.",
+      "lowercase": "Şifre bir küçük harf içermelidir.",
+      "number": "Şifre bir rakam içermelidir."
     }
   },
   "connectModels": {
@@ -3933,7 +4422,8 @@
       "enable": "Sağlayıcıyı etkinleştir",
       "enabling": "Etkinleştiriliyor…",
       "enabled": "{{name}} bağlandı — modelleri artık kullanılabilir",
-      "enableFailed": "Sağlayıcı etkinleştirilemedi"
+      "enableFailed": "Sağlayıcı etkinleştirilemedi",
+      "urlLabel": "Sunucu URL'si"
     },
     "cloud": {
       "title": "Bulut API",
@@ -3942,7 +4432,70 @@
       "connect": "Bağlan",
       "connecting": "Bağlanıyor…",
       "connected": "{{name}} bağlandı — modelleri artık kullanılabilir",
-      "saveFailed": "API anahtarı kaydedilemedi"
+      "saveFailed": "API anahtarı kaydedilemedi",
+      "keyLabel": "{{name}} API anahtarı"
+    },
+    "ollama": {
+      "status": {
+        "checking": "Kullanılabilirlik denetleniyor…",
+        "healthy": "Çalışıyor ve yerel modeller için hazır",
+        "offline": "Bu makinede algılanmadı",
+        "disabled": "Devre dışı — hiçbir denetim çalıştırılmayacak"
+      },
+      "recheck": "Tekrar denetle",
+      "enable": "Etkinleştir",
+      "disable": "Ollama denetimini durdur",
+      "enabledToast": "Ollama sağlayıcısı etkinleştirildi",
+      "disabledToast": "Ollama denetimleri devre dışı bırakıldı — Ayarlar'dan yeniden etkinleştirebilirsiniz",
+      "settingsFailed": "Ollama ayarları güncellenemedi",
+      "offlineHint": "ollama.com adresinden Ollama'yı kurun, otomatik olarak algılanacaktır — ya da aşağıdaki seçeneklerden birini kullanın. Ollama kullanmayı düşünmüyorsanız denetimlerini kapatabilirsiniz.",
+      "healthyHint": "Ollama bağlı. Modeller sayfasından bir model çekin, sohbete hazırsınız."
     }
+  },
+  "modelDownload": {
+    "success": "{{name}} indirildi",
+    "failed": "İndirme başarısız: {{error}}",
+    "startFailed": "İndirme başlatılamadı",
+    "cancelled": "İndirme iptal edildi"
+  },
+  "strands": {
+    "title": "Strands",
+    "subtitle": "Libre WebUI modellerinizde çalışan yerleşik ajan motoru.",
+    "subtitleVersion": "Yerleşik ajan motoru, harness {{version}}.",
+    "newSession": "Yeni oturum",
+    "sessions": "Oturumlar",
+    "noSessions": "Henüz oturum yok. Başlamak için bir tane oluşturun.",
+    "empty": "Ajandan çalışma alanındaki dosyaları okumasını veya düzenlemesini isteyin.",
+    "placeholder": "Motordan bir şey yapmasını isteyin…",
+    "model": "Model",
+    "defaultModel": "Varsayılan model",
+    "send": "Gönder",
+    "stop": "Durdur",
+    "reasoning": "muhakeme",
+    "tool": {
+      "running": "Çalışıyor",
+      "done": "Bitti",
+      "failed": "Başarısız"
+    },
+    "cancelled": "İptal edildi",
+    "turnLimit": "Tur sınırında durduruldu.",
+    "messageCount": "Mesajlar: {{count}}",
+    "deleteSession": "Oturumu sil",
+    "deleteConfirm": "\"{{title}}\" ve geçmişi silinsin mi?",
+    "loadFailed": "Strands yüklenemedi.",
+    "createFailed": "Oturum oluşturulamadı.",
+    "deleteFailed": "Oturum silinemedi.",
+    "saveFailed": "Oturum kaydedilemedi.",
+    "turnFailed": "Motor turu tamamlayamadı"
+  },
+  "notFound": {
+    "title": "Sayfa bulunamadı",
+    "description": "Bu sayfa mevcut değil veya taşınmış olabilir."
+  },
+  "themeToggle": {
+    "switchToLight": "Açık moda geç",
+    "switchToDark": "Koyu moda geç",
+    "switchToAmoled": "Saf siyah moda geç",
+    "switchToCelestial": "Göksel moda geç"
   }
 }

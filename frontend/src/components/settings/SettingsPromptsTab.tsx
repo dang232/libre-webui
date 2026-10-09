@@ -27,7 +27,13 @@ import {
   Upload,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { Button, IconAction, ModalShell } from '@/components/ui';
+import {
+  Button,
+  EmptyState,
+  IconAction,
+  LoadingState,
+  ModalShell,
+} from '@/components/ui';
 import { SettingsTabHeader } from './SettingsTabHeader';
 import { PromptModal } from '@/components/prompts/PromptModal';
 import { WorkspaceTemplateGrid } from './WorkspaceTemplateGrid';
@@ -237,31 +243,29 @@ export const SettingsPromptsTab: React.FC = () => {
         }
       />
 
-      {loading ? null : prompts.length === 0 ? (
-        <div className='px-3 py-16 text-center'>
-          <BookText className='mx-auto mb-3 h-6 w-6 text-gray-300 dark:text-dark-400' />
-          <p className='text-sm text-gray-500 dark:text-dark-500'>
-            {t('promptsPage.empty')}
-          </p>
-          <p className='mx-auto mt-2 max-w-md text-[13px] leading-6 text-gray-400 dark:text-dark-500'>
-            {t('promptsPage.emptyHint')}
-          </p>
-        </div>
+      {loading ? (
+        <LoadingState srOnly />
+      ) : prompts.length === 0 ? (
+        <EmptyState
+          icon={BookText}
+          title={t('promptsPage.empty')}
+          description={t('promptsPage.emptyHint')}
+        />
       ) : (
         <div className='space-y-2'>
           {prompts.map(prompt => (
             <div
               key={prompt.id}
               data-testid='prompt-row'
-              className='rounded-2xl border border-black/[0.06] bg-white/60 px-4 py-3 dark:border-white/[0.07] dark:bg-dark-100/60'
+              className='rounded-2xl border border-black/6 bg-white/60 px-4 py-3 dark:border-white/[0.07] dark:bg-dark-100/60'
             >
               <div className='flex flex-wrap items-start gap-3'>
-                <div className='min-w-0 flex-[1_1_16rem] [overflow-wrap:anywhere]'>
+                <div className='min-w-0 flex-[1_1_16rem] wrap-anywhere'>
                   <div className='flex flex-wrap items-center gap-2'>
                     <p className='max-w-full text-[14px] font-medium text-gray-900 dark:text-dark-900'>
                       {prompt.title}
                     </p>
-                    <code className='max-w-full rounded-md bg-black/[0.04] px-1.5 py-0.5 text-[11px] text-gray-500 dark:bg-white/[0.06] dark:text-dark-500'>
+                    <code className='max-w-full rounded-md bg-black/4 px-1.5 py-0.5 text-[11px] text-gray-500 dark:bg-white/6 dark:text-dark-500'>
                       /{prompt.slug}
                     </code>
                     <span className='text-[11px] text-gray-400 dark:text-dark-500'>
@@ -279,7 +283,7 @@ export const SettingsPromptsTab: React.FC = () => {
                     {prompt.tags.map(tag => (
                       <span
                         key={tag}
-                        className='max-w-full rounded-full bg-black/[0.04] px-2 py-0.5 text-[10px] text-gray-500 dark:bg-white/[0.06] dark:text-dark-500'
+                        className='max-w-full rounded-full bg-black/4 px-2 py-0.5 text-[10px] text-gray-500 dark:bg-white/6 dark:text-dark-500'
                       >
                         {tag}
                       </span>

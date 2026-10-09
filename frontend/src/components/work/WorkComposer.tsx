@@ -24,16 +24,18 @@ import {
   Square,
   X,
 } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ModelSelector } from '@/components/ModelSelector';
+import { ThinkingSelector } from '@/components/ThinkingSelector';
 import {
   composerSendButtonClass,
   composerSurfaceClass,
 } from '@/components/composer/composerStyles';
-import { Button } from '@/components/ui';
+import { Button, Select } from '@/components/ui';
 import { useDictation } from '@/hooks/useDictation';
-import type { ChatModel } from '@/types';
+import type { ChatModel, OllamaModel, ThinkingPreference } from '@/types';
+import { ollamaApi } from '@/utils/api';
 import { workModelSelectionKey, type WorkModelOption } from '@/types/work';
 import { cn } from '@/utils';
 import {
@@ -43,11 +45,19 @@ import {
   type WorkAttachmentDraft,
   type WorkAttachmentRejectionNote,
 } from '@/utils/workAttachments';
+import {
+  baseWorkModel,
+  selectWorkEngine,
+  type WorkEngine,
+} from '@/utils/workModels';
 
 interface WorkComposerProps {
   models: WorkModelOption[];
   selectorModels: ChatModel[];
-  modelKey: string;
+  selectedModel?: WorkModelOption;
+  engine: WorkEngine;
+  /** Whether this account may run Work on the Strands engine. */
+  strandsEnabled: boolean;
   running: boolean;
   loading: boolean;
   variant?: 'landing' | 'task';
@@ -60,7 +70,16 @@ interface WorkComposerProps {
   initialMessage?: string;
   remoteDisclosureDismissed: boolean;
   remoteDisclosureSaving: boolean;
-  onModelChange: (modelKey: string) => void | Promise<void>;
+  /** This composer's own reasoning choice; null means the default applies. */
+  think?: ThinkingPreference | null;
+  /** What the default resolves to: the pinned or global chat setting. */
+  inheritedThink?: ThinkingPreference | null;
+  onThinkChange?: (think: ThinkingPreference | null) => void;
+  onModelChange: (
+    model: WorkModelOption,
+    engine?: WorkEngine
+  ) => void | Promise<void>;
+  onEngineChange: (engine: WorkEngine) => void | Promise<void>;
   onDismissRemoteDisclosure: () => Promise<boolean>;
   onModelsRefresh: () => void | Promise<void>;
   onSubmit: (message: string, files: WorkAttachmentDraft[]) => Promise<boolean>;
@@ -82,6 +101,9 @@ const workSelectorModelLabel = (model: ChatModel): string => {
 
   return readableModelName;
 };
+
+const workSelectorModelId = (model: OllamaModel): string =>
+  baseWorkModel(model.name);
 
 const modelFromOption = (option: WorkModelOption): ChatModel => {
   const providerPrefix = `${option.model} · `;
@@ -106,7 +128,9 @@ const modelFromOption = (option: WorkModelOption): ChatModel => {
 export function WorkComposer({
   models,
   selectorModels,
-  modelKey,
+  selectedModel,
+  engine,
+  strandsEnabled,
   running,
   loading,
   variant = 'task',
@@ -116,7 +140,11 @@ export function WorkComposer({
   initialMessage,
   remoteDisclosureDismissed,
   remoteDisclosureSaving,
+  think,
+  inheritedThink,
+  onThinkChange,
   onModelChange,
+  onEngineChange,
   onDismissRemoteDisclosure,
   onModelsRefresh,
   onSubmit,
@@ -136,6 +164,7 @@ export function WorkComposer({
     appliedInitialRef.current = initialMessage;
     setMessage(initialMessage);
   }, [initialMessage, message]);
+  const engineLabelId = useId();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   // Dictated text appends to whatever was typed before the mic started.
   const dictationBaseRef = useRef('');
@@ -198,16 +227,63 @@ export function WorkComposer({
   };
   const desktopModelTriggerRef = useRef<HTMLButtonElement>(null);
   const mobileModelTriggerRef = useRef<HTMLButtonElement>(null);
-  const selectedModel = models.find(item => item.key === modelKey);
+  const modelKey = selectedModel
+    ? selectWorkEngine(selectedModel, 'libre').key
+    : '';
   const remoteProvider = selectedModel?.remote === true;
   const landing = variant === 'landing';
   const effectiveSelectorModels = useMemo(() => {
-    const availableValues = new Set(selectorModels.map(workSelectorModelValue));
-    const persistedModels = models
-      .filter(option => !availableValues.has(option.key))
-      .map(modelFromOption);
-    return [...selectorModels, ...persistedModels];
+    const available = new Map(
+      selectorModels.map(model => [workSelectorModelValue(model), model])
+    );
+    return models.map(
+      option => available.get(option.key) ?? modelFromOption(option)
+    );
   }, [models, selectorModels]);
+
+  // The reasoning control shows where thinking means something, as in Chat:
+  // a plugin model answers for itself, and Ollama is asked about its own
+  // models. Where Ollama says nothing the control is offered, not hidden.
+  const selectedEntry = effectiveSelectorModels.find(
+    model => workSelectorModelValue(model) === modelKey
+  );
+  const ollamaModelName =
+    selectedEntry && !selectedEntry.isPlugin
+      ? baseWorkModel(selectedEntry.name)
+      : undefined;
+  const [ollamaThinking, setOllamaThinking] = useState<{
+    model: string;
+    supported?: boolean;
+  } | null>(null);
+  useEffect(() => {
+    if (!ollamaModelName || !onThinkChange) return;
+    let cancelled = false;
+    void ollamaApi
+      .getModelDefaults(ollamaModelName)
+      .then(response => {
+        if (cancelled || !response.success || !response.data) return;
+        setOllamaThinking({
+          model: ollamaModelName,
+          supported: response.data.supportsThinking,
+        });
+      })
+      .catch(() => {
+        // A model that cannot be inspected keeps the control available.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [ollamaModelName, onThinkChange]);
+  const thinkingAvailable = Boolean(
+    onThinkChange &&
+    selectedEntry &&
+    (selectedEntry.isPlugin
+      ? selectedEntry.reasoningSupport !== false
+      : !(
+          ollamaThinking?.model === ollamaModelName &&
+          ollamaThinking?.supported === false
+        ))
+  );
 
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -223,9 +299,10 @@ export function WorkComposer({
         mobileModelTriggerRef.current,
       ];
       const visibleTrigger = triggers.find(
-        trigger => trigger && trigger.offsetParent !== null
+        trigger => trigger && !trigger.disabled && trigger.offsetParent !== null
       );
-      (visibleTrigger || desktopModelTriggerRef.current)?.focus();
+      if (visibleTrigger) visibleTrigger.focus();
+      else if (!textareaRef.current?.disabled) textareaRef.current?.focus();
     }
   };
 
@@ -235,7 +312,11 @@ export function WorkComposer({
       models.find(
         item => item.providerType === 'ollama' && item.model === value
       );
-    if (option) void onModelChange(option.key);
+    if (option) void onModelChange(option);
+  };
+
+  const changeEngine = (next: WorkEngine) => {
+    if (next === 'libre' || strandsEnabled) void onEngineChange(next);
   };
 
   const submit = async () => {
@@ -283,6 +364,8 @@ export function WorkComposer({
             .startsWith(mention.query.trimStart().toLowerCase())
         );
   const mentionOpen = mention !== null && mentionMatches.length > 0;
+  const mentionListId = `${useId()}-mention-list`;
+  const mentionOptionId = (index: number) => `${mentionListId}-${index}`;
   const applyMention = (agent: { id: string; name: string }) => {
     if (!mention) return;
     const next = `${message.slice(0, mention.start)}@${agent.name} ${message.slice(mention.end)}`;
@@ -297,6 +380,43 @@ export function WorkComposer({
     });
   };
 
+  const engineSelector = (strandsEnabled || engine === 'strands') && (
+    <div
+      className={cn(
+        landing
+          ? 'min-w-0 flex-[1_1_11rem]'
+          : 'mb-2 flex flex-wrap items-center gap-2 px-2'
+      )}
+    >
+      <span
+        id={engineLabelId}
+        className={cn(
+          'text-ink-muted',
+          landing ? 'mb-1.5 block text-[11px] font-medium' : 'text-xs'
+        )}
+      >
+        {t('work.composer.engine')}
+      </span>
+      <Select
+        aria-labelledby={engineLabelId}
+        data-testid='work-engine-select'
+        value={engine}
+        onChange={event => changeEngine(event.target.value as WorkEngine)}
+        disabled={running || loading}
+        options={[
+          { value: 'libre', label: 'Libre WebUI' },
+          { value: 'strands', label: 'Strands' },
+        ]}
+        className={cn(
+          'motion-reduce:transition-none',
+          landing
+            ? 'h-11 min-h-[44px] min-w-0 bg-surface-subtle px-3 py-2 text-[13px]'
+            : 'h-9 min-h-[44px] max-w-52 py-1 text-sm sm:min-h-9'
+        )}
+      />
+    </div>
+  );
+
   return (
     <div
       data-testid={landing ? 'work-landing-composer' : 'work-task-composer'}
@@ -305,7 +425,7 @@ export function WorkComposer({
         'relative shrink-0',
         landing
           ? 'mt-6 w-full'
-          : 'border-t border-line bg-surface/95 px-3 py-3 backdrop-blur md:px-5'
+          : 'border-t border-line bg-surface/95 px-3 py-3 backdrop-blur-sm md:px-5'
       )}
     >
       {remoteProvider && !remoteDisclosureDismissed && (
@@ -319,13 +439,13 @@ export function WorkComposer({
             data-testid='work-provider-disclosure-popover'
             aria-labelledby='work-provider-disclosure-title'
             aria-live='polite'
-            className='relative rounded-2xl border border-warning-500/40 bg-surface-overlay p-3 pe-10 shadow-overlay backdrop-blur dark:border-warning-500/45'
+            className='relative rounded-2xl border border-warning-500/40 bg-surface-overlay p-3 pe-10 shadow-overlay backdrop-blur-sm dark:border-warning-500/45'
           >
             <button
               type='button'
               onClick={() => void dismissRemoteDisclosure()}
               disabled={remoteDisclosureSaving}
-              className='absolute end-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-warning-500/20 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warning-500 disabled:cursor-wait disabled:opacity-50'
+              className='absolute inset-e-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-warning-500/20 hover:text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-warning-500 disabled:cursor-wait disabled:opacity-50'
               aria-label={t('work.composer.remoteDismissLabel', {
                 defaultValue: 'Dismiss remote provider notice',
               })}
@@ -385,17 +505,20 @@ export function WorkComposer({
       >
         {mentionOpen && (
           <div
+            id={mentionListId}
             data-testid='work-mention-menu'
             role='listbox'
             aria-label={t('work.composer.mentionAgents', {
               defaultValue: 'Mention an agent',
             })}
-            className='absolute bottom-full start-2 z-40 mb-2 w-64 overflow-hidden rounded-xl border border-line bg-surface-overlay shadow-overlay backdrop-blur'
+            className='absolute bottom-full inset-s-2 z-40 mb-2 w-64 overflow-hidden rounded-xl border border-line bg-surface-overlay shadow-overlay backdrop-blur-sm'
           >
             {mentionMatches.slice(0, 6).map((agent, index) => (
               <button
                 key={agent.id}
+                id={mentionOptionId(index)}
                 type='button'
+                tabIndex={-1}
                 role='option'
                 aria-selected={index === mentionIndex}
                 data-testid='work-mention-option'
@@ -421,6 +544,7 @@ export function WorkComposer({
           data-testid='work-composer-surface'
           className={cn(
             composerSurfaceClass,
+            landing && 'p-3 sm:p-4',
             dragActive && 'ring-2 ring-primary-500'
           )}
           onDragOver={event => {
@@ -492,6 +616,18 @@ export function WorkComposer({
             ref={textareaRef}
             data-testid='work-composer-input'
             dir='auto'
+            aria-label={t('work.composer.placeholder', {
+              defaultValue: 'Describe what you want to build or change…',
+            })}
+            // The combobox role only exists while the @-menu does, so the
+            // field stays a plain textbox the rest of the time.
+            role={mentionOpen ? 'combobox' : undefined}
+            aria-autocomplete={mentionOpen ? 'list' : undefined}
+            aria-expanded={mentionOpen ? true : undefined}
+            aria-controls={mentionOpen ? mentionListId : undefined}
+            aria-activedescendant={
+              mentionOpen ? mentionOptionId(mentionIndex) : undefined
+            }
             value={message}
             onChange={event => {
               setMessage(event.target.value);
@@ -539,55 +675,200 @@ export function WorkComposer({
             disabled={disabled}
             rows={1}
             className={cn(
-              'm-0 block max-h-[160px] w-full resize-none overflow-y-auto rounded-none border-0 bg-transparent px-2 pt-1.5 pb-2 text-[0.9375rem] leading-relaxed text-ink shadow-none outline-none placeholder:text-ink-subtle focus:border-0 focus:bg-transparent focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60',
-              landing ? 'min-h-20' : 'min-h-9'
+              'm-0 block max-h-[160px] w-full resize-none overflow-y-auto rounded-none border-0 bg-transparent px-2 pt-1.5 pb-2 text-[0.9375rem] leading-relaxed text-ink shadow-none outline-hidden placeholder:text-ink-subtle focus:border-0 focus:bg-transparent focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60',
+              landing ? 'min-h-28 px-1 pt-1 text-base' : 'min-h-9'
             )}
             placeholder={t('work.composer.placeholder', {
               defaultValue: 'Describe what you want to build or change…',
             })}
           />
 
-          <div className='mt-1 flex min-w-0 items-center gap-2'>
-            <div className='hidden min-w-0 flex-1 sm:block'>
-              <ModelSelector
-                models={effectiveSelectorModels}
-                selectedModel={modelKey}
-                onModelChange={event => changeModel(event.target.value)}
-                onModelsRefresh={() => void onModelsRefresh()}
-                getModelValue={workSelectorModelValue}
-                getModelLabel={workSelectorModelLabel}
-                getModelTitle={model => model.name}
-                triggerRef={desktopModelTriggerRef}
-                triggerTestId='work-model-selector-trigger'
-                selectTestId='work-model-select'
-                ariaLabel={t('work.composer.model', {
-                  defaultValue: 'Work model',
-                })}
-                disabled={running || models.length === 0}
-                className='min-w-0 w-full max-w-[230px]'
-                compact
-              />
+          {!landing && engineSelector}
+          <div
+            data-testid='work-composer-toolbar'
+            className={cn(
+              landing
+                ? 'mt-3 flex min-w-0 flex-wrap items-end gap-3 border-t border-line/60 pt-3'
+                : 'mt-1 flex min-w-0 items-center gap-2'
+            )}
+          >
+            <div
+              className={
+                landing
+                  ? 'flex min-w-0 flex-[1_1_24rem] flex-wrap items-end gap-3'
+                  : 'contents'
+              }
+            >
+              {landing && engineSelector}
+              <div
+                className={landing ? 'min-w-0 flex-[1_1_13rem]' : 'contents'}
+              >
+                {landing && (
+                  <span className='mb-1.5 block text-[11px] font-medium text-ink-muted'>
+                    {t('work.composer.modelLabel')}
+                  </span>
+                )}
+                <>
+                  <div className='hidden min-w-0 flex-1 sm:block'>
+                    <ModelSelector
+                      models={effectiveSelectorModels}
+                      selectedModel={modelKey}
+                      onModelChange={event => changeModel(event.target.value)}
+                      onModelsRefresh={() => void onModelsRefresh()}
+                      getModelValue={workSelectorModelValue}
+                      getModelId={workSelectorModelId}
+                      getModelTitle={model => model.name}
+                      triggerRef={desktopModelTriggerRef}
+                      triggerTestId='work-model-selector-trigger'
+                      selectTestId='work-model-select'
+                      ariaLabel={t('work.composer.model', {
+                        defaultValue: 'Work model',
+                      })}
+                      disabled={running || models.length === 0}
+                      className={cn(
+                        'min-w-0 w-full',
+                        landing
+                          ? '[&>button]:h-11 [&>button]:min-h-[44px] [&>button]:px-3'
+                          : 'max-w-[230px]'
+                      )}
+                      compact
+                    />
+                  </div>
+
+                  <div className='min-w-0 flex-1 sm:hidden'>
+                    <ModelSelector
+                      models={effectiveSelectorModels}
+                      selectedModel={modelKey}
+                      onModelChange={event => changeModel(event.target.value)}
+                      onModelsRefresh={() => void onModelsRefresh()}
+                      getModelValue={workSelectorModelValue}
+                      getModelId={workSelectorModelId}
+                      getModelTitle={model => model.name}
+                      triggerRef={mobileModelTriggerRef}
+                      triggerTestId='work-model-selector-trigger-mobile'
+                      selectTestId='work-model-select-mobile'
+                      ariaLabel={t('work.composer.model', {
+                        defaultValue: 'Work model',
+                      })}
+                      disabled={running || models.length === 0}
+                      className={cn(
+                        'min-w-0 w-full',
+                        landing &&
+                          '[&>button]:h-11 [&>button]:min-h-[44px] [&>button]:px-3'
+                      )}
+                      compact
+                    />
+                  </div>
+                </>
+              </div>
             </div>
 
-            <div className='min-w-0 flex-1 sm:hidden'>
-              <ModelSelector
-                models={effectiveSelectorModels}
-                selectedModel={modelKey}
-                onModelChange={event => changeModel(event.target.value)}
-                onModelsRefresh={() => void onModelsRefresh()}
-                getModelValue={workSelectorModelValue}
-                getModelLabel={workSelectorModelLabel}
-                getModelTitle={model => model.name}
-                triggerRef={mobileModelTriggerRef}
-                triggerTestId='work-model-selector-trigger-mobile'
-                selectTestId='work-model-select-mobile'
-                ariaLabel={t('work.composer.model', {
-                  defaultValue: 'Work model',
-                })}
-                disabled={running || models.length === 0}
-                className='min-w-0 w-full'
-                compact
-              />
+            <div
+              className={cn(
+                'flex shrink-0 items-center gap-2',
+                landing && 'ms-auto'
+              )}
+            >
+              {thinkingAvailable && onThinkChange && (
+                <div data-testid='work-thinking-selector'>
+                  <ThinkingSelector
+                    value={think}
+                    inheritedValue={inheritedThink}
+                    onChange={onThinkChange}
+                  />
+                </div>
+              )}
+              {dictation.supported && (
+                <Button
+                  data-testid='work-voice-input'
+                  type='button'
+                  variant='ghost'
+                  size='sm'
+                  disabled={disabled}
+                  aria-pressed={dictationActive}
+                  className={cn(
+                    'flex h-9 w-9 shrink-0 touch-manipulation items-center justify-center rounded-full p-0 transition-colors duration-150',
+                    landing && 'h-11 w-11 min-h-[44px] min-w-[44px]',
+                    dictationActive
+                      ? 'animate-pulse bg-red-50 text-red-500 dark:bg-red-900/20'
+                      : 'text-ink-muted hover:bg-surface-subtle hover:text-ink'
+                  )}
+                  title={
+                    dictationActive
+                      ? t('chat.input.voiceStop')
+                      : t('chat.input.voiceInput')
+                  }
+                  aria-label={
+                    dictationActive
+                      ? t('chat.input.voiceStop')
+                      : t('chat.input.voiceInput')
+                  }
+                  onClick={() => void dictation.toggle()}
+                >
+                  {dictation.phase === 'starting' ? (
+                    <Loader2 className='h-4 w-4 animate-spin' />
+                  ) : dictation.phase === 'transcribing' ? (
+                    <Square className='h-4 w-4 fill-current' />
+                  ) : (
+                    <Mic className='h-4 w-4' />
+                  )}
+                </Button>
+              )}
+              {running && (
+                <Button
+                  data-testid='work-cancel-button'
+                  type='button'
+                  variant='ghost'
+                  size='sm'
+                  disabled={loading}
+                  className='flex h-9 w-9 shrink-0 touch-manipulation items-center justify-center rounded-full bg-error-500/15 p-0 text-error-600 transition-colors duration-150 hover:bg-error-500/25 dark:text-error-400'
+                  title={t('work.composer.cancel', { defaultValue: 'Stop' })}
+                  aria-label={t('work.composer.cancel', {
+                    defaultValue: 'Stop',
+                  })}
+                  onClick={() => void onCancel()}
+                >
+                  {loading ? (
+                    <Loader2 className='h-4 w-4 animate-spin' />
+                  ) : (
+                    <Square className='h-4 w-4 fill-current' />
+                  )}
+                </Button>
+              )}
+              {
+                <Button
+                  data-testid='work-submit-button'
+                  type='submit'
+                  variant='primary'
+                  size='sm'
+                  disabled={
+                    loading ||
+                    disabled ||
+                    !message.trim() ||
+                    (!running && !selectedModel)
+                  }
+                  className={cn(
+                    composerSendButtonClass,
+                    landing &&
+                      'h-11 min-h-[44px] w-auto gap-2 px-4 text-sm font-medium'
+                  )}
+                  title={t('work.composer.send', { defaultValue: 'Run' })}
+                  aria-label={t('work.composer.send', {
+                    defaultValue: 'Run',
+                  })}
+                >
+                  {loading ? (
+                    <Loader2 className='h-4 w-4 animate-spin' />
+                  ) : (
+                    <ArrowUp className='h-4 w-4' />
+                  )}
+                  {landing && (
+                    <span>
+                      {t('work.composer.send', { defaultValue: 'Run' })}
+                    </span>
+                  )}
+                </Button>
+              }
             </div>
 
             <Button
@@ -607,87 +888,6 @@ export function WorkComposer({
             >
               <Paperclip className='h-4 w-4' />
             </Button>
-            {dictation.supported && (
-              <Button
-                data-testid='work-voice-input'
-                type='button'
-                variant='ghost'
-                size='sm'
-                disabled={disabled}
-                aria-pressed={dictationActive}
-                className={cn(
-                  'flex h-9 w-9 shrink-0 touch-manipulation items-center justify-center rounded-full p-0 transition-colors duration-150',
-                  dictationActive
-                    ? 'animate-pulse bg-red-50 text-red-500 dark:bg-red-900/20'
-                    : 'text-ink-muted hover:bg-surface-subtle hover:text-ink'
-                )}
-                title={
-                  dictationActive
-                    ? t('chat.input.voiceStop')
-                    : t('chat.input.voiceInput')
-                }
-                aria-label={
-                  dictationActive
-                    ? t('chat.input.voiceStop')
-                    : t('chat.input.voiceInput')
-                }
-                onClick={() => void dictation.toggle()}
-              >
-                {dictation.phase === 'starting' ? (
-                  <Loader2 className='h-4 w-4 animate-spin' />
-                ) : dictation.phase === 'transcribing' ? (
-                  <Square className='h-4 w-4 fill-current' />
-                ) : (
-                  <Mic className='h-4 w-4' />
-                )}
-              </Button>
-            )}
-            {running && (
-              <Button
-                data-testid='work-cancel-button'
-                type='button'
-                variant='ghost'
-                size='sm'
-                disabled={loading}
-                className='flex h-9 w-9 shrink-0 touch-manipulation items-center justify-center rounded-full bg-error-500/15 p-0 text-error-600 transition-colors duration-150 hover:bg-error-500/25 dark:text-error-400'
-                title={t('work.composer.cancel', { defaultValue: 'Stop' })}
-                aria-label={t('work.composer.cancel', {
-                  defaultValue: 'Stop',
-                })}
-                onClick={() => void onCancel()}
-              >
-                {loading ? (
-                  <Loader2 className='h-4 w-4 animate-spin' />
-                ) : (
-                  <Square className='h-4 w-4 fill-current' />
-                )}
-              </Button>
-            )}
-            {
-              <Button
-                data-testid='work-submit-button'
-                type='submit'
-                variant='primary'
-                size='sm'
-                disabled={
-                  loading ||
-                  disabled ||
-                  !message.trim() ||
-                  (!running && !selectedModel)
-                }
-                className={composerSendButtonClass}
-                title={t('work.composer.send', { defaultValue: 'Run' })}
-                aria-label={t('work.composer.send', {
-                  defaultValue: 'Run',
-                })}
-              >
-                {loading ? (
-                  <Loader2 className='h-4 w-4 animate-spin' />
-                ) : (
-                  <ArrowUp className='h-4 w-4' />
-                )}
-              </Button>
-            }
           </div>
         </div>
       </form>

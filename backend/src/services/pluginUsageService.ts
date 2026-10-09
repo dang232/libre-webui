@@ -96,6 +96,24 @@ export interface PluginUsageAnalytics {
     errors: number;
     averageLatencyMs: number;
   }>;
+  /** Recorded agent sources only; supported agents without traffic remain visible. */
+  agents?: Array<{
+    agentId: string;
+    agentName: string;
+    calls: number;
+    tokens: number;
+    errors: number;
+    averageLatencyMs: number;
+    meteredCalls: number;
+    /** Top 20 models per agent; summary counters include all models. */
+    models: Array<{
+      model: string;
+      calls: number;
+      tokens: number;
+      errors: number;
+      meteredCalls: number;
+    }>;
+  }>;
   capabilities: Array<{
     capability: PluginUsageCapability;
     calls: number;
@@ -228,6 +246,8 @@ class PluginUsageService {
     const from = startOfToday.getTime() - (days - 1) * DAY_MS;
     const heatmapFrom = startOfToday.getTime() - (HEATMAP_DAYS - 1) * DAY_MS;
     const repository = this.repository();
+    // Read static names only: analytics never resolves binaries or probes models.
+    const { AGENT_CLI_DEFINITIONS } = await import('./agentCliService.js');
     const [
       totals,
       modelSeriesRows,
@@ -235,6 +255,7 @@ class PluginUsageService {
       models,
       heatmapRows,
       capabilities,
+      agentRows,
     ] = await Promise.all([
       repository.totals(from, to),
       repository.modelSeries(
@@ -248,7 +269,35 @@ class PluginUsageService {
       repository.models(from, to),
       repository.heatmap(heatmapFrom, to, DAY_MS),
       repository.capabilities(from, to),
+      repository.agentUsage(
+        from,
+        to,
+        AGENT_CLI_DEFINITIONS.map(agent => agent.id)
+      ),
     ]);
+
+    const agents = AGENT_CLI_DEFINITIONS.map(agent => {
+      const rows = agentRows.filter(row => row.agent_id === agent.id);
+      const summary = rows.find(row => row.model === null);
+      return {
+        agentId: agent.id,
+        agentName: agent.name,
+        calls: asNumber(summary?.calls),
+        tokens: asNumber(summary?.tokens),
+        errors: asNumber(summary?.errors),
+        averageLatencyMs: asNumber(summary?.average_latency_ms),
+        meteredCalls: asNumber(summary?.metered_calls),
+        models: rows
+          .filter(row => row.model !== null)
+          .map(row => ({
+            model: String(row.model),
+            calls: asNumber(row.calls),
+            tokens: asNumber(row.tokens),
+            errors: asNumber(row.errors),
+            meteredCalls: asNumber(row.metered_calls),
+          })),
+      };
+    });
 
     const emptySeries = (): PluginUsageAnalytics['series'] =>
       Array.from({ length: days }, (_, bucket) => ({
@@ -337,6 +386,7 @@ class PluginUsageService {
       },
       series,
       modelSeries,
+      agents,
       plugins: plugins.map(row => ({
         pluginId: String(row.plugin_id),
         pluginName: String(row.plugin_name),

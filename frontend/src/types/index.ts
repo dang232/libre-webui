@@ -415,6 +415,8 @@ export interface ChatModel {
   reasoningSupport?: boolean;
 }
 
+export type OllamaModel = ChatModel;
+
 /** How hard a model should think: off, on, or one of the named levels. */
 export type ThinkingLevel = 'low' | 'medium' | 'high';
 export type ThinkingPreference = boolean | ThinkingLevel;
@@ -648,6 +650,16 @@ export interface EmbeddingResponse {
   embeddings: number[][];
 }
 
+export interface RunningModel {
+  name: string;
+  model: string;
+  size: number;
+  digest: string;
+  details?: Record<string, unknown>;
+  expires_at?: string;
+  size_vram?: number;
+}
+
 // Plugin system types
 export interface PluginAuthConfig {
   header: string; // e.g., "x-api-key", "Authorization"
@@ -856,12 +868,16 @@ export interface PendingApprovalSummary {
   latestCreatedAt: string | null;
 }
 
+/** Who may use the embedded Strands agent engine. */
+export type StrandsAccessMode = 'disabled' | 'admins' | 'all-users';
+
 export interface SystemInfo {
   requiresAuth: boolean;
   hasUsers: boolean;
   userCount: number;
   signupEnabled: boolean;
-  agentsEnabled?: boolean; // Admin opt-in for the Agents section (Libre Claw)
+  agentCliModelsEnabled?: boolean; // Separate opt-in for installed agent chat models
+  strandsAccess?: StrandsAccessMode; // Who may use the embedded Strands engine
   passkeysInUse?: boolean; // At least one passkey registered system-wide
   ollamaEnabled?: boolean; // False when the admin disabled the Ollama provider
   version?: string;

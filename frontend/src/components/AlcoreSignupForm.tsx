@@ -67,7 +67,7 @@ export const AlcoreSignupForm: React.FC = () => {
       case 'passwordMismatch':
         return t('auth.alcore.signup.mismatch');
       case 'passwordPolicy':
-        return detail ?? t('auth.alcore.signup.invalidEmail');
+        return detail ? t(detail) : t('auth.alcore.signup.invalidEmail');
     }
   };
 

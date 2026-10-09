@@ -105,6 +105,8 @@ import artifactsRoutes from './routes/artifacts.js';
 import searchRoutes from './routes/search.js';
 import openaiCompatRoutes from './routes/openaiCompat.js';
 import healthRoutes from './routes/health.js';
+import strandsRoutes from './routes/strands.js';
+import { stopStrandsEngine } from './strands/runtime.js';
 import jobsRoutes from './routes/jobs.js';
 import groupsRoutes from './routes/groups.js';
 import accessRoutes from './routes/access.js';
@@ -715,6 +717,10 @@ app.use('/api/artifacts', artifactsRoutes);
 app.use('/api/search', chatRateLimiter, searchRoutes);
 // The OpenAI-compatible public API answers on the canonical /v1 base.
 app.use('/v1', chatRateLimiter, openaiCompatRoutes);
+// The embedded Strands agent engine. Every route answers 403 until an
+// administrator grants access, so mounting it unconditionally keeps the
+// feature behind configuration rather than behind a build variant.
+app.use('/api/strands', chatRateLimiter, strandsRoutes);
 app.use('/api/jobs', jobsRoutes);
 app.use('/api/groups', groupsRoutes);
 app.use('/api/access', accessRoutes);
@@ -985,6 +991,9 @@ const shutdown = async (signal: 'SIGTERM' | 'SIGINT'): Promise<void> => {
       : Promise.resolve();
   const cleanup = Promise.allSettled([
     registeredWebSockets.close(),
+    // Cancel live Strands turns and flush their session snapshots instead of
+    // relying on process exit.
+    stopStrandsEngine(),
     stopWork,
     closeDurableJobRuntime(),
     httpClosed,

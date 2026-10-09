@@ -3,7 +3,7 @@
   "scope": {
     "uiSource": "frontend/src/App.tsx",
     "backendSource": "backend/src/index.ts",
-    "excludedUiRoutes": ["/*"],
+    "excludedUiRoutes": ["/*", "*"],
     "providerContract": "scripts/capability-contracts.json",
     "backendRouteDirectory": "backend/src/routes",
     "websocketSource": "backend/src/websocketServer.ts"
@@ -1647,6 +1647,15 @@
             "only the opted-in user with an address",
             "automation-run:run-1"
           ]
+        },
+        {
+          "file": "scripts/test-email-notifications.mjs",
+          "runner": "test:package",
+          "name": "admin draft previews are bounded, escape content, and never send or enqueue mail",
+          "behaviorPatterns": [
+            "preview never opens an SMTP session",
+            "preview does not save the draft"
+          ]
         }
       ],
       "backendRoutes": [
@@ -1745,6 +1754,12 @@
           "mount": "/api/email",
           "method": "POST",
           "path": "/test"
+        },
+        {
+          "file": "backend/src/routes/email.ts",
+          "mount": "/api/email",
+          "method": "POST",
+          "path": "/preview"
         }
       ],
       "contractSurfaces": {
@@ -2618,7 +2633,7 @@
     {
       "id": "agent-cli",
       "title": "Agent CLI models",
-      "uiRoutes": ["/agents"],
+      "uiRoutes": [],
       "documentation": [
         {
           "file": "docs/36-AGENT_CLI_MODELS.md",
@@ -2634,6 +2649,15 @@
             "buildArgs\\('opus'\\)",
             "buildArgs\\('gpt-5\\.4'\\)"
           ]
+        },
+        {
+          "file": "scripts/test-agent-cli-access.mjs",
+          "runner": "test:package",
+          "name": "enabled CLI models are listed for administrators and never for regular users",
+          "behaviorPatterns": [
+            "listAgentModels\\(regular\\.id\\)",
+            "assertAgentAccess\\(regular\\.id\\)"
+          ]
         }
       ],
       "backendRoutes": [
@@ -2642,6 +2666,18 @@
           "mount": "/api/agent-clis",
           "method": "GET",
           "path": "/models"
+        },
+        {
+          "file": "backend/src/routes/agentCli.ts",
+          "mount": "/api/agent-clis",
+          "method": "GET",
+          "path": "/access"
+        },
+        {
+          "file": "backend/src/routes/agentCli.ts",
+          "mount": "/api/agent-clis",
+          "method": "PUT",
+          "path": "/access"
         }
       ],
       "contractSurfaces": {
@@ -2663,7 +2699,10 @@
           "evidence": [
             {
               "file": "backend/src/services/agentAccessService.ts",
-              "patterns": ["AGENTS_ENABLED_KEY", "stay disabled"]
+              "patterns": [
+                "AGENT_CLI_MODELS_ENABLED_KEY",
+                "getAgentCliModelsEnabled"
+              ]
             }
           ]
         }
@@ -2845,6 +2884,36 @@
           "runner": "test:package",
           "name": "hard budgets block exhausted principals and fail open otherwise",
           "behaviorPatterns": ["BudgetExceededError", "Team hard cap"]
+        },
+        {
+          "file": "frontend/e2e/plugin-usage.spec.ts",
+          "runner": "test:e2e",
+          "name": "agent usage appears before cost and charts with recorded, unmetered, and zero states",
+          "behaviorPatterns": [
+            "usage-agent-breakdown",
+            "toHaveCount\\(5\\)",
+            "Tokens not reported"
+          ]
+        },
+        {
+          "file": "scripts/test-plugin-usage-analytics.mjs",
+          "runner": "test:package",
+          "name": "agent totals bypass provider/model top limits and never attribute ordinary provider traffic",
+          "behaviorPatterns": [
+            "analytics\\.plugins\\.length, 50",
+            "analytics\\.models\\.length, 100",
+            "analytics\\.agents"
+          ]
+        },
+        {
+          "file": "scripts/test-agent-cli-chat.mjs",
+          "runner": "test:package",
+          "name": "Codex cumulative totals include caches/reasoning once and replace repeated terminal snapshots",
+          "behaviorPatterns": [
+            "parseCodexLine",
+            "cached_input_tokens",
+            "agentCliTokenUsage"
+          ]
         }
       ],
       "backendRoutes": [
@@ -3301,7 +3370,7 @@
           "file": "docs/12-AUTHENTICATION.md",
           "patterns": [
             "Every login also creates a server-side session record bound into the JWT",
-            "Settings → API keys mints personal access tokens"
+            "Settings \u2192 API keys mints personal access tokens"
           ]
         },
         {
@@ -4104,7 +4173,7 @@
         {
           "file": "docs/41-DATA_PORTABILITY.md",
           "patterns": [
-            "Settings → Data Management",
+            "Settings \u2192 Data Management",
             "GET`  \\| `/api/preferences/export"
           ]
         }
@@ -4974,33 +5043,70 @@
       }
     },
     {
-      "id": "libre-claw",
-      "title": "Libre Claw",
-      "uiRoutes": [],
+      "id": "strands-engine",
+      "title": "Strands engine",
+      "uiRoutes": ["/strands"],
       "sourceEvidence": [
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/strands.ts",
           "patterns": [
-            "router.use\\(authenticate, requireAdmin\\)",
-            "router.post\\('/runs'"
+            "router.use\\(requireStrandsAccess\\)",
+            "router.put\\('/access', requireAdmin"
           ]
+        },
+        {
+          "file": "backend/src/strands/harness.ts",
+          "patterns": ["WATCHED_EVENTS", "process.removeListener"]
+        },
+        {
+          "file": "backend/src/strands/sandbox.ts",
+          "patterns": ["export class WorkspaceSandbox"]
         }
       ],
       "documentation": [
         {
-          "file": "docs/31-LIBRE_CLAW_INTEGRATION.md",
-          "patterns": [
-            "# Libre Claw Integration",
-            "All Libre Claw routes require an authenticated admin user"
-          ]
+          "file": "docs/67-STRANDS_ENGINE.md",
+          "patterns": ["# Strands Engine", "LIBRE_STRANDS_ACCESS"]
+        },
+        {
+          "file": "docs/06-TROUBLESHOOTING.md",
+          "patterns": ["## Strands Engine Problems"]
+        },
+        {
+          "file": "docs/33-WORKSPACES.md",
+          "patterns": ["## Strands engine"]
         }
       ],
       "focusedTests": [
         {
-          "file": "frontend/e2e/sidebar-create-actions.spec.ts",
+          "file": "scripts/test-strands-engine.mjs",
+          "runner": "test:package",
+          "name": "Strands access fails closed and follows the admin setting and environment pin",
+          "behaviorPatterns": ["LIBRE_STRANDS_ACCESS", "regularToken"]
+        },
+        {
+          "file": "scripts/test-strands-engine.mjs",
+          "runner": "test:package",
+          "name": "a Strands turn streams NDJSON, runs a jailed file tool, and persists the transcript",
+          "behaviorPatterns": ["tool-result", "web_fetch"]
+        },
+        {
+          "file": "scripts/test-strands-engine.mjs",
+          "runner": "test:package",
+          "name": "the workspace jail rejects paths that leave the session root",
+          "behaviorPatterns": ["escaped\\.txt", "regularToken"]
+        },
+        {
+          "file": "frontend/e2e/strands-engine.spec.ts",
           "runner": "test:e2e",
           "name": "Work and Agents are hidden and route-protected for non-admin users",
           "behaviorPatterns": ["/api/alcore-claw", "libreClawRequests"]
+        },
+        {
+          "file": "frontend/e2e/strands-engine.spec.ts",
+          "runner": "test:e2e",
+          "name": "an admin creates a Strands session and streams a turn with a tool call",
+          "behaviorPatterns": ["strands-new-session", "strands-tool-trace"]
         }
       ],
       "backendRoutes": [
@@ -5011,8 +5117,20 @@
           "path": "/access"
         },
         {
+          "file": "backend/src/routes/strands.ts",
+          "mount": "/api/strands",
+          "method": "GET",
+          "path": "/access"
+        },
+        {
           "file": "backend/src/routes/libreClaw.ts",
           "mount": "/api/alcore-claw",
+          "method": "PUT",
+          "path": "/access"
+        },
+        {
+          "file": "backend/src/routes/strands.ts",
+          "mount": "/api/strands",
           "method": "PUT",
           "path": "/access"
         },
@@ -5029,22 +5147,58 @@
           "path": "/health"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/alcore-claw",
+          "file": "backend/src/routes/strands.ts",
+          "mount": "/api/strands",
           "method": "GET",
-          "path": "/dashboard"
+          "path": "/health"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "GET",
-          "path": "/config/model"
+          "path": "/models"
+        },
+        {
+          "file": "backend/src/routes/strands.ts",
+          "mount": "/api/strands",
+          "method": "GET",
+          "path": "/models"
+        },
+        {
+          "file": "backend/src/routes/libreClaw.ts",
+          "mount": "/api/alcore-claw",
+          "method": "GET",
+          "path": "/sessions"
+        },
+        {
+          "file": "backend/src/routes/strands.ts",
+          "mount": "/api/strands",
+          "method": "GET",
+          "path": "/sessions"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "PATCH",
-          "path": "/config/model"
+          "path": "/sessions/:sessionId"
+        },
+        {
+          "file": "backend/src/routes/strands.ts",
+          "mount": "/api/strands",
+          "method": "POST",
+          "path": "/sessions"
+        },
+        {
+          "file": "backend/src/routes/strands.ts",
+          "mount": "/api/strands",
+          "method": "GET",
+          "path": "/sessions/:sessionId"
+        },
+        {
+          "file": "backend/src/routes/strands.ts",
+          "mount": "/api/strands",
+          "method": "PATCH",
+          "path": "/sessions/:sessionId"
         },
         {
           "file": "backend/src/routes/libreClaw.ts",
@@ -5158,7 +5312,25 @@
           "file": "backend/src/routes/libreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "DELETE",
-          "path": "/automations/:automationId"
+          "path": "/sessions/:sessionId"
+        },
+        {
+          "file": "backend/src/routes/strands.ts",
+          "mount": "/api/strands",
+          "method": "DELETE",
+          "path": "/sessions/:sessionId"
+        },
+        {
+          "file": "backend/src/routes/strands.ts",
+          "mount": "/api/strands",
+          "method": "POST",
+          "path": "/sessions/:sessionId/cancel"
+        },
+        {
+          "file": "backend/src/routes/strands.ts",
+          "mount": "/api/strands",
+          "method": "POST",
+          "path": "/sessions/:sessionId/messages"
         }
       ],
       "contractSurfaces": {
@@ -5170,17 +5342,29 @@
                 "export interface AlcoreClawRun",
                 "export interface AlcoreClawAutomation"
               ]
+            },
+            {
+              "file": "backend/src/strands/engine.ts",
+              "patterns": ["export type StrandsTurnEvent", "STRANDS_MAX_TURNS"]
+            },
+            {
+              "file": "backend/src/strands/work-model.ts",
+              "patterns": ["WORK_STRANDS_MODEL_PREFIX", "workProviderModel"]
             }
           ]
         },
         "manifests": {
-          "notApplicable": "Libre Claw is an explicitly configured service integration and does not use a Libre provider manifest."
+          "notApplicable": "The Strands engine is built into the backend and drives existing Ollama and provider-plugin routes, so it has no manifest of its own."
         },
         "defaults": {
           "evidence": [
             {
               "file": "backend/src/services/alcoreClawService.ts",
               "patterns": ["DEFAULT_BASE_URL", "ALCORE_CLAW_TIMEOUT_MS"]
+            },
+            {
+              "file": "backend/src/services/strandsAccessService.ts",
+              "patterns": ["STRANDS_ACCESS_MODE_KEY", "LIBRE_STRANDS_ACCESS"]
             }
           ]
         }

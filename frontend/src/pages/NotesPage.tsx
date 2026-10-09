@@ -33,7 +33,12 @@ import {
 } from 'lucide-react';
 import { RichMessageContent } from '@/components/ui/RichMessageContent';
 import toast from 'react-hot-toast';
-import { Button } from '@/components/ui';
+import {
+  Button,
+  EmptyState,
+  LoadingState,
+  WorkspaceToolbar,
+} from '@/components/ui';
 import { notesApi } from '@/utils/api';
 import { cn, formatTimestamp } from '@/utils';
 import { createLogger } from '@/utils/logger';
@@ -51,13 +56,18 @@ export const NotesPage: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  // Mirrors the latest selection for async save callbacks.
+  const selectedIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    selectedIdRef.current = selectedId;
+  }, [selectedId]);
   const [query, setQuery] = useState('');
   const [titleDraft, setTitleDraft] = useState('');
   const [contentDraft, setContentDraft] = useState('');
   const [previewing, setPreviewing] = useState(true);
-  const [saveState, setSaveState] = useState<'saved' | 'saving' | 'idle'>(
-    'idle'
-  );
+  const [saveState, setSaveState] = useState<
+    'saved' | 'saving' | 'idle' | 'error'
+  >('idle');
   const [toolsTab, setToolsTab] = useState<NoteToolsTab | null>(null);
   const saveTimerRef = useRef<number | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -114,6 +124,7 @@ export const NotesPage: React.FC = () => {
 
   const selectNote = (note: Note, mode: 'preview' | 'edit' = 'preview') => {
     flushPendingSave();
+    selectedIdRef.current = note.id;
     setSelectedId(note.id);
     setTitleDraft(note.title);
     setContentDraft(note.content);
@@ -133,9 +144,12 @@ export const NotesPage: React.FC = () => {
         setNotes(previous =>
           previous.map(note => (note.id === updated.id ? updated : note))
         );
+      } else {
+        toast.error(t('notes.saveFailed'));
       }
     } catch (error) {
       logger.error('Failed to toggle pin:', error);
+      toast.error(t('notes.saveFailed'));
     }
   };
 
@@ -177,12 +191,18 @@ export const NotesPage: React.FC = () => {
             (a, b) => b.updatedAt - a.updatedAt
           )
         );
-        setSaveState('saved');
+        // A background flush can finish after the user moved on; its state
+        // belongs to that earlier note, not the one now on screen.
+        if (selectedIdRef.current === noteId) setSaveState('saved');
+      } else {
+        // Never leave the indicator on "saving" after a rejected save.
+        toast.error(t('notes.saveFailed'));
+        if (selectedIdRef.current === noteId) setSaveState('error');
       }
     } catch (error) {
       logger.error('Failed to save note:', error);
       toast.error(t('notes.saveFailed'));
-      setSaveState('idle');
+      if (selectedIdRef.current === noteId) setSaveState('error');
     }
   };
 
@@ -226,6 +246,8 @@ export const NotesPage: React.FC = () => {
         if (selectedId === noteId) {
           setSelectedId(null);
         }
+      } else {
+        toast.error(t('notes.deleteFailed'));
       }
     } catch (error) {
       logger.error('Failed to delete note:', error);
@@ -252,26 +274,27 @@ export const NotesPage: React.FC = () => {
       <div
         data-testid='notes-list'
         className={cn(
-          'min-h-0 w-full shrink-0 flex-col border-e border-black/[0.06] dark:border-white/[0.07] md:w-72',
+          'min-h-0 w-full shrink-0 flex-col border-e border-black/6 dark:border-white/[0.07] md:w-72',
           selectedNote ? 'hidden md:flex' : 'flex'
         )}
       >
-        <div className='flex items-center justify-between px-4 pb-2 pt-4'>
-          <h1 className='text-sm font-semibold text-gray-900 dark:text-dark-900'>
-            {t('notes.title')}
-          </h1>
-          <Button
-            size='sm'
-            variant='ghost'
-            onClick={() => void handleCreate()}
-            className='h-7 w-7 p-0'
-            title={t('notes.new')}
-          >
-            <Plus className='h-4 w-4' />
-          </Button>
-        </div>
-        <div className='relative mx-3 mb-2'>
-          <Search className='pointer-events-none absolute start-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400 dark:text-dark-500' />
+        <WorkspaceToolbar
+          title={t('notes.title')}
+          actions={
+            <Button
+              size='sm'
+              variant='ghost'
+              onClick={() => void handleCreate()}
+              className='h-7 w-7 p-0'
+              title={t('notes.new')}
+              aria-label={t('notes.new')}
+            >
+              <Plus className='h-4 w-4' />
+            </Button>
+          }
+        />
+        <div className='relative mx-3 mb-2 mt-3'>
+          <Search className='pointer-events-none absolute inset-s-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400 dark:text-dark-500' />
           <input
             ref={searchInputRef}
             type='search'
@@ -279,32 +302,33 @@ export const NotesPage: React.FC = () => {
             onChange={event => setQuery(event.target.value)}
             placeholder={t('common.search')}
             aria-label={t('common.search')}
-            className='w-full rounded-lg border border-transparent bg-black/[0.04] py-1.5 pe-2.5 ps-8 text-base text-gray-900 placeholder:text-gray-400 focus:border-primary-500/40 focus:outline-none dark:bg-white/[0.05] dark:text-dark-900 dark:placeholder:text-dark-500 sm:text-[13px]'
+            className='w-full rounded-lg border border-transparent bg-black/4 py-1.5 pe-2.5 ps-8 text-base text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/30 dark:bg-white/5 dark:text-dark-900 dark:placeholder:text-dark-500 sm:text-[13px]'
           />
         </div>
         <div className='scroll-region min-h-0 flex-1 overflow-y-auto px-2 pb-3 scrollbar-thin'>
-          {loading ? null : filteredNotes.length === 0 ? (
-            <div className='px-3 py-10 text-center'>
-              <NotebookPen className='mx-auto mb-2 h-6 w-6 text-gray-300 dark:text-dark-400' />
-              <p
-                className='text-xs text-gray-500 dark:text-dark-500'
-                role='status'
-              >
-                {query.trim() ? t('common.noResults') : t('notes.empty')}
-              </p>
-              {query.trim() && (
-                <Button
-                  size='sm'
-                  variant='ghost'
-                  className='mt-2'
-                  onClick={() => {
-                    setQuery('');
-                    searchInputRef.current?.focus();
-                  }}
-                >
-                  {t('common.clear')}
-                </Button>
-              )}
+          {loading ? (
+            <LoadingState size='sm' srOnly />
+          ) : filteredNotes.length === 0 ? (
+            <div role='status'>
+              <EmptyState
+                icon={NotebookPen}
+                size='sm'
+                title={query.trim() ? t('common.noResults') : t('notes.empty')}
+                action={
+                  query.trim() ? (
+                    <Button
+                      size='sm'
+                      variant='ghost'
+                      onClick={() => {
+                        setQuery('');
+                        searchInputRef.current?.focus();
+                      }}
+                    >
+                      {t('common.clear')}
+                    </Button>
+                  ) : undefined
+                }
+              />
             </div>
           ) : (
             <div className='space-y-0.5'>
@@ -315,16 +339,17 @@ export const NotesPage: React.FC = () => {
                   className={cn(
                     'group relative flex items-center rounded-lg transition-colors',
                     selectedId === note.id
-                      ? 'bg-white ring-1 ring-black/[0.04] dark:bg-dark-200 dark:ring-white/[0.05]'
+                      ? 'bg-white ring-1 ring-black/4 dark:bg-dark-200 dark:ring-white/5'
                       : 'hover:bg-white/60 dark:hover:bg-dark-200/60'
                   )}
                 >
                   <button
                     type='button'
+                    tabIndex={0}
                     onClick={() => selectNote(note)}
                     aria-label={note.title || t('notes.untitled')}
                     aria-current={selectedId === note.id ? 'true' : undefined}
-                    className='min-w-0 flex-1 rounded-lg px-2.5 py-2 text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas'
+                    className='min-w-0 flex-1 rounded-lg px-2.5 py-2 text-start focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas'
                   >
                     <span className='flex min-w-0 items-center gap-1 truncate text-[13px] font-medium text-gray-900 dark:text-dark-900'>
                       {note.pinned && (
@@ -356,8 +381,9 @@ export const NotesPage: React.FC = () => {
                   {!note.shared && (
                     <button
                       type='button'
+                      tabIndex={0}
                       onClick={() => void handleDelete(note.id)}
-                      className='me-1.5 shrink-0 rounded-md p-1.5 text-gray-500 opacity-100 transition-opacity hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100 dark:text-dark-500 dark:hover:bg-red-900/20 dark:hover:text-red-400'
+                      className='me-1.5 shrink-0 rounded-md p-1.5 text-gray-500 opacity-100 transition-opacity hover:bg-red-50 hover:text-red-600 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100 dark:text-dark-500 dark:hover:bg-red-900/20 dark:hover:text-red-400'
                       title={t('common.delete')}
                       aria-label={`${t('common.delete')}: ${note.title || t('notes.untitled')}`}
                     >
@@ -381,7 +407,7 @@ export const NotesPage: React.FC = () => {
       >
         {selectedNote ? (
           <>
-            <div className='flex min-w-0 items-center gap-1.5 border-b border-black/[0.06] px-2.5 py-2.5 dark:border-white/[0.07] sm:gap-2 sm:px-5 sm:py-3'>
+            <div className='flex min-w-0 items-center gap-1.5 border-b border-black/6 px-2.5 py-2.5 dark:border-white/[0.07] sm:gap-2 sm:px-5 sm:py-3'>
               <Button
                 size='sm'
                 variant='ghost'
@@ -421,17 +447,25 @@ export const NotesPage: React.FC = () => {
                       );
                     }}
                     placeholder={t('notes.untitled')}
-                    className='min-w-0 flex-1 bg-transparent text-base font-semibold text-gray-950 placeholder:text-gray-400 focus:outline-none dark:text-dark-950 dark:placeholder:text-dark-500 sm:text-lg'
+                    aria-label={t('notes.titleLabel')}
+                    className='min-w-0 flex-1 rounded-md bg-transparent text-base font-semibold text-gray-950 placeholder:text-gray-400 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500/50 dark:text-dark-950 dark:placeholder:text-dark-500 sm:text-lg'
                   />
                   <span
-                    className='hidden shrink-0 text-[11px] text-gray-400 dark:text-dark-500 sm:inline'
+                    className={cn(
+                      'hidden shrink-0 text-[11px] sm:inline',
+                      saveState === 'error'
+                        ? 'text-error-700 dark:text-error-300'
+                        : 'text-ink-muted'
+                    )}
                     aria-live='polite'
                   >
                     {saveState === 'saving'
                       ? t('common.saving')
                       : saveState === 'saved'
                         ? t('notes.saved')
-                        : ''}
+                        : saveState === 'error'
+                          ? t('notes.saveFailed')
+                          : ''}
                   </span>
                 </>
               )}
@@ -534,7 +568,8 @@ export const NotesPage: React.FC = () => {
                 }}
                 onBlur={flushPendingSave}
                 placeholder={t('notes.contentPlaceholder')}
-                className='min-h-0 flex-1 resize-none bg-transparent px-4 py-3 font-mono text-base leading-relaxed text-gray-900 placeholder:text-gray-400 focus:outline-none dark:text-dark-900 dark:placeholder:text-dark-500 sm:px-5 sm:py-4 sm:text-[13.5px]'
+                aria-label={t('notes.contentPlaceholder')}
+                className='min-h-0 flex-1 resize-none bg-transparent px-4 py-3 font-mono text-base leading-relaxed text-gray-900 placeholder:text-gray-400 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-500/50 dark:text-dark-900 dark:placeholder:text-dark-500 sm:px-5 sm:py-4 sm:text-[13.5px]'
               />
             )}
             {toolsTab !== null && (

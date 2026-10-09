@@ -15,9 +15,12 @@
  * limitations under the License.
  */
 
+import { isWorkStrandsModel } from '../strands/work-model.js';
+import type { WorkStrandsDriver } from '../strands/work-driver.js';
 import workModelProviderService, {
   WORK_TOOL_ARGUMENTS_ERROR_METADATA_KEY,
   WORK_TOOL_ARGUMENTS_ERROR_MESSAGE,
+  type WorkModelStreamObserver,
 } from './workModelProviderService.js';
 import workEventService from './workEventService.js';
 import {
@@ -68,6 +71,11 @@ import workTaskService, {
   deriveStatusBlurb,
 } from './workTaskService.js';
 import { ProviderChatMessage, ProviderChatResponse } from '../types/index.js';
+import {
+  OllamaChatMessage,
+  OllamaChatRequest,
+  OllamaChatResponse,
+} from '../types/index.js';
 import {
   WorkMessage,
   WorkRun,
@@ -867,6 +875,7 @@ export class WorkAgentService {
     let runDelegation: WorkDelegationSource | undefined;
     let releaseExecutionLease: (() => void) | undefined;
     let executionContainerSettled = false;
+    let strandsDriver: WorkStrandsDriver | undefined;
     // Files this run created, moved, or deleted, in first-touch order. They
     // are persisted with the run so the workspace chips survive a reload.
     const changedFiles: string[] = [];
@@ -1034,6 +1043,13 @@ export class WorkAgentService {
           durableAttemptIdentity
         );
       }
+      if (isWorkStrandsModel(run.model)) {
+        await workModelProviderService.assertModelSupportsTools(
+          run.model,
+          { providerType: run.providerType, providerId: run.providerId },
+          userId
+        );
+      }
       releaseExecutionLease = await workRuntimeService.prepare(
         task,
         controller.signal
@@ -1059,6 +1075,20 @@ export class WorkAgentService {
           providerSelection,
           userId
         );
+      if (isWorkStrandsModel(run.model)) {
+        const { createWorkStrandsDriver } =
+          await import('../strands/work-driver.js');
+        strandsDriver = await createWorkStrandsDriver({
+          generate: (request, observer, signal) =>
+            workModelProviderService.generateChatStreamResponse(
+              request,
+              providerSelection,
+              userId,
+              observer,
+              signal
+            ),
+        });
+      }
       // A5 approvals: whether side-effecting tool calls pause for review.
       // Resolved once per run — the policy force-flag or the task opt-in;
       // per-call rules are re-read at gate time so an Always-allow decision
@@ -1201,7 +1231,22 @@ export class WorkAgentService {
             userId,
             providerRoutingFingerprint
           );
-          response = await workModelProviderService.generateChatStreamResponse(
+          response = await (
+            strandsDriver
+              ? strandsDriver.generate.bind(strandsDriver)
+              : (
+                  request: OllamaChatRequest,
+                  observer: WorkModelStreamObserver,
+                  signal?: AbortSignal
+                ) =>
+                  workModelProviderService.generateChatStreamResponse(
+                    request,
+                    providerSelection,
+                    userId,
+                    observer,
+                    signal
+                  )
+          )(
             {
               model: run.model,
               messages,
@@ -1212,9 +1257,10 @@ export class WorkAgentService {
                 ...(externalTools?.schemas ?? []),
               ],
               stream: true,
+              ...(run.think !== undefined
+                ? { options: { think: run.think } }
+                : {}),
             },
-            providerSelection,
-            userId,
             {
               onContent: delta => contentStream.push(delta),
               onReasoning: delta => reasoningStream.push(delta),
@@ -1804,7 +1850,7 @@ export class WorkAgentService {
                 ],
                 tools: [],
                 options:
-                  run.providerType === 'plugin'
+                  run.providerType !== 'ollama'
                     ? { num_predict: 2048 }
                     : undefined,
                 stream: true,
@@ -2082,9 +2128,13 @@ export class WorkAgentService {
     } finally {
       this.controllers.delete(runId);
       try {
-        await settleExecutionContainer();
+        await strandsDriver?.dispose();
       } finally {
-        releaseExecutionLease?.();
+        try {
+          await settleExecutionContainer();
+        } finally {
+          releaseExecutionLease?.();
+        }
       }
     }
   }
@@ -2160,7 +2210,8 @@ export class WorkAgentService {
     const persisted = restorePersistedWorkContext(
       await workTaskService.getRecentModelContextMessages(task.id, 30),
       provider,
-      providerStateScope
+      providerStateScope,
+      task.userId
     );
     return [
       {
@@ -2923,7 +2974,7 @@ export class WorkAgentService {
             ],
             tools: [],
             options:
-              run.providerType === 'plugin' ? { num_predict: 64 } : undefined,
+              run.providerType !== 'ollama' ? { num_predict: 64 } : undefined,
             stream: true,
           },
           {
@@ -3017,6 +3068,8 @@ interface PersistedWorkProviderState {
   model: string;
   providerMetadata?: Record<string, unknown>;
   toolCalls?: PersistedWorkChatToolCall[];
+  thinking?: string;
+  userId?: string;
 }
 
 interface PersistedWorkChatToolCall {
@@ -3162,9 +3215,10 @@ function persistedChatToolCalls(
 export function restorePersistedWorkContext(
   messages: WorkMessage[],
   provider: Pick<WorkRun, 'providerType' | 'providerId' | 'model'>,
-  expectedStateScope?: string
-): ProviderChatMessage[] {
-  const restored: ProviderChatMessage[] = [];
+  expectedStateScope?: string,
+  _expectedUserId?: string
+): OllamaChatMessage[] {
+  const restored: OllamaChatMessage[] = [];
   let pendingGroup:
     | {
         assistant: ProviderChatMessage;

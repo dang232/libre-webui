@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui';
 import { SettingsToggle } from '@/components/settings/SettingsToggle';
 import { useAuthStore } from '@/store/authStore';
-import { libreClawApi } from '@/utils/api/libreClawApi';
+import { useChatStore } from '@/store/chatStore';
+import { agentCliApi } from '@/utils/api/agentCliApi';
 
 /**
  * Administrator opt-in for the Agents section (Alcore Claw and agent CLI
@@ -31,8 +32,10 @@ import { libreClawApi } from '@/utils/api/libreClawApi';
  */
 export const AgentAccessSettings: React.FC = () => {
   const { t } = useTranslation();
+  const titleId = useId();
   const systemInfo = useAuthStore(state => state.systemInfo);
   const setSystemInfo = useAuthStore(state => state.setSystemInfo);
+  const loadModels = useChatStore(state => state.loadModels);
   const [enabled, setEnabled] = useState<boolean | null>(null);
   const [lockedByEnv, setLockedByEnv] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -40,11 +43,12 @@ export const AgentAccessSettings: React.FC = () => {
   // the rest of the session; offer a retry instead.
   const [loadFailed, setLoadFailed] = useState(false);
   const [loadAttempt, setLoadAttempt] = useState(0);
+  const labelKey = 'userManager.agentCliAccess';
 
   useEffect(() => {
     let cancelled = false;
-    libreClawApi
-      .access()
+    agentCliApi
+      .getAccess()
       .then(response => {
         if (cancelled) return;
         if (response.success && response.data) {
@@ -65,37 +69,47 @@ export const AgentAccessSettings: React.FC = () => {
   const handleChange = async (checked: boolean) => {
     setSaving(true);
     try {
-      const response = await libreClawApi.setAccess(checked);
+      const response = await agentCliApi.setAccess(checked);
       if (!response.success || !response.data) {
         throw new Error(response.error || 'Agent access update failed.');
       }
       setEnabled(response.data.enabled);
-      // The navigation reads the flag from system info; update it in place
-      // so the Agents section appears or disappears without a re-login.
+      // Update the relevant flag without coupling chat access to navigation.
       if (systemInfo) {
-        setSystemInfo({ ...systemInfo, agentsEnabled: response.data.enabled });
+        setSystemInfo({
+          ...systemInfo,
+          agentCliModelsEnabled: response.data.enabled,
+        });
       }
-      toast.success(t('userManager.agentAccess.saved'));
+      // The chat picker caches its catalogue independently of navigation.
+      await loadModels({ quiet: true });
+      toast.success(t('userManager.agentCliAccess.saved'));
     } catch {
-      toast.error(t('userManager.agentAccess.saveFailed'));
+      toast.error(t('userManager.agentCliAccess.saveFailed'));
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className='rounded-lg border border-gray-200 dark:border-dark-300 bg-white dark:bg-dark-100 p-4'>
+    <div
+      className='rounded-lg border border-gray-200 dark:border-dark-300 bg-white dark:bg-dark-100 p-4'
+      data-testid='agent-cli-access-settings'
+    >
       <div className='flex items-center justify-between gap-4'>
         <div>
-          <h4 className='text-sm font-medium text-gray-900 dark:text-gray-100'>
-            {t('userManager.agentAccess.title')}
+          <h4
+            id={titleId}
+            className='text-sm font-medium text-gray-900 dark:text-gray-100'
+          >
+            {t(`${labelKey}.title`)}
           </h4>
           <p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
-            {t('userManager.agentAccess.description')}
+            {t(`${labelKey}.description`)}
           </p>
           {lockedByEnv && (
             <p className='text-xs text-amber-600 dark:text-amber-400 mt-1'>
-              {t('userManager.agentAccess.lockedByEnv')}
+              {t(`${labelKey}.lockedByEnv`)}
             </p>
           )}
         </div>
@@ -112,6 +126,7 @@ export const AgentAccessSettings: React.FC = () => {
           </Button>
         ) : (
           <SettingsToggle
+            aria-labelledby={titleId}
             checked={enabled === true}
             onChange={handleChange}
             disabled={saving || enabled === null || lockedByEnv}

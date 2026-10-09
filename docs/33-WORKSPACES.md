@@ -40,6 +40,50 @@ operator, not merely as a chat user.
 
 :::
 
+## Strands engine
+
+Work's **Engine** control offers **Libre WebUI** (the default) and **Strands**.
+**Strands** appears when your account may use the
+[Strands engine](./STRANDS_ENGINE). Choose the local or remote provider model
+in the separate model picker; model names, provider identity, credentials, and
+the remote-use disclosure stay the same on either engine.
+
+With **Engine: Strands**, a Strands agent plans each step and Work executes the
+tools it asks for. Work supplies the prompt, conversation, tool definitions,
+and sandbox, validates every tool call, enforces approvals and policy, runs the
+tools in the task's container, and records the results in its existing
+SQL-backed run history. The Strands agent has no host filesystem or shell tools
+of its own. The provider model must support tool calling; Work checks this
+before the run starts. Stop cancels the model and the agent before Work cleans
+up its container. Restored runs use the saved Work context without repeating
+completed tool effects.
+
+A specific Strands model selected in Chat carries into a new Work task as the
+same engine, provider, and model. If that provider or model becomes
+unavailable, Work preserves the choice and requires a replacement before
+starting a run. Runs saved by earlier releases with a `dsh:` model prefix open
+as Strands runs.
+
+The server re-checks Strands access on every model call of a Strands run, so
+turning the engine off for your account stops a live run at its next step.
+Existing tasks remain readable and can select the Libre WebUI engine again.
+
+## Reasoning level
+
+The Work composer carries the same reasoning control as Chat, beside the model
+picker, with the levels **off**, **on**, **low**, **medium**, and **high**. It
+starts from the default Chat uses: the level pinned for that model, else the
+one in Settings > Generation. A level picked in the composer applies to each
+run started from it, and a new task keeps the level it was created with while
+the page is open.
+
+Each run stores the level it asked for, and the server translates it per
+provider exactly as it does for Chat, on either engine. Anthropic and Gemini
+budgets are added on top of Work's usual 4,096-token answer room so thinking
+does not crowd out a large tool call. The control is hidden for a model that
+reports it cannot reason. Runs started by automations or by another agent use
+the model default.
+
 ## Release Highlights
 
 This release introduces Work as a complete task workflow:
@@ -76,6 +120,10 @@ This release introduces Work as a complete task workflow:
 The persistent unit is the task workspace, not a continuously running
 container. Alcore starts, stops, and may recreate the task's container as
 needed while retaining its named volume.
+During an agent run, the sandbox stays running between commands and workspace
+helpers. Run completion stops it unless a verified preview or watched Work
+Computer screen keeps it active; standalone commands and workspace helpers
+stop their sandbox when no other activity needs it.
 
 ## Architecture
 
@@ -180,8 +228,10 @@ its provider route, and its persistent workspace.
 The starting screen groups runtime policy and optional agent choices above the
 composer. These choices sit side by side when space permits and stack on
 smaller screens. If host folders are available, the folder field and access
-warning stay visible. The model selector stays inside the composer at every
-screen size, and long model names fit within narrow conversation panes.
+warning stay visible. Engine and Model sit together inside the composer beside
+dictation and a labeled Run button. The controls wrap on smaller screens, and
+long model names fit within narrow conversation panes. Changing an engine or
+model keeps the task description you have already entered.
 
 Each task remains in the primary sidebar. Reopening it restores its recent
 conversation, Files view, current provider/model selection, and workspace.
@@ -942,7 +992,12 @@ cheap and the workspace persists, so an idled preview simply restarts on
 the next use. The default is thirty minutes; the preview and screen panes
 say so ("Stops after 30 minutes without activity"), a named policy can set
 its own value, and `0` turns the sweep off so a preview runs until it is
-stopped explicitly.
+stopped explicitly. In team mode, the external worker also expires previews
+owned by application replicas. A preview's ownership hold alone does not
+count as activity; active runs, commands, and attached terminals or screens
+keep the sandbox running. After the worker stops a preview, its application
+owner releases the runtime admission slot on the next heartbeat (normally
+within ten seconds).
 
 A finished task (completed, failed, or cancelled) does not get a preview or
 a screen by accident: the panes offer **Reopen task and start preview** or

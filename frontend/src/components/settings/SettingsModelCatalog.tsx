@@ -289,11 +289,12 @@ export const SettingsModelCatalog: React.FC = () => {
 
       <div className='flex flex-wrap items-center gap-2'>
         <div className='relative min-w-[180px] flex-1'>
-          <Search className='pointer-events-none absolute start-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400' />
+          <Search className='pointer-events-none absolute inset-s-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400' />
           <Input
             value={search}
             onChange={event => setSearch(event.target.value)}
             placeholder={t('modelManager.catalog.searchPlaceholder')}
+            aria-label={t('modelManager.catalog.searchPlaceholder')}
             className='ps-9'
           />
         </div>
@@ -301,7 +302,7 @@ export const SettingsModelCatalog: React.FC = () => {
           value={filter}
           onChange={event => setFilter(event.target.value as CatalogFilter)}
           className='h-9 rounded-lg border border-gray-200 bg-white px-2 text-xs text-gray-700 dark:border-dark-300 dark:bg-dark-100 dark:text-gray-200'
-          aria-label={t('modelManager.catalog.filterAll')}
+          aria-label={t('modelManager.catalog.filterLabel')}
         >
           {filters.map(entry => (
             <option key={entry.id} value={entry.id}>
@@ -406,6 +407,7 @@ export const SettingsModelCatalog: React.FC = () => {
                   type='button'
                   onClick={() => handleAvatarPick(key)}
                   title={t('modelManager.catalog.setPicture')}
+                  aria-label={t('modelManager.catalog.setPicture')}
                   className='flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-gray-50 text-gray-400 dark:border-dark-300 dark:bg-dark-200'
                 >
                   {entry.avatar ? (
@@ -439,7 +441,7 @@ export const SettingsModelCatalog: React.FC = () => {
                   title={starLabel}
                   aria-label={starLabel}
                   className={cn(
-                    'flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1 dark:hover:bg-dark-200 dark:focus-visible:ring-offset-dark-100',
+                    'flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1 dark:hover:bg-dark-200 dark:focus-visible:ring-offset-dark-100',
                     isStarred
                       ? 'text-primary-600 dark:text-primary-400'
                       : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
@@ -454,6 +456,8 @@ export const SettingsModelCatalog: React.FC = () => {
                   type='button'
                   onClick={() => setEditing(isEditing ? null : key)}
                   title={t('modelManager.catalog.rename')}
+                  aria-label={t('modelManager.catalog.rename')}
+                  aria-expanded={isEditing}
                   className='flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-dark-200'
                 >
                   {isEditing ? (
@@ -502,6 +506,9 @@ export const SettingsModelCatalog: React.FC = () => {
                       updateMetadata(key, { label: event.target.value }, true)
                     }
                     placeholder={model.name}
+                    aria-label={t('modelManager.catalog.displayName', {
+                      name: model.name,
+                    })}
                     className='h-8 max-w-xs text-xs'
                   />
                   {entry.avatar && (
