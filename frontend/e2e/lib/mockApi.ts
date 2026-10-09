@@ -832,7 +832,20 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
     }
   );
   const ollamaHealthy = options.ollamaHealthy ?? true;
-  const plugins = structuredClone(options.plugins ?? []);
+  const defaultPlugins: MockPlugin[] = [
+    {
+      id: 'e2e-chat',
+      name: 'E2E Chat Provider',
+      type: 'completion',
+      endpoint: '/api/chat/completions',
+      api_mode: 'chat_completions',
+      base_url: '',
+      auth: { header: 'Authorization', key_env: 'E2E_KEY' },
+      model_map: ['llama3.2:3b'],
+      active: true,
+    },
+  ];
+  const plugins = structuredClone(options.plugins ?? defaultPlugins);
   const pluginVariables = structuredClone(options.pluginVariables ?? {});
   const libraryModels = options.libraryModels ?? defaultLibraryModels;
   const cloudLibraryModels =
