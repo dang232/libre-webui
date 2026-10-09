@@ -82,7 +82,6 @@ test('PostgreSQL migration registry is contiguous, checksummed, and frozen', () 
     POSTGRES_MIGRATIONS.map(migration => migration.version),
     [
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
       22, 23, 24, 25, 26, 27, 28, 29,
       30, 31, 32,
     ]
@@ -3335,6 +3334,9 @@ test(
     await target.query('DROP TABLE canonical_identity_conflicts');
     await target.query('DROP INDEX IF EXISTS idx_users_auth_subject');
     await target.query('ALTER TABLE users DROP COLUMN auth_subject');
+    await target.query(
+      'DELETE FROM libre_schema_migrations WHERE version = 32'
+    );
     await target.query(
       'DELETE FROM libre_schema_migrations WHERE version = 31'
     );
