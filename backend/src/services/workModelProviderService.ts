@@ -321,14 +321,21 @@ export class WorkModelProviderService {
         'WORK_MODEL_UNAVAILABLE'
       );
     }
+    // Only the underlying model reaches the provider: a `strands:`-wrapped
+    // selection must be unwrapped (and re-checked for engine access) first.
+    const cleaned = await this.providerModel(
+      streamRequest.model,
+      provider,
+      userId
+    );
     const plugin = await this.requireExactPlugin(
       provider.providerId,
-      streamRequest.model,
+      cleaned,
       userId
     );
     return this.generatePluginStream(
       plugin,
-      streamRequest,
+      { ...streamRequest, model: cleaned },
       userId,
       observer,
       signal
