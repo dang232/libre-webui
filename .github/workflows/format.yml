@@ -10,9 +10,7 @@ on:
 
 jobs:
   format-and-lint:
-    runs-on: [self-hosted, Linux, X64] # fork/PR2: self-hosted LL runner; billing-blocked hosted
-    env:
-      npm_config_ignore_scripts: 'true' # fork/PR2: LL has no compiler/sudo; lint needs no native builds
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
