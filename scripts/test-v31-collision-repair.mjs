@@ -124,6 +124,9 @@ test('builds the production-collided fixture (ledger 31 canonical, no auth_subje
 
     // Reproduce the production incident state: ledger claims v31
     // canonical-auth-identity while the auth_subject DDL was never applied.
+    // The v33 work-run-think row is also removed so the ledger ends at v31.
+    db.exec('DELETE FROM _libre_schema_migrations WHERE version = 33');
+    db.exec('ALTER TABLE work_runs DROP COLUMN think');
     db.exec('DELETE FROM _libre_schema_migrations WHERE version = 32');
     db.exec('DROP INDEX IF EXISTS idx_users_auth_subject');
     db.exec('ALTER TABLE users DROP COLUMN auth_subject');
@@ -163,7 +166,7 @@ test('builds the production-collided fixture (ledger 31 canonical, no auth_subje
   }
 });
 
-test('collided fixture boots cleanly and converges to v32', t => {
+test('collided fixture boots cleanly and converges to v33', t => {
   assert.ok(dataDir, 'fixture built by the previous test');
   const child = bootDatabase(dataDir);
   assert.equal(
@@ -194,14 +197,16 @@ test('collided fixture boots cleanly and converges to v32', t => {
   );
 
   const ledger = readLedger(db);
-  assert.equal(ledger.length, 32, 'ledger reconciled to versions 1..32');
+  assert.equal(ledger.length, 33, 'ledger reconciled to versions 1..33');
   assert.deepEqual(
-    ledger.at(-2),
+    ledger.at(-3),
     CANONICAL_ROW_31,
     'v31 canonical-auth-identity row is never rewritten'
   );
-  assert.equal(ledger.at(-1)?.version, 32);
-  assert.equal(ledger.at(-1)?.name, 'alcore-auth-subject');
+  assert.equal(ledger.at(-2)?.version, 32);
+  assert.equal(ledger.at(-2)?.name, 'alcore-auth-subject');
+  assert.equal(ledger.at(-1)?.version, 33);
+  assert.equal(ledger.at(-1)?.name, 'work-run-think');
 
   const users = db
     .prepare(
