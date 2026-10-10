@@ -12,3 +12,18 @@
 # the local Docker client, not a network server.
 CVE-2026-78667
 CVE-2026-97031
+CVE-2026-94439
+CVE-2026-97032
+CVE-2026-56857
+CVE-2026-56866
+CVE-2026-78659
+CVE-2026-78660
+CVE-2026-78663
+CVE-2026-78669
+CVE-2026-94440
+CVE-2026-94448
+CVE-2026-97030
+# KaTeX prototype-pollution XSS (LOW): fixed in 0.18.2, but mermaid pins
+# katex ^0.16.47 so the fixed release cannot be consumed without an
+# override; chat math rendering stays server-sanitized in the meantime.
+CVE-2026-103923

@@ -272,6 +272,10 @@ jobs:
           format: sarif
           output: security-artifacts/trivy-container.sarif
           exit-code: '1'
+          # Repository waivers for fixed-but-unshippable findings (e.g. Go
+          # stdlib inside Alpine's docker-cli); passed explicitly so the
+          # gate does not depend on working-directory auto-discovery.
+          trivyignores: .trivyignore
 
       - name: Upload container findings to code scanning
         # Code scanning results can only be uploaded where the feature
