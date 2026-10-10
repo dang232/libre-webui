@@ -44,15 +44,17 @@ test.after(() => {
 const password = 'Alcore-Subject-Test-Password-1!';
 let adminId = null;
 
-test('SQLite registry ends with additive alcore-auth-subject v32', async () => {
+test('SQLite registry ends with additive work-run-think v33', async () => {
   const { SQLITE_MIGRATION_CONTRACT } = await importBuilt(
     'persistence/sqliteMigrations.js'
   );
-  assert.equal(SQLITE_MIGRATION_CONTRACT.at(-1)?.version, 32);
-  assert.equal(SQLITE_MIGRATION_CONTRACT.at(-1)?.name, 'alcore-auth-subject');
-  assert.equal(SQLITE_MIGRATION_CONTRACT.at(-2)?.version, 31);
+  assert.equal(SQLITE_MIGRATION_CONTRACT.at(-1)?.version, 33);
+  assert.equal(SQLITE_MIGRATION_CONTRACT.at(-1)?.name, 'work-run-think');
+  assert.equal(SQLITE_MIGRATION_CONTRACT.at(-2)?.version, 32);
+  assert.equal(SQLITE_MIGRATION_CONTRACT.at(-2)?.name, 'alcore-auth-subject');
+  assert.equal(SQLITE_MIGRATION_CONTRACT.at(-3)?.version, 31);
   assert.equal(
-    SQLITE_MIGRATION_CONTRACT.at(-2)?.name,
+    SQLITE_MIGRATION_CONTRACT.at(-3)?.name,
     'canonical-auth-identity'
   );
 });
