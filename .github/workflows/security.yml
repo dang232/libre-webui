@@ -272,6 +272,10 @@ jobs:
           format: sarif
           output: security-artifacts/trivy-container.sarif
           exit-code: '1'
+          # trivy-action unsets the severity filter when building a SARIF
+          # report, so without this every fixed LOW (e.g. the transitive
+          # katex copy) fails the step even though the gate is HIGH/CRITICAL.
+          limit-severities-for-sarif: true
 
       - name: Upload container findings to code scanning
         # Code scanning results can only be uploaded where the feature
