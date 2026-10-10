@@ -8,7 +8,6 @@ hide_table_of_contents: true
 keywords:
   [
     Alcore,
-    ollama,
     local ai,
     self-hosted ai,
     ai workspace,
@@ -51,7 +50,7 @@ import CodeBlock from '@theme/CodeBlock';
         <CodeBlock language="bash">npx libre-webui@latest</CodeBlock>
       </div>
       <p className="docs-landing__command-note">
-        {"Open the workspace at "}<code>http://localhost:8080</code>{". Add Ollama for local models or connect a supported provider when you choose."}
+        {"Open the workspace at "}<code>http://localhost:8080</code>{Connect a supported provider when you choose."}
       </p>
     </div>
   </header>
@@ -65,7 +64,7 @@ import CodeBlock from '@theme/CodeBlock';
         <span className="docs-landing-card__index">01</span>
         <h3 className="docs-landing-card__title">Start on your own infrastructure</h3>
         <p className="docs-landing-card__copy">
-          {"Run one command, use a local Ollama model or a supported provider, and keep deployment choices in your hands."}
+          {"Run one command, use a supported provider, and keep deployment choices in your hands."}
         </p>
         <a className="docs-landing-card__link" href="/QUICK_START">
           {"Install Alcore"}

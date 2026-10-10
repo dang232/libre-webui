@@ -3,7 +3,7 @@ sidebar_position: 4
 title: 'Pro Tips'
 description: 'Practical workflows for getting more out of Alcore.'
 slug: /PRO_TIPS
-keywords: [Alcore pro tips, ai workflows, ollama tips, productivity]
+keywords: [Alcore pro tips, ai workflows, productivity]
 ---
 
 # Pro Tips

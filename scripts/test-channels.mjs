@@ -88,7 +88,8 @@ const [
   { createDomainDurableJobHandlers },
   toolServers,
   toolAccess,
-  { default: ollamaService },
+  { default: pluginService },
+  { default: chatGenerationService },
 ] = await Promise.all([
   distModule('db.js'),
   distModule('services/authService.js'),
@@ -99,7 +100,8 @@ const [
   distModule('platform/jobs/domainJobHandlers.js'),
   distModule('services/toolServerService.js'),
   distModule('services/toolAccessService.js'),
-  distModule('services/ollamaService.js'),
+  distModule('services/pluginService.js'),
+  distModule('services/chatGenerationService.js'),
 ]);
 
 const database = getDatabase();
@@ -677,28 +679,66 @@ const providerRounds = [];
 const providerRequests = [];
 const oneShotRequests = [];
 let providerStubbed = false;
-const realChatStream =
-  ollamaService.generateChatStreamResponse.bind(ollamaService);
-const realChatResponse = ollamaService.generateChatResponse.bind(ollamaService);
-ollamaService.generateChatStreamResponse = async (...args) => {
-  if (!providerStubbed) return realChatStream(...args);
-  const [request, onChunk, , onDone] = args;
-  providerRequests.push(request);
+const MENTION_PLUGIN_ID = 'channel-fixture-provider';
+const mentionPlugin = {
+  id: MENTION_PLUGIN_ID,
+  name: 'Channel Fixture Provider',
+  type: 'completion',
+};
+const realGetActivePluginForModel =
+  pluginService.getActivePluginForModel.bind(pluginService);
+pluginService.getActivePluginForModel = async (model, userId, pluginId) => {
+  if (model === MENTION_MODEL) return mentionPlugin;
+  return realGetActivePluginForModel(model, userId, pluginId);
+};
+const realExecutePluginStreamRequest =
+  pluginService.executePluginStreamRequest.bind(pluginService);
+let toolCallIds = 0;
+pluginService.executePluginStreamRequest = async function* (...args) {
+  const [model, messages, options] = args;
+  if (!providerStubbed) {
+    yield* realExecutePluginStreamRequest(...args);
+    return;
+  }
+  providerRequests.push({ model, messages, tools: options?.tools ?? [] });
   const scripted = providerRounds[providerRequests.length - 1] ?? [
     { message: { content: 'done' }, done: true },
   ];
-  for (const chunk of scripted) onChunk(chunk);
-  onDone?.();
+  for (const chunk of scripted) {
+    const calls = chunk.message?.tool_calls ?? [];
+    for (const call of calls) {
+      toolCallIds += 1;
+      yield {
+        type: 'tool_call',
+        toolCall: {
+          id: `call-${toolCallIds}`,
+          name: call.function.name,
+          arguments: JSON.stringify(call.function.arguments),
+        },
+      };
+    }
+    if (chunk.message?.content) {
+      yield { type: 'content', content: chunk.message.content };
+    }
+  }
+  yield { type: 'done' };
 };
-ollamaService.generateChatResponse = async (...args) => {
-  if (!providerStubbed) return realChatResponse(...args);
-  const [request] = args;
-  oneShotRequests.push(request);
+const realExecuteNonStreaming = chatGenerationService.executeNonStreaming.bind(
+  chatGenerationService
+);
+chatGenerationService.executeNonStreaming = async (...args) => {
+  if (!providerStubbed) return realExecuteNonStreaming(...args);
+  const [input] = args;
+  oneShotRequests.push(input);
   return {
-    model: request.model,
-    created_at: new Date().toISOString(),
-    message: { role: 'assistant', content: 'plain one-shot reply' },
-    done: true,
+    response: {
+      model: input.target?.actualModelName ?? MENTION_MODEL,
+      created_at: new Date().toISOString(),
+      message: { role: 'assistant', content: 'plain one-shot reply' },
+      done: true,
+    },
+    assistantContent: 'plain one-shot reply',
+    source: 'plugin',
   };
 };
 
@@ -767,7 +807,7 @@ test('a mention runs read-only tools and records them on the reply', async () =>
   // Two provider rounds: the tool request, then the answer that used it.
   assert.equal(providerRequests.length, 2);
   assert.ok(
-    providerRequests[0].tools.some(tool => tool.function.name === GET_PETS),
+    providerRequests[0].tools.some(tool => tool.name === GET_PETS),
     'the catalog reached the provider'
   );
   assert.equal(reply.content, 'There is one pet, ada.');

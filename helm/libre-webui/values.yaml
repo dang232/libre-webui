@@ -96,9 +96,6 @@ env:
   CORS_ORIGIN: 'http://localhost:8080'
   ENABLE_SIGNUP: 'false'
   JWT_EXPIRES_IN: '7d'
-  OLLAMA_TIMEOUT: 300000
-  OLLAMA_LONG_OPERATION_TIMEOUT: 900000
-  OLLAMA_MAX_CONTEXT: 32768
   # Team mode requires these node-local credential paths to stay disabled;
   # durable chat provider execution occurs in the external worker.
   AGENT_CLI_MODELS_ENABLED: 'false'

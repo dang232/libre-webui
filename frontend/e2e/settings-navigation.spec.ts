@@ -23,7 +23,7 @@ test('settings tabs support vertical keyboard navigation and skip disabled tabs'
   page,
 }) => {
   await mockLibreWebUiApi(page, {
-    systemInfo: { ...defaultSystemInfo, ollamaEnabled: false },
+    systemInfo: { ...defaultSystemInfo },
   });
   await page.goto('/chat');
   const panel = await openSettingsModal(page);
@@ -57,7 +57,7 @@ test('settings search keeps disabled sections closed and announces empty results
   page,
 }) => {
   await mockLibreWebUiApi(page, {
-    systemInfo: { ...defaultSystemInfo, ollamaEnabled: false },
+    systemInfo: { ...defaultSystemInfo },
   });
   await page.goto('/chat');
   const panel = await openSettingsModal(page);

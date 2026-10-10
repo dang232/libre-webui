@@ -87,7 +87,6 @@ role accordingly.
 The Usage page (`/usage`) charts user-attributed model and provider work.
 Metering happens at each supported execution boundary and currently covers:
 
-- local Ollama chat calls, including native Chat and Ollama-backed Work calls;
 - installed agent CLI chat calls and Strands engine calls;
 - plugin-backed chat, streaming and non-streaming;
 - plugin embeddings, image generation, speech to text, text to speech, sound,
@@ -148,7 +147,7 @@ responses that exit unsuccessfully retain their actual outcome.
 
 Strands calls are attributed to the **Strands** agent. The engine has no model
 provider of its own; every model call it makes goes through Libre WebUI's
-Ollama or plugin providers. Calls made outside LWUI are not imported. Older
+plugin providers. Calls made outside LWUI are not imported. Older
 records without token counters remain unmetered.
 
 The endpoint exposes this bounded breakdown in `agents`, including all five

@@ -160,7 +160,6 @@ test('auth-free local plugins are available without a fake API key', async () =>
   assert.equal(pluginRequiresApiKey(localPlugin), false);
   assert.equal(pluginRequiresApiKey(plugin('alcore')), true);
   assert.deepEqual(await service.availability('test-user'), {
-    ollamaAvailable: false,
     pluginAvailable: true,
   });
   await service.assertModelSupportsTools(

@@ -1,12 +1,12 @@
 ---
 sidebar_position: 3
 title: 'Working with AI Models'
-description: 'Model selection, Ollama management, cloud provider plugins, and performance guidance for Alcore.'
+description: 'Model selection, provider plugins, and performance guidance for Alcore.'
 slug: /WORKING_WITH_MODELS
 keywords:
   [
     Alcore ai models,
-    ollama models,
+    provider plugin models,
     ai model management,
     gemma,
     llama,
@@ -74,7 +74,7 @@ for images, not for the session model's abilities: when a vision model is
 configured, every image-bearing turn uses it, even if the session model could
 handle images itself.
 
-The selection stores the exact provider identity (Ollama or a specific plugin)
+The selection stores the exact provider identity (a specific plugin)
 together with the model name, so a provider cannot capture an identically named
 model. If the saved selection loses that identity — for example the model or
 provider is no longer available — an image-bearing turn fails. Re-select the
@@ -92,7 +92,7 @@ Work needs a chat model that can call tools. It can use:
 Plugin-backed Work runs use the Alcore provider adapter for the configured
 plugin. Alcore persists the exact
 provider type and plugin identifier with the task and each run, so a plugin
-cannot capture an identically named Ollama model. If the selected model or
+cannot capture an identically named model from another provider. If the selected model or
 provider rejects tool calling, the run fails instead of silently switching to
 another provider.
 
