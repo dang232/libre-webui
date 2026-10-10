@@ -179,7 +179,6 @@ export interface SystemInfo {
   strandsAccess: StrandsAccessMode;
   /** True when at least one passkey is registered system-wide. */
   passkeysInUse: boolean;
-  ollamaEnabled: boolean;
   version?: string;
   turnstile: TurnstilePublicConfig;
   defaultTheme: ThemePreference;
@@ -320,7 +319,6 @@ export class AuthService {
       agentCliModelsEnabled: await getAgentCliModelsEnabled(),
       strandsAccess: await getStrandsAccessMode(),
       passkeysInUse: await anyPasskeysRegistered(),
-      ollamaEnabled: false,
       version: packageVersion,
       turnstile: turnstileService.getPublicConfig(),
       defaultTheme: await getDefaultTheme(),

@@ -48,7 +48,7 @@ router.use(authenticate);
 // interface can apply the same visibility, priority, order, and presentation;
 // changes are admin-only.
 router.get(
-  '/models/visibility',
+  '/visibility',
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const [hidden, order, starred, metadata] = await Promise.all([
       getHiddenModels(),
@@ -61,7 +61,7 @@ router.get(
 );
 
 router.put(
-  '/models/visibility',
+  '/visibility',
   requireAdmin,
   async (req: Request, res: Response): Promise<void> => {
     try {
@@ -98,24 +98,21 @@ router.put(
 // Who may manage models. Read is open to any authenticated user so the
 // interface can decide whether to offer management affordances; changing the
 // mode is admin-only.
-router.get(
-  '/models/access',
-  async (req: AuthenticatedRequest, res: Response) => {
-    const currentUser = req.user
-      ? await userModel.getUserById(req.user.userId)
-      : null;
-    res.json({
-      success: true,
-      data: {
-        mode: await getModelDownloadMode(),
-        allowed: currentUser ? await userCanDownloadModels(currentUser) : false,
-      },
-    });
-  }
-);
+router.get('/access', async (req: AuthenticatedRequest, res: Response) => {
+  const currentUser = req.user
+    ? await userModel.getUserById(req.user.userId)
+    : null;
+  res.json({
+    success: true,
+    data: {
+      mode: await getModelDownloadMode(),
+      allowed: currentUser ? await userCanDownloadModels(currentUser) : false,
+    },
+  });
+});
 
 router.put(
-  '/models/access',
+  '/access',
   requireAdmin,
   async (req: Request, res: Response): Promise<void> => {
     const mode = req.body?.mode;

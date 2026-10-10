@@ -18,15 +18,12 @@
 /**
  * The provider models the Strands engine may drive, and how a selection maps
  * back onto the Libre WebUI provider that serves it. The engine never talks to
- * a provider directly: every call goes through the same Ollama and plugin
- * services Chat uses, so credentials, usage metering, and the Ollama switch
- * apply unchanged.
+ * a provider directly: every call goes through the same plugin services Chat
+ * uses, so credentials and usage metering apply unchanged.
  */
 
 import type { Plugin } from '../types/index.js';
 import pluginService from '../services/pluginService.js';
-import ollamaService from '../services/ollamaService.js';
-import { getOllamaRuntimeSettings } from '../services/ollamaSettingsService.js';
 import preferencesService, {
   instanceDefaultModel,
 } from '../services/preferencesService.js';
@@ -38,15 +35,17 @@ const logger = createLogger('strands-catalog');
 export const STRANDS_AGENT_ID = 'strands';
 const STRANDS_SELECTOR_PREFIX = `${STRANDS_AGENT_ID}:`;
 
-export type StrandsProviderRoute =
-  | { type: 'ollama'; model: string }
-  | { type: 'plugin'; model: string; pluginId: string };
+export type StrandsProviderRoute = {
+  type: 'plugin';
+  model: string;
+  pluginId: string;
+};
 
 export interface StrandsCatalogModel {
-  /** Route id, `ollama:<model>` or `plugin:<pluginId>:<model>`, URI encoded. */
+  /** Route id, `plugin:<pluginId>:<model>`, URI encoded. */
   readonly id: string;
   readonly name: string;
-  readonly providerType: 'ollama' | 'plugin';
+  readonly providerType: 'plugin';
   readonly providerId: string | null;
   readonly providerName: string;
 }
@@ -65,9 +64,7 @@ export class StrandsModelError extends Error {
 }
 
 export function strandsModelRouteId(route: StrandsProviderRoute): string {
-  return route.type === 'ollama'
-    ? `ollama:${encodeURIComponent(route.model)}`
-    : `plugin:${encodeURIComponent(route.pluginId)}:${encodeURIComponent(route.model)}`;
+  return `plugin:${encodeURIComponent(route.pluginId)}:${encodeURIComponent(route.model)}`;
 }
 
 /** Parse a route id. Returns undefined for a bare model name. */
@@ -76,9 +73,6 @@ export function parseStrandsModelRoute(
 ): StrandsProviderRoute | undefined {
   const parts = id.split(':');
   try {
-    if (parts[0] === 'ollama' && parts.length === 2 && parts[1]) {
-      return { type: 'ollama', model: decodeURIComponent(parts[1]) };
-    }
     if (parts[0] === 'plugin' && parts.length === 3 && parts[1] && parts[2]) {
       return {
         type: 'plugin',
@@ -154,39 +148,11 @@ async function requirePluginRoute(
   return plugin;
 }
 
-async function requireOllamaEnabled(): Promise<void> {
-  if (!(await getOllamaRuntimeSettings()).enabled) {
-    throw new StrandsModelError(
-      'Ollama is disabled. Choose a plugin model for the Strands engine.'
-    );
-  }
-}
-
 /** Every chat model the engine may drive for this account. */
 export async function listStrandsModels(
   userId: string
 ): Promise<StrandsCatalogModel[]> {
   const models = new Map<string, StrandsCatalogModel>();
-  try {
-    const local = (await getOllamaRuntimeSettings()).enabled
-      ? await ollamaService.getModels()
-      : [];
-    for (const model of local) {
-      if (!isChatModelId(model.name)) continue;
-      const id = strandsModelRouteId({ type: 'ollama', model: model.name });
-      models.set(id, {
-        id,
-        name: model.name,
-        providerType: 'ollama',
-        providerId: null,
-        providerName: 'Ollama',
-      });
-    }
-  } catch (error) {
-    logger.debug('Ollama models are unavailable to the Strands engine', {
-      error,
-    });
-  }
   try {
     const statuses = await pluginService.getPluginStatus(userId);
     for (const plugin of await pluginService.getActivePlugins(userId)) {
@@ -245,12 +211,8 @@ export async function resolveStrandsRoute(
       if (!isChatModelId(qualified.model)) {
         throw new StrandsModelError('Choose a chat model for Strands.');
       }
-      if (qualified.type === 'plugin') {
-        const plugin = await requirePluginRoute(qualified, userId);
-        return { id: strandsModelRouteId(qualified), route: qualified, plugin };
-      }
-      await requireOllamaEnabled();
-      return { id: strandsModelRouteId(qualified), route: qualified };
+      const plugin = await requirePluginRoute(qualified, userId);
+      return { id: strandsModelRouteId(qualified), route: qualified, plugin };
     }
     if (!isChatModelId(model)) {
       throw new StrandsModelError(
@@ -271,17 +233,6 @@ export async function resolveStrandsRoute(
       const plugin = await requirePluginRoute(route, userId);
       return { id: strandsModelRouteId(route), route, plugin };
     }
-    const ollamaEnabled = (await getOllamaRuntimeSettings()).enabled;
-    if (ollamaEnabled) {
-      const local = await ollamaService.getModels().catch(() => []);
-      if (
-        (preferred && preferences?.defaultProviderType === 'ollama') ||
-        local.some(candidate => candidate.name === model)
-      ) {
-        const route = { type: 'ollama' as const, model };
-        return { id: strandsModelRouteId(route), route };
-      }
-    }
     const plugin = await pluginService
       .getActivePluginForModel(model, userId)
       .catch(() => null);
@@ -299,7 +250,7 @@ export async function resolveStrandsRoute(
   const first = (await listStrandsModels(userId))[0];
   if (!first) {
     throw new StrandsModelError(
-      'No chat model is available to the Strands engine. Enable Ollama or a chat plugin first.'
+      'No chat model is available to the Strands engine. Enable a chat plugin first.'
     );
   }
   return resolveStrandsRoute(first.id, userId);
@@ -311,11 +262,13 @@ export async function resolveStrandsProviderTarget(
   userId: string
 ): Promise<{
   model: string;
-  providerType: 'ollama' | 'plugin';
+  providerType: 'plugin';
   providerId: string | null;
 }> {
   const { route } = await resolveStrandsRoute(requested, userId);
-  return route.type === 'plugin'
-    ? { model: route.model, providerType: 'plugin', providerId: route.pluginId }
-    : { model: route.model, providerType: 'ollama', providerId: null };
+  return {
+    model: route.model,
+    providerType: 'plugin',
+    providerId: route.pluginId,
+  };
 }

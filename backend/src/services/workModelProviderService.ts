@@ -129,7 +129,6 @@ export const WORK_TOOL_ARGUMENTS_ERROR_MESSAGE =
   'The provider returned incomplete or invalid JSON for this tool call, likely because its output-token limit was reached. Retry with a smaller payload; split large write_file content into focused files.';
 
 export interface WorkProviderAvailability {
-  ollamaAvailable: boolean;
   pluginAvailable: boolean;
 }
 
@@ -172,7 +171,7 @@ export class WorkModelProviderService {
 
   async availability(userId: string): Promise<WorkProviderAvailability> {
     const pluginAvailable = await this.hasConfiguredPlugin(userId);
-    return { ollamaAvailable: false, pluginAvailable };
+    return { pluginAvailable };
   }
 
   async assertModelSupportsTools(
