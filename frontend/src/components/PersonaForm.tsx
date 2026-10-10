@@ -64,8 +64,8 @@ const PersonaForm: React.FC<PersonaFormProps> = ({
   const [formData, setFormData] = useState<ExtendedFormData>(DEFAULT_FORM_DATA);
   const chatModels = useChatStore(state => state.models);
   const loadChatModels = useChatStore(state => state.loadModels);
-  // The chat store's list already merges Ollama and provider (plugin) models;
-  // personas can back onto either — the backend routes plugin models by name.
+  // The chat store's list already merges provider (plugin) models;
+  // personas back onto them — the backend routes plugin models by name.
   // Other personas and agent CLIs are not valid persona backends.
   const availableModels = useMemo<ChatModel[]>(
     () =>
@@ -127,18 +127,7 @@ const PersonaForm: React.FC<PersonaFormProps> = ({
       return acc;
     }, []);
 
-    return unique.length > 0
-      ? unique
-      : [
-          {
-            id: 'nomic-embed-text',
-            name: 'nomic-embed-text',
-            description: 'Ollama - Default embedding model',
-            provider: 'ollama' as const,
-            dimensions: 0,
-            isDetectedEmbedding: true,
-          },
-        ];
+    return unique;
   }, []);
 
   const personaId = persona?.id;

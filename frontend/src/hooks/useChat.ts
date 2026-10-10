@@ -601,7 +601,7 @@ export const useChat = (sessionId: string) => {
         timestamp: number;
         messageId?: string;
         thinking?: string;
-        statistics?: GenerationStatistics; // Generation statistics from Ollama
+        statistics?: GenerationStatistics; // Generation statistics from the provider
         providerMetadata?: Record<string, unknown>;
         /** The reply was too large to ride along; read it from the session. */
         truncated?: boolean;
@@ -670,7 +670,7 @@ export const useChat = (sessionId: string) => {
           completeData.thinking || streamingThinkingRef.current;
 
         // Use updateMessageWithStatistics to include generation statistics
-        // The backend times the thinking phase for Ollama streams; the local
+        // The backend times the thinking phase for provider streams; the local
         // timer covers providers that stream without statistics.
         const thinkingDurationMs = takeThinkingDuration(messageId);
         const statistics =

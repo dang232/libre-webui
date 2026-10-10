@@ -1115,8 +1115,7 @@ const ProjectsPanel: React.FC = () => {
 /**
  * Default chat model: the ALcore API Platform is provisioned automatically
  * at signup/first login (server-held credential, never in the browser), so
- * new chats start there with zero setup. Local Ollama stays available as an
- * opt-in provider. This panel only reflects and re-selects the persisted
+ * new chats start there with zero setup. This panel only reflects and re-selects the persisted
  * default through the preferences API — provisioning itself happens
  * server-side. Store access is dynamic (click-time only) so this settings
  * tab keeps rendering without the chat store, matching the lane convention

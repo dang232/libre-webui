@@ -35,7 +35,6 @@ import {
 import { Button, Select } from '@/components/ui';
 import { useDictation } from '@/hooks/useDictation';
 import type { ChatModel, OllamaModel, ThinkingPreference } from '@/types';
-import { ollamaApi } from '@/utils/api';
 import { workModelSelectionKey, type WorkModelOption } from '@/types/work';
 import { cn } from '@/utils';
 import {
@@ -242,47 +241,15 @@ export function WorkComposer({
   }, [models, selectorModels]);
 
   // The reasoning control shows where thinking means something, as in Chat:
-  // a plugin model answers for itself, and Ollama is asked about its own
-  // models. Where Ollama says nothing the control is offered, not hidden.
+  // a plugin model answers for itself, and every other model is offered
+  // the control.
   const selectedEntry = effectiveSelectorModels.find(
     model => workSelectorModelValue(model) === modelKey
   );
-  const ollamaModelName =
-    selectedEntry && !selectedEntry.isPlugin
-      ? baseWorkModel(selectedEntry.name)
-      : undefined;
-  const [ollamaThinking, setOllamaThinking] = useState<{
-    model: string;
-    supported?: boolean;
-  } | null>(null);
-  useEffect(() => {
-    if (!ollamaModelName || !onThinkChange) return;
-    let cancelled = false;
-    void ollamaApi
-      .getModelDefaults(ollamaModelName)
-      .then(response => {
-        if (cancelled || !response.success || !response.data) return;
-        setOllamaThinking({
-          model: ollamaModelName,
-          supported: response.data.supportsThinking,
-        });
-      })
-      .catch(() => {
-        // A model that cannot be inspected keeps the control available.
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [ollamaModelName, onThinkChange]);
   const thinkingAvailable = Boolean(
     onThinkChange &&
     selectedEntry &&
-    (selectedEntry.isPlugin
-      ? selectedEntry.reasoningSupport !== false
-      : !(
-          ollamaThinking?.model === ollamaModelName &&
-          ollamaThinking?.supported === false
-        ))
+    (selectedEntry.isPlugin ? selectedEntry.reasoningSupport !== false : true)
   );
 
   useEffect(() => {

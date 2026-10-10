@@ -296,7 +296,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         section: actionSection,
         label: t('sidebar.navigation.models', 'Models'),
         icon: Database,
-        keywords: 'models ollama providers llm',
+        keywords: 'models providers llm',
         run: () => onOpenSettingsTab('model-manager'),
       },
       {
