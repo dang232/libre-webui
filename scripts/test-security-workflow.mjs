@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
+import { execFileSync } from 'node:child_process';
 import yaml from 'js-yaml';
 
 const repoRoot = path.resolve(import.meta.dirname, '..');
@@ -104,15 +105,24 @@ test('scanner reports are retained and tolerated scans are re-enforced', () => {
   assert.match(container, /uses: github\/codeql-action\/upload-sarif@v4/);
 });
 
-test('shipped languages stay visible to language detection and CodeQL', () => {
+test('CodeQL scans exactly the languages the repo ships', () => {
   const codeql = yaml.load(
     fs.readFileSync(path.join(repoRoot, '.github/workflows/codeql.yml'), 'utf8')
   );
-  // Python stays in the matrix (matching upstream) so any future Python
-  // integration is scanned from the day it lands. The example servers
-  // themselves were removed by the keep-only-bundled-providers refactor,
-  // so there is no examples/ tree to keep linguist-visible anymore.
-  assert.ok(codeql.jobs.analyze.strategy.matrix.language.includes('python'));
+  const languages = codeql.jobs.analyze.strategy.matrix.language;
+  assert.ok(languages.includes('javascript-typescript'));
+  // Python joins the matrix only while Python code ships: with zero .py
+  // files the analyzer exits 32, and the example servers were removed by
+  // the keep-only-bundled-providers refactor.
+  const pythonFiles = execFileSync('git', ['ls-files', '*.py'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  }).trim();
+  assert.equal(
+    languages.includes('python'),
+    pythonFiles.length > 0,
+    'python joins the matrix when Python code ships'
+  );
   assert.equal(codeql.on.pull_request, null);
   assert.equal(codeql.jobs.analyze.strategy['fail-fast'], false);
   assert.notEqual(codeql.jobs.analyze['continue-on-error'], true);
