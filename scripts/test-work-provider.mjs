@@ -594,27 +594,16 @@ test('Work screenshots reach every provider payload as image parts', () => {
 
 test('Strands Work selections retain the exact underlying provider and require access', async () => {
   let strandsAllowed = true;
-  const seen = [];
+  const remotePlugin = {
+    ...plugin('fixture-work'),
+    active: true,
+    model_map: ['fixture-model'],
+  };
   const service = new WorkModelProviderService({
-    ollama: {
-      isHealthy: async () => true,
-      showModel: async model => {
-        seen.push(['inspect', model]);
-        return { capabilities: ['tools'] };
-      },
-      generateChatResponse: async request => {
-        seen.push(['generate', request.model]);
-        return {
-          model: request.model,
-          message: { role: 'assistant', content: 'fixture' },
-          done: true,
-        };
-      },
-    },
     plugins: {
-      getActivePlugins: () => [],
-      getPlugin: () => null,
-      getApiKey: () => null,
+      getActivePlugins: () => [remotePlugin],
+      getPlugin: id => (id === remotePlugin.id ? remotePlugin : null),
+      getApiKey: () => 'test-key',
       getPluginVariables: () => ({}),
     },
     post: async () => {
@@ -622,12 +611,24 @@ test('Strands Work selections retain the exact underlying provider and require a
     },
     strandsAccess: async () => strandsAllowed,
   });
+  const selection = { providerType: 'plugin', providerId: remotePlugin.id };
+  const originalFetch = globalThis.fetch;
+  const payloads = [];
+  globalThis.fetch = async (_url, init) => {
+    payloads.push(JSON.parse(init.body));
+    return new Response(
+      JSON.stringify({
+        choices: [{ message: { role: 'assistant', content: 'fixture' } }],
+      }),
+      { headers: { 'content-type': 'application/json' } }
+    );
+  };
   try {
     strandsAllowed = false;
     await assert.rejects(
       service.assertModelSupportsTools(
         'strands:fixture-model',
-        { providerType: 'ollama' },
+        selection,
         'user'
       ),
       error => error.code === 'WORK_STRANDS_DISABLED'
@@ -635,7 +636,7 @@ test('Strands Work selections retain the exact underlying provider and require a
     strandsAllowed = true;
     await service.assertModelSupportsTools(
       'strands:fixture-model',
-      { providerType: 'ollama' },
+      selection,
       'user'
     );
     await service.generateChatStreamResponse(
@@ -645,26 +646,22 @@ test('Strands Work selections retain the exact underlying provider and require a
         tools: [tool],
         stream: true,
       },
-      { providerType: 'ollama' },
+      selection,
       'user',
       {}
     );
-    assert.deepEqual(seen, [
-      ['inspect', 'fixture-model'],
-      ['generate', 'fixture-model'],
-    ]);
+    assert.equal(payloads.length, 1);
+    assert.equal(payloads[0].model, 'fixture-model');
+    assert.deepEqual(payloads[0].tools, [tool]);
     for (const model of ['strands:', 'dsh:', 'strands:strands:fixture-model']) {
       await assert.rejects(
-        service.assertModelSupportsTools(
-          model,
-          { providerType: 'ollama' },
-          'user'
-        ),
+        service.assertModelSupportsTools(model, selection, 'user'),
         error => error.code === 'WORK_MODEL_TOOLS_UNSUPPORTED'
       );
     }
   } finally {
     strandsAllowed = true;
+    globalThis.fetch = originalFetch;
   }
 });
 
