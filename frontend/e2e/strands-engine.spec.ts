@@ -230,3 +230,49 @@ test('the Strands model selector works before a session exists and on an open se
     .poll(() => patchBodies[patchBodies.length - 1])
     .toEqual({ model: null });
 });
+
+test('Work and Agents are hidden and route-protected for non-admin users', async ({
+  page,
+}) => {
+  const libreClawRequests: string[] = [];
+  await mockLibreWebUiApi(page, {
+    systemInfo: {
+      ...defaultSystemInfo,
+      requiresAuth: true,
+      strandsAccess: 'admins',
+    },
+    authUsers: [
+      {
+        id: 'member',
+        username: 'member',
+        email: null,
+        role: 'user',
+        status: 'active',
+        token: 'member-token',
+      },
+    ],
+  });
+  await page.addInitScript(() =>
+    localStorage.setItem('auth-token', 'member-token')
+  );
+  await page.route('**/api/alcore-claw/**', async route => {
+    libreClawRequests.push(
+      `${route.request().method()} ${new URL(route.request().url()).pathname}`
+    );
+    await route.continue();
+  });
+
+  await page.goto('/');
+  const explore = page.getByTestId('sidebar-navigation');
+  await expect(explore.getByRole('link', { name: 'Strands' })).toHaveCount(
+    0
+  );
+
+  await page.goto('/strands');
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByTestId('strands-page')).toHaveCount(0);
+
+  expect(
+    libreClawRequests.filter(request => !request.startsWith('GET'))
+  ).toEqual([]);
+});
