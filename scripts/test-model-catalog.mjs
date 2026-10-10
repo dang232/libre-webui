@@ -202,7 +202,7 @@ test('hidden models, order, stars, and metadata are stored independently', async
 
 test('a reorder survives the round trip the UI makes', async () => {
   const wanted = ['gemma3:12b', 'qwen3:8b', 'llama3.2:3b'];
-  const put = await fetch(`${baseUrl}/models/visibility`, {
+  const put = await fetch(`${baseUrl}/visibility`, {
     method: 'PUT',
     headers: { Authorization: `Bearer ${adminToken}`, ...asJson },
     body: JSON.stringify({ order: wanted }),
@@ -211,7 +211,7 @@ test('a reorder survives the round trip the UI makes', async () => {
   const saved = await put.json();
   assert.deepEqual(saved.data.order, wanted, 'the PUT echoes the new order');
 
-  const get = await fetch(`${baseUrl}/models/visibility`, {
+  const get = await fetch(`${baseUrl}/visibility`, {
     headers: { Authorization: `Bearer ${adminToken}` },
   });
   const read = await get.json();
@@ -220,7 +220,7 @@ test('a reorder survives the round trip the UI makes', async () => {
 
 test('star priority survives the round trip the UI makes', async () => {
   const wanted = ['gemma3:12b', 'alcore/test-model'];
-  const put = await fetch(`${baseUrl}/models/visibility`, {
+  const put = await fetch(`${baseUrl}/visibility`, {
     method: 'PUT',
     headers: { Authorization: `Bearer ${adminToken}`, ...asJson },
     body: JSON.stringify({ starred: wanted }),
@@ -229,7 +229,7 @@ test('star priority survives the round trip the UI makes', async () => {
   const saved = await put.json();
   assert.deepEqual(saved.data.starred, wanted, 'the PUT echoes star priority');
 
-  const get = await fetch(`${baseUrl}/models/visibility`, {
+  const get = await fetch(`${baseUrl}/visibility`, {
     headers: { Authorization: `Bearer ${adminToken}` },
   });
   const read = await get.json();
@@ -237,12 +237,12 @@ test('star priority survives the round trip the UI makes', async () => {
 });
 
 test('sending only one field leaves the others untouched', async () => {
-  await fetch(`${baseUrl}/models/visibility`, {
+  await fetch(`${baseUrl}/visibility`, {
     method: 'PUT',
     headers: { Authorization: `Bearer ${adminToken}`, ...asJson },
     body: JSON.stringify({ metadata: { 'qwen3:8b': { label: 'House' } } }),
   });
-  const get = await fetch(`${baseUrl}/models/visibility`, {
+  const get = await fetch(`${baseUrl}/visibility`, {
     headers: { Authorization: `Bearer ${adminToken}` },
   });
   const read = await get.json();
@@ -260,14 +260,14 @@ test('sending only one field leaves the others untouched', async () => {
 });
 
 test('invalid star settings are rejected without changing saved priority', async () => {
-  const bad = await fetch(`${baseUrl}/models/visibility`, {
+  const bad = await fetch(`${baseUrl}/visibility`, {
     method: 'PUT',
     headers: { Authorization: `Bearer ${adminToken}`, ...asJson },
     body: JSON.stringify({ starred: 'gemma3:12b' }),
   });
   assert.equal(bad.status, 400);
 
-  const get = await fetch(`${baseUrl}/models/visibility`, {
+  const get = await fetch(`${baseUrl}/visibility`, {
     headers: { Authorization: `Bearer ${adminToken}` },
   });
   const read = await get.json();
@@ -275,21 +275,21 @@ test('invalid star settings are rejected without changing saved priority', async
 });
 
 test('only administrators can change the catalog', async () => {
-  const forbidden = await fetch(`${baseUrl}/models/visibility`, {
+  const forbidden = await fetch(`${baseUrl}/visibility`, {
     method: 'PUT',
     headers: { Authorization: `Bearer ${memberToken}`, ...asJson },
     body: JSON.stringify({ order: [] }),
   });
   assert.equal(forbidden.status, 403);
 
-  const readable = await fetch(`${baseUrl}/models/visibility`, {
+  const readable = await fetch(`${baseUrl}/visibility`, {
     headers: { Authorization: `Bearer ${memberToken}` },
   });
   assert.equal(readable.status, 200, 'but anyone may read it');
 });
 
 test('a bad picture is rejected with a 400, not stored', async () => {
-  const bad = await fetch(`${baseUrl}/models/visibility`, {
+  const bad = await fetch(`${baseUrl}/visibility`, {
     method: 'PUT',
     headers: { Authorization: `Bearer ${adminToken}`, ...asJson },
     body: JSON.stringify({
@@ -297,7 +297,7 @@ test('a bad picture is rejected with a 400, not stored', async () => {
     }),
   });
   assert.equal(bad.status, 400);
-  const get = await fetch(`${baseUrl}/models/visibility`, {
+  const get = await fetch(`${baseUrl}/visibility`, {
     headers: { Authorization: `Bearer ${adminToken}` },
   });
   const read = await get.json();
