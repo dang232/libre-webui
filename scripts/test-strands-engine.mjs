@@ -17,8 +17,8 @@
 
 /**
  * End-to-end coverage for the embedded Strands engine: access control on
- * the HTTP surface, a real harness turn against a fake Ollama, the file-tool
- * workspace jail, and transcript persistence.
+ * the HTTP surface, a real harness turn against a fake OpenAI-compatible
+ * plugin, the file-tool workspace jail, and transcript persistence.
  */
 
 import assert from 'node:assert/strict';
@@ -40,99 +40,92 @@ process.env.DATA_DIR = path.join(directory, 'data');
 process.env.PLUGINS_DIR = path.join(directory, 'plugins');
 process.env.ENCRYPTION_KEY = '7'.repeat(64);
 process.env.JWT_SECRET = 'strands-engine-test-secret-value';
-process.env.OLLAMA_ENABLED = 'true';
 delete process.env.LIBRE_STRANDS_ACCESS;
 
-/** Every /api/chat body the fake Ollama received. */
-const chatRequests = [];
+/** Every chat-completions body the fake plugin received. */
+const pluginRequests = [];
 
 /**
- * A fake Ollama that plays a two-step agent: when the latest message is the
- * user's, it asks for the `write` tool with the path named in the prompt;
- * once a tool result is in the history, it answers in text.
+ * A fake OpenAI-compatible plugin that plays a two-step agent: the first
+ * call asks for the `write` tool with the path named in the prompt; once a
+ * tool result is in the history, it answers in text.
  */
-const ollama = http.createServer((request, response) => {
+const pluginServer = http.createServer((request, response) => {
   const chunks = [];
   request.on('data', chunk => chunks.push(chunk));
   request.on('end', () => {
     const body = chunks.length ? JSON.parse(Buffer.concat(chunks)) : {};
-    if (request.url === '/api/tags') {
+    if (request.url === '/v1/models' && request.method === 'GET') {
       response.writeHead(200, { 'Content-Type': 'application/json' });
       response.end(
         JSON.stringify({
-          models: [
-            { name: 'fixture-agent', model: 'fixture-agent', size: 1 },
-            { name: 'nomic-embed-text', model: 'nomic-embed-text', size: 1 },
-          ],
+          data: [{ id: 'fixture-agent' }, { id: 'nomic-embed-text' }],
         })
       );
       return;
     }
-    if (request.url === '/api/show') {
-      response.writeHead(200, { 'Content-Type': 'application/json' });
-      response.end(
-        JSON.stringify({
-          parameters: '',
-          model_info: {},
-          capabilities: ['completion', 'tools'],
-        })
-      );
-      return;
-    }
-    if (request.url !== '/api/chat') {
+    if (request.url !== '/v1/chat/completions') {
       response.writeHead(404).end();
       return;
     }
-    chatRequests.push(body);
+    pluginRequests.push(body);
     const messages = Array.isArray(body.messages) ? body.messages : [];
-    const last = messages[messages.length - 1] ?? {};
-    const lines = [];
-    if (last.role === 'tool') {
-      lines.push({
-        message: { role: 'assistant', content: 'Saved the note.' },
-        done: false,
-      });
-      lines.push({
-        message: { role: 'assistant', content: '' },
-        done: true,
-        done_reason: 'stop',
-        prompt_eval_count: 30,
-        eval_count: 4,
+    const events = [];
+    if (messages.some(message => message.role === 'tool')) {
+      events.push({
+        id: 'chatcmpl-fixture-text',
+        choices: [
+          {
+            index: 0,
+            delta: { role: 'assistant', content: 'Saved the note.' },
+            finish_reason: 'stop',
+          },
+        ],
       });
     } else {
+      const prompt = messages
+        .map(message =>
+          typeof message.content === 'string' ? message.content : ''
+        )
+        .join('\n');
       const target =
-        /path=(\S+)/.exec(String(last.content ?? ''))?.[1] ??
-        '/workspace/notes.txt';
-      lines.push({
-        message: {
-          role: 'assistant',
-          content: '',
-          tool_calls: [
-            {
-              id: 'call_write_1',
-              function: {
-                name: 'write',
-                arguments: { path: target, content: 'hello from strands' },
-              },
+        /path=(\S+)/.exec(prompt)?.[1] ?? '/workspace/notes.txt';
+      events.push({
+        id: 'chatcmpl-fixture-tool',
+        choices: [
+          {
+            index: 0,
+            delta: {
+              role: 'assistant',
+              tool_calls: [
+                {
+                  index: 0,
+                  id: 'call_write_1',
+                  type: 'function',
+                  function: {
+                    name: 'write',
+                    arguments: JSON.stringify({
+                      path: target,
+                      content: 'hello from strands',
+                    }),
+                  },
+                },
+              ],
             },
-          ],
-        },
-        done: false,
-      });
-      lines.push({
-        message: { role: 'assistant', content: '' },
-        done: true,
-        done_reason: 'stop',
-        prompt_eval_count: 20,
-        eval_count: 8,
+            finish_reason: 'tool_calls',
+          },
+        ],
       });
     }
-    response.writeHead(200, { 'Content-Type': 'application/x-ndjson' });
-    response.end(lines.map(line => `${JSON.stringify(line)}\n`).join(''));
+    response.writeHead(200, { 'Content-Type': 'text/event-stream' });
+    response.end(
+      events.map(event => `data: ${JSON.stringify(event)}\n\n`).join('') +
+        'data: [DONE]\n\n'
+    );
   });
 });
-await new Promise(resolve => ollama.listen(0, '127.0.0.1', resolve));
-process.env.OLLAMA_BASE_URL = `http://127.0.0.1:${ollama.address().port}`;
+await new Promise(resolve => pluginServer.listen(0, '127.0.0.1', resolve));
+const pluginEndpoint = `http://127.0.0.1:${pluginServer.address().port}/v1/chat/completions`;
 
 const importBuilt = file =>
   import(pathToFileURL(path.join(repoRoot, 'backend', 'dist', file)).href);
@@ -151,12 +144,16 @@ const [
   { userModel },
   runtime,
   access,
+  { default: pluginService },
+  { default: pluginCredentialsService },
 ] = await Promise.all([
   importBuilt('routes/strands.js'),
   importBuilt('services/authService.js'),
   importBuilt('models/userModel.js'),
   importBuilt('strands/runtime.js'),
   importBuilt('services/strandsAccessService.js'),
+  importBuilt('services/pluginService.js'),
+  importBuilt('services/pluginCredentialsService.js'),
 ]);
 
 const admin = await userModel.createUser({
@@ -176,6 +173,28 @@ const regular = await userModel.createUser({
 const metadata = { kind: 'signup', ip: '203.0.113.7', userAgent: 'node-test' };
 const adminToken = await authService.issueSession(admin, metadata);
 const regularToken = await authService.issueSession(regular, metadata);
+
+process.env.FIXTURE_PLUGIN_KEY = 'fixture-plugin-key';
+const fixtureManifest = {
+  id: 'fixture-plugin',
+  name: 'Fixture plugin',
+  type: 'completion',
+  endpoint: pluginEndpoint,
+  api_mode: 'chat_completions',
+  auth: { header: 'Authorization', key_env: 'FIXTURE_PLUGIN_KEY' },
+  model_map: ['fixture-agent', 'nomic-embed-text'],
+};
+await pluginService.installPlugin(fixtureManifest, admin.id);
+await pluginCredentialsService.setApiKey(
+  'fixture-plugin',
+  'fixture-plugin-key',
+  admin.id,
+  await pluginService.getCredentialRoutingAuthFingerprint(
+    fixtureManifest,
+    admin.id
+  )
+);
+await pluginService.activatePlugin('fixture-plugin', admin.id);
 
 const app = express();
 app.use(express.json());
@@ -231,8 +250,8 @@ test.after(async () => {
   await runtime.stopStrandsEngine();
   server.closeAllConnections();
   await new Promise(resolve => server.close(resolve));
-  ollama.closeAllConnections();
-  await new Promise(resolve => ollama.close(resolve));
+  pluginServer.closeAllConnections();
+  await new Promise(resolve => pluginServer.close(resolve));
   await persistence.closePersistence();
   await rm(directory, { recursive: true, force: true });
 });
@@ -311,13 +330,13 @@ test('a Strands turn streams NDJSON, runs a jailed file tool, and persists the t
   const models = (await (await call('/models')).json()).data;
   assert.deepEqual(
     models.map(model => model.id),
-    ['ollama:fixture-agent'],
+    ['plugin:fixture-plugin:fixture-agent'],
     'embedding models are not offered to the agent'
   );
 
   const created = await call('/sessions', {
     method: 'POST',
-    body: { title: 'Fixture', model: 'ollama:fixture-agent' },
+    body: { title: 'Fixture', model: 'plugin:fixture-plugin:fixture-agent' },
   });
   assert.equal(created.status, 201);
   const session = (await created.json()).data;
@@ -359,7 +378,7 @@ test('a Strands turn streams NDJSON, runs a jailed file tool, and persists the t
 
   // The model only ever sees read, write and edit, and never a shell.
   const offered = new Set(
-    chatRequests.flatMap(body =>
+    pluginRequests.flatMap(body =>
       (body.tools ?? []).map(tool => tool.function?.name)
     )
   );
@@ -382,7 +401,7 @@ test('the workspace jail rejects paths that leave the session root', async () =>
     await (
       await call('/sessions', {
         method: 'POST',
-        body: { model: 'ollama:fixture-agent' },
+        body: { model: 'plugin:fixture-plugin:fixture-agent' },
       })
     ).json()
   ).data;
