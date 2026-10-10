@@ -5156,19 +5156,19 @@
           "file": "backend/src/routes/libreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "GET",
-          "path": "/models"
+          "path": "/config/model"
+        },
+        {
+          "file": "backend/src/routes/libreClaw.ts",
+          "mount": "/api/alcore-claw",
+          "method": "GET",
+          "path": "/dashboard"
         },
         {
           "file": "backend/src/routes/strands.ts",
           "mount": "/api/strands",
           "method": "GET",
           "path": "/models"
-        },
-        {
-          "file": "backend/src/routes/libreClaw.ts",
-          "mount": "/api/alcore-claw",
-          "method": "GET",
-          "path": "/sessions"
         },
         {
           "file": "backend/src/routes/strands.ts",
@@ -5180,7 +5180,7 @@
           "file": "backend/src/routes/libreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "PATCH",
-          "path": "/sessions/:sessionId"
+          "path": "/config/model"
         },
         {
           "file": "backend/src/routes/strands.ts",
@@ -5312,7 +5312,7 @@
           "file": "backend/src/routes/libreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "DELETE",
-          "path": "/sessions/:sessionId"
+          "path": "/automations/:automationId"
         },
         {
           "file": "backend/src/routes/strands.ts",
