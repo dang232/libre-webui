@@ -189,8 +189,10 @@ const server = http.createServer(async (request, response) => {
         (key === delayedMarker || key === authorizationMarker) &&
         count === 1
       ) {
-        await new Promise(resolve => setTimeout(resolve, 60_000));
+        await new Promise(resolve => setTimeout(resolve, 30_000));
       }
+      // The worker dies mid-call, so stalls must fit inside the plugin
+      // POST timeout (60s) with margin; the old Ollama path allowed 300s.
       const text = `fixture-response:${key}:${count}`;
       if (body.stream === true) {
         response.writeHead(200, {
@@ -344,8 +346,10 @@ const server = http.createServer(async (request, response) => {
         (key === delayedMarker || key === authorizationMarker) &&
         count === 1
       ) {
-        await new Promise(resolve => setTimeout(resolve, 60_000));
+        await new Promise(resolve => setTimeout(resolve, 30_000));
       }
+      // The worker dies mid-call, so stalls must fit inside the plugin
+      // POST timeout (60s) with margin; the old Ollama path allowed 300s.
       const payload = {
         model: body.model || 'libre-test',
         created_at: new Date().toISOString(),
