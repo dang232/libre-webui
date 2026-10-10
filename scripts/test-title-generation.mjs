@@ -252,15 +252,14 @@ const dshTitleRequest = {
   providerId: 'dsh',
 };
 
-test('a real Ollama model named dsh does not invoke the harness resolver', async () => {
+test('a removed Ollama provider type falls back without invoking the harness resolver', async () => {
   const fixture = dshTitleFixture();
   const result = await fixture.service.generateTitleForSession({
     ...dshTitleRequest,
     providerType: 'ollama',
     providerId: null,
   });
-  assert.equal(result.source, 'ollama');
-  assert.equal(fixture.calls.ollama[0][0].model, 'dsh');
+  assert.equal(result.source, 'fallback');
   assert.deepEqual(fixture.calls.resolved, []);
 });
 
