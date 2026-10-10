@@ -51,17 +51,17 @@ agentic tasks in isolated workspaces—all from a self-hosted interface.
 Alcore is a self-hosted AI workspace for people who want control over
 their models, data, providers, and interface.
 
-Use local models through [Ollama](https://ollama.com), connect the providers you
-choose, search your own documents, create interactive artifacts, and give
+Connect the providers you choose through the provider plugin layer, search
+your own documents, create interactive artifacts, and give
 model-driven tasks an isolated workspace with files, tools, a terminal, and a
 live preview.
 
 It runs on your machine, server, or cluster. Alcore is not a hosted AI
-service and does not require a cloud account for local inference.
+service.
 
 ## Why Alcore?
 
-- **Local-first:** Use Ollama and other local inference backends.
+- **Local-first:** Use local inference backends through provider plugins.
 - **Provider-flexible:** Connect cloud providers or OpenAI-compatible endpoints
   when you choose.
 - **Private by default:** Alcore ships without application telemetry or
@@ -83,7 +83,6 @@ service and does not require a cloud account for local inference.
 ### Requirements
 
 - [Node.js 22.22 or newer](https://nodejs.org)
-- [Ollama](https://ollama.com) for local models
 - Docker is optional and required only for local **Work** sandboxes
 
 ### Start with npm
@@ -96,16 +95,11 @@ Open [http://localhost:8080](http://localhost:8080).
 
 The first account created on a fresh installation becomes the administrator.
 
-### Connect a local model
+### Connect a provider
 
-Install Ollama, then pull a model:
-
-```bash
-ollama pull gemma4:12b
-```
-
-Alcore can now use Ollama for local inference. No cloud account or API key
-is required.
+Open **Settings → Plugins**, add a chat provider plugin with its endpoint
+and credential, and pick its models in the chat model selector. The bundled
+ALcore API Platform is provisioned automatically at signup with no setup.
 
 ### Start with Docker
 
@@ -118,7 +112,7 @@ docker compose up -d
 ```
 
 See the [Docker deployment guide](https://docs.librewebui.org/DOCKER) for
-production configuration, external Ollama, GPU support, networking, and
+production configuration, GPU support, networking, and
 persistent storage.
 
 ## Features
@@ -126,7 +120,7 @@ persistent storage.
 | Feature                | Description                                                                                                                                                          |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Chat**               | Streaming conversations with prompt queueing, multi-model comparison, and chat forking                                                                               |
-| **Local inference**    | Ollama support with no required cloud account                                                                                                                        |
+| **Local inference**    | Local backends through provider plugins, no required cloud account                                                                                                   |
 | **Provider plugins**   | Chat, image, video, embedding, and speech providers through an extensible plugin layer                                                                               |
 | **Knowledge**          | Chat with PDF, Office, Markdown, HTML, code, and CSV documents via hybrid retrieval with cited sources                                                               |
 | **Web search**         | Self-hosted SearXNG search for chats and Work tasks                                                                                                                  |
@@ -153,12 +147,11 @@ persistent storage.
 
 ## Models and providers
 
-Ollama is the default local path, but Alcore is designed to avoid provider
+Alcore is designed to avoid provider
 lock-in.
 
 Supported integrations include:
 
-- Ollama and Ollama Cloud
 - Alcore
 - OpenAI
 - Anthropic
@@ -300,7 +293,7 @@ by the redirect handoff.
 
 Alcore ships without application telemetry or analytics.
 
-When using a local provider such as Ollama, prompts and responses remain on the
+When using a local provider, prompts and responses remain on the
 infrastructure where that provider runs. When using a remote provider, prompts,
 responses, documents, and tool results may be sent to that provider as part of
 the request.
@@ -348,7 +341,7 @@ AGENT_CLI_MODELS_ENABLED=false
 Libre WebUI embeds an agent engine built on the open-source
 [Strands Agents harness](https://github.com/strands-agents/harness-sdk). It
 runs inside the backend process and drives the models Libre WebUI already
-has: Ollama models when Ollama is enabled, and active chat or completion
+has: active chat or completion
 provider plugins. It needs no separate provider configuration or API keys.
 
 An administrator chooses who can use it in **Settings → User Management →
@@ -372,16 +365,16 @@ for the security model, limits, storage, and API.
 
 ## Deployment options
 
-| Deployment          | Command or link                                                         | Use case                                 |
-| ------------------- | ----------------------------------------------------------------------- | ---------------------------------------- |
-| **npm**             | `npx libre-webui@latest`                                                | Fast local start                         |
-| **Docker Compose**  | `docker compose up -d`                                                  | Persistent self-hosted deployment        |
-| **External Ollama** | `docker compose -f docker-compose.external-ollama.yml up -d`            | Use an existing Ollama instance          |
-| **NVIDIA Docker**   | `docker compose -f docker-compose.gpu.yml up -d`                        | GPU-enabled local inference              |
-| **Kubernetes**      | `helm install libre-webui oci://ghcr.io/libre-webui/charts/libre-webui` | Cluster deployment                       |
-| **Team profile**    | `docker compose -f docker-compose.team.yml up -d`                       | Multi-replica PostgreSQL + S3 deployment |
-| **Desktop client**  | [GitHub Releases](https://github.com/libre-webui/libre-webui/releases)  | Desktop interface over a managed backend |
-| **Source**          | `npm install && npm run dev`                                            | Development                              |
+| Deployment         | Command or link          | Use case                          |
+| ------------------ | ------------------------ | --------------------------------- |
+| **npm**            | `npx libre-webui@latest` | Fast local start                  |
+| **Docker Compose** | `docker compose up -d`   | Persistent self-hosted deployment |
+
+| **NVIDIA Docker** | `docker compose -f docker-compose.gpu.yml up -d` | GPU-enabled local inference |
+| **Kubernetes** | `helm install libre-webui oci://ghcr.io/libre-webui/charts/libre-webui` | Cluster deployment |
+| **Team profile** | `docker compose -f docker-compose.team.yml up -d` | Multi-replica PostgreSQL + S3 deployment |
+| **Desktop client** | [GitHub Releases](https://github.com/libre-webui/libre-webui/releases) | Desktop interface over a managed backend |
+| **Source** | `npm install && npm run dev` | Development |
 
 For production deployments:
 

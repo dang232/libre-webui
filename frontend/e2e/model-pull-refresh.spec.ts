@@ -18,40 +18,50 @@
 import { expect, test } from '@playwright/test';
 import { mockLibreWebUiApi } from './lib/mockApi';
 
-test('a model pulled while the app is open becomes selectable without a reload', async ({
+test('a model added while the app is open becomes selectable without a reload', async ({
   page,
 }) => {
-  const mockApi = await mockLibreWebUiApi(page);
+  const mockApi = await mockLibreWebUiApi(page, {
+    sessions: [
+      {
+        id: 'fresh-model-session',
+        title: 'Fresh model',
+        model: 'llama3.2:3b',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        messages: [],
+      },
+    ],
+  });
 
   await page.goto('/chat');
   // The picker is a visually hidden native select behind a styled trigger.
   const options = page.locator('select option');
   await expect(options.filter({ hasText: 'llama' }).first()).toBeAttached();
-  await expect(options.filter({ hasText: 'fresh-model' })).toHaveCount(0);
+  await expect(options.filter({ hasText: 'Fresh Model' })).toHaveCount(0);
 
-  // The model appears on the backend, as it would once a pull finishes.
-  mockApi.setModels([
-    ...mockApi.getModels(),
+  // The model appears on the backend, as it would once provisioning
+  // finishes on the provider side.
+  mockApi.setPlugins([
     {
-      name: 'fresh-model:latest',
-      model: 'fresh-model:latest',
-      size: 1024,
-      digest: 'fresh',
-      modified_at: new Date(0).toISOString(),
-      details: {
-        family: 'llama',
-        parameter_size: '1B',
-        quantization_level: 'Q4_0',
-      },
+      id: 'e2e-chat',
+      name: 'E2E Chat Provider',
+      type: 'completion',
+      endpoint: '/api/chat/completions',
+      api_mode: 'chat_completions',
+      base_url: '',
+      auth: { header: 'Authorization', key_env: 'E2E_KEY' },
+      model_map: ['llama3.2:3b', 'fresh-model:latest'],
+      active: true,
     },
   ]);
 
-  // Completing a pull announces the change; nothing else should be needed.
+  // Completing provisioning announces the change; nothing else should be needed.
   await page.evaluate(() =>
     window.dispatchEvent(new Event('alcore:models-changed'))
   );
 
   await expect(
-    options.filter({ hasText: 'fresh-model' }).first()
+    options.filter({ hasText: 'Fresh Model' }).first()
   ).toBeAttached();
 });

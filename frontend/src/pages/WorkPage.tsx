@@ -1304,13 +1304,9 @@ export default function WorkPage() {
     capabilities?.runtime === 'kubernetes'
       ? `Kubernetes · ${runtimeReadyLabel}`
       : capabilities?.pluginAvailable
-        ? capabilities.ollamaAvailable
-          ? t('work.runtime.readyHybrid', {
-              defaultValue: 'Docker + models ready',
-            })
-          : t('work.runtime.readyPlugin', {
-              defaultValue: 'Docker + plugin ready',
-            })
+        ? t('work.runtime.readyPlugin', {
+            defaultValue: 'Docker + plugin ready',
+          })
         : t('work.runtime.readyOllama', {
             defaultValue: 'Docker ready',
           });

@@ -243,7 +243,6 @@ export interface WorkCapabilities {
   runtime: 'docker' | 'kubernetes';
   image: string;
   runtimeAvailable?: boolean;
-  ollamaAvailable?: boolean;
   pluginAvailable?: boolean;
   /** Whether this account may run Work tasks on the Strands engine. */
   strands?: {

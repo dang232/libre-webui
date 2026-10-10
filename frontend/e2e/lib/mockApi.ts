@@ -87,15 +87,6 @@ type MockModelCatalog = {
   >;
 };
 
-type MockLibraryModel = {
-  name: string;
-  description: string;
-  category: string;
-  sizes: string[];
-  pulls?: string;
-  tags?: string[];
-};
-
 type MockTTSModel = {
   model: string;
   plugin: string;
@@ -377,7 +368,6 @@ type MockWorkCapabilities = {
     nextAttemptAt: number | null;
   };
   runtimeAvailable?: boolean;
-  ollamaAvailable?: boolean;
   pluginAvailable?: boolean;
   runtimeImage?: string;
   limits?: {
@@ -585,7 +575,6 @@ type MockOptions = {
   folders?: MockFolder[];
   models?: MockModel[];
   modelCatalog?: MockModelCatalog;
-  ollamaHealthy?: boolean;
   plugins?: MockPlugin[];
   pluginVariables?: Record<string, Record<string, MockPluginVariableValue>>;
   pluginDiscoveryResults?: Record<string, string[]>;
@@ -595,8 +584,6 @@ type MockOptions = {
   pluginMutationRefreshDelayMs?: number;
   pluginUsage?: PluginUsageAnalytics;
   systemDiagnostics?: SystemDiagnostics;
-  libraryModels?: MockLibraryModel[];
-  cloudLibraryModels?: MockLibraryModel[];
   ttsModels?: MockTTSModel[];
   ttsPlugins?: MockTTSPlugin[];
   ttsVoiceProfiles?: MockTTSVoiceProfile[];
@@ -726,34 +713,11 @@ const defaultPreferences = {
   },
 };
 
-const defaultLibraryModels: MockLibraryModel[] = [
-  {
-    name: 'llama3.2',
-    description: 'General local chat model',
-    category: 'general',
-    sizes: ['3b'],
-    pulls: '50M+',
-    tags: ['general'],
-  },
-];
-
-const defaultCloudLibraryModels: MockLibraryModel[] = [
-  {
-    name: 'gpt-oss',
-    description: 'Cloud model returned without the required pull suffix',
-    category: 'cloud',
-    sizes: ['cloud'],
-    pulls: 'Cloud',
-    tags: ['cloud'],
-  },
-];
-
 const defaultWorkCapabilities: MockWorkCapabilities = {
   available: true,
   runtime: 'docker',
   image: 'ghcr.io/libre-webui/work-runtime:0.1.0-e2e',
   runtimeAvailable: true,
-  ollamaAvailable: true,
   runtimeImage: 'ghcr.io/libre-webui/work-runtime:0.1.0-e2e',
   limits: {
     maxRounds: 48,
@@ -831,7 +795,6 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
       metadata: {},
     }
   );
-  const ollamaHealthy = options.ollamaHealthy ?? true;
   const defaultPlugins: MockPlugin[] = [
     {
       id: 'e2e-chat',
@@ -845,11 +808,8 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
       active: true,
     },
   ];
-  const plugins = structuredClone(options.plugins ?? defaultPlugins);
+  let plugins = structuredClone(options.plugins ?? defaultPlugins);
   const pluginVariables = structuredClone(options.pluginVariables ?? {});
-  const libraryModels = options.libraryModels ?? defaultLibraryModels;
-  const cloudLibraryModels =
-    options.cloudLibraryModels ?? defaultCloudLibraryModels;
   const ttsModels = options.ttsModels ?? [];
   const ttsPlugins = options.ttsPlugins ?? [];
   let ttsVoiceProfiles = structuredClone(options.ttsVoiceProfiles ?? []);
@@ -947,7 +907,6 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
           : {}),
       }
     : null;
-  const pullStreamUrls: string[] = [];
   const ttsGenerationRequests: MockTTSGenerationRequest[] = [];
   const sttTranscriptionRequests: Array<{
     body: string;
@@ -2637,85 +2596,18 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
         return;
       }
 
-      if (path === '/ollama/health' && method === 'GET') {
-        await fulfillJson(
-          route,
-          { status: ollamaHealthy ? 'ok' : 'offline' },
-          ollamaHealthy
-        );
-        return;
-      }
-
-      if (path === '/ollama/settings' && method === 'GET') {
-        await fulfillJson(route, {
-          enabled: true,
-          baseUrl: 'http://localhost:11434',
-        });
-        return;
-      }
-
-      if (path === '/ollama/models' && method === 'GET') {
-        if (!ollamaHealthy) {
-          await fulfillApiError(route, 503, 'Ollama is offline');
-          return;
-        }
-        await fulfillJson(route, models);
-        return;
-      }
-
-      if (
-        (path === '/ollama/models/visibility' ||
-          path === '/models/visibility') &&
-        method === 'GET'
-      ) {
+      if (path === '/models/visibility' && method === 'GET') {
         await fulfillJson(route, modelCatalog);
         return;
       }
 
-      if (
-        (path === '/ollama/models/visibility' ||
-          path === '/models/visibility') &&
-        method === 'PUT'
-      ) {
+      if (path === '/models/visibility' && method === 'PUT') {
         const update = route
           .request()
           .postDataJSON() as Partial<MockModelCatalog>;
         modelCatalogUpdateRequests.push(structuredClone(update));
         modelCatalog = { ...modelCatalog, ...structuredClone(update) };
         await fulfillJson(route, modelCatalog);
-        return;
-      }
-
-      if (path === '/ollama/running' && method === 'GET') {
-        await fulfillJson(route, []);
-        return;
-      }
-
-      if (path === '/ollama/version' && method === 'GET') {
-        await fulfillJson(route, { version: '0.10.0-e2e' });
-        return;
-      }
-
-      if (path === '/ollama/library' && method === 'GET') {
-        await fulfillJson(
-          route,
-          url.searchParams.get('category') === 'cloud'
-            ? cloudLibraryModels
-            : libraryModels
-        );
-        return;
-      }
-
-      if (path === '/ollama/pull/stream' && method === 'GET') {
-        pullStreamUrls.push(route.request().url());
-        await route.fulfill({
-          status: 200,
-          headers: {
-            'content-type': 'text/event-stream',
-            'cache-control': 'no-cache',
-          },
-          body: 'data: {"type":"complete"}\n\n',
-        });
         return;
       }
 
@@ -3581,7 +3473,10 @@ export async function mockLibreWebUiApi(page: Page, options: MockOptions = {}) {
       models = next;
     },
     getModels: () => models,
-    pullStreamUrls,
+    /** Stands in for a provider model appearing while the app is open. */
+    setPlugins: (next: MockPlugin[]) => {
+      plugins = structuredClone(next);
+    },
     preferenceUpdateRequests,
     modelCatalogUpdateRequests,
     pluginCredentialUpdateRequests,

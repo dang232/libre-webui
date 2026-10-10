@@ -39,7 +39,6 @@ export interface GgufFileInfo {
   sizeFormatted: string;
   quantization?: string;
   url: string;
-  ollamaCommand: string;
 }
 
 // HuggingFace Hub API
@@ -146,7 +145,6 @@ export const huggingfaceHubApi = {
           sizeFormatted: '4.19 GB',
           quantization: 'Q4_K_M',
           url: `https://huggingface.co/${author}/${modelName}/resolve/main/model-Q4_K_M.gguf`,
-          ollamaCommand: `hf.co/${author}/${modelName}:Q4_K_M`,
         },
       ]);
     }

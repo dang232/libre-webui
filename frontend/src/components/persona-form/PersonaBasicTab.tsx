@@ -96,7 +96,7 @@ export function PersonaBasicTab({
                 <option value={formData.model}>{formData.model}</option>
               )}
             {localModels.length > 0 && (
-              <optgroup label='Ollama'>
+              <optgroup label='Local'>
                 {localModels.map(model => (
                   <option key={model.name} value={model.name}>
                     {model.name}

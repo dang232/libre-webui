@@ -293,7 +293,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             ? `${model.name} · ${model.pluginName || model.pluginId}${
                 model.isUnavailable ? ' (unavailable)' : ''
               }`
-            : `${model.name}${model.isUnavailable ? ' (unavailable)' : ''}`,
+            : model.isAgent
+              ? `${model.agentName || model.name} · Agent CLI${
+                  model.isUnavailable ? ' (unavailable)' : ''
+                }`
+              : `${model.name}${model.isUnavailable ? ' (unavailable)' : ''}`,
     })),
   ];
 

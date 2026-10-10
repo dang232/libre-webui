@@ -87,10 +87,7 @@ export function PersonaAdvancedTab({
         {embeddingModels.length === 0 && (
           <div className='mt-3 rounded-lg border border-amber-200 bg-amber-500/10 p-3 dark:border-amber-700/50 dark:bg-amber-900/20'>
             <p className='text-sm text-ink'>
-              {t('personaForm.advanced.installHint')}{' '}
-              <code className='rounded-sm bg-amber-500/20 px-1.5 py-0.5 text-xs dark:bg-amber-900/40'>
-                ollama pull nomic-embed-text
-              </code>
+              {t('personaForm.advanced.installHint')}
             </p>
           </div>
         )}

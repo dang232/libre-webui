@@ -54,19 +54,6 @@ const cloudPlugin = {
   model_map: ['gpt-cloud'],
   active: true,
 };
-const localModel = {
-  name: 'local-chat:3b',
-  model: 'local-chat:3b',
-  size: 2_000_000_000,
-  digest: 'fixture-local',
-  modified_at: '2026-09-19T00:00:00Z',
-  details: {
-    family: 'llama',
-    parameter_size: '3B',
-    format: 'gguf',
-    quantization_level: 'Q4_0',
-  },
-};
 const agentKey = (agent: (typeof agents)[number]) =>
   `agent:${encodeURIComponent(agent.agentId)}:${encodeURIComponent(agent.id)}`;
 
@@ -75,19 +62,17 @@ async function setup(
   {
     theme = 'dark',
     language = 'en',
-    ollamaEnabled = false,
     taskModel = '',
   }: {
     theme?: 'light' | 'dark';
     language?: 'en' | 'ar';
-    ollamaEnabled?: boolean;
     taskModel?: string;
   } = {}
 ) {
   const preferences = {
-    defaultModel: ollamaEnabled ? localModel.name : 'gpt-cloud',
-    defaultProviderType: ollamaEnabled ? 'ollama' : 'plugin',
-    defaultProviderId: ollamaEnabled ? null : cloudPlugin.id,
+    defaultModel: 'gpt-cloud',
+    defaultProviderType: 'plugin',
+    defaultProviderId: cloudPlugin.id,
     titleSettings: { autoTitle: true, taskModel },
     theme: {
       mode: theme,
@@ -101,11 +86,9 @@ async function setup(
     requiresAuth: true,
     agentCliModelsEnabled: true,
     strandsAccess: 'admins' as const,
-    ollamaEnabled,
   };
   await mockLibreWebUiApi(page, {
     systemInfo,
-    models: ollamaEnabled ? [localModel] : [],
     plugins: [cloudPlugin],
     preferences,
     authUsers: [
@@ -129,25 +112,6 @@ async function setup(
   );
   await page.route('**/api/agent-clis/models', route =>
     route.fulfill({ json: { success: true, data: agents } })
-  );
-  await page.route('**/api/ollama/settings', route =>
-    route.fulfill({
-      json: {
-        success: true,
-        data: { enabled: ollamaEnabled, baseUrl: 'http://localhost:11434' },
-      },
-    })
-  );
-  await page.route('**/api/ollama/health', route =>
-    route.fulfill({
-      json: {
-        success: true,
-        data: {
-          status: ollamaEnabled ? 'ok' : 'disabled',
-          enabled: ollamaEnabled,
-        },
-      },
-    })
   );
   const defaultWrites: Array<{
     model: string;
@@ -211,10 +175,10 @@ for (const theme of ['light', 'dark'] as const) {
       ).toHaveText(`${agent.name} (Agent)`);
       await expect(
         vision.locator(`option[value="${agentKey(agent)}"]`)
-      ).toHaveText(`${agent.name} · Agent`);
+      ).toHaveText(`${agent.name} · Agent CLI`);
       await expect(
         task.locator(`option[value="${agentKey(agent)}"]`)
-      ).toHaveText(`${agent.name} · Agent`);
+      ).toHaveText(`${agent.name} · Agent CLI`);
     }
     await expect(
       defaults.locator('option[value="plugin:openai-cloud:gpt-cloud"]')
@@ -260,26 +224,6 @@ for (const theme of ['light', 'dark'] as const) {
   });
 }
 
-test('an actual enabled Ollama model retains its provider label and concrete metadata', async ({
-  page,
-}) => {
-  const { panel } = await setup(page, { ollamaEnabled: true });
-  const defaults = panel.getByTestId('default-model-select');
-  await expect(
-    defaults.locator('option[value="ollama:local-chat%3A3b"]')
-  ).toHaveText('local-chat:3b (Ollama)');
-  await defaults.selectOption('ollama:local-chat%3A3b');
-  const info = panel.getByTestId('current-model-info');
-  await expect(info.getByText('Provider:', { exact: true })).toBeVisible();
-  await expect(info.getByText('Ollama', { exact: true })).toBeVisible();
-  await expect(info.getByText('3B', { exact: true })).toBeVisible();
-  await expect(info.getByText('llama', { exact: true })).toBeVisible();
-  await expect(info.getByText('gguf', { exact: true })).toBeVisible();
-  await expect(
-    defaults.locator('option[value="agent:strands:strands"]')
-  ).toHaveText('Strands (Agent)');
-});
-
 test('agent provider labels remain translated and correctly grouped in Arabic', async ({
   page,
 }) => {
@@ -293,12 +237,12 @@ test('agent provider labels remain translated and correctly grouped in Arabic', 
     panel
       .getByTestId('vision-model-select')
       .locator('option[value="agent:strands:strands"]')
-  ).toHaveText('Strands · الوكيل');
+  ).toHaveText('Strands · Agent CLI');
   await expect(
     panel
       .getByTestId('task-model-select')
       .locator('option[value="agent:strands:strands"]')
-  ).toHaveText('Strands · الوكيل');
+  ).toHaveText('Strands · Agent CLI');
   await expect(defaults.locator('option', { hasText: 'Ollama' })).toHaveCount(
     0
   );

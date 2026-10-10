@@ -414,11 +414,11 @@ On Kubernetes, enable the native Pod/PVC runtime with Helm value
 deployment still reports **Runtime unavailable**, the Work page names which of
 these applies:
 
-| Message                                        | Cause and fix                                                                                                         |
-| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `The "docker" CLI is not installed…`           | A custom image without `docker-cli`. Use the official image, or point `WORK_DOCKER_COMMAND` at a CLI.                 |
-| `No Docker daemon is reachable…`               | The socket mount was removed, or the host daemon is stopped. Restore the mount in your Compose file and start Docker. |
-| `The Docker socket is mounted but…cannot open` | The socket's group differs from the container's. Set `DOCKER_GID` in `.env` (see below) and recreate the container.   |
+| Message                                                                         | Cause and fix                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `The "docker" CLI is not installed…`                                            | A custom image without `docker-cli`. Use the official image, or point `WORK_DOCKER_COMMAND` at a CLI.                                                                                                                                                           |
+| `No Docker daemon is reachable…`                                                | The socket mount was removed, or the host daemon is stopped. Restore the mount in your Compose file and start Docker.                                                                                                                                           |
+| `The Docker socket is mounted but…cannot open`                                  | The socket's group differs from the container's. Set `DOCKER_GID` in `.env` (see below) and recreate the container.                                                                                                                                             |
 | Work screen/audio closes with WebSocket `1006` and logs `screen is unreachable` | The containerized backend is dialing its own loopback. On Docker Desktop use the shipped `WORK_DOCKER_PUBLISHED_HOST=host.docker.internal`; on native Docker Engine also set `WORK_PREVIEW_BIND` to the non-public Docker bridge gateway, then recreate Alcore. |
 
 Read the socket group through a container, because a macOS host reports a
@@ -599,8 +599,7 @@ value other than `disabled`, `admins`, or `all-users` locks the engine off.
 
 ### No models are listed
 
-Strands only drives models Libre WebUI already serves. Enable Ollama and pull a
-chat model, or activate a chat provider plugin under **Settings → Plugins**. The
+Strands only drives models Libre WebUI already serves. Activate a chat provider plugin under **Settings → Plugins**. The
 Strands model list then includes those models.
 
 ### A Work step on Strands fails because tools are unsupported

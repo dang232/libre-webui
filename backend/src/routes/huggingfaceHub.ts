@@ -94,7 +94,6 @@ interface GgufFileInfo {
   sizeFormatted: string;
   quantization?: string;
   url: string;
-  ollamaCommand: string;
 }
 
 // HuggingFace file tree response
@@ -395,7 +394,7 @@ router.get(
 
 /**
  * Get GGUF files available for a model
- * Returns list of GGUF files with size, quantization info, and Ollama pull command
+ * Returns list of GGUF files with size, quantization info, and download URL.
  */
 router.get(
   '/models/:author/:modelName/gguf',
@@ -442,21 +441,12 @@ router.get(
           // Use LFS size if available, otherwise regular size
           const size = file.lfs?.size || file.size;
 
-          // Ollama HF pull format: hf.co/{author}/{repo}:{tag}
-          // Tag should match the filename pattern (without .gguf extension)
-          // e.g., "Qwen3-0.6B-Q2_K.gguf" -> tag is "Qwen3-0.6B-Q2_K" or just "Q2_K"
-          const filenameWithoutExt = file.path.replace(/\.gguf$/i, '');
-
           return {
             filename: file.path,
             size,
             sizeFormatted: formatFileSize(size),
             quantization,
             url: `https://huggingface.co/${modelId}/resolve/main/${file.path}`,
-            // Use the quantization as tag if available, otherwise use full filename
-            ollamaCommand: quantization
-              ? `hf.co/${modelId}:${quantization}`
-              : `hf.co/${modelId}:${filenameWithoutExt}`,
           };
         })
         .sort((a, b) => {

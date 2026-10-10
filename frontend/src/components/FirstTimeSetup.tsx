@@ -191,8 +191,7 @@ export const FirstTimeSetup: React.FC<FirstTimeSetupProps> = ({
       toast.error(t('setup.encryptionKey.confirmRequired'));
       return;
     }
-    // Before landing in an empty chat, offer to connect a model source —
-    // Ollama is one option among several, not an assumption.
+    // Before landing in an empty chat, offer to connect a model source.
     setStep('connect-models');
   };
 

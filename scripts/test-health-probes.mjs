@@ -436,7 +436,6 @@ test('deep health runs integrity checks and the route requires a current admin',
     path.join(repoRoot, 'backend', 'src', 'index.ts'),
     'utf8'
   );
-  assert.match(serverSource, /id: 'ollama-provider'/);
   assert.match(serverSource, /depths: \['deep'\]/);
-  assert.match(serverSource, /ollamaService\.isHealthy\(\)/);
+  assert.doesNotMatch(serverSource, /ollama-provider/);
 });

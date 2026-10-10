@@ -12,7 +12,6 @@ keywords:
     embedded agent,
     agent engine,
     work engine,
-    ollama,
     provider plugins,
   ]
 ---
@@ -28,12 +27,11 @@ Strands switched off never loads it.
 
 The engine drives the models Libre WebUI already serves:
 
-- Ollama models, when Ollama is enabled
 - models from active chat or completion provider plugins
 
-Every model call goes through the same Ollama and plugin services Chat uses.
+Every model call goes through the same plugin services Chat uses.
 There is no separate provider configuration and no separate API key. Provider
-credentials and the Ollama switch apply unchanged.
+credentials apply unchanged.
 
 You can use the engine in three places:
 

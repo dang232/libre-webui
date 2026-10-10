@@ -65,9 +65,4 @@ export interface ModelSelectorProps {
   ariaLabel?: string;
 }
 
-export interface PullProgress {
-  status: string;
-  percent?: number;
-}
-
-export type TabType = 'installed' | 'ollama' | 'huggingface';
+export type TabType = 'installed';

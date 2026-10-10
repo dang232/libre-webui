@@ -70,22 +70,3 @@ one. The existing secret must carry the same keys the chart would render.
 {{- include "libre-webui.fullname" . }}-secrets
 {{- end -}}
 {{- end }}
-
-{{/*
-Ollama URL - external endpoint wins when configured, otherwise local.
-Nil-safe: the chart ships no ollama values block (no bundled Ollama),
-so every access must tolerate a missing tree.
-*/}}
-{{- define "libre-webui.ollamaUrl" -}}
-{{- if .Values.ollama }}
-{{- if .Values.ollama.external.enabled }}
-{{- .Values.ollama.external.url }}
-{{- else if .Values.ollama.bundled.enabled }}
-{{- printf "http://%s-ollama:11434" (include "libre-webui.fullname" .) }}
-{{- else }}
-{{- "http://localhost:11434" }}
-{{- end }}
-{{- else }}
-{{- "http://localhost:11434" }}
-{{- end }}
-{{- end }}

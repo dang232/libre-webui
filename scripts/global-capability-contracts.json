@@ -616,25 +616,25 @@
           "file": "backend/src/routes/models.ts",
           "mount": "/api/models",
           "method": "GET",
-          "path": "/models/visibility"
+          "path": "/visibility"
         },
         {
           "file": "backend/src/routes/models.ts",
           "mount": "/api/models",
           "method": "PUT",
-          "path": "/models/visibility"
+          "path": "/visibility"
         },
         {
           "file": "backend/src/routes/models.ts",
           "mount": "/api/models",
           "method": "GET",
-          "path": "/models/access"
+          "path": "/access"
         },
         {
           "file": "backend/src/routes/models.ts",
           "mount": "/api/models",
           "method": "PUT",
-          "path": "/models/access"
+          "path": "/access"
         }
       ],
       "contractSurfaces": {

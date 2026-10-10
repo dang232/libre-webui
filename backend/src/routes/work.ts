@@ -190,8 +190,7 @@ router.get(
       workModelProviderService.availability(userId),
       userHasStrandsAccess({ id: userId, role: req.user?.role }),
     ]);
-    const providerAvailable =
-      providers.ollamaAvailable || providers.pluginAvailable;
+    const providerAvailable = providers.pluginAvailable;
     const recoveryPending = workRuntimeService.recoveryPending;
     const recoveryPendingCount = workRuntimeService.recoveryPendingCount;
     const available = runtimeAvailable && !recoveryPending && providerAvailable;
@@ -208,7 +207,6 @@ router.get(
       runtime: workRuntimeService.runtimeKind,
       image: workRuntimeService.image,
       runtimeAvailable,
-      ollamaAvailable: providers.ollamaAvailable,
       pluginAvailable: providers.pluginAvailable,
       strands: { enabled: strandsEnabled },
       runtimeImage: workRuntimeService.image,

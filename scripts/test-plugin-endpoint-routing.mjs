@@ -624,7 +624,6 @@ test('pre-upgrade writable definitions stay quarantined across every execution p
         }
 
         assert.deepEqual(await workService.availability(user.id), {
-          ollamaAvailable: false,
           pluginAvailable: false,
         });
         assert.equal(networkRequests.length, 0);
@@ -1741,7 +1740,6 @@ test('environment credentials never reach imported or user-stored routes', async
           },
         });
         assert.deepEqual(await workAvailability.availability(adminUser.id), {
-          ollamaAvailable: false,
           pluginAvailable: false,
         });
         await assert.rejects(
@@ -1787,7 +1785,6 @@ test('environment credentials never reach imported or user-stored routes', async
           true
         );
         assert.deepEqual(await workAvailability.availability(adminUser.id), {
-          ollamaAvailable: false,
           pluginAvailable: true,
         });
         assert.deepEqual(await service.discoverModels(pluginId, adminUser.id), [

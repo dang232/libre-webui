@@ -879,7 +879,6 @@ export interface SystemInfo {
   agentCliModelsEnabled?: boolean; // Separate opt-in for installed agent chat models
   strandsAccess?: StrandsAccessMode; // Who may use the embedded Strands engine
   passkeysInUse?: boolean; // At least one passkey registered system-wide
-  ollamaEnabled?: boolean; // False when the admin disabled the Ollama provider
   version?: string;
   turnstile?: {
     enabled: boolean;

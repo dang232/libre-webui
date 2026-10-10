@@ -18,8 +18,8 @@
 /**
  * A Strands model that serves every turn through Libre WebUI's own provider
  * services. The agent loop, tools, and sessions belong to Strands; the model
- * call goes through the same Ollama and plugin paths Chat uses, so provider
- * credentials, usage metering, and the Ollama switch apply unchanged.
+ * call goes through the same plugin paths Chat uses, so provider
+ * credentials and usage metering apply unchanged.
  *
  * Strands expects one content block at a time and a message stop event that
  * says why the turn ended. Tools only run when that reason is 'toolUse'.
@@ -41,13 +41,8 @@ import type {
   ProviderToolSpec,
 } from '../types/index.js';
 import pluginService from '../services/pluginService.js';
-import ollamaService from '../services/ollamaService.js';
-import { toOpenAICompatibleTools } from '../utils/pluginChatAdapter.js';
 import type { PluginStreamToolCall } from '../utils/pluginStreaming.js';
 import type { ResolvedStrandsRoute } from './catalog.js';
-
-const MAX_BUFFERED_EVENTS = 2048;
-const MAX_BUFFERED_BYTES = 2_000_000;
 
 export interface LibreWebUiModelConfig extends BaseModelConfig {
   /** Route id the engine resolved for this session. */
@@ -220,10 +215,7 @@ export class LibreWebUiModel extends Model<LibreWebUiModelConfig> {
     let outputTokens = 0;
     let sawUsage = false;
 
-    const source =
-      this.target.route.type === 'plugin'
-        ? this.pluginEvents(chatMessages, generation, tools, signal)
-        : this.ollamaEvents(chatMessages, generation, tools, signal);
+    const source = this.pluginEvents(chatMessages, generation, tools, signal);
 
     for await (const event of source) {
       if (event.type === 'text' || event.type === 'reasoning') {
@@ -324,139 +316,6 @@ export class LibreWebUiModel extends Model<LibreWebUiModelConfig> {
       } else if (chunk.type === 'done') {
         yield { type: 'done', reason: chunk.doneReason };
       }
-    }
-  }
-
-  /** Ollama streams through callbacks, so bridge them onto a bounded queue. */
-  private async *ollamaEvents(
-    messages: ChatMessage[],
-    generation: GenerationOptions,
-    tools: ProviderToolSpec[] | undefined,
-    outer?: AbortSignal
-  ): AsyncGenerator<ProviderEvent> {
-    const controller = new AbortController();
-    const signal = outer
-      ? AbortSignal.any([outer, controller.signal])
-      : controller.signal;
-    const queue: ProviderEvent[] = [];
-    let bufferedBytes = 0;
-    let settled = false;
-    let failure: Error | undefined;
-    let wake: (() => void) | undefined;
-    let doneReason: string | undefined;
-    const notify = () => {
-      wake?.();
-      wake = undefined;
-    };
-    const fail = (error: Error) => {
-      failure ??= error;
-      settled = true;
-      notify();
-    };
-    const push = (event: ProviderEvent) => {
-      if (settled || signal.aborted) return;
-      const bytes = Buffer.byteLength(JSON.stringify(event));
-      if (
-        queue.length >= MAX_BUFFERED_EVENTS ||
-        bufferedBytes + bytes > MAX_BUFFERED_BYTES
-      ) {
-        const error = new Error(
-          'Strands provider output exceeded its stream buffer limit.'
-        );
-        fail(error);
-        controller.abort(error);
-        return;
-      }
-      queue.push(event);
-      bufferedBytes += bytes;
-      notify();
-    };
-    const abort = () =>
-      fail(
-        signal.reason instanceof Error
-          ? signal.reason
-          : new Error('Request aborted')
-      );
-    signal.addEventListener('abort', abort, { once: true });
-    if (signal.aborted) abort();
-
-    const route = this.target.route;
-    const finished = ollamaService
-      .generateChatStreamResponse(
-        {
-          model: route.model,
-          messages,
-          stream: true,
-          options: { ...generation } as Record<string, unknown>,
-          ...(tools?.length ? { tools: toOpenAICompatibleTools(tools) } : {}),
-        },
-        chunk => {
-          const text = chunk.message?.content;
-          if (text) push({ type: 'text', text });
-          if (chunk.message?.thinking) {
-            push({ type: 'reasoning', text: chunk.message.thinking });
-          }
-          for (const rawCall of chunk.message?.tool_calls ?? []) {
-            const fn = rawCall.function as
-              { name?: unknown; arguments?: unknown } | undefined;
-            push({
-              type: 'tool-call',
-              toolCall: {
-                id:
-                  typeof rawCall.id === 'string' && rawCall.id
-                    ? rawCall.id
-                    : `call_${randomUUID()}`,
-                name: typeof fn?.name === 'string' ? fn.name : '',
-                arguments:
-                  typeof fn?.arguments === 'string'
-                    ? fn.arguments
-                    : JSON.stringify(fn?.arguments ?? {}),
-              },
-            });
-          }
-          if (
-            typeof chunk.prompt_eval_count === 'number' &&
-            typeof chunk.eval_count === 'number'
-          ) {
-            push({
-              type: 'usage',
-              inputTokens: chunk.prompt_eval_count,
-              outputTokens: chunk.eval_count,
-            });
-          }
-          if (chunk.done_reason) doneReason = chunk.done_reason;
-        },
-        fail,
-        () => push({ type: 'done', reason: doneReason }),
-        signal,
-        { userId: this.userId }
-      )
-      .catch(error =>
-        fail(error instanceof Error ? error : new Error(String(error)))
-      )
-      .finally(() => {
-        settled = true;
-        notify();
-      });
-    try {
-      while (!settled || queue.length) {
-        if (failure) throw failure;
-        const event = queue.shift();
-        if (event) {
-          bufferedBytes -= Buffer.byteLength(JSON.stringify(event));
-          yield event;
-        } else {
-          await new Promise<void>(resolve => {
-            wake = resolve;
-          });
-        }
-      }
-      if (failure) throw failure;
-    } finally {
-      signal.removeEventListener('abort', abort);
-      controller.abort();
-      queue.length = 0;
-      await finished;
     }
   }
 }

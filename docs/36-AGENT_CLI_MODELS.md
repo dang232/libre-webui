@@ -41,8 +41,8 @@ is installed for you, and no configuration file is required — if the command
 runs in your server's shell, it shows up.
 
 Settings → Chat → Defaults also identifies these entries as **Agent**, including
-Strands when your account may use it. Plugin models keep their provider name, and only
-Ollama models carry the Ollama label. Disabling Ollama does not hide configured
+Strands when your account may use it. Plugin models keep their provider name.
+Disabling a provider does not hide configured
 agents or plugins. The model information card shows the selected entry's display
 name and provider, with size, family, and format only when supplied by its catalog.
 
@@ -70,7 +70,7 @@ Each CLI can expose several entries in the Agents group:
 
 The embedded [Strands engine](./STRANDS_ENGINE) also appears in the Agents group
 when your account may use it. It is not a CLI: it runs inside the backend and
-drives your Ollama and provider plugin models. The plain **Strands** entry
+drives your provider plugin models. The plain **Strands** entry
 (`strands`) uses your default chat model. The other entries (`strands:<route>`)
 list one per available model, such as **Strands · gpt-5.6-sol (Codex
 (ChatGPT))**, and pin both the model and its provider for that conversation;
@@ -81,8 +81,8 @@ The same Strands entries work as the task model under **Settings → Chat →
 Defaults** for automatic titles and thinking summaries. **Use current running
 model** uses the conversation's saved Strands selection. These short text
 requests call its underlying provider model directly; they do not run the
-agent's tools or create an agent session. Other CLI profiles require an Ollama,
-plugin, or Strands task model for these auxiliary requests.
+agent's tools or create an agent session. Other CLI profiles require a
+plugin or Strands task model for these auxiliary requests.
 
 Pi runs each turn stateless (`--no-session`), with local tools disabled and a
 neutral system prompt, so replies are not colored by — and chats never touch —

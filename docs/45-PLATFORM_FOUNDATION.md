@@ -115,12 +115,9 @@ key. Keep a different active key for new blob writes and retain old keys until
 the object inventory proves they are unused.
 
 The same file may set `POSTGRES_MIGRATION_MODE`, `POSTGRES_POOL_MAX`, the
-supported PostgreSQL timeouts, `REDIS_CONNECT_TIMEOUT_MS`, `OLLAMA_BASE_URL`,
-`OLLAMA_TIMEOUT`, `OLLAMA_LONG_OPERATION_TIMEOUT`, and `OLLAMA_MAX_CONTEXT`;
+supported PostgreSQL timeouts, and `REDIS_CONNECT_TIMEOUT_MS`;
 the shared Compose environment sends each value identically to the application
-and external worker. The provider timeouts accept 1,000-3,600,000 milliseconds,
-maximum context accepts 128-2,097,152 tokens, and the long timeout cannot be
-shorter than the standard timeout; malformed values fail both server
+and external worker. Malformed values fail both server
 entrypoints before state is created. Node-local Agent CLI binaries and Codex
 OAuth token files are not supported by external durable workers, so the team
 profile pins both provider paths off and startup rejects attempts to enable

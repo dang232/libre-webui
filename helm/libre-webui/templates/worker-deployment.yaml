@@ -37,14 +37,6 @@ spec:
           env:
             - name: NODE_ENV
               value: {{ .Values.env.NODE_ENV | quote }}
-            - name: OLLAMA_BASE_URL
-              value: {{ include "libre-webui.ollamaUrl" . | quote }}
-            - name: OLLAMA_TIMEOUT
-              value: {{ .Values.env.OLLAMA_TIMEOUT | quote }}
-            - name: OLLAMA_LONG_OPERATION_TIMEOUT
-              value: {{ .Values.env.OLLAMA_LONG_OPERATION_TIMEOUT | quote }}
-            - name: OLLAMA_MAX_CONTEXT
-              value: {{ .Values.env.OLLAMA_MAX_CONTEXT | quote }}
             - name: AGENT_CLI_MODELS_ENABLED
               value: {{ .Values.env.AGENT_CLI_MODELS_ENABLED | quote }}
             - name: CODEX_OAUTH_MODELS_ENABLED

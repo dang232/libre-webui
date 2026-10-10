@@ -1129,7 +1129,6 @@ test('offers cloud models and remembers remote disclosure dismissal', async ({
       runtime: 'docker',
       image: 'node:test',
       runtimeAvailable: true,
-      ollamaAvailable: false,
       pluginAvailable: true,
       runtimeImage: 'node:test',
       limits: {
@@ -1360,9 +1359,8 @@ test('keeps the remote disclosure open when saving dismissal fails', async ({
   ).toBeEnabled();
 });
 
-test('loads plugin Work models when Ollama is offline', async ({ page }) => {
+test('loads plugin Work models', async ({ page }) => {
   await mockLibreWebUiApi(page, {
-    ollamaHealthy: false,
     plugins: [
       {
         id: 'cloud-only',
@@ -1383,7 +1381,6 @@ test('loads plugin Work models when Ollama is offline', async ({ page }) => {
       runtime: 'docker',
       image: 'node:test',
       runtimeAvailable: true,
-      ollamaAvailable: false,
       pluginAvailable: true,
       runtimeImage: 'node:test',
       limits: {
@@ -3291,7 +3288,6 @@ test('explains when the local container runtime is unavailable', async ({
       runtime: 'docker',
       image: '',
       runtimeAvailable: false,
-      ollamaAvailable: true,
       runtimeImage: '',
       reason: 'Docker daemon unavailable',
       limits: {
@@ -3416,7 +3412,6 @@ test('the terminal explains when a deployment cannot offer it', async ({
       runtime: 'docker',
       image: 'ghcr.io/libre-webui/work-runtime:0.1.0-e2e',
       runtimeAvailable: true,
-      ollamaAvailable: true,
       runtimeImage: 'ghcr.io/libre-webui/work-runtime:0.1.0-e2e',
       limits: {
         maxRounds: 48,

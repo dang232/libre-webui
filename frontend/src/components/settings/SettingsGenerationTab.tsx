@@ -585,7 +585,7 @@ function ContextCompactionSection() {
       value: candidate.name,
       label: candidate.isPlugin
         ? `${candidate.name} · ${candidate.pluginName || candidate.pluginId}`
-        : `${candidate.name} · Ollama`,
+        : `${candidate.name} · Local`,
     })),
     ...(model && !selectableModels.some(candidate => candidate.name === model)
       ? [{ value: model, label: `${model} (current)` }]

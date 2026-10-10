@@ -363,7 +363,6 @@ export interface WorkCapabilities {
   runtime: 'docker' | 'kubernetes';
   image: string;
   runtimeAvailable: boolean;
-  ollamaAvailable: boolean;
   pluginAvailable: boolean;
   runtimeImage: string;
   /** Whether this user may run Work tasks on the Strands agent engine. */
