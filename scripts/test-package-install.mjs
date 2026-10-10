@@ -313,7 +313,7 @@ test(
       installTimeout
     );
 
-    const installation = path.join(consumer, 'node_modules/libre-webui');
+    const installation = path.join(consumer, 'node_modules/alcore');
     assert.ok(
       !(await fs.lstat(installation)).isSymbolicLink(),
       'The package must be installed, not linked'
@@ -371,7 +371,7 @@ test(
       children,
       signal
     );
-    assert.equal(version.trim(), `libre-webui v${manifest.version}`);
+    assert.equal(version.trim(), `alcore v${manifest.version}`);
 
     const request = async (
       base,
@@ -494,7 +494,7 @@ test(
     assert.equal(persisted.content, content);
     await stopTree(second.processRecord, children);
     console.log(
-      `Production installation verified: libre-webui ${manifest.version}, ${process.platform}, Node ${process.version}.`
+      `Production installation verified: alcore ${manifest.version}, ${process.platform}, Node ${process.version}.`
     );
   }
 );
