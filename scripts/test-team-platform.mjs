@@ -887,7 +887,7 @@ test(
       }
     );
     await waitForJob(killQueued.data.jobId, adminToken, ['running']);
-    // The fixture stalls the first sentinel call for a minute so the worker
+    // The fixture stalls the first sentinel call for half a minute so the worker
     // dies mid-call. Killing before that call lands leaves the provider with a
     // single call from the reclaimed attempt, which is not the fault window
     // this drill exercises.
