@@ -475,7 +475,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             </button>
           )}
         </div>
-        <div className='mt-2 text-center'>
+        <div className='mt-2 flex items-center justify-center gap-4 text-center'>
           <button
             type='button'
             onClick={() => {
@@ -487,6 +487,16 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           >
             {t('auth.signup.otpBackToSignup', 'Back to sign up')}
           </button>
+          {onBackToLogin ? (
+            <button
+              type='button'
+              data-testid='signup-otp-back-to-login'
+              onClick={onBackToLogin}
+              className='text-sm font-medium text-ink-muted transition-colors hover:text-ink'
+            >
+              {t('auth.signup.backToSignIn', 'Back to sign in')}
+            </button>
+          ) : null}
         </div>
       </div>
     );
