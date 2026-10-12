@@ -236,10 +236,10 @@
       "completing": "Completing Auth sign-in…",
       "redirecting": "正在重定向到 Auth…",
       "claim": {
-        "title": "Already have a Libre account? Link it to Auth",
-        "body": "Enter your existing Libre username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
-        "libreUsername": "Libre username",
-        "librePassword": "Libre password",
+        "title": "Already have an Alcore account? Link it to Auth",
+        "body": "Enter your existing Alcore username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
+        "libreUsername": "Alcore username",
+        "librePassword": "Alcore password",
         "authEmail": "Auth email",
         "authPassword": "Auth password",
         "submit": "Link my account",
@@ -251,7 +251,7 @@
       },
       "signup": {
         "title": "Create your account",
-        "subtitle": "One account for Auth and Libre — the same sign-in works on both.",
+        "subtitle": "One account for Auth and Alcore — the same sign-in works on both.",
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "Choose a password",
         "confirmPassword": "Confirm password",
@@ -267,7 +267,7 @@
       "signin": {
         "toggle": "Signed out of Auth? Sign in with your Auth email",
         "hide": "Hide Auth sign-in",
-        "body": "Enter your Auth email and password. They go directly to Auth — Libre never sees them. A successful sign-in continues into Libre automatically.",
+        "body": "Enter your Auth email and password. They go directly to Auth — Alcore never sees them. A successful sign-in continues into Alcore automatically.",
         "email": "Auth email",
         "password": "Auth password",
         "submit": "Sign in with Auth",
@@ -1454,7 +1454,7 @@
       "profileSave": "Save profile",
       "savedOk": "Saved.",
       "saveFailed": "Couldn't save {{label}}: check the values and try again.",
-      "keysNativeTitle": "API keys in Libre",
+      "keysNativeTitle": "API keys in Alcore",
       "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
       "keyNameLabel": "Key name",
       "keyNamePlaceholder": "e.g. production-app",
@@ -2307,7 +2307,7 @@
       "description": "选择谁可以使用内置的 Strands 智能体。它可以读取和编辑每个会话私有工作区中的文件，但不能运行 shell 命令。",
       "saved": "Strands 访问权限已更新",
       "saveFailed": "无法更新 Strands 访问权限",
-      "lockedByEnv": "由环境变量 LIBRE_STRANDS_ACCESS 固定。",
+      "lockedByEnv": "由环境变量 ALCORE_STRANDS_ACCESS 固定。",
       "modes": {
         "disabled": "关",
         "admins": "管理员",
@@ -2924,13 +2924,13 @@
     "viewOnGithub": "在 GitHub 上查看",
     "dismiss": "关闭"
   },
-  "libreClaw": {
+  "alcoreClaw": {
     "title": "智能体",
     "subtitle": "本地代理运行、批准、计划、内存、工具和使用情况。",
     "dashboard": "仪表板",
     "connection": {
       "disconnectedTitle": "Alcore Claw 守护进程未连接",
-      "disconnectedDescription": "使用 <command>libre-claw start</command> 在本地启动它，或在后端环境中设置 <env>LIBRE_CLAW_BASE_URL</env>。"
+      "disconnectedDescription": "使用 <command>alcore-claw start</command> 在本地启动它，或在后端环境中设置 <env>ALCORE_CLAW_BASE_URL</env>。"
     },
     "status": {
       "connected": "已连接",
@@ -3117,7 +3117,7 @@
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
       },
       "engine": "引擎",
-      "libreModels": "Libre WebUI模型",
+      "libreModels": "Alcore WebUI模型",
       "strandsDisabled": "你的账户无法使用 Strands 引擎。",
       "modelLabel": "模型"
     },
@@ -3724,7 +3724,7 @@
       "rotate": "轮换密钥",
       "enable": "启用",
       "disable": "禁用",
-      "revealHint": "仅显示一次。请作为 Bearer 令牌或 X-Libre-Webhook-Secret 请求头发送。",
+      "revealHint": "仅显示一次。请作为 Bearer 令牌或 X-Alcore-Webhook-Secret 请求头发送。",
       "failed": "无法更新 Webhook。"
     },
     "triggers": {
@@ -4460,7 +4460,7 @@
   },
   "strands": {
     "title": "Strands",
-    "subtitle": "在你的 Libre WebUI 模型上运行的内置智能体引擎。",
+    "subtitle": "在你的 Alcore WebUI 模型上运行的内置智能体引擎。",
     "subtitleVersion": "内置智能体引擎，harness {{version}}。",
     "newSession": "新建会话",
     "sessions": "会话",

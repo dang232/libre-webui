@@ -39,8 +39,8 @@ import type { SystemInfo, User } from '@/types';
  * Public self-service signup (Auth-driven, open registration).
  *
  * The credential is registered at Auth and the fresh Auth session is
- * exchanged at the Libre BFF, which lazy-provisions the Libre profile —
- * the same email/password signs in on both products. No Libre-local
+ * exchanged at the Alcore BFF, which lazy-provisions the Alcore profile —
+ * the same email/password signs in on both products. No Alcore-local
  * password is ever created: passwords travel browser→Auth only, exactly
  * like the Alcore sign-in panel. Duplicate emails surface Auth's safe
  * message without revealing whether an address is registered.

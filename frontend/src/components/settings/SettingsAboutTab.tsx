@@ -44,7 +44,7 @@ const aboutLinks = [
     descriptionKey: 'settings.about.links.documentationDescription',
   },
   {
-    href: 'https://github.com/dang232/libre-webui/issues',
+    href: 'https://alcore.io.vn/support',
     icon: MessageSquare,
     labelKey: 'settings.about.links.reportIssue',
     descriptionKey: 'settings.about.links.reportIssueDescription',

@@ -236,10 +236,10 @@
       "completing": "Completing Auth sign-in…",
       "redirecting": "Authにリダイレクトしています…",
       "claim": {
-        "title": "Already have a Libre account? Link it to Auth",
-        "body": "Enter your existing Libre username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
-        "libreUsername": "Libre username",
-        "librePassword": "Libre password",
+        "title": "Already have an Alcore account? Link it to Auth",
+        "body": "Enter your existing Alcore username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
+        "libreUsername": "Alcore username",
+        "librePassword": "Alcore password",
         "authEmail": "Auth email",
         "authPassword": "Auth password",
         "submit": "Link my account",
@@ -251,7 +251,7 @@
       },
       "signup": {
         "title": "Create your account",
-        "subtitle": "One account for Auth and Libre — the same sign-in works on both.",
+        "subtitle": "One account for Auth and Alcore — the same sign-in works on both.",
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "Choose a password",
         "confirmPassword": "Confirm password",
@@ -267,7 +267,7 @@
       "signin": {
         "toggle": "Signed out of Auth? Sign in with your Auth email",
         "hide": "Hide Auth sign-in",
-        "body": "Enter your Auth email and password. They go directly to Auth — Libre never sees them. A successful sign-in continues into Libre automatically.",
+        "body": "Enter your Auth email and password. They go directly to Auth — Alcore never sees them. A successful sign-in continues into Alcore automatically.",
         "email": "Auth email",
         "password": "Auth password",
         "submit": "Sign in with Auth",
@@ -1454,7 +1454,7 @@
       "profileSave": "Save profile",
       "savedOk": "Saved.",
       "saveFailed": "Couldn't save {{label}}: check the values and try again.",
-      "keysNativeTitle": "API keys in Libre",
+      "keysNativeTitle": "API keys in Alcore",
       "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
       "keyNameLabel": "Key name",
       "keyNamePlaceholder": "e.g. production-app",
@@ -2307,7 +2307,7 @@
       "description": "組み込みの Strands エージェントを使えるユーザーを選びます。各セッション専用のワークスペース内でファイルを読み取り・編集できますが、シェルコマンドは実行できません。",
       "saved": "Strands のアクセス設定を更新しました",
       "saveFailed": "Strands のアクセス設定を更新できませんでした",
-      "lockedByEnv": "環境変数 LIBRE_STRANDS_ACCESS で固定されています。",
+      "lockedByEnv": "環境変数 ALCORE_STRANDS_ACCESS で固定されています。",
       "modes": {
         "disabled": "オフ",
         "admins": "管理者",
@@ -2924,13 +2924,13 @@
     "viewOnGithub": "GitHub で見る",
     "dismiss": "閉じる"
   },
-  "libreClaw": {
+  "alcoreClaw": {
     "title": "エージェント",
     "subtitle": "ローカル エージェントの実行、承認、スケジュール、メモリ、ツール、および使用状況。",
     "dashboard": "ダッシュボード",
     "connection": {
       "disconnectedTitle": "Alcore Claw デーモンが接続されていません",
-      "disconnectedDescription": "<command>libre-claw start</command> を使用してローカルで開始するか、バックエンド環境で <env>LIBRE_CLAW_BASE_URL</env> を設定します。"
+      "disconnectedDescription": "<command>alcore-claw start</command> を使用してローカルで開始するか、バックエンド環境で <env>ALCORE_CLAW_BASE_URL</env> を設定します。"
     },
     "status": {
       "connected": "接続済み",
@@ -3117,7 +3117,7 @@
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
       },
       "engine": "エンジン",
-      "libreModels": "Libre WebUIモデル",
+      "libreModels": "Alcore WebUIモデル",
       "strandsDisabled": "このアカウントでは Strands エンジンを利用できません。",
       "modelLabel": "モデル"
     },
@@ -3724,7 +3724,7 @@
       "rotate": "シークレットを更新",
       "enable": "有効にする",
       "disable": "無効にする",
-      "revealHint": "表示は一度だけです。Bearer トークンまたは X-Libre-Webhook-Secret ヘッダーとして送信してください。",
+      "revealHint": "表示は一度だけです。Bearer トークンまたは X-Alcore-Webhook-Secret ヘッダーとして送信してください。",
       "failed": "Webhook を更新できませんでした。"
     },
     "triggers": {
@@ -4460,7 +4460,7 @@
   },
   "strands": {
     "title": "Strands",
-    "subtitle": "Libre WebUI のモデルで動く組み込みエージェントエンジン。",
+    "subtitle": "Alcore WebUI のモデルで動く組み込みエージェントエンジン。",
     "subtitleVersion": "組み込みエージェントエンジン、harness {{version}}。",
     "newSession": "新しいセッション",
     "sessions": "セッション",

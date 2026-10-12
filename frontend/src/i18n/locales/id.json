@@ -236,10 +236,10 @@
       "completing": "Completing Auth sign-in…",
       "redirecting": "Mengalihkan ke Auth…",
       "claim": {
-        "title": "Already have a Libre account? Link it to Auth",
-        "body": "Enter your existing Libre username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
-        "libreUsername": "Libre username",
-        "librePassword": "Libre password",
+        "title": "Already have an Alcore account? Link it to Auth",
+        "body": "Enter your existing Alcore username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
+        "libreUsername": "Alcore username",
+        "librePassword": "Alcore password",
         "authEmail": "Auth email",
         "authPassword": "Auth password",
         "submit": "Link my account",
@@ -251,7 +251,7 @@
       },
       "signup": {
         "title": "Create your account",
-        "subtitle": "One account for Auth and Libre — the same sign-in works on both.",
+        "subtitle": "One account for Auth and Alcore — the same sign-in works on both.",
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "Choose a password",
         "confirmPassword": "Confirm password",
@@ -267,7 +267,7 @@
       "signin": {
         "toggle": "Signed out of Auth? Sign in with your Auth email",
         "hide": "Hide Auth sign-in",
-        "body": "Enter your Auth email and password. They go directly to Auth — Libre never sees them. A successful sign-in continues into Libre automatically.",
+        "body": "Enter your Auth email and password. They go directly to Auth — Alcore never sees them. A successful sign-in continues into Alcore automatically.",
         "email": "Auth email",
         "password": "Auth password",
         "submit": "Sign in with Auth",
@@ -1454,7 +1454,7 @@
       "profileSave": "Save profile",
       "savedOk": "Saved.",
       "saveFailed": "Couldn't save {{label}}: check the values and try again.",
-      "keysNativeTitle": "API keys in Libre",
+      "keysNativeTitle": "API keys in Alcore",
       "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
       "keyNameLabel": "Key name",
       "keyNamePlaceholder": "e.g. production-app",
@@ -2307,7 +2307,7 @@
       "description": "Pilih siapa yang dapat menggunakan agen Strands tertanam. Agen ini dapat membaca dan mengedit file di ruang kerja pribadi setiap sesi, tetapi tidak dapat menjalankan perintah shell.",
       "saved": "Akses Strands diperbarui",
       "saveFailed": "Tidak dapat memperbarui akses Strands",
-      "lockedByEnv": "Ditetapkan oleh variabel lingkungan LIBRE_STRANDS_ACCESS.",
+      "lockedByEnv": "Ditetapkan oleh variabel lingkungan ALCORE_STRANDS_ACCESS.",
       "modes": {
         "disabled": "Mati",
         "admins": "Administrator",
@@ -2924,13 +2924,13 @@
     "viewOnGithub": "Lihat di GitHub",
     "dismiss": "Tutup"
   },
-  "libreClaw": {
+  "alcoreClaw": {
     "title": "Agen",
     "subtitle": "Agen lokal dijalankan, persetujuan, jadwal, memori, alat, dan penggunaan.",
     "dashboard": "Dasbor",
     "connection": {
       "disconnectedTitle": "Daemon Alcore Claw tidak terhubung",
-      "disconnectedDescription": "Mulai secara lokal dengan <command>libre-claw start</command> atau atur <env>LIBRE_CLAW_BASE_URL</env> di lingkungan backend."
+      "disconnectedDescription": "Mulai secara lokal dengan <command>alcore-claw start</command> atau atur <env>ALCORE_CLAW_BASE_URL</env> di lingkungan backend."
     },
     "status": {
       "connected": "Terhubung",
@@ -3117,7 +3117,7 @@
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
       },
       "engine": "Mesin",
-      "libreModels": "Model Libre WebUI",
+      "libreModels": "Model Alcore WebUI",
       "strandsDisabled": "Mesin Strands tidak tersedia untuk akun Anda.",
       "modelLabel": "Model"
     },
@@ -3724,7 +3724,7 @@
       "rotate": "Rotasi rahasia",
       "enable": "Aktifkan",
       "disable": "Nonaktifkan",
-      "revealHint": "Ditampilkan sekali saja. Kirim sebagai token Bearer atau header X-Libre-Webhook-Secret.",
+      "revealHint": "Ditampilkan sekali saja. Kirim sebagai token Bearer atau header X-Alcore-Webhook-Secret.",
       "failed": "Webhook tidak dapat diperbarui."
     },
     "triggers": {
@@ -4460,7 +4460,7 @@
   },
   "strands": {
     "title": "Strands",
-    "subtitle": "Mesin agen tertanam yang berjalan di model Libre WebUI Anda.",
+    "subtitle": "Mesin agen tertanam yang berjalan di model Alcore WebUI Anda.",
     "subtitleVersion": "Mesin agen tertanam, harness {{version}}.",
     "newSession": "Sesi baru",
     "sessions": "Sesi",

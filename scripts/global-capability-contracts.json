@@ -5111,7 +5111,7 @@
       ],
       "backendRoutes": [
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/access"
@@ -5123,7 +5123,7 @@
           "path": "/access"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "PUT",
           "path": "/access"
@@ -5135,13 +5135,13 @@
           "path": "/access"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/status"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/health"
@@ -5153,13 +5153,13 @@
           "path": "/health"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/config/model"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/dashboard"
@@ -5177,7 +5177,7 @@
           "path": "/sessions"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "PATCH",
           "path": "/config/model"
@@ -5201,115 +5201,115 @@
           "path": "/sessions/:sessionId"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/config/fallback"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "PATCH",
           "path": "/config/fallback"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "PATCH",
           "path": "/config/theme"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/runs"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/runs"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/runs/:runId"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/runs/:runId/events"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/runs/:runId/cancel"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/runs/:runId/permissions/:toolCallId"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/usage"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/automations"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/automations"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "GET",
           "path": "/automations/:automationId"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "PATCH",
           "path": "/automations/:automationId"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "PUT",
           "path": "/automations/:automationId"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/automations/:automationId/pause"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/automations/:automationId/resume"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "POST",
           "path": "/automations/:automationId/run"
         },
         {
-          "file": "backend/src/routes/libreClaw.ts",
+          "file": "backend/src/routes/alcoreClaw.ts",
           "mount": "/api/alcore-claw",
           "method": "DELETE",
           "path": "/automations/:automationId"

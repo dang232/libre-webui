@@ -140,7 +140,7 @@ const planNameOf = (plan: Record<string, unknown>): string => {
 
 /**
  * Account panel: subscription, budgets, spending limits and profile persisted
- * through the Libre BFF (todo 22). The browser sends the Libre user session
+ * through the Alcore BFF (todo 22). The browser sends the Alcore user session
  * only; every read/write round-trips through TokenPanel server-side. A 401
  * (stale session or upstream-invalid customer JWT) is handled by the shared
  * API client — clearToken + AUTH_INVALIDATED_EVENT, single-fire — so this
@@ -607,8 +607,8 @@ const AccountPanel: React.FC = () => {
 };
 
 /**
- * Native keys manager through the Libre BFF (todo 19). The browser sends
- * the Libre user session only; the backend attaches the management
+ * Native keys manager through the Alcore BFF (todo 19). The browser sends
+ * the Alcore user session only; the backend attaches the management
  * credential server-side and answers `no-store`. Full secrets are shown
  * exactly once: the one-time banner clears from state on dismiss, and the
  * list carries fingerprints/prefixes only. A 401 engages the shared
@@ -1012,7 +1012,7 @@ const KeysPanel: React.FC = () => {
 };
 
 /**
- * Native projects list through the Libre BFF (todo 19, read-only: no
+ * Native projects list through the Alcore BFF (todo 19, read-only: no
  * upstream project-create exists, so none is offered here).
  */
 const ProjectsPanel: React.FC = () => {
@@ -1232,7 +1232,7 @@ const PlatformDefaultPanel: React.FC = () => {
  * API Platform tab: single-login cross-link into the TokenPanel customer
  * portal (alcore.io.vn), which stays the permanent home for API keys, usage,
  * billing and the customer playground. Opening a section mints a 120s viewer
- * JWT through the Libre backend and hands it to the portal in a one-time URL
+ * JWT through the Alcore backend and hands it to the portal in a one-time URL
  * fragment the portal consumes and strips. Both apps keep their own login
  * until the unified identity (auth.alcore.io.vn) lands.
  */

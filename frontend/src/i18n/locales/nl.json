@@ -236,10 +236,10 @@
       "completing": "Completing Auth sign-in…",
       "redirecting": "Doorverwijzen naar Auth…",
       "claim": {
-        "title": "Already have a Libre account? Link it to Auth",
-        "body": "Enter your existing Libre username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
-        "libreUsername": "Libre username",
-        "librePassword": "Libre password",
+        "title": "Already have an Alcore account? Link it to Auth",
+        "body": "Enter your existing Alcore username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
+        "libreUsername": "Alcore username",
+        "librePassword": "Alcore password",
         "authEmail": "Auth email",
         "authPassword": "Auth password",
         "submit": "Link my account",
@@ -251,7 +251,7 @@
       },
       "signup": {
         "title": "Create your account",
-        "subtitle": "One account for Auth and Libre — the same sign-in works on both.",
+        "subtitle": "One account for Auth and Alcore — the same sign-in works on both.",
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "Choose a password",
         "confirmPassword": "Confirm password",
@@ -267,7 +267,7 @@
       "signin": {
         "toggle": "Signed out of Auth? Sign in with your Auth email",
         "hide": "Hide Auth sign-in",
-        "body": "Enter your Auth email and password. They go directly to Auth — Libre never sees them. A successful sign-in continues into Libre automatically.",
+        "body": "Enter your Auth email and password. They go directly to Auth — Alcore never sees them. A successful sign-in continues into Alcore automatically.",
         "email": "Auth email",
         "password": "Auth password",
         "submit": "Sign in with Auth",
@@ -1454,7 +1454,7 @@
       "profileSave": "Save profile",
       "savedOk": "Saved.",
       "saveFailed": "Couldn't save {{label}}: check the values and try again.",
-      "keysNativeTitle": "API keys in Libre",
+      "keysNativeTitle": "API keys in Alcore",
       "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
       "keyNameLabel": "Key name",
       "keyNamePlaceholder": "e.g. production-app",
@@ -2307,7 +2307,7 @@
       "description": "Kies wie de ingebouwde Strands-agent mag gebruiken. Hij kan bestanden lezen en bewerken in de privéwerkruimte van elke sessie, maar kan geen shell-opdrachten uitvoeren.",
       "saved": "Strands-toegang bijgewerkt",
       "saveFailed": "Strands-toegang kon niet worden bijgewerkt",
-      "lockedByEnv": "Vastgelegd door de omgevingsvariabele LIBRE_STRANDS_ACCESS.",
+      "lockedByEnv": "Vastgelegd door de omgevingsvariabele ALCORE_STRANDS_ACCESS.",
       "modes": {
         "disabled": "Uit",
         "admins": "Beheerders",
@@ -2924,13 +2924,13 @@
     "viewOnGithub": "Bekijken op GitHub",
     "dismiss": "Sluiten"
   },
-  "libreClaw": {
+  "alcoreClaw": {
     "title": "Agents",
     "subtitle": "Lokale agentuitvoeringen, goedkeuringen, planningen, geheugen, tools en gebruik.",
     "dashboard": "Dashboard",
     "connection": {
       "disconnectedTitle": "Alcore Claw-daemon is niet verbonden",
-      "disconnectedDescription": "Start het lokaal met <command>libre-claw start</command> of stel <env>LIBRE_CLAW_BASE_URL</env> in de backend-omgeving in."
+      "disconnectedDescription": "Start het lokaal met <command>alcore-claw start</command> of stel <env>ALCORE_CLAW_BASE_URL</env> in de backend-omgeving in."
     },
     "status": {
       "connected": "Verbonden",
@@ -3117,7 +3117,7 @@
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
       },
       "engine": "Engine",
-      "libreModels": "Libre WebUI-modellen",
+      "libreModels": "Alcore WebUI-modellen",
       "strandsDisabled": "De Strands-engine is niet beschikbaar voor je account.",
       "modelLabel": "Model"
     },
@@ -3724,7 +3724,7 @@
       "rotate": "Geheim roteren",
       "enable": "Inschakelen",
       "disable": "Uitschakelen",
-      "revealHint": "Wordt één keer getoond. Stuur het als Bearer-token of X-Libre-Webhook-Secret-header.",
+      "revealHint": "Wordt één keer getoond. Stuur het als Bearer-token of X-Alcore-Webhook-Secret-header.",
       "failed": "De webhook kon niet worden bijgewerkt."
     },
     "triggers": {
@@ -4460,7 +4460,7 @@
   },
   "strands": {
     "title": "Strands",
-    "subtitle": "Ingebouwde agent-engine die op je Libre WebUI-modellen draait.",
+    "subtitle": "Ingebouwde agent-engine die op je Alcore WebUI-modellen draait.",
     "subtitleVersion": "Ingebouwde agent-engine, harness {{version}}.",
     "newSession": "Nieuwe sessie",
     "sessions": "Sessies",

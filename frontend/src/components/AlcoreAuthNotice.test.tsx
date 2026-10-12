@@ -186,7 +186,7 @@ test('Alcore-mode login carries no architecture paragraphs', () => {
     'Auth session',
     'uses your existing Auth session',
     'They go directly to Auth',
-    'Libre never sees',
+    'Alcore never sees',
     'Alcore Auth',
     'wired up separately',
     'disabled here',

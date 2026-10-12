@@ -236,10 +236,10 @@
       "completing": "Completing Auth sign-in…",
       "redirecting": "Redirigiendo a Auth…",
       "claim": {
-        "title": "Already have a Libre account? Link it to Auth",
-        "body": "Enter your existing Libre username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
-        "libreUsername": "Libre username",
-        "librePassword": "Libre password",
+        "title": "Already have an Alcore account? Link it to Auth",
+        "body": "Enter your existing Alcore username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
+        "libreUsername": "Alcore username",
+        "librePassword": "Alcore password",
         "authEmail": "Auth email",
         "authPassword": "Auth password",
         "submit": "Link my account",
@@ -251,7 +251,7 @@
       },
       "signup": {
         "title": "Create your account",
-        "subtitle": "One account for Auth and Libre — the same sign-in works on both.",
+        "subtitle": "One account for Auth and Alcore — the same sign-in works on both.",
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "Choose a password",
         "confirmPassword": "Confirm password",
@@ -267,7 +267,7 @@
       "signin": {
         "toggle": "¿Sesión de Auth cerrada? Inicia sesión aquí",
         "hide": "Ocultar el inicio de sesión",
-        "body": "Introduce tu correo y tu contraseña de Auth. Van directamente a Auth — Libre nunca los ve. Tras iniciar sesión, continuarás en Libre automáticamente.",
+        "body": "Introduce tu correo y tu contraseña de Auth. Van directamente a Auth — Alcore nunca los ve. Tras iniciar sesión, continuarás en Alcore automáticamente.",
         "email": "Correo de Auth",
         "password": "Contraseña de Auth",
         "submit": "Iniciar sesión con Auth",
@@ -1454,7 +1454,7 @@
       "profileSave": "Save profile",
       "savedOk": "Saved.",
       "saveFailed": "Couldn't save {{label}}: check the values and try again.",
-      "keysNativeTitle": "API keys in Libre",
+      "keysNativeTitle": "API keys in Alcore",
       "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
       "keyNameLabel": "Key name",
       "keyNamePlaceholder": "e.g. production-app",
@@ -2307,7 +2307,7 @@
       "description": "Elige quién puede usar el agente Strands integrado. Puede leer y editar archivos en el espacio de trabajo privado de cada sesión, pero no puede ejecutar comandos de shell.",
       "saved": "Acceso a Strands actualizado",
       "saveFailed": "No se pudo actualizar el acceso a Strands",
-      "lockedByEnv": "Fijado por la variable de entorno LIBRE_STRANDS_ACCESS.",
+      "lockedByEnv": "Fijado por la variable de entorno ALCORE_STRANDS_ACCESS.",
       "modes": {
         "disabled": "Desactivado",
         "admins": "Administradores",
@@ -2924,13 +2924,13 @@
     "viewOnGithub": "Ver en GitHub",
     "dismiss": "Ocultar"
   },
-  "libreClaw": {
+  "alcoreClaw": {
     "title": "Agentes",
     "subtitle": "Ejecuciones, aprobaciones, programaciones, memoria, herramientas y uso del agente local.",
     "dashboard": "Panel de control",
     "connection": {
       "disconnectedTitle": "El demonio de Alcore Claw no está conectado",
-      "disconnectedDescription": "Inícielo localmente con <command>libre-claw start</command> o configure <env>LIBRE_CLAW_BASE_URL</env> en el entorno backend."
+      "disconnectedDescription": "Inícielo localmente con <command>alcore-claw start</command> o configure <env>ALCORE_CLAW_BASE_URL</env> en el entorno backend."
     },
     "status": {
       "connected": "Conectado",
@@ -3117,7 +3117,7 @@
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
       },
       "engine": "Motor",
-      "libreModels": "Modelos de Libre WebUI",
+      "libreModels": "Modelos de Alcore WebUI",
       "strandsDisabled": "El motor Strands no está disponible para tu cuenta.",
       "modelLabel": "Modelo"
     },
@@ -3724,7 +3724,7 @@
       "rotate": "Rotar secreto",
       "enable": "Activar",
       "disable": "Desactivar",
-      "revealHint": "Se muestra una sola vez. Envíalo como token Bearer o en la cabecera X-Libre-Webhook-Secret.",
+      "revealHint": "Se muestra una sola vez. Envíalo como token Bearer o en la cabecera X-Alcore-Webhook-Secret.",
       "failed": "No se pudo actualizar el webhook."
     },
     "triggers": {
@@ -4460,7 +4460,7 @@
   },
   "strands": {
     "title": "Strands",
-    "subtitle": "Motor de agentes integrado que usa tus modelos de Libre WebUI.",
+    "subtitle": "Motor de agentes integrado que usa tus modelos de Alcore WebUI.",
     "subtitleVersion": "Motor de agentes integrado, harness {{version}}.",
     "newSession": "Nueva sesión",
     "sessions": "Sesiones",

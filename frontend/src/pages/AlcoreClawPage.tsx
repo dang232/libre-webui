@@ -39,17 +39,17 @@ import {
 } from 'lucide-react';
 import { Button, PageHeader, PageShell } from '@/components/ui';
 import {
-  libreClawApi,
-  LibreClawAutomation,
-  LibreClawEvent,
-  LibreClawPermissionResolution,
-  LibreClawRun,
-  LibreClawStatus,
+  alcoreClawApi,
+  AlcoreClawAutomation,
+  AlcoreClawEvent,
+  AlcoreClawPermissionResolution,
+  AlcoreClawRun,
+  AlcoreClawStatus,
 } from '@/utils/api';
 import { cn } from '@/utils';
 import { createLogger } from '@/utils/logger';
 
-const logger = createLogger('pages:libre-claw');
+const logger = createLogger('pages:alcore-claw');
 
 const stateStyles: Record<string, string> = {
   queued: 'bg-gray-100 text-gray-700 dark:bg-dark-200 dark:text-dark-700',
@@ -85,7 +85,7 @@ interface TimelineItem {
   firstEventId: number;
   lastEventId: number;
   timestamp: string;
-  events: LibreClawEvent[];
+  events: AlcoreClawEvent[];
 }
 
 const themeOptions = [
@@ -110,12 +110,12 @@ const themeOptions = [
   ['matrix', 'Matrix'],
 ] as const;
 
-const LibreClawPage: React.FC = () => {
+const AlcoreClawPage: React.FC = () => {
   const { t } = useTranslation();
-  const [status, setStatus] = useState<LibreClawStatus | null>(null);
-  const [runs, setRuns] = useState<LibreClawRun[]>([]);
-  const [events, setEvents] = useState<LibreClawEvent[]>([]);
-  const [automations, setAutomations] = useState<LibreClawAutomation[]>([]);
+  const [status, setStatus] = useState<AlcoreClawStatus | null>(null);
+  const [runs, setRuns] = useState<AlcoreClawRun[]>([]);
+  const [events, setEvents] = useState<AlcoreClawEvent[]>([]);
+  const [automations, setAutomations] = useState<AlcoreClawAutomation[]>([]);
   const [modelConfig, setModelConfig] = useState<Record<
     string,
     unknown
@@ -180,12 +180,12 @@ const LibreClawPage: React.FC = () => {
         usageRes,
         automationsRes,
       ] = await Promise.all([
-        libreClawApi.status(),
-        libreClawApi.listRuns(30),
-        libreClawApi.currentModel(),
-        libreClawApi.currentFallback(),
-        libreClawApi.usage('', 100),
-        libreClawApi.listAutomations(50),
+        alcoreClawApi.status(),
+        alcoreClawApi.listRuns(30),
+        alcoreClawApi.currentModel(),
+        alcoreClawApi.currentFallback(),
+        alcoreClawApi.usage('', 100),
+        alcoreClawApi.listAutomations(50),
       ]);
 
       if (statusRes.success && statusRes.data) {
@@ -212,8 +212,8 @@ const LibreClawPage: React.FC = () => {
         setAutomations(automationsRes.data.automations);
       }
     } catch (error) {
-      logger.error('Failed to load Libre Claw overview:', error);
-      toast.error(t('libreClaw.toasts.loadStatusFailed'));
+      logger.error('Failed to load Alcore Claw overview:', error);
+      toast.error(t('alcoreClaw.toasts.loadStatusFailed'));
     } finally {
       setLoading(false);
     }
@@ -227,7 +227,7 @@ const LibreClawPage: React.FC = () => {
           ? events[events.length - 1]?.event_id || 0
           : 0;
       try {
-        const response = await libreClawApi.getEvents(runId, after);
+        const response = await alcoreClawApi.getEvents(runId, after);
         if (response.success && response.data) {
           setEvents(current =>
             replace
@@ -236,7 +236,7 @@ const LibreClawPage: React.FC = () => {
           );
         }
       } catch (error) {
-        logger.error('Failed to load Libre Claw events:', error);
+        logger.error('Failed to load Alcore Claw events:', error);
       }
     },
     [events]
@@ -257,7 +257,7 @@ const LibreClawPage: React.FC = () => {
       return () => window.clearTimeout(timeout);
     }
     const runId = selectedRunId;
-    libreClawApi
+    alcoreClawApi
       .getEvents(runId, 0)
       .then(response => {
         if (response.success && response.data) {
@@ -265,7 +265,7 @@ const LibreClawPage: React.FC = () => {
         }
       })
       .catch(error => {
-        logger.error('Failed to load Libre Claw events:', error);
+        logger.error('Failed to load Alcore Claw events:', error);
       });
   }, [selectedRunId]);
 
@@ -275,7 +275,7 @@ const LibreClawPage: React.FC = () => {
 
     const interval = window.setInterval(() => {
       loadEvents(selectedRunId);
-      libreClawApi.listRuns(30).then(response => {
+      alcoreClawApi.listRuns(30).then(response => {
         if (response.success && response.data) {
           setRuns(response.data.runs);
         }
@@ -287,12 +287,12 @@ const LibreClawPage: React.FC = () => {
 
   const startRun = async () => {
     if (!runMessage.trim()) {
-      toast.error(t('libreClaw.toasts.enterTask'));
+      toast.error(t('alcoreClaw.toasts.enterTask'));
       return;
     }
     setStartingRun(true);
     try {
-      const response = await libreClawApi.startRun({
+      const response = await alcoreClawApi.startRun({
         message: runMessage,
         kind: runKind,
         provider: runProvider || undefined,
@@ -306,13 +306,13 @@ const LibreClawPage: React.FC = () => {
         ]);
         setSelectedRunId(run.run_id);
         setRunMessage('');
-        toast.success(t('libreClaw.toasts.runStarted'));
+        toast.success(t('alcoreClaw.toasts.runStarted'));
       } else {
-        toast.error(response.error || t('libreClaw.toasts.startRunFailed'));
+        toast.error(response.error || t('alcoreClaw.toasts.startRunFailed'));
       }
     } catch (error) {
-      logger.error('Failed to start Libre Claw run:', error);
-      toast.error(t('libreClaw.toasts.startRunFailed'));
+      logger.error('Failed to start Alcore Claw run:', error);
+      toast.error(t('alcoreClaw.toasts.startRunFailed'));
     } finally {
       setStartingRun(false);
     }
@@ -320,25 +320,25 @@ const LibreClawPage: React.FC = () => {
 
   const cancelRun = async (runId: string) => {
     try {
-      await libreClawApi.cancelRun(runId);
+      await alcoreClawApi.cancelRun(runId);
       await loadOverview();
-      toast.success(t('libreClaw.toasts.runCancelled'));
+      toast.success(t('alcoreClaw.toasts.runCancelled'));
     } catch (error) {
-      logger.error('Failed to cancel Libre Claw run:', error);
-      toast.error(t('libreClaw.toasts.cancelRunFailed'));
+      logger.error('Failed to cancel Alcore Claw run:', error);
+      toast.error(t('alcoreClaw.toasts.cancelRunFailed'));
     }
   };
 
   const resolvePermission = async (
-    event: LibreClawEvent,
-    resolution: LibreClawPermissionResolution
+    event: AlcoreClawEvent,
+    resolution: AlcoreClawPermissionResolution
   ) => {
     if (!selectedRunId) return;
     const toolCallId = String(event.data.tool_call_id || '');
     if (!toolCallId) return;
 
     try {
-      await libreClawApi.resolvePermission(
+      await alcoreClawApi.resolvePermission(
         selectedRunId,
         toolCallId,
         resolution
@@ -346,36 +346,36 @@ const LibreClawPage: React.FC = () => {
       await loadEvents(selectedRunId, true);
       toast.success(
         resolution === 'deny'
-          ? t('libreClaw.toasts.denied')
-          : t('libreClaw.toasts.approved')
+          ? t('alcoreClaw.toasts.denied')
+          : t('alcoreClaw.toasts.approved')
       );
     } catch (error) {
-      logger.error('Failed to resolve Libre Claw permission:', error);
-      toast.error(t('libreClaw.toasts.resolvePermissionFailed'));
+      logger.error('Failed to resolve Alcore Claw permission:', error);
+      toast.error(t('alcoreClaw.toasts.resolvePermissionFailed'));
     }
   };
 
   const saveModel = async () => {
     if (!modelProvider.trim() || !modelName.trim()) {
-      toast.error(t('libreClaw.toasts.providerModelRequired'));
+      toast.error(t('alcoreClaw.toasts.providerModelRequired'));
       return;
     }
     setSavingModel(true);
     try {
-      const response = await libreClawApi.updateModel(
+      const response = await alcoreClawApi.updateModel(
         modelProvider,
         modelName,
         persistModel
       );
       if (response.success && response.data) {
         setModelConfig(response.data);
-        toast.success(t('libreClaw.toasts.modelUpdated'));
+        toast.success(t('alcoreClaw.toasts.modelUpdated'));
       } else {
-        toast.error(response.error || t('libreClaw.toasts.updateModelFailed'));
+        toast.error(response.error || t('alcoreClaw.toasts.updateModelFailed'));
       }
     } catch (error) {
-      logger.error('Failed to update Libre Claw model:', error);
-      toast.error(t('libreClaw.toasts.updateModelFailed'));
+      logger.error('Failed to update Alcore Claw model:', error);
+      toast.error(t('alcoreClaw.toasts.updateModelFailed'));
     } finally {
       setSavingModel(false);
     }
@@ -384,15 +384,15 @@ const LibreClawPage: React.FC = () => {
   const saveTheme = async () => {
     setSavingTheme(true);
     try {
-      const response = await libreClawApi.updateTheme(clawTheme, persistTheme);
+      const response = await alcoreClawApi.updateTheme(clawTheme, persistTheme);
       if (response.success) {
-        toast.success(t('libreClaw.toasts.themeUpdated'));
+        toast.success(t('alcoreClaw.toasts.themeUpdated'));
       } else {
-        toast.error(response.error || t('libreClaw.toasts.updateThemeFailed'));
+        toast.error(response.error || t('alcoreClaw.toasts.updateThemeFailed'));
       }
     } catch (error) {
-      logger.error('Failed to update Libre Claw theme:', error);
-      toast.error(t('libreClaw.toasts.updateThemeFailed'));
+      logger.error('Failed to update Alcore Claw theme:', error);
+      toast.error(t('alcoreClaw.toasts.updateThemeFailed'));
     } finally {
       setSavingTheme(false);
     }
@@ -404,12 +404,12 @@ const LibreClawPage: React.FC = () => {
       !automationSchedule.trim() ||
       !automationPrompt.trim()
     ) {
-      toast.error(t('libreClaw.toasts.automationRequired'));
+      toast.error(t('alcoreClaw.toasts.automationRequired'));
       return;
     }
     setSavingAutomation(true);
     try {
-      const response = await libreClawApi.createAutomation({
+      const response = await alcoreClawApi.createAutomation({
         name: automationName,
         schedule: automationSchedule,
         prompt: automationPrompt,
@@ -420,15 +420,15 @@ const LibreClawPage: React.FC = () => {
         setAutomationSchedule('');
         setAutomationPrompt('');
         await loadOverview();
-        toast.success(t('libreClaw.toasts.automationCreated'));
+        toast.success(t('alcoreClaw.toasts.automationCreated'));
       } else {
         toast.error(
-          response.error || t('libreClaw.toasts.createAutomationFailed')
+          response.error || t('alcoreClaw.toasts.createAutomationFailed')
         );
       }
     } catch (error) {
-      logger.error('Failed to create Libre Claw automation:', error);
-      toast.error(t('libreClaw.toasts.createAutomationFailed'));
+      logger.error('Failed to create Alcore Claw automation:', error);
+      toast.error(t('alcoreClaw.toasts.createAutomationFailed'));
     } finally {
       setSavingAutomation(false);
     }
@@ -439,17 +439,17 @@ const LibreClawPage: React.FC = () => {
     action: 'pause' | 'resume' | 'run' | 'delete'
   ) => {
     try {
-      if (action === 'pause') await libreClawApi.pauseAutomation(automationId);
+      if (action === 'pause') await alcoreClawApi.pauseAutomation(automationId);
       if (action === 'resume')
-        await libreClawApi.resumeAutomation(automationId);
-      if (action === 'run') await libreClawApi.runAutomationNow(automationId);
+        await alcoreClawApi.resumeAutomation(automationId);
+      if (action === 'run') await alcoreClawApi.runAutomationNow(automationId);
       if (action === 'delete')
-        await libreClawApi.deleteAutomation(automationId);
+        await alcoreClawApi.deleteAutomation(automationId);
       await loadOverview();
-      toast.success(t('libreClaw.toasts.automationUpdated'));
+      toast.success(t('alcoreClaw.toasts.automationUpdated'));
     } catch (error) {
-      logger.error('Failed to update Libre Claw automation:', error);
-      toast.error(t('libreClaw.toasts.updateAutomationFailed'));
+      logger.error('Failed to update Alcore Claw automation:', error);
+      toast.error(t('alcoreClaw.toasts.updateAutomationFailed'));
     }
   };
 
@@ -457,8 +457,8 @@ const LibreClawPage: React.FC = () => {
     <PageShell width='wide' contentClassName='space-y-6'>
       <PageHeader
         className='mb-0'
-        title={t('libreClaw.title')}
-        description={t('libreClaw.subtitle')}
+        title={t('alcoreClaw.title')}
+        description={t('alcoreClaw.subtitle')}
         actions={
           <>
             <StatusPill status={status} t={t} />
@@ -473,7 +473,7 @@ const LibreClawPage: React.FC = () => {
               className='inline-flex min-h-9 items-center gap-1.5 rounded-xl border border-gray-200/80 bg-white/70 px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-white dark:border-white/10 dark:bg-white/[0.04] dark:text-dark-700 dark:hover:bg-white/[0.08]'
             >
               <ExternalLink className='h-4 w-4' />
-              {t('libreClaw.dashboard')}
+              {t('alcoreClaw.dashboard')}
             </a>
           </>
         }
@@ -485,11 +485,11 @@ const LibreClawPage: React.FC = () => {
             <Terminal className='mt-0.5 h-5 w-5 shrink-0 text-amber-500' />
             <div>
               <h2 className='font-semibold'>
-                {t('libreClaw.connection.disconnectedTitle')}
+                {t('alcoreClaw.connection.disconnectedTitle')}
               </h2>
               <p className='mt-1 text-sm opacity-90'>
                 <Trans
-                  i18nKey='libreClaw.connection.disconnectedDescription'
+                  i18nKey='alcoreClaw.connection.disconnectedDescription'
                   components={{
                     command: <code />,
                     env: <code />,
@@ -506,14 +506,14 @@ const LibreClawPage: React.FC = () => {
 
       <section className='grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]'>
         <Panel
-          title={t('libreClaw.startRun.title')}
+          title={t('alcoreClaw.startRun.title')}
           icon={<Play className='h-4 w-4' />}
         >
           <div className='space-y-3'>
             <textarea
               value={runMessage}
               onChange={event => setRunMessage(event.target.value)}
-              placeholder={t('libreClaw.startRun.placeholder')}
+              placeholder={t('alcoreClaw.startRun.placeholder')}
               className='min-h-32 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100 dark:border-dark-300 dark:bg-dark-50 dark:text-dark-800 dark:focus:border-primary-500 dark:focus:ring-primary-900/30'
             />
             <div className='grid gap-3 sm:grid-cols-4'>
@@ -524,31 +524,33 @@ const LibreClawPage: React.FC = () => {
                 }
                 className='rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm dark:border-dark-300 dark:bg-dark-50 dark:text-dark-800'
               >
-                <option value='chat'>{t('libreClaw.startRun.chatRun')}</option>
-                <option value='goal'>{t('libreClaw.startRun.goalMode')}</option>
+                <option value='chat'>{t('alcoreClaw.startRun.chatRun')}</option>
+                <option value='goal'>
+                  {t('alcoreClaw.startRun.goalMode')}
+                </option>
               </select>
               <input
                 value={runProvider}
                 onChange={event => setRunProvider(event.target.value)}
-                placeholder={t('libreClaw.startRun.providerOverride')}
+                placeholder={t('alcoreClaw.startRun.providerOverride')}
                 className='rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm dark:border-dark-300 dark:bg-dark-50 dark:text-dark-800'
               />
               <input
                 value={runModel}
                 onChange={event => setRunModel(event.target.value)}
-                placeholder={t('libreClaw.startRun.modelOverride')}
+                placeholder={t('alcoreClaw.startRun.modelOverride')}
                 className='rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm dark:border-dark-300 dark:bg-dark-50 dark:text-dark-800'
               />
               <Button onClick={startRun} loading={startingRun}>
                 <Bot className='h-4 w-4' />
-                {t('libreClaw.startRun.run')}
+                {t('alcoreClaw.startRun.run')}
               </Button>
             </div>
           </div>
         </Panel>
 
         <Panel
-          title={t('libreClaw.modelRoute.title')}
+          title={t('alcoreClaw.modelRoute.title')}
           icon={<GitBranch className='h-4 w-4' />}
         >
           <div className='space-y-3'>
@@ -556,13 +558,13 @@ const LibreClawPage: React.FC = () => {
               <input
                 value={modelProvider}
                 onChange={event => setModelProvider(event.target.value)}
-                placeholder={t('libreClaw.modelRoute.providerPlaceholder')}
+                placeholder={t('alcoreClaw.modelRoute.providerPlaceholder')}
                 className='rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm dark:border-dark-300 dark:bg-dark-50 dark:text-dark-800'
               />
               <input
                 value={modelName}
                 onChange={event => setModelName(event.target.value)}
-                placeholder={t('libreClaw.modelRoute.modelPlaceholder')}
+                placeholder={t('alcoreClaw.modelRoute.modelPlaceholder')}
                 className='rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm dark:border-dark-300 dark:bg-dark-50 dark:text-dark-800'
               />
             </div>
@@ -573,18 +575,18 @@ const LibreClawPage: React.FC = () => {
                 onChange={event => setPersistModel(event.target.checked)}
                 className='h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500'
               />
-              {t('libreClaw.modelRoute.persistGlobal')}
+              {t('alcoreClaw.modelRoute.persistGlobal')}
             </label>
             <Button
               variant='secondary'
               onClick={saveModel}
               loading={savingModel}
             >
-              {t('libreClaw.modelRoute.saveModel')}
+              {t('alcoreClaw.modelRoute.saveModel')}
             </Button>
             <div className='border-t border-gray-100 pt-3 dark:border-dark-200'>
               <label className='mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-dark-500'>
-                {t('libreClaw.modelRoute.theme')}
+                {t('alcoreClaw.modelRoute.theme')}
               </label>
               <div className='grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-1'>
                 <select
@@ -603,7 +605,7 @@ const LibreClawPage: React.FC = () => {
                   onClick={saveTheme}
                   loading={savingTheme}
                 >
-                  {t('libreClaw.modelRoute.saveTheme')}
+                  {t('alcoreClaw.modelRoute.saveTheme')}
                 </Button>
               </div>
               <label className='mt-2 flex items-center gap-2 text-sm text-gray-600 dark:text-dark-600'>
@@ -613,7 +615,7 @@ const LibreClawPage: React.FC = () => {
                   onChange={event => setPersistTheme(event.target.checked)}
                   className='h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500'
                 />
-                {t('libreClaw.modelRoute.persistGlobal')}
+                {t('alcoreClaw.modelRoute.persistGlobal')}
               </label>
             </div>
             {modelConfig && (
@@ -627,12 +629,12 @@ const LibreClawPage: React.FC = () => {
 
       <section className='grid gap-4 xl:grid-cols-[360px_minmax(0,1fr)]'>
         <Panel
-          title={t('libreClaw.runs.title')}
+          title={t('alcoreClaw.runs.title')}
           icon={<Activity className='h-4 w-4' />}
         >
           <div className='space-y-2'>
             {runs.length === 0 && (
-              <EmptyState text={t('libreClaw.runs.empty')} />
+              <EmptyState text={t('alcoreClaw.runs.empty')} />
             )}
             {runs.map(run => (
               <button
@@ -664,7 +666,7 @@ const LibreClawPage: React.FC = () => {
 
         <Panel
           title={
-            selectedRun ? selectedRun.title : t('libreClaw.timeline.title')
+            selectedRun ? selectedRun.title : t('alcoreClaw.timeline.title')
           }
           icon={<Clock className='h-4 w-4' />}
           actions={
@@ -685,7 +687,7 @@ const LibreClawPage: React.FC = () => {
             <div className='mb-4 space-y-2 rounded-xl border border-amber-200 bg-amber-500/10 p-3 dark:border-amber-800 dark:bg-amber-900/20'>
               <div className='flex items-center gap-2 text-sm font-semibold text-ink'>
                 <ShieldCheck className='h-4 w-4 text-amber-500' />
-                {t('libreClaw.approvals.needed')}
+                {t('alcoreClaw.approvals.needed')}
               </div>
               {pendingPermissionEvents.map(event => (
                 <div
@@ -693,7 +695,7 @@ const LibreClawPage: React.FC = () => {
                   className='rounded-lg bg-white/70 p-3 dark:bg-dark-50/70'
                 >
                   <div className='text-sm font-medium text-gray-900 dark:text-dark-900'>
-                    {String(event.data.name || t('libreClaw.fallbacks.tool'))}
+                    {String(event.data.name || t('alcoreClaw.fallbacks.tool'))}
                   </div>
                   <pre className='mt-2 max-h-36 overflow-auto rounded bg-gray-100 p-2 text-xs text-gray-700 dark:bg-dark-200 dark:text-dark-700'>
                     {JSON.stringify(event.data.arguments || {}, null, 2)}
@@ -704,7 +706,7 @@ const LibreClawPage: React.FC = () => {
                       onClick={() => resolvePermission(event, 'allow_once')}
                     >
                       <Check className='h-4 w-4' />
-                      {t('libreClaw.approvals.allowOnce')}
+                      {t('alcoreClaw.approvals.allowOnce')}
                     </Button>
                     <Button
                       size='sm'
@@ -713,7 +715,7 @@ const LibreClawPage: React.FC = () => {
                         resolvePermission(event, 'always_allow_tool')
                       }
                     >
-                      {t('libreClaw.approvals.alwaysAllowTool')}
+                      {t('alcoreClaw.approvals.alwaysAllowTool')}
                     </Button>
                     <Button
                       size='sm'
@@ -721,7 +723,7 @@ const LibreClawPage: React.FC = () => {
                       onClick={() => resolvePermission(event, 'deny')}
                     >
                       <X className='h-4 w-4' />
-                      {t('libreClaw.approvals.deny')}
+                      {t('alcoreClaw.approvals.deny')}
                     </Button>
                   </div>
                 </div>
@@ -731,7 +733,7 @@ const LibreClawPage: React.FC = () => {
 
           <div className='space-y-3'>
             {events.length === 0 && (
-              <EmptyState text={t('libreClaw.timeline.empty')} />
+              <EmptyState text={t('alcoreClaw.timeline.empty')} />
             )}
             {timelineItems.map(item => (
               <TimelineCard key={item.key} item={item} t={t} />
@@ -742,7 +744,7 @@ const LibreClawPage: React.FC = () => {
 
       <section className='grid gap-4 xl:grid-cols-2'>
         <Panel
-          title={t('libreClaw.automations.title')}
+          title={t('alcoreClaw.automations.title')}
           icon={<CalendarClock className='h-4 w-4' />}
         >
           <div className='space-y-4'>
@@ -750,13 +752,13 @@ const LibreClawPage: React.FC = () => {
               <input
                 value={automationName}
                 onChange={event => setAutomationName(event.target.value)}
-                placeholder={t('libreClaw.automations.namePlaceholder')}
+                placeholder={t('alcoreClaw.automations.namePlaceholder')}
                 className='rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm dark:border-dark-300 dark:bg-dark-50 dark:text-dark-800'
               />
               <input
                 value={automationSchedule}
                 onChange={event => setAutomationSchedule(event.target.value)}
-                placeholder={t('libreClaw.automations.schedulePlaceholder')}
+                placeholder={t('alcoreClaw.automations.schedulePlaceholder')}
                 className='rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm dark:border-dark-300 dark:bg-dark-50 dark:text-dark-800'
               />
               <select
@@ -765,25 +767,25 @@ const LibreClawPage: React.FC = () => {
                 className='rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm dark:border-dark-300 dark:bg-dark-50 dark:text-dark-800'
               >
                 <option value='report'>
-                  {t('libreClaw.automations.routes.report')}
+                  {t('alcoreClaw.automations.routes.report')}
                 </option>
                 <option value='telegram'>
-                  {t('libreClaw.automations.routes.telegram')}
+                  {t('alcoreClaw.automations.routes.telegram')}
                 </option>
               </select>
               <Button onClick={createAutomation} loading={savingAutomation}>
-                {t('libreClaw.automations.create')}
+                {t('alcoreClaw.automations.create')}
               </Button>
             </div>
             <textarea
               value={automationPrompt}
               onChange={event => setAutomationPrompt(event.target.value)}
-              placeholder={t('libreClaw.automations.promptPlaceholder')}
+              placeholder={t('alcoreClaw.automations.promptPlaceholder')}
               className='min-h-24 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm dark:border-dark-300 dark:bg-dark-50 dark:text-dark-800'
             />
             <div className='space-y-2'>
               {automations.length === 0 && (
-                <EmptyState text={t('libreClaw.automations.empty')} />
+                <EmptyState text={t('alcoreClaw.automations.empty')} />
               )}
               {automations.map(automation => (
                 <div
@@ -797,12 +799,15 @@ const LibreClawPage: React.FC = () => {
                       </div>
                       <div className='mt-1 text-xs text-gray-500 dark:text-dark-500'>
                         {automation.schedule} ·{' '}
-                        {t(`libreClaw.automations.routes.${automation.route}`, {
-                          defaultValue: automation.route,
-                        })}{' '}
+                        {t(
+                          `alcoreClaw.automations.routes.${automation.route}`,
+                          {
+                            defaultValue: automation.route,
+                          }
+                        )}{' '}
                         ·{' '}
                         {t(
-                          `libreClaw.automations.status.${automation.status}`,
+                          `alcoreClaw.automations.status.${automation.status}`,
                           {
                             defaultValue: automation.status,
                           }
@@ -811,7 +816,7 @@ const LibreClawPage: React.FC = () => {
                     </div>
                     <div className='flex shrink-0 gap-1'>
                       <IconButton
-                        title={t('libreClaw.automations.runNow')}
+                        title={t('alcoreClaw.automations.runNow')}
                         onClick={() =>
                           automationAction(automation.automation_id, 'run')
                         }
@@ -821,8 +826,8 @@ const LibreClawPage: React.FC = () => {
                       <IconButton
                         title={
                           automation.status === 'paused'
-                            ? t('libreClaw.automations.resume')
-                            : t('libreClaw.automations.pause')
+                            ? t('alcoreClaw.automations.resume')
+                            : t('alcoreClaw.automations.pause')
                         }
                         onClick={() =>
                           automationAction(
@@ -855,21 +860,21 @@ const LibreClawPage: React.FC = () => {
         </Panel>
 
         <Panel
-          title={t('libreClaw.usageFallback.title')}
+          title={t('alcoreClaw.usageFallback.title')}
           icon={<Activity className='h-4 w-4' />}
         >
           <div className='space-y-4'>
             <div>
               <h3 className='mb-2 text-sm font-semibold text-gray-900 dark:text-dark-900'>
-                {t('libreClaw.usageFallback.usage')}
+                {t('alcoreClaw.usageFallback.usage')}
               </h3>
               <pre className='max-h-52 overflow-auto rounded-xl bg-gray-100 p-3 text-xs text-gray-700 dark:bg-dark-200 dark:text-dark-700'>
-                {usageText || t('libreClaw.usageFallback.noUsage')}
+                {usageText || t('alcoreClaw.usageFallback.noUsage')}
               </pre>
             </div>
             <div>
               <h3 className='mb-2 text-sm font-semibold text-gray-900 dark:text-dark-900'>
-                {t('libreClaw.usageFallback.fallbackRoute')}
+                {t('alcoreClaw.usageFallback.fallbackRoute')}
               </h3>
               <pre className='max-h-52 overflow-auto rounded-xl bg-gray-100 p-3 text-xs text-gray-700 dark:bg-dark-200 dark:text-dark-700'>
                 {JSON.stringify(fallbackConfig || {}, null, 2)}
@@ -888,7 +893,7 @@ const LibreClawPage: React.FC = () => {
 };
 
 const StatusPill: React.FC<{
-  status: LibreClawStatus | null;
+  status: AlcoreClawStatus | null;
   t: TFunction;
 }> = ({ status, t }) => {
   const connected = Boolean(status?.connected);
@@ -908,12 +913,12 @@ const StatusPill: React.FC<{
         )}
       />
       {connected
-        ? t('libreClaw.status.connected')
-        : t('libreClaw.status.disconnected')}
+        ? t('alcoreClaw.status.connected')
+        : t('alcoreClaw.status.disconnected')}
       {status?.health?.active_runs !== undefined && (
         <span className='opacity-70'>
           ·{' '}
-          {t('libreClaw.status.activeRuns', {
+          {t('alcoreClaw.status.activeRuns', {
             count: status.health.active_runs,
           })}
         </span>
@@ -932,7 +937,7 @@ const StateBadge: React.FC<{ state: string; t: TFunction }> = ({
       stateStyles[state] || stateStyles.queued
     )}
   >
-    {t(`libreClaw.states.${state}`, { defaultValue: state })}
+    {t(`alcoreClaw.states.${state}`, { defaultValue: state })}
   </span>
 );
 
@@ -1013,7 +1018,7 @@ const TimelineBody: React.FC<{ item: TimelineItem; t: TFunction }> = ({
   if (item.kind === 'assistant_message') {
     return (
       <p className='whitespace-pre-wrap text-sm leading-6 text-gray-900 dark:text-dark-900'>
-        {joinAssistantDeltas(item.events) || t('libreClaw.timeline.streaming')}
+        {joinAssistantDeltas(item.events) || t('alcoreClaw.timeline.streaming')}
       </p>
     );
   }
@@ -1041,7 +1046,7 @@ const TimelineBody: React.FC<{ item: TimelineItem; t: TFunction }> = ({
     return (
       <div>
         <div className='text-sm font-medium text-gray-900 dark:text-dark-900'>
-          {String(event.data.name || t('libreClaw.fallbacks.tool'))}
+          {String(event.data.name || t('alcoreClaw.fallbacks.tool'))}
         </div>
         <JsonBlock value={event.data.arguments || {}} />
       </div>
@@ -1052,10 +1057,10 @@ const TimelineBody: React.FC<{ item: TimelineItem; t: TFunction }> = ({
     return (
       <div>
         <div className='text-sm font-medium text-gray-900 dark:text-dark-900'>
-          {String(event.data.name || t('libreClaw.fallbacks.tool'))} ·{' '}
+          {String(event.data.name || t('alcoreClaw.fallbacks.tool'))} ·{' '}
           {event.data.is_error
-            ? t('libreClaw.timeline.resultError')
-            : t('libreClaw.timeline.resultOk')}
+            ? t('alcoreClaw.timeline.resultError')
+            : t('alcoreClaw.timeline.resultOk')}
         </div>
         <pre className='mt-2 max-h-56 overflow-auto whitespace-pre-wrap rounded-lg bg-gray-100 p-2 text-xs text-gray-700 dark:bg-dark-200 dark:text-dark-700'>
           {String(event.data.content || '')}
@@ -1069,7 +1074,7 @@ const TimelineBody: React.FC<{ item: TimelineItem; t: TFunction }> = ({
       <div>
         <div className='text-sm font-medium text-gray-900 dark:text-dark-900'>
           {String(
-            event.data.name || t('libreClaw.approvals.toolApprovalRequested')
+            event.data.name || t('alcoreClaw.approvals.toolApprovalRequested')
           )}
         </div>
         <JsonBlock value={event.data.arguments || {}} />
@@ -1081,17 +1086,17 @@ const TimelineBody: React.FC<{ item: TimelineItem; t: TFunction }> = ({
     return (
       <div className='flex flex-wrap gap-2'>
         <MetricPill
-          label={t('libreClaw.metrics.tool')}
+          label={t('alcoreClaw.metrics.tool')}
           value={String(
             event.data.name ||
               event.data.tool_call_id ||
-              t('libreClaw.fallbacks.tool')
+              t('alcoreClaw.fallbacks.tool')
           )}
         />
         <MetricPill
-          label={t('libreClaw.metrics.resolution')}
+          label={t('alcoreClaw.metrics.resolution')}
           value={String(
-            event.data.resolution || t('libreClaw.fallbacks.resolved')
+            event.data.resolution || t('alcoreClaw.fallbacks.resolved')
           )}
         />
       </div>
@@ -1109,7 +1114,7 @@ const TimelineBody: React.FC<{ item: TimelineItem; t: TFunction }> = ({
   if (event.type === 'error') {
     return (
       <p className='text-sm text-red-700 dark:text-red-300'>
-        {String(event.data.message || t('libreClaw.fallbacks.unknownError'))}
+        {String(event.data.message || t('alcoreClaw.fallbacks.unknownError'))}
       </p>
     );
   }
@@ -1123,31 +1128,31 @@ const UsageSummary: React.FC<{
 }> = ({ data, t }) => (
   <div className='flex flex-wrap gap-2'>
     <MetricPill
-      label={t('libreClaw.metrics.provider')}
-      value={String(data.provider || t('libreClaw.fallbacks.unknown'))}
+      label={t('alcoreClaw.metrics.provider')}
+      value={String(data.provider || t('alcoreClaw.fallbacks.unknown'))}
     />
     <MetricPill
-      label={t('libreClaw.metrics.model')}
-      value={String(data.model || t('libreClaw.fallbacks.unknown'))}
+      label={t('alcoreClaw.metrics.model')}
+      value={String(data.model || t('alcoreClaw.fallbacks.unknown'))}
     />
     <MetricPill
-      label={t('libreClaw.metrics.input')}
-      value={t('libreClaw.metrics.tokens', {
+      label={t('alcoreClaw.metrics.input')}
+      value={t('alcoreClaw.metrics.tokens', {
         count: toFiniteNumber(data.input_tokens),
         formatted: formatCount(data.input_tokens),
       })}
     />
     <MetricPill
-      label={t('libreClaw.metrics.output')}
-      value={t('libreClaw.metrics.tokens', {
+      label={t('alcoreClaw.metrics.output')}
+      value={t('alcoreClaw.metrics.tokens', {
         count: toFiniteNumber(data.output_tokens),
         formatted: formatCount(data.output_tokens),
       })}
     />
     {toFiniteNumber(data.cached_tokens) > 0 && (
       <MetricPill
-        label={t('libreClaw.metrics.cached')}
-        value={t('libreClaw.metrics.tokens', {
+        label={t('alcoreClaw.metrics.cached')}
+        value={t('alcoreClaw.metrics.tokens', {
           count: toFiniteNumber(data.cached_tokens),
           formatted: formatCount(data.cached_tokens),
         })}
@@ -1155,15 +1160,15 @@ const UsageSummary: React.FC<{
     )}
     {toFiniteNumber(data.reasoning_tokens) > 0 && (
       <MetricPill
-        label={t('libreClaw.metrics.reasoning')}
-        value={t('libreClaw.metrics.tokens', {
+        label={t('alcoreClaw.metrics.reasoning')}
+        value={t('alcoreClaw.metrics.tokens', {
           count: toFiniteNumber(data.reasoning_tokens),
           formatted: formatCount(data.reasoning_tokens),
         })}
       />
     )}
     <MetricPill
-      label={t('libreClaw.metrics.cost')}
+      label={t('alcoreClaw.metrics.cost')}
       value={formatCost(data.cost)}
     />
   </div>
@@ -1175,14 +1180,14 @@ const RunFinishedSummary: React.FC<{
 }> = ({ data, t }) => (
   <div className='flex flex-wrap gap-2'>
     <MetricPill
-      label={t('libreClaw.metrics.state')}
-      value={t(`libreClaw.states.${String(data.state || 'done')}`, {
+      label={t('alcoreClaw.metrics.state')}
+      value={t(`alcoreClaw.states.${String(data.state || 'done')}`, {
         defaultValue: String(data.state || 'done'),
       })}
     />
     {data.stop_reason !== undefined && (
       <MetricPill
-        label={t('libreClaw.metrics.stopReason')}
+        label={t('alcoreClaw.metrics.stopReason')}
         value={String(data.stop_reason)}
       />
     )}
@@ -1221,7 +1226,7 @@ const formatDate = (value: string): string => {
 };
 
 const buildTimelineItems = (
-  events: LibreClawEvent[],
+  events: AlcoreClawEvent[],
   t: TFunction
 ): TimelineItem[] => {
   const items: TimelineItem[] = [];
@@ -1232,7 +1237,7 @@ const buildTimelineItems = (
     if (!event) break;
 
     if (event.type === 'assistant_delta') {
-      const group: LibreClawEvent[] = [];
+      const group: AlcoreClawEvent[] = [];
       while (events[index]?.type === 'assistant_delta') {
         const delta = events[index];
         if (delta) group.push(delta);
@@ -1245,7 +1250,7 @@ const buildTimelineItems = (
           key: `assistant-${first.event_id}-${last.event_id}`,
           kind: 'assistant_message',
           eventType: 'assistant_message',
-          label: t('libreClaw.timeline.assistantResponse'),
+          label: t('alcoreClaw.timeline.assistantResponse'),
           firstEventId: first.event_id,
           lastEventId: last.event_id,
           timestamp: first.timestamp,
@@ -1271,20 +1276,20 @@ const buildTimelineItems = (
   return items;
 };
 
-const joinAssistantDeltas = (events: LibreClawEvent[]): string =>
+const joinAssistantDeltas = (events: AlcoreClawEvent[]): string =>
   events.map(event => String(event.data.text || '')).join('');
 
 const formatEventLabel = (type: string, t: TFunction): string => {
   const labels: Record<string, string> = {
-    user_message: t('libreClaw.timeline.labels.userMessage'),
-    tool_call: t('libreClaw.timeline.labels.toolCall'),
-    tool_result: t('libreClaw.timeline.labels.toolResult'),
-    permission_request: t('libreClaw.timeline.labels.approvalRequest'),
-    permission_response: t('libreClaw.timeline.labels.approvalResponse'),
-    run_started: t('libreClaw.timeline.labels.runStarted'),
-    run_finished: t('libreClaw.timeline.labels.runFinished'),
-    usage: t('libreClaw.timeline.labels.usage'),
-    error: t('libreClaw.timeline.labels.error'),
+    user_message: t('alcoreClaw.timeline.labels.userMessage'),
+    tool_call: t('alcoreClaw.timeline.labels.toolCall'),
+    tool_result: t('alcoreClaw.timeline.labels.toolResult'),
+    permission_request: t('alcoreClaw.timeline.labels.approvalRequest'),
+    permission_response: t('alcoreClaw.timeline.labels.approvalResponse'),
+    run_started: t('alcoreClaw.timeline.labels.runStarted'),
+    run_finished: t('alcoreClaw.timeline.labels.runFinished'),
+    usage: t('alcoreClaw.timeline.labels.usage'),
+    error: t('alcoreClaw.timeline.labels.error'),
   };
   return labels[type] || type.replace(/_/g, ' ');
 };
@@ -1311,4 +1316,4 @@ const formatCost = (value: unknown): string => {
   return `$${cost.toFixed(4)}`;
 };
 
-export default LibreClawPage;
+export default AlcoreClawPage;

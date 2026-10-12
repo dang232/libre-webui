@@ -355,7 +355,7 @@ the switch on, and each user still opts in per notification kind under
 
 | Variable               | Default                    | Purpose                                                                                                         |
 | ---------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `LIBRE_STRANDS_ACCESS` | unset (admin setting, off) | Pin who can use the embedded Strands engine: `disabled`, `admins`, or `all-users`. Any other value locks it off |
+| `ALCORE_STRANDS_ACCESS` | unset (admin setting, off) | Pin who can use the embedded Strands engine: `disabled`, `admins`, or `all-users`. Any other value locks it off. The legacy `LIBRE_STRANDS_ACCESS` variable is still accepted as a fallback. |
 
 ## Work Runtime
 

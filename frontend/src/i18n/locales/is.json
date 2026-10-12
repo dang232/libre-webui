@@ -236,10 +236,10 @@
       "completing": "Completing Auth sign-in…",
       "redirecting": "Endurbeiting til Auth…",
       "claim": {
-        "title": "Already have a Libre account? Link it to Auth",
-        "body": "Enter your existing Libre username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
-        "libreUsername": "Libre username",
-        "librePassword": "Libre password",
+        "title": "Already have an Alcore account? Link it to Auth",
+        "body": "Enter your existing Alcore username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
+        "libreUsername": "Alcore username",
+        "librePassword": "Alcore password",
         "authEmail": "Auth email",
         "authPassword": "Auth password",
         "submit": "Link my account",
@@ -251,7 +251,7 @@
       },
       "signup": {
         "title": "Create your account",
-        "subtitle": "One account for Auth and Libre — the same sign-in works on both.",
+        "subtitle": "One account for Auth and Alcore — the same sign-in works on both.",
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "Choose a password",
         "confirmPassword": "Confirm password",
@@ -267,7 +267,7 @@
       "signin": {
         "toggle": "Signed out of Auth? Sign in with your Auth email",
         "hide": "Hide Auth sign-in",
-        "body": "Enter your Auth email and password. They go directly to Auth — Libre never sees them. A successful sign-in continues into Libre automatically.",
+        "body": "Enter your Auth email and password. They go directly to Auth — Alcore never sees them. A successful sign-in continues into Alcore automatically.",
         "email": "Auth email",
         "password": "Auth password",
         "submit": "Sign in with Auth",
@@ -1454,7 +1454,7 @@
       "profileSave": "Save profile",
       "savedOk": "Saved.",
       "saveFailed": "Couldn't save {{label}}: check the values and try again.",
-      "keysNativeTitle": "API keys in Libre",
+      "keysNativeTitle": "API keys in Alcore",
       "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
       "keyNameLabel": "Key name",
       "keyNamePlaceholder": "e.g. production-app",
@@ -2307,7 +2307,7 @@
       "description": "Veldu hverjir mega nota innbyggða Strands-umboðsmanninn. Hann getur lesið og breytt skrám á einkavinnusvæði hverrar lotu, en getur ekki keyrt skeljarskipanir.",
       "saved": "Aðgangur að Strands uppfærður",
       "saveFailed": "Ekki tókst að uppfæra aðgang að Strands",
-      "lockedByEnv": "Fest með umhverfisbreytunni LIBRE_STRANDS_ACCESS.",
+      "lockedByEnv": "Fest með umhverfisbreytunni ALCORE_STRANDS_ACCESS.",
       "modes": {
         "disabled": "Slökkt",
         "admins": "Stjórnendur",
@@ -2924,13 +2924,13 @@
     "viewOnGithub": "Skoða á GitHub",
     "dismiss": "Loka"
   },
-  "libreClaw": {
+  "alcoreClaw": {
     "title": "Fulltrúar",
     "subtitle": "Staðbundin umboðsmaður keyrir, samþykki, áætlanir, minni, verkfæri og notkun.",
     "dashboard": "Stjórnborð",
     "connection": {
       "disconnectedTitle": "Alcore Claw-daemoninn er ekki tengdur",
-      "disconnectedDescription": "Byrjaðu það á staðnum með <command>libre-claw start</command> eða stilltu <env>LIBRE_CLAW_BASE_URL</env> í bakendaumhverfinu."
+      "disconnectedDescription": "Byrjaðu það á staðnum með <command>alcore-claw start</command> eða stilltu <env>ALCORE_CLAW_BASE_URL</env> í bakendaumhverfinu."
     },
     "status": {
       "connected": "Tengdur",
@@ -3117,7 +3117,7 @@
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
       },
       "engine": "Vél",
-      "libreModels": "Libre WebUI-líkön",
+      "libreModels": "Alcore WebUI-líkön",
       "strandsDisabled": "Strands-vélin er ekki í boði fyrir aðganginn þinn.",
       "modelLabel": "Líkan"
     },
@@ -3724,7 +3724,7 @@
       "rotate": "Endurnýja leyni",
       "enable": "Virkja",
       "disable": "Óvirkja",
-      "revealHint": "Birt aðeins einu sinni. Sendu það sem Bearer-tákn eða X-Libre-Webhook-Secret-haus.",
+      "revealHint": "Birt aðeins einu sinni. Sendu það sem Bearer-tákn eða X-Alcore-Webhook-Secret-haus.",
       "failed": "Ekki tókst að uppfæra webhook."
     },
     "triggers": {
@@ -4460,7 +4460,7 @@
   },
   "strands": {
     "title": "Strands",
-    "subtitle": "Innbyggð umboðsvél sem keyrir á Libre WebUI-líkönunum þínum.",
+    "subtitle": "Innbyggð umboðsvél sem keyrir á Alcore WebUI-líkönunum þínum.",
     "subtitleVersion": "Innbyggð umboðsvél, harness {{version}}.",
     "newSession": "Ný lota",
     "sessions": "Lotur",

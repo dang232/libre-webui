@@ -458,8 +458,8 @@ export const authApi = {
    *
    * The browser redeems an opaque Auth product code (Bearer handoff via
    * Auth POST /oidc/exchange, or redirect handoff via Auth
-   * GET /oidc/exchange/redirect carrying ?code=&state=) at the Libre BFF,
-   * which validates it server-to-server and returns a Libre product
+   * GET /oidc/exchange/redirect carrying ?code=&state=) at the Alcore BFF,
+   * which validates it server-to-server and returns an Alcore product
    * session. The BFF never sees passwords or Auth refresh credentials.
    */
   alcoreConfig: (): Promise<
@@ -486,9 +486,9 @@ export const authApi = {
 // ---------------------------------------------------------------------------
 // Browser-direct Auth calls (todo 45).
 //
-// These use plain fetch against the Auth origin — never the Libre `api`
-// client — so no Libre session token is attached and no 401 handler fires.
-// Passwords travel browser→Auth only; Libre (BFF/frontend store) never sees
+// These use plain fetch against the Auth origin — never the Alcore `api`
+// client — so no Alcore session token is attached and no 401 handler fires.
+// Passwords travel browser→Auth only; Alcore (BFF/frontend store) never sees
 // them. Legacy flag-OFF holds an Auth access token in memory just long
 // enough to fetch the opaque product code. Flag-ON never reads a token
 // — the response's HttpOnly cookie is the session and the page navigates
@@ -591,7 +591,7 @@ export const alcoreDirectResetRequest = async (
 };
 
 /**
- * Redeem an Auth session for the opaque single-use Libre product code.
+ * Redeem an Auth session for the opaque single-use Alcore product code.
  * The access token is used once here and must be discarded by the caller.
  */
 export const alcoreDirectProductCode = async (

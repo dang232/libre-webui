@@ -133,7 +133,7 @@ const withUnwrappedList = <T>(
 };
 
 /**
- * Usage + requests via the Libre BFF (`GET /api/tokenpanel/usage/*`).
+ * Usage + requests via the Alcore BFF (`GET /api/tokenpanel/usage/*`).
  * The panel sends no window by default, so the server default window
  * applies identically on both sides of the BFF (no silent widening).
  */

@@ -131,7 +131,7 @@ curl -X POST https://your-host/api/automations/<automationId>/webhook \
   -H "Authorization: Bearer lwh_..."
 ```
 
-(`X-Libre-Webhook-Secret: lwh_...` works as an alternative header.) The
+(`X-Alcore-Webhook-Secret: lwh_...` works as an alternative header; the legacy `X-Libre-Webhook-Secret` header is still accepted.) The
 response is `202` with the queued run id — the same manual-run path as
 **Run now**, so runs settle, notify, and appear in history identically. The
 secret comparison is constant-time, a missing automation and a wrong secret

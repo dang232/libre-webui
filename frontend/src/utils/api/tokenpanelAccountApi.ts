@@ -19,10 +19,10 @@ import type { ApiResponse } from '@/types';
 import { api } from './client';
 
 /**
- * TokenPanel account surface through the Libre BFF (todo 22) — the browser
- * sends the Libre user session only; the BFF holds tp_mgmt_* server-side.
+ * TokenPanel account surface through the Alcore BFF (todo 22) — the browser
+ * sends the Alcore user session only; the BFF holds tp_mgmt_* server-side.
  * Amounts are integer micros, currency is server-pinned. Every request flows
- * through the shared `api` client, so a 401 (stale Libre session or an
+ * through the shared `api` client, so a 401 (stale Alcore session or an
  * upstream-invalid customer JWT forwarded as 401) engages the unified
  * invalid-session path: clearToken + AUTH_INVALIDATED_EVENT, single-fire.
  */

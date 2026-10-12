@@ -236,10 +236,10 @@
       "completing": "Completing Auth sign-in…",
       "redirecting": "Omdirigerar till Auth…",
       "claim": {
-        "title": "Already have a Libre account? Link it to Auth",
-        "body": "Enter your existing Libre username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
-        "libreUsername": "Libre username",
-        "librePassword": "Libre password",
+        "title": "Already have an Alcore account? Link it to Auth",
+        "body": "Enter your existing Alcore username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
+        "libreUsername": "Alcore username",
+        "librePassword": "Alcore password",
         "authEmail": "Auth email",
         "authPassword": "Auth password",
         "submit": "Link my account",
@@ -251,7 +251,7 @@
       },
       "signup": {
         "title": "Create your account",
-        "subtitle": "One account for Auth and Libre — the same sign-in works on both.",
+        "subtitle": "One account for Auth and Alcore — the same sign-in works on both.",
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "Choose a password",
         "confirmPassword": "Confirm password",
@@ -267,7 +267,7 @@
       "signin": {
         "toggle": "Signed out of Auth? Sign in with your Auth email",
         "hide": "Hide Auth sign-in",
-        "body": "Enter your Auth email and password. They go directly to Auth — Libre never sees them. A successful sign-in continues into Libre automatically.",
+        "body": "Enter your Auth email and password. They go directly to Auth — Alcore never sees them. A successful sign-in continues into Alcore automatically.",
         "email": "Auth email",
         "password": "Auth password",
         "submit": "Sign in with Auth",
@@ -1454,7 +1454,7 @@
       "profileSave": "Save profile",
       "savedOk": "Saved.",
       "saveFailed": "Couldn't save {{label}}: check the values and try again.",
-      "keysNativeTitle": "API keys in Libre",
+      "keysNativeTitle": "API keys in Alcore",
       "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
       "keyNameLabel": "Key name",
       "keyNamePlaceholder": "e.g. production-app",
@@ -2307,7 +2307,7 @@
       "description": "Välj vem som får använda den inbyggda Strands-agenten. Den kan läsa och redigera filer i varje sessions privata arbetsyta, men kan inte köra skalkommandon.",
       "saved": "Strands-åtkomst uppdaterad",
       "saveFailed": "Det gick inte att uppdatera Strands-åtkomst",
-      "lockedByEnv": "Låst av miljövariabeln LIBRE_STRANDS_ACCESS.",
+      "lockedByEnv": "Låst av miljövariabeln ALCORE_STRANDS_ACCESS.",
       "modes": {
         "disabled": "Av",
         "admins": "Administratörer",
@@ -2924,13 +2924,13 @@
     "viewOnGithub": "Visa på GitHub",
     "dismiss": "Stäng"
   },
-  "libreClaw": {
+  "alcoreClaw": {
     "title": "Agenter",
     "subtitle": "Lokala agentkörningar, godkännanden, scheman, minne, verktyg och användning.",
     "dashboard": "Översikt",
     "connection": {
       "disconnectedTitle": "Alcore Claw-daemonen är inte ansluten",
-      "disconnectedDescription": "Starta den lokalt med <command>libre-claw start</command> eller ställ in <env>LIBRE_CLAW_BASE_URL</env> i backend-miljön."
+      "disconnectedDescription": "Starta den lokalt med <command>alcore-claw start</command> eller ställ in <env>ALCORE_CLAW_BASE_URL</env> i backend-miljön."
     },
     "status": {
       "connected": "Ansluten",
@@ -3117,7 +3117,7 @@
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
       },
       "engine": "Motor",
-      "libreModels": "Libre WebUI-modeller",
+      "libreModels": "Alcore WebUI-modeller",
       "strandsDisabled": "Strands-motorn är inte tillgänglig för ditt konto.",
       "modelLabel": "Modell"
     },
@@ -3724,7 +3724,7 @@
       "rotate": "Rotera hemlighet",
       "enable": "Aktivera",
       "disable": "Inaktivera",
-      "revealHint": "Visas bara en gång. Skicka den som Bearer-token eller X-Libre-Webhook-Secret-header.",
+      "revealHint": "Visas bara en gång. Skicka den som Bearer-token eller X-Alcore-Webhook-Secret-header.",
       "failed": "Webhooken kunde inte uppdateras."
     },
     "triggers": {
@@ -4460,7 +4460,7 @@
   },
   "strands": {
     "title": "Strands",
-    "subtitle": "Inbyggd agentmotor som körs på dina Libre WebUI-modeller.",
+    "subtitle": "Inbyggd agentmotor som körs på dina Alcore WebUI-modeller.",
     "subtitleVersion": "Inbyggd agentmotor, harness {{version}}.",
     "newSession": "Ny session",
     "sessions": "Sessioner",

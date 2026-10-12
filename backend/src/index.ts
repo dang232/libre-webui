@@ -98,7 +98,7 @@ import imageGenRoutes from './routes/imageGen.js';
 import mediaRoutes from './routes/media.js';
 import embeddingsRoutes from './routes/embeddings.js';
 import huggingfaceHubRoutes from './routes/huggingfaceHub.js';
-import alcoreClawRoutes from './routes/libreClaw.js';
+import alcoreClawRoutes from './routes/alcoreClaw.js';
 import workRoutes from './routes/work.js';
 import systemDiagnosticsRoutes from './routes/systemDiagnostics.js';
 import artifactsRoutes from './routes/artifacts.js';
@@ -906,7 +906,7 @@ server.listen({ port, host }, () => {
       if (!seen) {
         await setSystemSetting('first_run_star_note', 'shown');
         logger.info(
-          'If Alcore is useful to you, a star helps others find it: https://github.com/libre-webui/libre-webui'
+          'If Alcore is useful to you, a star helps others find it: https://alcore.io.vn'
         );
       }
     } catch {

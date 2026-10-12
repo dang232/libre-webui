@@ -31,7 +31,7 @@ import { startAuthHandoff } from '@/utils/canonicalHandoff';
  * R4: Auth sign-in before the handoff.
  *
  * Always-visible primary sign-in for the simplified login panel: the
- * password travels browser→Auth only (never through Libre, exactly
+ * password travels browser→Auth only (never through Alcore, exactly
  * like the claim and signup forms), the Auth session lands in Auth's
  * HttpOnly cookie, and a successful sign-in continues into the
  * redirect handoff automatically.

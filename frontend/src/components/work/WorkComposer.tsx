@@ -371,7 +371,7 @@ export function WorkComposer({
         onChange={event => changeEngine(event.target.value as WorkEngine)}
         disabled={running || loading}
         options={[
-          { value: 'libre', label: 'Libre WebUI' },
+          { value: 'libre', label: 'Alcore' },
           { value: 'strands', label: 'Strands' },
         ]}
         className={cn(

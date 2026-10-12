@@ -86,7 +86,7 @@ const isElectron = process.env.ELECTRON_BUILD === 'true';
  * for the dev server.
  */
 const artifactRuntimeHeaders = () => ({
-  name: 'libre-artifact-runtime-headers',
+  name: 'alcore-artifact-runtime-headers',
   configureServer(server: { middlewares: { use: (fn: unknown) => void } }) {
     server.middlewares.use(
       (

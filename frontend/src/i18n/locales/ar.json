@@ -236,10 +236,10 @@
       "completing": "Completing Auth sign-in…",
       "redirecting": "جارٍ إعادة التوجيه إلى Auth…",
       "claim": {
-        "title": "Already have a Libre account? Link it to Auth",
-        "body": "Enter your existing Libre username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
-        "libreUsername": "Libre username",
-        "librePassword": "Libre password",
+        "title": "Already have an Alcore account? Link it to Auth",
+        "body": "Enter your existing Alcore username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
+        "libreUsername": "Alcore username",
+        "librePassword": "Alcore password",
         "authEmail": "Auth email",
         "authPassword": "Auth password",
         "submit": "Link my account",
@@ -251,7 +251,7 @@
       },
       "signup": {
         "title": "Create your account",
-        "subtitle": "One account for Auth and Libre — the same sign-in works on both.",
+        "subtitle": "One account for Auth and Alcore — the same sign-in works on both.",
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "Choose a password",
         "confirmPassword": "Confirm password",
@@ -267,7 +267,7 @@
       "signin": {
         "toggle": "Signed out of Auth? Sign in with your Auth email",
         "hide": "Hide Auth sign-in",
-        "body": "Enter your Auth email and password. They go directly to Auth — Libre never sees them. A successful sign-in continues into Libre automatically.",
+        "body": "Enter your Auth email and password. They go directly to Auth — Alcore never sees them. A successful sign-in continues into Alcore automatically.",
         "email": "Auth email",
         "password": "Auth password",
         "submit": "Sign in with Auth",
@@ -1454,7 +1454,7 @@
       "profileSave": "Save profile",
       "savedOk": "Saved.",
       "saveFailed": "Couldn't save {{label}}: check the values and try again.",
-      "keysNativeTitle": "مفاتيح API في Libre",
+      "keysNativeTitle": "مفاتيح API في Alcore",
       "keysNativeDescription": "أنشئ مفاتيح العملاء tp_live_* واعرضها ودوّرها وأبطلها من هنا. يظهر المفتاح الكامل مرة واحدة فقط.",
       "keyNameLabel": "اسم المفتاح",
       "keyNamePlaceholder": "مثال: production-app",
@@ -2307,7 +2307,7 @@
       "description": "اختر من يمكنه استخدام وكيل Strands المدمج. يمكنه قراءة الملفات وتعديلها في مساحة العمل الخاصة بكل جلسة، لكنه لا يستطيع تشغيل أوامر الطرفية.",
       "saved": "تم تحديث الوصول إلى Strands",
       "saveFailed": "تعذر تحديث الوصول إلى Strands",
-      "lockedByEnv": "مثبّت بواسطة متغير البيئة LIBRE_STRANDS_ACCESS.",
+      "lockedByEnv": "مثبّت بواسطة متغير البيئة ALCORE_STRANDS_ACCESS.",
       "modes": {
         "disabled": "إيقاف",
         "admins": "المسؤولون",
@@ -2924,13 +2924,13 @@
     "viewOnGithub": "عرض على GitHub",
     "dismiss": "تجاهل"
   },
-  "libreClaw": {
+  "alcoreClaw": {
     "title": "الوكلاء",
     "subtitle": "يعمل الوكيل المحلي والموافقات والجداول الزمنية والذاكرة والأدوات والاستخدام.",
     "dashboard": "لوحة المعلومات",
     "connection": {
       "disconnectedTitle": "خدمة Alcore Claw غير متصلة",
-      "disconnectedDescription": "ابدأ تشغيله محليًا باستخدام <command>libre-claw start</command> أو قم بتعيين <env>LIBRE_CLAW_BASE_URL</env> في بيئة الواجهة الخلفية."
+      "disconnectedDescription": "ابدأ تشغيله محليًا باستخدام <command>alcore-claw start</command> أو قم بتعيين <env>ALCORE_CLAW_BASE_URL</env> في بيئة الواجهة الخلفية."
     },
     "status": {
       "connected": "متصل",
@@ -3117,7 +3117,7 @@
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
       },
       "engine": "المحرك",
-      "libreModels": "نماذج Libre WebUI",
+      "libreModels": "نماذج Alcore WebUI",
       "strandsDisabled": "محرك Strands غير متاح لحسابك.",
       "modelLabel": "النموذج"
     },
@@ -3724,7 +3724,7 @@
       "rotate": "تدوير السر",
       "enable": "تفعيل",
       "disable": "تعطيل",
-      "revealHint": "يُعرض مرة واحدة. أرسله كرمز Bearer أو ضمن ترويسة X-Libre-Webhook-Secret.",
+      "revealHint": "يُعرض مرة واحدة. أرسله كرمز Bearer أو ضمن ترويسة X-Alcore-Webhook-Secret.",
       "failed": "تعذر تحديث الـ webhook."
     },
     "triggers": {
@@ -4460,7 +4460,7 @@
   },
   "strands": {
     "title": "Strands",
-    "subtitle": "محرك وكلاء مدمج يعمل على نماذج Libre WebUI.",
+    "subtitle": "محرك وكلاء مدمج يعمل على نماذج Alcore WebUI.",
     "subtitleVersion": "محرك وكلاء مدمج، الإصدار {{version}}.",
     "newSession": "جلسة جديدة",
     "sessions": "الجلسات",

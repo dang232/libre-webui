@@ -19,10 +19,10 @@ import type { ApiResponse } from '@/types';
 import { isDemoMode } from '@/utils/demoMode';
 import { api, createDemoResponse } from './client';
 
-export type LibreClawRunState =
+export type AlcoreClawRunState =
   'queued' | 'running' | 'blocked' | 'done' | 'failed' | 'cancelled';
 
-export interface LibreClawStatus {
+export interface AlcoreClawStatus {
   connected: boolean;
   baseUrl: string;
   dashboardUrl: string;
@@ -35,9 +35,9 @@ export interface LibreClawStatus {
   error?: string;
 }
 
-export interface LibreClawRun {
+export interface AlcoreClawRun {
   run_id: string;
-  state: LibreClawRunState;
+  state: AlcoreClawRunState;
   title: string;
   kind: string;
   provider: string;
@@ -47,14 +47,14 @@ export interface LibreClawRun {
   updated_at: string;
 }
 
-export interface LibreClawEvent {
+export interface AlcoreClawEvent {
   event_id: number;
   timestamp: string;
   type: string;
   data: Record<string, unknown>;
 }
 
-export interface LibreClawAutomation {
+export interface AlcoreClawAutomation {
   automation_id: string;
   name: string;
   prompt: string;
@@ -68,21 +68,21 @@ export interface LibreClawAutomation {
   telegram_chat_id?: number | null;
 }
 
-export interface LibreClawStartRunPayload {
+export interface AlcoreClawStartRunPayload {
   message: string;
   kind?: 'chat' | 'goal';
   provider?: string;
   model?: string;
 }
 
-export type LibreClawPermissionResolution =
+export type AlcoreClawPermissionResolution =
   'allow_once' | 'deny' | 'always_allow_tool' | 'always_allow_call';
 
-const demoStatus: LibreClawStatus = {
+const demoStatus: AlcoreClawStatus = {
   connected: false,
   baseUrl: 'http://127.0.0.1:8766',
   dashboardUrl: 'http://127.0.0.1:8766/dashboard',
-  error: 'Libre Claw daemon is not connected in demo mode.',
+  error: 'Alcore Claw daemon is not connected in demo mode.',
 };
 
 export interface AgentAccess {
@@ -90,7 +90,7 @@ export interface AgentAccess {
   lockedByEnv: boolean;
 }
 
-export const libreClawApi = {
+export const alcoreClawApi = {
   access: (): Promise<ApiResponse<AgentAccess>> => {
     if (isDemoMode()) {
       return createDemoResponse({ enabled: false, lockedByEnv: false });
@@ -105,7 +105,7 @@ export const libreClawApi = {
     return api.put('/alcore-claw/access', { enabled }).then(res => res.data);
   },
 
-  status: (): Promise<ApiResponse<LibreClawStatus>> => {
+  status: (): Promise<ApiResponse<AlcoreClawStatus>> => {
     if (isDemoMode()) {
       return createDemoResponse(demoStatus);
     }
@@ -201,7 +201,7 @@ export const libreClawApi = {
       .then(res => res.data);
   },
 
-  listRuns: (limit = 20): Promise<ApiResponse<{ runs: LibreClawRun[] }>> => {
+  listRuns: (limit = 20): Promise<ApiResponse<{ runs: AlcoreClawRun[] }>> => {
     if (isDemoMode()) {
       return createDemoResponse({ runs: [] });
     }
@@ -209,15 +209,15 @@ export const libreClawApi = {
   },
 
   startRun: (
-    payload: LibreClawStartRunPayload
-  ): Promise<ApiResponse<{ run: LibreClawRun }>> => {
+    payload: AlcoreClawStartRunPayload
+  ): Promise<ApiResponse<{ run: AlcoreClawRun }>> => {
     if (isDemoMode()) {
       const now = new Date().toISOString();
       return createDemoResponse({
         run: {
           run_id: `demo-${Date.now()}`,
           state: 'queued',
-          title: payload.message.slice(0, 80) || 'Libre Claw demo run',
+          title: payload.message.slice(0, 80) || 'Alcore Claw demo run',
           kind: payload.kind || 'chat',
           provider: payload.provider || 'openrouter',
           model: payload.model || 'openrouter/auto',
@@ -242,7 +242,7 @@ export const libreClawApi = {
   getEvents: (
     runId: string,
     after = 0
-  ): Promise<ApiResponse<{ events: LibreClawEvent[] }>> => {
+  ): Promise<ApiResponse<{ events: AlcoreClawEvent[] }>> => {
     if (isDemoMode()) {
       return createDemoResponse({ events: [] });
     }
@@ -265,7 +265,7 @@ export const libreClawApi = {
   resolvePermission: (
     runId: string,
     toolCallId: string,
-    resolution: LibreClawPermissionResolution
+    resolution: AlcoreClawPermissionResolution
   ): Promise<ApiResponse<Record<string, unknown>>> => {
     if (isDemoMode()) {
       return createDemoResponse({
@@ -284,7 +284,7 @@ export const libreClawApi = {
 
   listAutomations: (
     limit = 50
-  ): Promise<ApiResponse<{ automations: LibreClawAutomation[] }>> => {
+  ): Promise<ApiResponse<{ automations: AlcoreClawAutomation[] }>> => {
     if (isDemoMode()) {
       return createDemoResponse({ automations: [] });
     }
@@ -294,7 +294,7 @@ export const libreClawApi = {
   },
 
   createAutomation: (
-    payload: Partial<LibreClawAutomation>
+    payload: Partial<AlcoreClawAutomation>
   ): Promise<ApiResponse<Record<string, unknown>>> => {
     if (isDemoMode()) {
       return createDemoResponse({
@@ -307,7 +307,7 @@ export const libreClawApi = {
 
   updateAutomation: (
     automationId: string,
-    payload: Partial<LibreClawAutomation>
+    payload: Partial<AlcoreClawAutomation>
   ): Promise<ApiResponse<Record<string, unknown>>> => {
     if (isDemoMode()) {
       return createDemoResponse({ ...payload, automation_id: automationId });

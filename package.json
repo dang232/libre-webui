@@ -72,7 +72,7 @@
   "bugs": {
     "url": "https://github.com/libre-webui/libre-webui/issues"
   },
-  "homepage": "https://librewebui.org",
+  "homepage": "https://alcore.io.vn",
   "engines": {
     "node": ">=22.22.0"
   },

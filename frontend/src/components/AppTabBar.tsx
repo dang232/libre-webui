@@ -354,7 +354,7 @@ export const AppTabBar: React.FC = () => {
         ? t('tabs.work', 'Work')
         : tabTitle(activeTab);
   useEffect(() => {
-    const brand = 'Libre WebUI';
+    const brand = 'Alcore';
     document.title =
       activeDocumentTitle && activeDocumentTitle !== brand
         ? `${activeDocumentTitle} · ${brand}`

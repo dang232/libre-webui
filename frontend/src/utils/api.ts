@@ -87,16 +87,16 @@ export type {
   VideoGenerationJob,
   VideoGenModel,
 } from './api/mediaApi';
-export { libreClawApi } from './api/libreClawApi';
+export { alcoreClawApi } from './api/alcoreClawApi';
 export type {
-  LibreClawAutomation,
-  LibreClawEvent,
-  LibreClawPermissionResolution,
-  LibreClawRun,
-  LibreClawRunState,
-  LibreClawStartRunPayload,
-  LibreClawStatus,
-} from './api/libreClawApi';
+  AlcoreClawAutomation,
+  AlcoreClawEvent,
+  AlcoreClawPermissionResolution,
+  AlcoreClawRun,
+  AlcoreClawRunState,
+  AlcoreClawStartRunPayload,
+  AlcoreClawStatus,
+} from './api/alcoreClawApi';
 export type {
   StrandsAccess,
   StrandsMessage,

@@ -236,10 +236,10 @@
       "completing": "Completing Auth sign-in…",
       "redirecting": "Auth-এ পুনর্নির্দেশ করা হচ্ছে…",
       "claim": {
-        "title": "Already have a Libre account? Link it to Auth",
-        "body": "Enter your existing Libre username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
-        "libreUsername": "Libre username",
-        "librePassword": "Libre password",
+        "title": "Already have an Alcore account? Link it to Auth",
+        "body": "Enter your existing Alcore username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
+        "libreUsername": "Alcore username",
+        "librePassword": "Alcore password",
         "authEmail": "Auth email",
         "authPassword": "Auth password",
         "submit": "Link my account",
@@ -251,7 +251,7 @@
       },
       "signup": {
         "title": "Create your account",
-        "subtitle": "One account for Auth and Libre — the same sign-in works on both.",
+        "subtitle": "One account for Auth and Alcore — the same sign-in works on both.",
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "Choose a password",
         "confirmPassword": "Confirm password",
@@ -267,7 +267,7 @@
       "signin": {
         "toggle": "Signed out of Auth? Sign in with your Auth email",
         "hide": "Hide Auth sign-in",
-        "body": "Enter your Auth email and password. They go directly to Auth — Libre never sees them. A successful sign-in continues into Libre automatically.",
+        "body": "Enter your Auth email and password. They go directly to Auth — Alcore never sees them. A successful sign-in continues into Alcore automatically.",
         "email": "Auth email",
         "password": "Auth password",
         "submit": "Sign in with Auth",
@@ -1454,7 +1454,7 @@
       "profileSave": "Save profile",
       "savedOk": "Saved.",
       "saveFailed": "Couldn't save {{label}}: check the values and try again.",
-      "keysNativeTitle": "API keys in Libre",
+      "keysNativeTitle": "API keys in Alcore",
       "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
       "keyNameLabel": "Key name",
       "keyNamePlaceholder": "e.g. production-app",
@@ -2307,7 +2307,7 @@
       "description": "কে এমবেডেড Strands এজেন্ট ব্যবহার করতে পারবে তা বেছে নিন। এটি প্রতিটি সেশনের ব্যক্তিগত ওয়ার্কস্পেসে ফাইল পড়তে ও সম্পাদনা করতে পারে, কিন্তু শেল কমান্ড চালাতে পারে না।",
       "saved": "Strands অ্যাক্সেস আপডেট হয়েছে",
       "saveFailed": "Strands অ্যাক্সেস আপডেট করা যায়নি",
-      "lockedByEnv": "LIBRE_STRANDS_ACCESS এনভায়রনমেন্ট ভেরিয়েবল দ্বারা নির্ধারিত।",
+      "lockedByEnv": "ALCORE_STRANDS_ACCESS এনভায়রনমেন্ট ভেরিয়েবল দ্বারা নির্ধারিত।",
       "modes": {
         "disabled": "বন্ধ",
         "admins": "প্রশাসকগণ",
@@ -2924,13 +2924,13 @@
     "viewOnGithub": "GitHub-এ দেখুন",
     "dismiss": "খারিজ করুন"
   },
-  "libreClaw": {
+  "alcoreClaw": {
     "title": "এজেন্ট",
     "subtitle": "স্থানীয় এজেন্ট রান, অনুমোদন, সময়সূচী, মেমরি, সরঞ্জাম, এবং ব্যবহার.",
     "dashboard": "ড্যাশবোর্ড",
     "connection": {
       "disconnectedTitle": "Alcore Claw ডেমন সংযুক্ত নয়",
-      "disconnectedDescription": "স্থানীয়ভাবে <command>libre-claw start</command> দিয়ে শুরু করুন অথবা ব্যাকএন্ড পরিবেশে <env>LIBRE_CLAW_BASE_URL</env> সেট করুন।"
+      "disconnectedDescription": "স্থানীয়ভাবে <command>alcore-claw start</command> দিয়ে শুরু করুন অথবা ব্যাকএন্ড পরিবেশে <env>ALCORE_CLAW_BASE_URL</env> সেট করুন।"
     },
     "status": {
       "connected": "সংযুক্ত",
@@ -3117,7 +3117,7 @@
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
       },
       "engine": "ইঞ্জিন",
-      "libreModels": "Libre WebUI মডেল",
+      "libreModels": "Alcore WebUI মডেল",
       "strandsDisabled": "আপনার অ্যাকাউন্টের জন্য Strands ইঞ্জিন উপলব্ধ নয়।",
       "modelLabel": "মডেল"
     },
@@ -3724,7 +3724,7 @@
       "rotate": "সিক্রেট রোটেট করুন",
       "enable": "সক্রিয় করুন",
       "disable": "নিষ্ক্রিয় করুন",
-      "revealHint": "একবারই দেখানো হয়। Bearer টোকেন বা X-Libre-Webhook-Secret হেডার হিসেবে পাঠান।",
+      "revealHint": "একবারই দেখানো হয়। Bearer টোকেন বা X-Alcore-Webhook-Secret হেডার হিসেবে পাঠান।",
       "failed": "Webhook আপডেট করা যায়নি।"
     },
     "triggers": {
@@ -4460,7 +4460,7 @@
   },
   "strands": {
     "title": "Strands",
-    "subtitle": "আপনার Libre WebUI মডেলে চলা এমবেডেড এজেন্ট ইঞ্জিন।",
+    "subtitle": "আপনার Alcore WebUI মডেলে চলা এমবেডেড এজেন্ট ইঞ্জিন।",
     "subtitleVersion": "এমবেডেড এজেন্ট ইঞ্জিন, হার্নেস {{version}}।",
     "newSession": "নতুন সেশন",
     "sessions": "সেশন",

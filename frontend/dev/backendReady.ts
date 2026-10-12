@@ -68,7 +68,7 @@ export function backendReadyProxy(
   );
   let abortProbes = () => {};
   return {
-    name: 'libre-backend-ready-proxy',
+    name: 'alcore-backend-ready-proxy',
     apply: 'serve',
     configureServer(server) {
       if (!local) return;

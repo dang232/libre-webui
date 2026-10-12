@@ -16,7 +16,7 @@
  */
 
 import React, { useState } from 'react';
-import { X, Info, ExternalLink } from 'lucide-react';
+import { X, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui';
 import { cn } from '@/utils';
@@ -71,26 +71,6 @@ export const DemoModeBanner: React.FC<DemoModeBannerProps> = ({
         </div>
 
         <div className='flex items-center gap-2 ms-4'>
-          {/* Link to GitHub or documentation */}
-          <Button
-            variant='ghost'
-            size='sm'
-            className='h-8 px-2 text-white/70 hover:bg-white/10 hover:text-white dark:text-gray-950/70 dark:hover:bg-black/6 dark:hover:text-gray-950'
-            onClick={() =>
-              window.open(
-                'https://github.com/libre-webui/libre-webui',
-                '_blank',
-                'noopener,noreferrer'
-              )
-            }
-            title={t('demoMode.viewOnGithub')}
-          >
-            <ExternalLink className='h-4 w-4' />
-            <span className='sr-only sm:not-sr-only sm:ms-1'>
-              {t('demoMode.github')}
-            </span>
-          </Button>
-
           {/* Dismiss button */}
           <Button
             variant='ghost'

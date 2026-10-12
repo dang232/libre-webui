@@ -30,7 +30,7 @@ export interface PortalTokenGrant {
  * for the caller's linked customer (created on first use). The token is
  * handed to the portal in a one-time URL fragment, never stored here.
  *
- * Billing parity (todo 21) goes through the Libre BFF instead
+ * Billing parity (todo 21) goes through the Alcore BFF instead
  * (`/api/tokenpanel/billing/*`): the browser never holds TokenPanel
  * credentials, amounts travel as integer micros, and settlement stays
  * server-side. QR payloads and `qrExpiresAt` TTLs pass through verbatim.
@@ -90,7 +90,7 @@ const billingQuery = (query?: BillingPageQuery): string => {
   return suffix ? `?${suffix}` : '';
 };
 
-/** Billing history + recharge intents + redeem via the Libre BFF. */
+/** Billing history + recharge intents + redeem via the Alcore BFF. */
 export const tokenpanelBillingApi = {
   history(query?: BillingPageQuery): Promise<ApiResponse<unknown>> {
     return api
@@ -179,8 +179,8 @@ export interface UpdateKeyInput {
 }
 
 /**
- * Libre-native keys + projects over the BFF (`/api/tokenpanel`, Wave4 todo
- * 19). The browser sends its Libre session only; the backend attaches the
+ * Alcore-native keys + projects over the BFF (`/api/tokenpanel`, Wave4 todo
+ * 19). The browser sends its Alcore session only; the backend attaches the
  * management credential server-side. No management credential value is
  * ever present in browser code, requests, or responses here.
  */

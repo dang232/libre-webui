@@ -126,7 +126,7 @@ router.put('/access', requireAdmin, async (req, res): Promise<void> => {
     res.status(409).json({
       success: false,
       error:
-        'Strands access is pinned by LIBRE_STRANDS_ACCESS; unset the environment variable to manage it here.',
+        'Strands access is pinned by ALCORE_STRANDS_ACCESS; unset the environment variable to manage it here.',
     } satisfies ApiResponse);
     return;
   }

@@ -236,10 +236,10 @@
       "completing": "Completing Auth sign-in…",
       "redirecting": "Auth पर रीडायरेक्ट किया जा रहा है…",
       "claim": {
-        "title": "Already have a Libre account? Link it to Auth",
-        "body": "Enter your existing Libre username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
-        "libreUsername": "Libre username",
-        "librePassword": "Libre password",
+        "title": "Already have an Alcore account? Link it to Auth",
+        "body": "Enter your existing Alcore username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
+        "libreUsername": "Alcore username",
+        "librePassword": "Alcore password",
         "authEmail": "Auth email",
         "authPassword": "Auth password",
         "submit": "Link my account",
@@ -251,7 +251,7 @@
       },
       "signup": {
         "title": "Create your account",
-        "subtitle": "One account for Auth and Libre — the same sign-in works on both.",
+        "subtitle": "One account for Auth and Alcore — the same sign-in works on both.",
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "Choose a password",
         "confirmPassword": "Confirm password",
@@ -267,7 +267,7 @@
       "signin": {
         "toggle": "Signed out of Auth? Sign in with your Auth email",
         "hide": "Hide Auth sign-in",
-        "body": "Enter your Auth email and password. They go directly to Auth — Libre never sees them. A successful sign-in continues into Libre automatically.",
+        "body": "Enter your Auth email and password. They go directly to Auth — Alcore never sees them. A successful sign-in continues into Alcore automatically.",
         "email": "Auth email",
         "password": "Auth password",
         "submit": "Sign in with Auth",
@@ -1454,7 +1454,7 @@
       "profileSave": "Save profile",
       "savedOk": "Saved.",
       "saveFailed": "Couldn't save {{label}}: check the values and try again.",
-      "keysNativeTitle": "API keys in Libre",
+      "keysNativeTitle": "API keys in Alcore",
       "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
       "keyNameLabel": "Key name",
       "keyNamePlaceholder": "e.g. production-app",
@@ -2307,7 +2307,7 @@
       "description": "चुनें कि एम्बेडेड Strands एजेंट का उपयोग कौन कर सकता है। यह हर सत्र के निजी वर्कस्पेस में फ़ाइलें पढ़ और संपादित कर सकता है, लेकिन शेल कमांड नहीं चला सकता।",
       "saved": "Strands एक्सेस अपडेट किया गया",
       "saveFailed": "Strands एक्सेस अपडेट नहीं हो सका",
-      "lockedByEnv": "LIBRE_STRANDS_ACCESS एनवायरनमेंट वेरिएबल द्वारा निर्धारित।",
+      "lockedByEnv": "ALCORE_STRANDS_ACCESS एनवायरनमेंट वेरिएबल द्वारा निर्धारित।",
       "modes": {
         "disabled": "बंद",
         "admins": "व्यवस्थापक",
@@ -2924,13 +2924,13 @@
     "viewOnGithub": "GitHub पर देखें",
     "dismiss": "हटाएँ"
   },
-  "libreClaw": {
+  "alcoreClaw": {
     "title": "एजेंट",
     "subtitle": "स्थानीय एजेंट चलाता है, अनुमोदन, शेड्यूल, मेमोरी, उपकरण और उपयोग।",
     "dashboard": "डैशबोर्ड",
     "connection": {
       "disconnectedTitle": "Alcore Claw डेमॉन कनेक्ट नहीं है",
-      "disconnectedDescription": "इसे स्थानीय रूप से <command>libre-claw start</command> से प्रारंभ करें या बैकएंड वातावरण में <env>LIBRE_CLAW_BASE_URL</env> सेट करें।"
+      "disconnectedDescription": "इसे स्थानीय रूप से <command>alcore-claw start</command> से प्रारंभ करें या बैकएंड वातावरण में <env>ALCORE_CLAW_BASE_URL</env> सेट करें।"
     },
     "status": {
       "connected": "जुड़ा हुआ",
@@ -3117,7 +3117,7 @@
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
       },
       "engine": "इंजन",
-      "libreModels": "Libre WebUI मॉडल",
+      "libreModels": "Alcore WebUI मॉडल",
       "strandsDisabled": "Strands इंजन आपके खाते के लिए उपलब्ध नहीं है।",
       "modelLabel": "मॉडल"
     },
@@ -3724,7 +3724,7 @@
       "rotate": "सीक्रेट रोटेट करें",
       "enable": "सक्षम करें",
       "disable": "अक्षम करें",
-      "revealHint": "केवल एक बार दिखाया जाता है। इसे Bearer टोकन या X-Libre-Webhook-Secret हेडर के रूप में भेजें।",
+      "revealHint": "केवल एक बार दिखाया जाता है। इसे Bearer टोकन या X-Alcore-Webhook-Secret हेडर के रूप में भेजें।",
       "failed": "Webhook अपडेट नहीं हो सका।"
     },
     "triggers": {
@@ -4460,7 +4460,7 @@
   },
   "strands": {
     "title": "Strands",
-    "subtitle": "आपके Libre WebUI मॉडल पर चलने वाला एम्बेडेड एजेंट इंजन।",
+    "subtitle": "आपके Alcore WebUI मॉडल पर चलने वाला एम्बेडेड एजेंट इंजन।",
     "subtitleVersion": "एम्बेडेड एजेंट इंजन, हार्नेस {{version}}।",
     "newSession": "नया सत्र",
     "sessions": "सत्र",

@@ -52,7 +52,7 @@ const API_TIMEOUT = import.meta.env?.VITE_API_TIMEOUT
 
 const handleApiError = (error: HttpError): never => {
   if (error.response?.status === 401) {
-    // Unified invalid-session path (todos 19-23 share it): expired Libre
+    // Unified invalid-session path (todos 19-23 share it): expired Alcore
     // sessions and 401s forwarded by the BFF for bad/expired upstream
     // TokenPanel customer JWTs converge here. Single-fire — concurrent 401s
     // produce one logout + one AUTH_INVALIDATED_EVENT + one redirect.

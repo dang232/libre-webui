@@ -153,7 +153,7 @@ function WorkAvatar({
 
   if (role === 'assistant') {
     // A task driven by a persona speaks with that persona's face — the same
-    // rounded square as the agents sidebar. The Libre mark stays the default.
+    // rounded square as the agents sidebar. The Alcore mark stays the default.
     if (persona) {
       return (
         <img

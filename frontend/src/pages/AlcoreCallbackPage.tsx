@@ -211,12 +211,12 @@ export const AlcoreCallbackPage: React.FC = () => {
             <p className='mt-3 text-[13px] leading-6 text-ink-muted'>
               {t('auth.callback.support')}{' '}
               <a
-                href='https://docs.librewebui.org'
+                href='https://alcore.io.vn/support'
                 target='_blank'
                 rel='noopener noreferrer'
                 className='underline'
               >
-                docs.librewebui.org
+                the support page
               </a>
             </p>
           </>

@@ -40,7 +40,9 @@ router.post('/:automationId/webhook', async (req, res) => {
   try {
     const automationId = String(req.params.automationId || '');
     const authorization = req.headers.authorization;
-    const headerSecret = req.headers['x-libre-webhook-secret'];
+    const headerSecret =
+      req.headers['x-alcore-webhook-secret'] ??
+      req.headers['x-libre-webhook-secret'];
     const presented =
       typeof headerSecret === 'string' && headerSecret
         ? headerSecret

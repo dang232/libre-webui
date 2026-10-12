@@ -29,7 +29,7 @@ import { isAuthBrowserHandoffEnabled } from '@/utils/canonicalHandoff';
 /**
  * Incumbent claim form (unified-auth-core todo 19).
  *
- * For a pre-existing Libre-only account: the Libre username + password
+ * For a pre-existing Alcore-only account: the Alcore username + password
  * prove row ownership (verified server-side without minting a local
  * session), and one Auth password sign-in fetches the single-use product
  * code that proves the Auth subject. The server links the two (or reports
@@ -42,8 +42,8 @@ export const AlcoreClaimForm: React.FC = () => {
   const { t } = useTranslation();
   const login = useAuthStore(state => state.login);
   const [open, setOpen] = React.useState(false);
-  const [libreUsername, setLibreUsername] = React.useState('');
-  const [librePassword, setLibrePassword] = React.useState('');
+  const [alcoreUsername, setAlcoreUsername] = React.useState('');
+  const [alcorePassword, setAlcorePassword] = React.useState('');
   const [authEmail, setAuthEmail] = React.useState('');
   const [authPassword, setAuthPassword] = React.useState('');
   const [busy, setBusy] = React.useState(false);
@@ -67,8 +67,8 @@ export const AlcoreClaimForm: React.FC = () => {
       const code = await alcoreDirectProductCode(authAccessToken);
       authAccessToken = null;
       const response = await authApi.alcoreClaim({
-        username: libreUsername.trim(),
-        password: librePassword,
+        username: alcoreUsername.trim(),
+        password: alcorePassword,
         code,
       });
       if (!response.success || !response.data) {
@@ -89,7 +89,7 @@ export const AlcoreClaimForm: React.FC = () => {
       }
     } finally {
       authAccessToken = null;
-      setLibrePassword('');
+      setAlcorePassword('');
       setAuthPassword('');
       setBusy(false);
     }
@@ -125,8 +125,8 @@ export const AlcoreClaimForm: React.FC = () => {
               type='text'
               required
               autoComplete='username'
-              value={libreUsername}
-              onChange={event => setLibreUsername(event.target.value)}
+              value={alcoreUsername}
+              onChange={event => setAlcoreUsername(event.target.value)}
               placeholder={t('auth.alcore.claim.libreUsername')}
               className={inputClass}
               disabled={busy}
@@ -144,8 +144,8 @@ export const AlcoreClaimForm: React.FC = () => {
               type='password'
               required
               autoComplete='current-password'
-              value={librePassword}
-              onChange={event => setLibrePassword(event.target.value)}
+              value={alcorePassword}
+              onChange={event => setAlcorePassword(event.target.value)}
               placeholder={t('auth.alcore.claim.librePassword')}
               className={inputClass}
               disabled={busy}

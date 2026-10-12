@@ -18,7 +18,7 @@
 /**
  * Public self-service signup through Auth (open registration).
  *
- * The credential is created at Auth and never at Libre: this module holds
+ * The credential is created at Auth and never at Alcore: this module holds
  * no HTTP client of its own. Validation is pure and unit-tested; the
  * register-then-exchange orchestration takes injected dependencies so
  * tests cover happy/duplicate/mismatch without touching the network and
@@ -89,20 +89,20 @@ export interface AlcoreSignupDeps {
     email: string,
     password: string
   ) => Promise<{ authAccessToken?: string }>;
-  /** Redeem an Auth session for the single-use Libre product code. */
+  /** Redeem an Auth session for the single-use Alcore product code. */
   fetchProductCode: (authAccessToken: string) => Promise<string>;
-  /** Redeem the product code at the Libre BFF (lazy-provisions). */
+  /** Redeem the product code at the Alcore BFF (lazy-provisions). */
   exchangeCode: (code: string) => Promise<AlcoreSession>;
   /** Start the redirect handoff (navigates away to Auth). */
   startRedirectHandoff: () => void;
 }
 
 /**
- * Register at Auth, then exchange into a Libre session.
+ * Register at Auth, then exchange into an Alcore session.
  *
  * Same credential on both products: the Auth email/password created in
  * step one is the identity the BFF lazy-provisions in step three. No
- * Libre-local password is ever created. Duplicate emails surface Auth's
+ * Alcore-local password is ever created. Duplicate emails surface Auth's
  * safe message without revealing whether an address is registered.
  */
 export async function runAlcoreSignup(

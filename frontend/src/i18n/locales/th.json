@@ -236,10 +236,10 @@
       "completing": "Completing Auth sign-in…",
       "redirecting": "กำลังเปลี่ยนเส้นทางไปยัง Auth…",
       "claim": {
-        "title": "Already have a Libre account? Link it to Auth",
-        "body": "Enter your existing Libre username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
-        "libreUsername": "Libre username",
-        "librePassword": "Libre password",
+        "title": "Already have an Alcore account? Link it to Auth",
+        "body": "Enter your existing Alcore username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
+        "libreUsername": "Alcore username",
+        "librePassword": "Alcore password",
         "authEmail": "Auth email",
         "authPassword": "Auth password",
         "submit": "Link my account",
@@ -251,7 +251,7 @@
       },
       "signup": {
         "title": "Create your account",
-        "subtitle": "One account for Auth and Libre — the same sign-in works on both.",
+        "subtitle": "One account for Auth and Alcore — the same sign-in works on both.",
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "Choose a password",
         "confirmPassword": "Confirm password",
@@ -267,7 +267,7 @@
       "signin": {
         "toggle": "Signed out of Auth? Sign in with your Auth email",
         "hide": "Hide Auth sign-in",
-        "body": "Enter your Auth email and password. They go directly to Auth — Libre never sees them. A successful sign-in continues into Libre automatically.",
+        "body": "Enter your Auth email and password. They go directly to Auth — Alcore never sees them. A successful sign-in continues into Alcore automatically.",
         "email": "Auth email",
         "password": "Auth password",
         "submit": "Sign in with Auth",
@@ -1454,7 +1454,7 @@
       "profileSave": "Save profile",
       "savedOk": "Saved.",
       "saveFailed": "Couldn't save {{label}}: check the values and try again.",
-      "keysNativeTitle": "API keys in Libre",
+      "keysNativeTitle": "API keys in Alcore",
       "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
       "keyNameLabel": "Key name",
       "keyNamePlaceholder": "e.g. production-app",
@@ -2307,7 +2307,7 @@
       "description": "เลือกผู้ที่ใช้เอเจนต์ Strands ในตัวได้ เอเจนต์สามารถอ่านและแก้ไขไฟล์ในพื้นที่ทำงานส่วนตัวของแต่ละเซสชัน แต่ไม่สามารถรันคำสั่งเชลล์ได้",
       "saved": "อัปเดตสิทธิ์เข้าถึง Strands แล้ว",
       "saveFailed": "ไม่สามารถอัปเดตสิทธิ์เข้าถึง Strands ได้",
-      "lockedByEnv": "กำหนดไว้โดยตัวแปรสภาพแวดล้อม LIBRE_STRANDS_ACCESS",
+      "lockedByEnv": "กำหนดไว้โดยตัวแปรสภาพแวดล้อม ALCORE_STRANDS_ACCESS",
       "modes": {
         "disabled": "ปิด",
         "admins": "ผู้ดูแลระบบ",
@@ -2924,13 +2924,13 @@
     "viewOnGithub": "ดูบน GitHub",
     "dismiss": "ปิด"
   },
-  "libreClaw": {
+  "alcoreClaw": {
     "title": "เอเจนต์",
     "subtitle": "การเรียกใช้ตัวแทนในพื้นที่ การอนุมัติ กำหนดการ หน่วยความจำ เครื่องมือ และการใช้งาน",
     "dashboard": "แดชบอร์ด",
     "connection": {
       "disconnectedTitle": "daemon ของ Alcore Claw ไม่ได้เชื่อมต่อ",
-      "disconnectedDescription": "เริ่มต้นในเครื่องด้วย <command>libre-claw start</command> หรือตั้งค่า <env>LIBRE_CLAW_BASE_URL</env> ในสภาพแวดล้อมแบ็กเอนด์"
+      "disconnectedDescription": "เริ่มต้นในเครื่องด้วย <command>alcore-claw start</command> หรือตั้งค่า <env>ALCORE_CLAW_BASE_URL</env> ในสภาพแวดล้อมแบ็กเอนด์"
     },
     "status": {
       "connected": "เชื่อมต่อแล้ว",
@@ -3117,7 +3117,7 @@
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
       },
       "engine": "เอนจิน",
-      "libreModels": "โมเดล Libre WebUI",
+      "libreModels": "โมเดล Alcore WebUI",
       "strandsDisabled": "เอนจิน Strands ไม่พร้อมใช้งานสำหรับบัญชีของคุณ",
       "modelLabel": "โมเดล"
     },
@@ -3724,7 +3724,7 @@
       "rotate": "หมุนเวียนซีเคร็ต",
       "enable": "เปิดใช้งาน",
       "disable": "ปิดใช้งาน",
-      "revealHint": "แสดงเพียงครั้งเดียว ส่งเป็นโทเคน Bearer หรือส่วนหัว X-Libre-Webhook-Secret",
+      "revealHint": "แสดงเพียงครั้งเดียว ส่งเป็นโทเคน Bearer หรือส่วนหัว X-Alcore-Webhook-Secret",
       "failed": "อัปเดต webhook ไม่สำเร็จ"
     },
     "triggers": {
@@ -4460,7 +4460,7 @@
   },
   "strands": {
     "title": "Strands",
-    "subtitle": "เอนจินเอเจนต์ในตัวที่ทำงานบนโมเดล Libre WebUI ของคุณ",
+    "subtitle": "เอนจินเอเจนต์ในตัวที่ทำงานบนโมเดล Alcore WebUI ของคุณ",
     "subtitleVersion": "เอนจินเอเจนต์ในตัว, harness {{version}}",
     "newSession": "เซสชันใหม่",
     "sessions": "เซสชัน",

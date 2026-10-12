@@ -236,10 +236,10 @@
       "completing": "Completing Auth sign-in…",
       "redirecting": "Đang chuyển hướng đến Auth…",
       "claim": {
-        "title": "Already have a Libre account? Link it to Auth",
-        "body": "Enter your existing Libre username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
-        "libreUsername": "Libre username",
-        "librePassword": "Libre password",
+        "title": "Already have an Alcore account? Link it to Auth",
+        "body": "Enter your existing Alcore username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
+        "libreUsername": "Alcore username",
+        "librePassword": "Alcore password",
         "authEmail": "Auth email",
         "authPassword": "Auth password",
         "submit": "Link my account",
@@ -251,7 +251,7 @@
       },
       "signup": {
         "title": "Create your account",
-        "subtitle": "One account for Auth and Libre — the same sign-in works on both.",
+        "subtitle": "One account for Auth and Alcore — the same sign-in works on both.",
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "Choose a password",
         "confirmPassword": "Confirm password",
@@ -267,7 +267,7 @@
       "signin": {
         "toggle": "Đã đăng xuất khỏi Auth? Đăng nhập tại đây",
         "hide": "Ẩn đăng nhập Auth",
-        "body": "Nhập email và mật khẩu Auth của bạn. Chúng được gửi thẳng tới Auth — Libre không bao giờ thấy chúng. Đăng nhập thành công sẽ tự động tiếp tục vào Libre.",
+        "body": "Nhập email và mật khẩu Auth của bạn. Chúng được gửi thẳng tới Auth — Alcore không bao giờ thấy chúng. Đăng nhập thành công sẽ tự động tiếp tục vào Alcore.",
         "email": "Email",
         "password": "Mật khẩu",
         "submit": "Đăng nhập",
@@ -1454,7 +1454,7 @@
       "profileSave": "Save profile",
       "savedOk": "Saved.",
       "saveFailed": "Couldn't save {{label}}: check the values and try again.",
-      "keysNativeTitle": "API keys in Libre",
+      "keysNativeTitle": "API keys in Alcore",
       "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
       "keyNameLabel": "Key name",
       "keyNamePlaceholder": "e.g. production-app",
@@ -2307,7 +2307,7 @@
       "description": "Chọn ai có thể dùng tác tử Strands tích hợp. Tác tử có thể đọc và chỉnh sửa tệp trong không gian làm việc riêng của mỗi phiên, nhưng không thể chạy lệnh shell.",
       "saved": "Đã cập nhật quyền truy cập Strands",
       "saveFailed": "Không thể cập nhật quyền truy cập Strands",
-      "lockedByEnv": "Được cố định bởi biến môi trường LIBRE_STRANDS_ACCESS.",
+      "lockedByEnv": "Được cố định bởi biến môi trường ALCORE_STRANDS_ACCESS.",
       "modes": {
         "disabled": "Tắt",
         "admins": "Quản trị viên",
@@ -2924,13 +2924,13 @@
     "viewOnGithub": "Xem trên GitHub",
     "dismiss": "Đóng"
   },
-  "libreClaw": {
+  "alcoreClaw": {
     "title": "Tác nhân",
     "subtitle": "Tác nhân cục bộ chạy, phê duyệt, lịch trình, bộ nhớ, công cụ và cách sử dụng.",
     "dashboard": "Bảng điều khiển",
     "connection": {
       "disconnectedTitle": "Daemon Alcore Claw chưa được kết nối",
-      "disconnectedDescription": "Bắt đầu cục bộ với <command>libre-claw start</command> hoặc đặt <env>LIBRE_CLAW_BASE_URL</env> trong môi trường phụ trợ."
+      "disconnectedDescription": "Bắt đầu cục bộ với <command>alcore-claw start</command> hoặc đặt <env>ALCORE_CLAW_BASE_URL</env> trong môi trường phụ trợ."
     },
     "status": {
       "connected": "Đã kết nối",
@@ -3117,7 +3117,7 @@
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
       },
       "engine": "Bộ máy",
-      "libreModels": "Mô hình Libre WebUI",
+      "libreModels": "Mô hình Alcore WebUI",
       "strandsDisabled": "Công cụ Strands không khả dụng cho tài khoản của bạn.",
       "modelLabel": "Mô hình"
     },
@@ -3724,7 +3724,7 @@
       "rotate": "Xoay vòng khóa",
       "enable": "Bật",
       "disable": "Tắt",
-      "revealHint": "Chỉ hiển thị một lần. Gửi dưới dạng token Bearer hoặc header X-Libre-Webhook-Secret.",
+      "revealHint": "Chỉ hiển thị một lần. Gửi dưới dạng token Bearer hoặc header X-Alcore-Webhook-Secret.",
       "failed": "Không thể cập nhật webhook."
     },
     "triggers": {
@@ -4460,7 +4460,7 @@
   },
   "strands": {
     "title": "Strands",
-    "subtitle": "Công cụ tác tử tích hợp chạy trên các mô hình Libre WebUI của bạn.",
+    "subtitle": "Công cụ tác tử tích hợp chạy trên các mô hình Alcore WebUI của bạn.",
     "subtitleVersion": "Công cụ tác tử tích hợp, harness {{version}}.",
     "newSession": "Phiên mới",
     "sessions": "Phiên",

@@ -10,7 +10,7 @@
  * Flow: the browser holds no Auth credentials at any point. It generates a CSRF
  * `state`, sends the user to Auth, Auth authenticates with its own HttpOnly
  * cookie and redirects back with a single-use code, and only then does the
- * browser present that code to the Libre backend. No session or access token is
+ * browser present that code to the Alcore backend. No session or access token is
  * ever readable by, or passes through, JavaScript.
  *
  * `state` is the CSRF binding: an attacker who can make the browser visit the
@@ -58,7 +58,7 @@ interface StoredState {
  * Cutover switch for the Auth browser handoff.
  *
  * Defaults OFF: while it is off the legacy local password form is the only way
- * in, so enabling this cannot strand a Libre user that has no
+ * in, so enabling this cannot strand an Alcore user that has no
  * `canonical_user_id` yet. Flip it only after the migration census shows the
  * population is mapped or deliberately flagged.
  *

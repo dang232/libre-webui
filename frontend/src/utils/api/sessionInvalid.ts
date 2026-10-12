@@ -19,7 +19,7 @@
  * Unified invalid-session path (todo 22, shared by todos 19-23).
  *
  * Mirrors the TokenPanel portal contract (`apps/api/.../client.ts:183-186`):
- * any HTTP 401 — an expired/revoked Libre session OR a 401 forwarded by the
+ * any HTTP 401 — an expired/revoked Alcore session OR a 401 forwarded by the
  * BFF when the upstream TokenPanel customer JWT is bad/expired — clears the
  * stored token and emits AUTH_INVALIDATED_EVENT exactly once per session.
  * Single-fire matters: N in-flight requests failing together must produce

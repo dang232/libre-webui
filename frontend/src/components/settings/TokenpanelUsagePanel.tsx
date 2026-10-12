@@ -31,7 +31,7 @@ import {
 
 /**
  * Live usage/requests panel (todo 20): renders EXACTLY what the TokenPanel
- * usage API returns through the Libre BFF (`GET /api/tokenpanel/usage/*`).
+ * usage API returns through the Alcore BFF (`GET /api/tokenpanel/usage/*`).
  * Raw integer micros flow untouched into `formatSpendMicros` /
  * `formatSpendWhole` at this render boundary — no float math, no
  * client-side currency conversion (the server currency is pinned and shown

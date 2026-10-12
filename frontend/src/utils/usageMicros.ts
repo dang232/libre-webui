@@ -17,7 +17,7 @@
 
 /**
  * Usage micros display (todo 20): the single audited formatter for the
- * Libre usage/requests panel. Raw integer micros flow BFF → frontend
+ * Alcore usage/requests panel. Raw integer micros flow BFF → frontend
  * untouched; major-unit rendering happens ONLY here, at the render boundary,
  * with string slicing + remainder — zero float arithmetic anywhere in this
  * file (integer string ops only: no division operator, no float parsing,

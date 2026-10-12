@@ -103,7 +103,7 @@ describe('validateAlcoreSignup', () => {
 });
 
 describe('runAlcoreSignup', () => {
-  it('happy path: register at Auth, then exchange into a Libre session', async () => {
+  it('happy path: register at Auth, then exchange into an Alcore session', async () => {
     const calls: string[] = [];
     const result = await runAlcoreSignup(
       {

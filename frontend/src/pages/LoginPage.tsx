@@ -140,21 +140,21 @@ export const LoginPage: React.FC = () => {
           <div className='relative z-10 space-y-1 font-mono text-[11px] text-ink-muted'>
             <p>
               <a
-                href='https://librewebui.org'
+                href='https://alcore.io.vn'
                 target='_blank'
                 rel='noopener noreferrer'
                 className='transition-colors hover:text-ink'
               >
-                librewebui.org
+                alcore.io.vn
               </a>
               {' · '}
               <a
-                href='https://docs.librewebui.org'
+                href='https://alcore.io.vn/support'
                 target='_blank'
                 rel='noopener noreferrer'
                 className='transition-colors hover:text-ink'
               >
-                docs.librewebui.org
+                support
               </a>
             </p>
             <p data-testid='app-version'>

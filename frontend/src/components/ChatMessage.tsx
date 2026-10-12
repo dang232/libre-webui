@@ -119,7 +119,7 @@ interface ChatAvatarProps {
   modelAvatar?: string | null;
 }
 
-/** Message avatars matching the Work conversation: the Libre mark for the
+/** Message avatars matching the Work conversation: the Alcore mark for the
  * assistant (or the persona's avatar) and the account avatar for the user. */
 function ChatAvatar({ role, user, persona, modelAvatar }: ChatAvatarProps) {
   const { t } = useTranslation();

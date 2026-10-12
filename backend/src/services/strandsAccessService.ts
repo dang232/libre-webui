@@ -21,7 +21,7 @@
  * opt in from User Management. Every check reads the live setting, so a
  * change takes effect on the next request without a restart.
  *
- * LIBRE_STRANDS_ACCESS pins the mode at deployment level. A malformed pin
+ * ALCORE_STRANDS_ACCESS pins the mode at deployment level. A malformed pin
  * locks the engine off rather than falling back to a saved opt-in.
  */
 
@@ -39,7 +39,7 @@ export const STRANDS_ACCESS_MODE_KEY = 'strands_access_mode';
 
 export interface StrandsAccessState {
   readonly mode: StrandsAccessMode;
-  /** Whether LIBRE_STRANDS_ACCESS pins the mode. */
+  /** Whether ALCORE_STRANDS_ACCESS pins the mode. */
   readonly lockedByEnv: boolean;
 }
 
@@ -53,7 +53,8 @@ export function isStrandsAccessMode(
 }
 
 function envMode(): StrandsAccessMode | undefined {
-  const raw = process.env.LIBRE_STRANDS_ACCESS;
+  const raw =
+    process.env.ALCORE_STRANDS_ACCESS ?? process.env.LIBRE_STRANDS_ACCESS;
   if (raw === undefined || raw.trim() === '') return undefined;
   const normalized = raw.trim().toLowerCase();
   return isStrandsAccessMode(normalized) ? normalized : 'disabled';
@@ -89,7 +90,7 @@ export async function setStrandsAccessMode(
     throw new Error(`Invalid Strands access mode "${String(mode)}".`);
   }
   if (strandsAccessLockedByEnv()) {
-    throw new Error('Strands access is pinned by LIBRE_STRANDS_ACCESS.');
+    throw new Error('Strands access is pinned by ALCORE_STRANDS_ACCESS.');
   }
   await setSystemSetting(STRANDS_ACCESS_MODE_KEY, mode);
 }

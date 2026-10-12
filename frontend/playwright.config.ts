@@ -40,7 +40,7 @@ export default defineConfig({
     baseURL,
     trace: 'on-first-retry',
   },
-  // Specs that drive an externally started stack (e.g. the real Auth+Libre
+  // Specs that drive an externally started stack (e.g. the real Auth+Alcore
   // pair for alcore-auth-handoff) opt out with PLAYWRIGHT_WEBSERVER=off;
   // every other run keeps the dev server exactly as before.
   ...(process.env.PLAYWRIGHT_WEBSERVER === 'off'

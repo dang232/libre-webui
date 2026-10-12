@@ -17,7 +17,7 @@
 
 /**
  * Billing micros helpers (todo 21): integer-exact money display for the
- * Libre billing UI. Amounts arrive from the BFF in integer micros plus an
+ * Alcore billing UI. Amounts arrive from the BFF in integer micros plus an
  * ISO currency code and are rendered with integer division + remainder only
  * — never floats. The QR TTL is server-authoritative (`qrExpiresAt`); these
  * helpers only derive display state (remaining ms, expired?) from it.

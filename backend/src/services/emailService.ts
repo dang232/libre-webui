@@ -694,7 +694,7 @@ const LIGHT_BRAND = {
   codeBackground: DEFAULT_EMAIL_MARKDOWN_THEME.codeBackground,
   buttonText: '#ffffff',
   logo: 'https://librewebui.org/logo-dark.png',
-  site: 'https://librewebui.org',
+  site: 'https://alcore.io.vn',
 } as const;
 
 const DARK_BRAND = {
@@ -772,7 +772,7 @@ export const renderNotificationEmail = (input: {
     body,
     button,
     '</td></tr>',
-    `<tr><td style="padding:18px 4px 0;font-size:12px;line-height:1.6;color:${BRAND.muted}">Sent by Alcore. Change what you receive under ${settingsLink}.<br><a href="${BRAND.site}" style="color:${BRAND.muted};text-decoration:none">librewebui.org</a></td></tr>`,
+    `<tr><td style="padding:18px 4px 0;font-size:12px;line-height:1.6;color:${BRAND.muted}">Sent by Alcore. Change what you receive under ${settingsLink}.<br><a href="${BRAND.site}" style="color:${BRAND.muted};text-decoration:none">alcore.io.vn</a></td></tr>`,
     '</table></td></tr></table></body></html>',
   ].join('');
   return { text: textParts.join('\n'), html };

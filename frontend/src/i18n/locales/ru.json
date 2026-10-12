@@ -236,10 +236,10 @@
       "completing": "Completing Auth sign-in…",
       "redirecting": "Перенаправление на Auth…",
       "claim": {
-        "title": "Already have a Libre account? Link it to Auth",
-        "body": "Enter your existing Libre username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
-        "libreUsername": "Libre username",
-        "librePassword": "Libre password",
+        "title": "Already have an Alcore account? Link it to Auth",
+        "body": "Enter your existing Alcore username and password, then sign in with Auth once. Your chats and settings stay untouched. Auth accounts created with Google need manual linking — contact support.",
+        "libreUsername": "Alcore username",
+        "librePassword": "Alcore password",
         "authEmail": "Auth email",
         "authPassword": "Auth password",
         "submit": "Link my account",
@@ -251,7 +251,7 @@
       },
       "signup": {
         "title": "Create your account",
-        "subtitle": "One account for Auth and Libre — the same sign-in works on both.",
+        "subtitle": "One account for Auth and Alcore — the same sign-in works on both.",
         "emailPlaceholder": "you@example.com",
         "passwordPlaceholder": "Choose a password",
         "confirmPassword": "Confirm password",
@@ -267,7 +267,7 @@
       "signin": {
         "toggle": "Signed out of Auth? Sign in with your Auth email",
         "hide": "Hide Auth sign-in",
-        "body": "Enter your Auth email and password. They go directly to Auth — Libre never sees them. A successful sign-in continues into Libre automatically.",
+        "body": "Enter your Auth email and password. They go directly to Auth — Alcore never sees them. A successful sign-in continues into Alcore automatically.",
         "email": "Auth email",
         "password": "Auth password",
         "submit": "Sign in with Auth",
@@ -1454,7 +1454,7 @@
       "profileSave": "Save profile",
       "savedOk": "Saved.",
       "saveFailed": "Couldn't save {{label}}: check the values and try again.",
-      "keysNativeTitle": "API keys in Libre",
+      "keysNativeTitle": "API keys in Alcore",
       "keysNativeDescription": "Create, reveal, rotate and revoke your tp_live_* customer keys here. The full secret is shown exactly once.",
       "keyNameLabel": "Key name",
       "keyNamePlaceholder": "e.g. production-app",
@@ -2307,7 +2307,7 @@
       "description": "Выберите, кто может пользоваться встроенным агентом Strands. Он может читать и изменять файлы в частной рабочей области каждого сеанса, но не может выполнять команды оболочки.",
       "saved": "Доступ к Strands обновлён",
       "saveFailed": "Не удалось обновить доступ к Strands",
-      "lockedByEnv": "Задано переменной окружения LIBRE_STRANDS_ACCESS.",
+      "lockedByEnv": "Задано переменной окружения ALCORE_STRANDS_ACCESS.",
       "modes": {
         "disabled": "Выкл",
         "admins": "Администраторы",
@@ -2924,13 +2924,13 @@
     "viewOnGithub": "Открыть на GitHub",
     "dismiss": "Закрыть"
   },
-  "libreClaw": {
+  "alcoreClaw": {
     "title": "Агенты",
     "subtitle": "Запуск локального агента, утверждения, расписания, память, инструменты и использование.",
     "dashboard": "Панель управления",
     "connection": {
       "disconnectedTitle": "Демон Alcore Claw не подключен",
-      "disconnectedDescription": "Запустите его локально с <command>libre-claw start</command> или установите <env>LIBRE_CLAW_BASE_URL</env> во внутренней среде."
+      "disconnectedDescription": "Запустите его локально с <command>alcore-claw start</command> или установите <env>ALCORE_CLAW_BASE_URL</env> во внутренней среде."
     },
     "status": {
       "connected": "Подключено",
@@ -3117,7 +3117,7 @@
         "attachUploadFailed": "\"{{name}}\" could not be uploaded: {{error}}"
       },
       "engine": "Движок",
-      "libreModels": "Модели Libre WebUI",
+      "libreModels": "Модели Alcore WebUI",
       "strandsDisabled": "Движок Strands недоступен для вашей учётной записи.",
       "modelLabel": "Модель"
     },
@@ -3724,7 +3724,7 @@
       "rotate": "Сменить секрет",
       "enable": "Включить",
       "disable": "Отключить",
-      "revealHint": "Показывается один раз. Отправляйте как токен Bearer или заголовок X-Libre-Webhook-Secret.",
+      "revealHint": "Показывается один раз. Отправляйте как токен Bearer или заголовок X-Alcore-Webhook-Secret.",
       "failed": "Не удалось обновить вебхук."
     },
     "triggers": {
@@ -4460,7 +4460,7 @@
   },
   "strands": {
     "title": "Strands",
-    "subtitle": "Встроенный движок агентов на ваших моделях Libre WebUI.",
+    "subtitle": "Встроенный движок агентов на ваших моделях Alcore WebUI.",
     "subtitleVersion": "Встроенный движок агентов, harness {{version}}.",
     "newSession": "Новый сеанс",
     "sessions": "Сеансы",

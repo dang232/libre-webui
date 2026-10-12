@@ -506,7 +506,7 @@ function AutomationModalForm({
                     <p className='text-[11px] text-gray-500 dark:text-dark-600'>
                       {t('automations.webhook.revealHint', {
                         defaultValue:
-                          'Shown once. Send it as a Bearer token or an X-Libre-Webhook-Secret header.',
+                          'Shown once. Send it as a Bearer token or an X-Alcore-Webhook-Secret header.',
                       })}
                     </p>
                     <code
