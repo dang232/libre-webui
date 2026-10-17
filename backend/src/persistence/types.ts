@@ -113,6 +113,7 @@ export interface IdentityRepository {
   findAccountStatusById(id: string): Promise<IdentityAccountStatus | null>;
   findByUsername(username: string): Promise<IdentityUserRecord | null>;
   findByAuthSubject(subject: string): Promise<IdentityUserRecord | null>;
+  findByEmail(email: string): Promise<IdentityUserRecord | null>;
   insert(user: IdentityUserRecord): Promise<void>;
   approve(id: string, approvedBy: string, approvedAt: number): Promise<boolean>;
   /** Idempotently fences an active identity before cross-domain cleanup. */
@@ -140,6 +141,7 @@ export interface IdentitySyncRepository {
   findAccountStatusById(id: string): IdentityAccountStatus | null;
   findByUsername(username: string): IdentityUserRecord | null;
   findByAuthSubject(subject: string): IdentityUserRecord | null;
+  findByEmail(email: string): IdentityUserRecord | null;
   insert(user: IdentityUserRecord): void;
   approve(id: string, approvedBy: string, approvedAt: number): boolean;
   beginRetirement(id: string, updatedAt: number): boolean;

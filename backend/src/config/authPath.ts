@@ -61,7 +61,8 @@ export const LIBRE_AUTH_PATH_OUTCOME_ACTION: Readonly<
  * literal PENDING/PROVISIONED strings:
  * - 200 exchange OK <-> PROVISIONED (TokenPanel uses 201 create/replay,
  *   same 2xx family, same state)
- * - 409 AUTH_LINK_CONFLICT <-> CONFLICT (twin queued, never merged)
+ * - 409 AUTH_LINK_CONFLICT <-> CONFLICT (subject-owned-by-other; email
+ *   twins auto-link since the 2026-10-17 operator decision)
  * - 500 <-> FAILED (retryable with the same provision key)
  * - 503 <-> FAILED (unreachable Auth, same retryable family as 500)
  * PENDING (attempt in flight) + UNPROVISIONED (never-contacted product)

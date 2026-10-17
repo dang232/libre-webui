@@ -16,10 +16,13 @@
  *      converge, never a second row).
  *   3. linkAuthSubject race-loss throws the already-linked denial whose
  *      wording matches the alcoreAuthService 409 regex
- *      (/already exists|already linked/i, alcoreAuthService.ts:258) ->
- *      route 409 AUTH_LINK_CONFLICT (routes/alcoreAuth.ts exchange catch).
- *   4. Same-user re-link stays a no-op; email-twin race keeps the
- *      email-collision denial (never merge).
+ *      (/already exists|already linked/i) -> route 409 AUTH_LINK_CONFLICT
+ *      (routes/alcoreAuth.ts exchange catch). Only subject-owned-by-other
+ *      still throws; email collisions auto-link (2026-10-17 decision).
+ *   4. Same-user re-link stays a no-op; email-twin race against an
+ *      UNLINKED owner row adopts it, while a twin of an already-linked
+ *      row keeps the already-linked denial (adopt must never steal a row
+ *      from another subject).
  */
 import { describe, test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
@@ -53,6 +56,13 @@ function makePersistence() {
         return false;
       }
       return [...users.values()].some(u => u.email === email);
+    },
+    findByEmail: async email => {
+      if (state.staleEmailReads > 0) {
+        state.staleEmailReads -= 1;
+        return null;
+      }
+      return [...users.values()].find(u => u.email === email) ?? null;
     },
     usernameExists: async username =>
       [...users.values()].some(u => u.username === username),
@@ -169,7 +179,7 @@ describe('task9 libre auth_subject lookup-before-create + conflict', () => {
     console.log('libre link race: loser=409/CONFLICT owner-unchanged rows=2');
   });
 
-  test('same-user re-link is a no-op; email-twin race keeps denial', async () => {
+  test('same-user re-link is a no-op; twin of a linked row still denied', async () => {
     const { persistence, state } = makePersistence();
     const model = new UserModel(() => persistence);
     const owner = await model.findOrCreateByAuthSubject({
@@ -185,12 +195,36 @@ describe('task9 libre auth_subject lookup-before-create + conflict', () => {
         username: 'twin',
         email: 'owner@example.com',
       }),
-      /already exists/
+      /already linked/
     );
     assert.match(
-      'An account with this email already exists',
+      'This Auth identity is already linked to an account',
       SERVICE_CONFLICT_REGEX
     );
-    console.log('libre idempotent relink: ok; email-twin: 409/CONFLICT');
+    console.log('libre idempotent relink: ok; linked-row twin: 409/CONFLICT');
+  });
+
+  test('email-twin race against an unlinked row adopts the owner', async () => {
+    const { persistence, users, state } = makePersistence();
+    const model = new UserModel(() => persistence);
+    const legacy = await model.createUser({
+      username: 'owner',
+      email: 'owner@example.com',
+      password: 'legacy-password',
+      role: 'user',
+    });
+    state.staleEmailReads = 1;
+    const twin = await model.findOrCreateByAuthSubject({
+      subject: 'https://auth.alcore.io.vn|task9-sub-3',
+      username: 'twin',
+      email: 'owner@example.com',
+    });
+    assert.equal(twin.id, legacy.id);
+    assert.equal(users.size, 1);
+    const bySubject = await model.getUserByAuthSubject(
+      'https://auth.alcore.io.vn|task9-sub-3'
+    );
+    assert.equal(bySubject?.id, legacy.id);
+    console.log('libre email-twin race: adopted owner rows=1');
   });
 });

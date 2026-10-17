@@ -444,6 +444,17 @@ class SQLiteIdentitySyncRepository implements IdentitySyncRepository {
     return user ? decodeIdentityRecord(this.emailCodec, user) : null;
   }
 
+  findByEmail(email: string): IdentityUserRecord | null {
+    const user =
+      this.executor.get<IdentityUserRecord>(
+        `SELECT id, username, email, password_hash, role, account_status,
+                 approved_at, approved_by, avatar, auth_subject, canonical_user_id, created_at, updated_at
+          FROM users WHERE email_lookup = ?`,
+        [this.emailCodec.lookupToken(email)]
+      ) ?? null;
+    return user ? decodeIdentityRecord(this.emailCodec, user) : null;
+  }
+
   insert(user: IdentityUserRecord): void {
     this.executor.run(
       `INSERT INTO users (
@@ -686,6 +697,19 @@ class SQLiteIdentityRepository implements IdentityRepository {
                  approved_at, approved_by, avatar, auth_subject, canonical_user_id, created_at, updated_at
           FROM users WHERE auth_subject = ?`,
         [subject]
+      )
+      .then(user =>
+        user ? decodeIdentityRecord(this.emailCodec, user) : null
+      );
+  }
+
+  findByEmail(email: string): Promise<IdentityUserRecord | null> {
+    return this.executor
+      .get<IdentityUserRecord>(
+        `SELECT id, username, email, password_hash, role, account_status,
+                 approved_at, approved_by, avatar, auth_subject, canonical_user_id, created_at, updated_at
+          FROM users WHERE email_lookup = ?`,
+        [this.emailCodec.lookupToken(email)]
       )
       .then(user =>
         user ? decodeIdentityRecord(this.emailCodec, user) : null

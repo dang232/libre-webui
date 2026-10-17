@@ -3,10 +3,10 @@
  *
  * Covers: SQLite v32 additive migration (nullable column, legacy rows NULL,
  * sparse unique allows multiple NULLs, duplicate non-null rejected),
- * userModel findOrCreateByAuthSubject beside unchanged id (email-only merge
- * forbidden, conversations/settings preserved), linkAuthSubject collision
- * behavior, ALCORE_AUTH_MODE fail-closed default, local-auth gate 404 shape,
- * and lwk_* still barred from /api/auth.
+ * userModel findOrCreateByAuthSubject beside unchanged id (email collision
+ * auto-links to the existing row, conversations/settings preserved),
+ * linkAuthSubject collision behavior, ALCORE_AUTH_MODE fail-closed default,
+ * local-auth gate 404 shape, and lwk_* still barred from /api/auth.
  */
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -227,18 +227,32 @@ test('Auth link preserves conversations and settings on the same Libre id', asyn
   );
 });
 
-test('email-only merge is forbidden', async () => {
-  await authService.signup('alcore_email_owner', password, 'owned@example.test', {
-    kind: 'signup',
+test('email collision auto-links the subject to the existing row', async () => {
+  const owner = await authService.signup(
+    'alcore_email_owner',
+    password,
+    'owned@example.test',
+    {
+      kind: 'signup',
+    }
+  );
+  const adopted = await userModel.findOrCreateByAuthSubject({
+    subject: 'auth|brand-new-subject',
+    username: 'alcore_intruder',
+    email: 'owned@example.test',
   });
-  await assert.rejects(
-    userModel.findOrCreateByAuthSubject({
-      subject: 'auth|brand-new-subject',
-      username: 'alcore_intruder',
-      email: 'owned@example.test',
-    }),
-    /already exists/,
-    'collision throws instead of linking'
+  assert.equal(
+    adopted.id,
+    owner.user.id,
+    'collision adopts the owner row instead of 409'
+  );
+  const bySubject = await userModel.getUserByAuthSubject(
+    'auth|brand-new-subject'
+  );
+  assert.equal(
+    bySubject?.id,
+    owner.user.id,
+    'subject resolves to the adopted row'
   );
 });
 

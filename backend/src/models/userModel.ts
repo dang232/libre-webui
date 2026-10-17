@@ -136,16 +136,50 @@ export class UserModel {
     return repositories.identity.findByAuthSubject(canonical);
   }
 
+  getUserByEmail(email: string): Promise<User | null> {
+    const repositories = this.persistenceProvider().repositories;
+    if (typeof repositories.identity.findByEmail !== 'function') {
+      return Promise.resolve(null);
+    }
+    return repositories.identity.findByEmail(email);
+  }
+
+  /**
+   * Adopt the Libre row already holding `email` for a fresh Auth subject.
+   * The row keeps its id (conversations/settings untouched) and gains the
+   * canonical subject; a row already bound to a DIFFERENT subject throws
+   * instead of being stolen, so subject-owned-by-other still fails closed.
+   */
+  private async adoptByEmail(
+    email: string,
+    canonical: string
+  ): Promise<UserPublic | null> {
+    const owner = await this.getUserByEmail(email);
+    if (!owner) return null;
+    if (owner.auth_subject && owner.auth_subject !== canonical) {
+      throw new Error('This Auth identity is already linked to an account');
+    }
+    if (owner.auth_subject !== canonical) {
+      await this.linkAuthSubject(owner.id, canonical);
+    }
+    const linked = await this.getUserById(owner.id);
+    if (!linked) throw new Error('The linked account no longer exists');
+    return linked;
+  }
+
   /**
    * Resolve an Alcore Auth subject to its Libre user, creating an
    * Auth-provisioned account on first sight. The join key is the canonical
    * issuer-plus-subject pair (`issuer|subject`); malformed keys throw
    * fail-closed and never fall back to email. The Libre `id` stays a fresh
    * randomUUID and every conversation/setting keyed by it is preserved.
-   * Email-only merge is forbidden: when another account already owns the
-   * email the call throws instead of linking (simpleOidcOAuth email-in-use
-   * precedent). The provisioned password is an unusable random secret —
-   * Libre keeps bcryptjs cost 12 and never rehashes on login.
+   * Email collision auto-links (operator decision 2026-10-17, replacing the
+   * old never-merge denial): when another row already owns the Auth email,
+   * the subject is attached to that row instead of throwing 409, so first
+   * login never strands. A row already bound to a DIFFERENT subject still
+   * throws instead of being stolen. The provisioned password is an unusable
+   * random secret — Libre keeps bcryptjs cost 12 and never rehashes on
+   * login.
    */
   async findOrCreateByAuthSubject(input: {
     subject: string;
@@ -164,8 +198,9 @@ export class UserModel {
       input.email === undefined || input.email === null
         ? null
         : input.email.trim() || null;
-    if (email && (await this.emailExists(email))) {
-      throw new Error('An account with this email already exists');
+    if (email) {
+      const adopted = await this.adoptByEmail(email, canonical);
+      if (adopted) return adopted;
     }
     let username = input.username.trim() || `alcore_${canonical.slice(0, 24)}`;
     username = username.replace(/[^A-Za-z0-9._-]/g, '_').slice(0, 48);
@@ -185,7 +220,8 @@ export class UserModel {
     // unique violation, never a second row and never an orphan row with a
     // NULL subject (the old create-then-update left both). On violation the
     // loser re-resolves to the winner (idempotent converge); an email-twin
-    // race keeps the email-collision denial; anything else rethrows.
+    // race adopts the owner row like the pre-check above; anything else
+    // rethrows.
     let created: UserPublic | null;
     try {
       created = await this.createPublicUser(
@@ -206,8 +242,12 @@ export class UserModel {
           throw new Error('The linked account no longer exists');
         return publicWinner;
       }
-      if (isEmailViolation(error))
+      if (isEmailViolation(error)) {
+        const adopted =
+          email !== null ? await this.adoptByEmail(email, canonical) : null;
+        if (adopted) return adopted;
         throw new Error('An account with this email already exists');
+      }
       throw error;
     }
     if (!created) throw new Error('Account creation failed');
