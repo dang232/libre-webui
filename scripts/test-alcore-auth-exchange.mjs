@@ -6,10 +6,11 @@
  * assertion → LOCAL profile → Libre product session only; same subject
  * converges on one profile with preserved data; replay/replay-binding and
  * malformed assertions fail closed with one generic 401; lwk_* never yields
- * a session; email collisions queue to manual link (409); concurrent
- * same-subject exchanges converge on one Libre row (count +1); pending accounts
- * stay 403; local mode isolates with 404 ALCORE_AUTH_ONLY; no-store on
- * every response; zero Auth refresh material anywhere in responses.
+ * a session; email collisions auto-link the holder row (200, no 409);
+ * concurrent same-subject exchanges converge on one Libre row (count +1);
+ * pending accounts stay 403; local mode isolates with 404 ALCORE_AUTH_ONLY;
+ * no-store on every response; zero Auth refresh material anywhere in
+ * responses.
  *
  * Todo 19 claim coverage (same file, still in-process): POST /claim happy
  * path keeps the Libre id and sets auth_subject; double-claim replays with
@@ -503,7 +504,7 @@ test('lwk_* presented to exchange is rejected and never a session', async () => 
   assert.ok(typeof retry.body.data?.token === 'string');
 });
 
-test('email collision refuses to merge and signals manual link', async () => {
+test('email collision auto-links the holder row instead of 409', async () => {
   const holder = await authService.signup(
     'task45_holder',
     'Task45-Exchange-Proof-Password-1!',
@@ -514,13 +515,15 @@ test('email collision refuses to merge and signals manual link', async () => {
   const outcome = await call('POST', '/api/auth/alcore/exchange', {
     code: 'collision-code-1',
   });
-  assert.equal(outcome.status, 409);
-  assert.equal(outcome.body.code, 'AUTH_LINK_CONFLICT');
+  assert.equal(outcome.status, 200);
+  assert.equal(outcome.body.data.user.id, holder.user.id);
+  assert.ok(typeof outcome.body.data.token === 'string');
   assert.ok(noRefreshMaterial(outcome));
-  // The holder row is untouched: still owned by its original id and email.
+  // The holder row keeps its id and email and gains the Auth subject.
   const holderAfter = await userModel.getUserByUsername('task45_holder');
   assert.equal(holderAfter?.id, holder.user.id);
   assert.equal(holderAfter?.email, 'taken@example.com');
+  assert.equal(holderAfter?.auth_subject, `${ISSUER}|auth-sub-new`);
 });
 
 // ---- Todo-19 incumbent claim flow (POST /claim, same in-process harness) ----

@@ -140,7 +140,8 @@ const MAX_STATE_CHARS = 512;
  * Body: { code, redirectUri?, state? }. Bound (redirect-handoff) codes must
  * carry the exact redirect_uri + state Auth bound; unbound (bearer-handoff)
  * codes carry the code alone. Failures are generic (no oracle); only the
- * email-collision manual-link case surfaces a distinct 409.
+ * subject-owned-by-other manual-link case surfaces a distinct 409
+ * (email collisions auto-link since the 2026-10-17 operator decision).
  */
 router.post('/exchange', exchangeRateLimiter, async (req, res) => {
   res.set('Cache-Control', 'no-store');

@@ -251,11 +251,14 @@ export const signInWithAuthCode = async (
       email: claims.email,
     });
   } catch (error) {
-    // Email-collision (another account owns the address): fail closed with
-    // the manual-link signal, never merge. No identity material in the log.
-    // Anything else is a local mapping failure (FAILED, not CONFLICT): it
-    // must not wear the 409 manual-link shape, so it surfaces as a generic
-    // 500 the route renders without a conflict code.
+    // Subject-owned-by-other (the canonical subject is already bound to a
+    // different row): fail closed with the manual-link signal. Email
+    // collisions no longer reach here — findOrCreateByAuthSubject adopts
+    // the email owner row (operator decision 2026-10-17). No identity
+    // material in the log. Anything else is a local mapping failure
+    // (FAILED, not CONFLICT): it must not wear the 409 manual-link shape,
+    // so it surfaces as a generic 500 the route renders without a
+    // conflict code.
     if (
       error instanceof Error &&
       /already exists|already linked/i.test(error.message)

@@ -279,6 +279,22 @@ class PostgresIdentityRepository implements IdentityRepository {
       : null;
   }
 
+  async findByEmail(email: string): Promise<IdentityUserRecord | null> {
+    const result = await this.executor.query<StoredIdentityRecord>(
+      `SELECT id, username, email, password_hash, role, account_status,
+               approved_at, approved_by, avatar, auth_subject, canonical_user_id, created_at, updated_at
+          FROM users WHERE email_lookup = $1`,
+      [lookupEmail(this.emailCodec, email)]
+    );
+    return result.rows[0]
+      ? (decodeUser(
+          this.emailCodec,
+          result.rows[0],
+          true
+        ) as IdentityUserRecord)
+      : null;
+  }
+
   async insert(user: IdentityUserRecord): Promise<void> {
     await this.executor.query(
       `INSERT INTO users
